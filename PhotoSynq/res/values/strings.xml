@@ -2,10 +2,10 @@
 <resources>
 
     <string name="app_name">PhotoSynq</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="login_button">Login</string>
-    <string name="title_activity_dashboard">PhotoSynq</string>
     <string name="save_credentials">Save Credentials</string>
+    <string name="title_activity_project_list">Research Projects</string>
+    <string name="research_project">Research Projects</string>
 
 </resources>

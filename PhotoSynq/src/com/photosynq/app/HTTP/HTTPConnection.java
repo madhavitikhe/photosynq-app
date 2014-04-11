@@ -9,6 +9,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -20,6 +21,7 @@ import android.util.Log;
 
 public class HTTPConnection extends AsyncTask<String, String, String>{
 	public static final String PHOTOSYNQ_LOGIN_URL = "http://photosynq.venturit.org/api/v1/sign_in.json";
+	public static final String PHOTOSYNQ_PROJECTS_LIST_URL = "http://photosynq.venturit.org/api/v1/projects.json?auth_token=";
 	public PhotosynqResponse delegate = null;
 	private String username;
 	private String password;
@@ -31,6 +33,10 @@ public class HTTPConnection extends AsyncTask<String, String, String>{
 		this.password=password;
 	}
 	
+	public HTTPConnection()
+	{
+
+	}
 	@Override
 	protected void onPreExecute() {
 		if(null != username && null != password)
@@ -58,15 +64,33 @@ public class HTTPConnection extends AsyncTask<String, String, String>{
     protected String doInBackground(String... uri) {
         HttpClient httpclient = new DefaultHttpClient();
         HttpResponse response;
-        HttpPost postRequest;
+        HttpPost postRequest = null;
+        HttpGet getRequest = null;
         String responseString = null;
+        Log.d("PHOTOSYNQ-HTTPConnection", "in async task");
         try {
-        	postRequest = new HttpPost(uri[0]);
+        	Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ URI"+uri[0]);
+        	if("POST".equals( uri[1]) )
+        	{
+        		postRequest = new HttpPost(uri[0]);
+        	}else
+        	{
+        		getRequest = new HttpGet(uri[0]);
+        	}
+        	
         	if(null!=input)
         	{
         		postRequest.setEntity(input);
         	}
-            response = httpclient.execute(postRequest);
+        	if("POST".equals( uri[1]) )
+        	{
+        		Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing POST request");
+        		response = httpclient.execute(postRequest);
+        	}else
+        	{
+        		Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing GET request");
+        		response = httpclient.execute(getRequest);
+        	}
             StatusLine statusLine = response.getStatusLine();
             if(statusLine.getStatusCode() == HttpStatus.SC_OK){
                 ByteArrayOutputStream out = new ByteArrayOutputStream();

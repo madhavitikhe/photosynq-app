@@ -161,7 +161,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 		showProgress(true);
 		mAuthTask = new HTTPConnection(mEmail, mPassword);
 		mAuthTask.delegate = this;
-		mAuthTask.execute(HTTPConnection.PHOTOSYNQ_LOGIN_URL);
+		mAuthTask.execute(HTTPConnection.PHOTOSYNQ_LOGIN_URL,"POST");
 	}
 
 	/**
@@ -172,6 +172,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
 		// for very easy animations. If available, use these APIs to fade-in
 		// the progress spinner.
+		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
 			int shortAnimTime = getResources().getInteger(
 					android.R.integer.config_shortAnimTime);
@@ -210,28 +211,25 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 		//Destroy Async task and stop showing spinning wheel.
 		mAuthTask = null;
 		showProgress(false);
-		if(null != result)
-		{
-			CheckBox isSaveCredentials = (CheckBox) findViewById(R.id.save_credentials);
-			if(isSaveCredentials.isChecked())
-			{
-				JSONObject jsonResult;
-				try {
-						jsonResult = new JSONObject(result);
-						//Save authentication values to preferences
-						PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, jsonResult.get("email").toString());
-						PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_LOGIN_PASSWORD_KEY, mPassword);
-						PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_AUTH_TOKEN_KEY, jsonResult.get("auth_token").toString());
-					} catch (JSONException e) {
-					// TODO Log error
-					e.printStackTrace();
+		if (null != result) {
+			JSONObject jsonResult = null;
+			try {
+				jsonResult = new JSONObject(result);
+				CheckBox isSaveCredentials = (CheckBox) findViewById(R.id.save_credentials);
+				if (isSaveCredentials.isChecked()) {
+					// Save authentication values to preferences
+					PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_LOGIN_USERNAME_KEY,jsonResult.get("email").toString());
+					PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_LOGIN_PASSWORD_KEY, mPassword);
 				}
+				PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_AUTH_TOKEN_KEY,jsonResult.get("auth_token").toString());
+			} catch (JSONException e) {
+				// TODO Log error
+				e.printStackTrace();
 			}
 			Intent intent = new Intent(getApplicationContext(),MainActivity.class);
 			startActivity(intent);
-			//finish();
-		}
-		else
+			// finish();
+		}		else
 		{
 			mPasswordView.setError(getString(R.string.error_incorrect_password));
 			mPasswordView.requestFocus();
