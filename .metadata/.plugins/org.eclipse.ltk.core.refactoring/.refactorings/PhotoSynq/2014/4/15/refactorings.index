@@ -13,3 +13,5 @@
 1397144446988	Delete element
 1397189833539	Delete elements
 1397189842008	Delete element
+1397202231079	Rename type 'HttpResponse'
+1397203492677	Rename method 'receivedResponse'

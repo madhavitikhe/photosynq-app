@@ -1,30 +1,13 @@
 package com.photosynq.app;
 
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -32,13 +15,14 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.photosynq.app.utils.JSONBuilder;
+import com.photosynq.app.HTTP.HTTPConnection;
+import com.photosynq.app.HTTP.PhotosynqResponse;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
  * well.
  */
-public class LoginActivity extends Activity {
+public class LoginActivity extends Activity implements PhotosynqResponse {
 
 	/**
 	 * The default email to populate the email field with.
@@ -48,7 +32,8 @@ public class LoginActivity extends Activity {
 	/**
 	 * Keep track of the login task to ensure we can cancel it if requested.
 	 */
-	private UserLoginTask mAuthTask = null;
+	//private UserLoginTask mAuthTask = null;
+	private HTTPConnection mAuthTask = null;
 
 	// Values for email and password at the time of the login attempt.
 	private String mEmail;
@@ -159,8 +144,9 @@ public class LoginActivity extends Activity {
 			// perform the user login attempt.
 			mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
 			showProgress(true);
-			mAuthTask = new UserLoginTask();
-			mAuthTask.execute( mEmail,mPassword);
+			mAuthTask = new HTTPConnection(mEmail, mPassword);
+			mAuthTask.delegate = this;
+			mAuthTask.execute(HTTPConnection.PHOTOSYNQ_LOGIN_URL);
 		}
 	}
 
@@ -205,108 +191,21 @@ public class LoginActivity extends Activity {
 		}
 	}
 
-	/**
-	 * Represents an asynchronous login/registration task used to authenticate
-	 * the user.
-	 */
-	public class UserLoginTask extends AsyncTask<String, Void, Boolean> {
-		@Override
-		protected Boolean doInBackground(String... params) {
-			// TODO: attempt authentication against a network service.
-
-			int TIMEOUT_MILLISEC = 10000;
-			HttpParams httpParams = new BasicHttpParams();
-			HttpConnectionParams.setConnectionTimeout(httpParams,
-					TIMEOUT_MILLISEC);
-			HttpConnectionParams.setSoTimeout(httpParams, TIMEOUT_MILLISEC);
-			HttpClient httpclient = new DefaultHttpClient();
-			HttpPost request = new HttpPost(
-					"http://photosynq.venturit.org/api/v1/sign_in.json");
-			// pass the client the HttpParms to define some of its
-			// characteristics
-
-			JSONObject credentials = new JSONObject();
-			JSONObject user = new JSONObject();
-			try {
-				credentials.put("email", params[0]);
-				credentials.put("password", params[1]);
-
-				user.put("user", credentials);
-				Log.d("Test Thread", "user" + " " + user.toString());
-
-			} catch (JSONException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-			StringEntity input = null;
-
-			// pass the object into a string entity
-			try {
-				input = new StringEntity(user.toString());
-			} catch (UnsupportedEncodingException e1) {
-				e1.printStackTrace();
-			}
-
-			input.setContentType("application/json");
-
-			// pass the entity into a HttpPost request
-			request.setEntity(input);
-			InputStream is = null;
-
-			try {
-
-				// execute a request and get a response
-				HttpResponse response = httpclient.execute(request);
-				HttpEntity entityResponse = response.getEntity();
-				// get the entity from the response
-				is = entityResponse.getContent();
-				JSONObject responseJSON = buildJSON(is);
-				String token=responseJSON.getString("auth_token");
-				if(null !=token || token.length() > 0)
-				{
-					Log.d("Test Thread",
-							"JSONObject" + " " + responseJSON.toString());
-					return true;
-				}
-				
-			} catch (Exception e) {
-				Log.d("error", e.toString());
-			}
-
-			return false;
-		}
-
-		private JSONObject buildJSON(InputStream is)
+	@Override
+	public void onResponseReceived(String result) {
+		// TODO Set received token to preferences and launch main activity.
+		mAuthTask = null;
+		showProgress(false);
+		if(null != result)
 		{
-			JSONBuilder jsonBuilder=new JSONBuilder();
-			String jsonString=jsonBuilder.buildJSONString(is);
-			Log.d("Test Thread", "return"+" "+jsonString);
-			JSONObject jsonObject=jsonBuilder.buildJSONObject(jsonString);
-			return jsonObject;
-			
+			Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+			startActivity(intent);
+			finish();
 		}
-
-		@Override
-		protected void onPostExecute(final Boolean success) {
-			mAuthTask = null;
-			showProgress(false);
-
-			if (success) {
-				Intent intent = new Intent(getApplicationContext(),
-						MainActivity.class);
-				startActivity(intent);
-				finish();
-			} else {
-				mPasswordView.setError(getString(R.string.error_incorrect_password));
-				mPasswordView.requestFocus();
-			}
-		}
-
-		@Override
-		protected void onCancelled() {
-			mAuthTask = null;
-			showProgress(false);
+		else
+		{
+			mPasswordView.setError(getString(R.string.error_incorrect_password));
+			mPasswordView.requestFocus();
 		}
 	}
 }

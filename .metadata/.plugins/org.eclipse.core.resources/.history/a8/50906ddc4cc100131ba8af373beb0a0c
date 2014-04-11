@@ -1,0 +1,5 @@
+package com.photosynq.app.HTTP;
+
+public interface HttpResponse {
+
+}
