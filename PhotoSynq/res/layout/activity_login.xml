@@ -1,5 +1,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     tools:context="com.photosynq.app.LoginActivity" >
 
     <!-- Login progress -->
@@ -38,6 +40,8 @@
 
         <LinearLayout
             style="@style/LoginFormContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical" >
 
             <EditText
@@ -60,7 +64,13 @@
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true" />
-
+            <CheckBox
+                android:id="@+id/save_credentials"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:layout_marginTop="23dp"
+                android:text="@string/save_credentials"/>
+            
             <Button
                 android:id="@+id/sign_in_button"
                 android:layout_width="wrap_content"
@@ -70,6 +80,8 @@
                 android:paddingLeft="32dp"
                 android:paddingRight="32dp"
                 android:text="@string/action_sign_in_register" />
+
+
         </LinearLayout>
     </ScrollView>
 

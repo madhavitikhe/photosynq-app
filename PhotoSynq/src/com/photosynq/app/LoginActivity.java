@@ -1,5 +1,8 @@
 package com.photosynq.app;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -12,11 +15,13 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.HTTP.PhotosynqResponse;
+import com.photosynq.app.utils.PrefUtils;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
@@ -32,7 +37,6 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 	/**
 	 * Keep track of the login task to ensure we can cancel it if requested.
 	 */
-	//private UserLoginTask mAuthTask = null;
 	private HTTPConnection mAuthTask = null;
 
 	// Values for email and password at the time of the login attempt.
@@ -49,9 +53,18 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.activity_login);
+		
+		mLoginFormView = findViewById(R.id.login_form);
+		mLoginStatusView = findViewById(R.id.login_status);
+		mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);
 
+		mEmail = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+		mPassword = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_PASSWORD_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+		if(!mEmail.equals(PrefUtils.PREFS_DEFAULT_VAL) && !mPassword.equals(PrefUtils.PREFS_DEFAULT_VAL) )
+		{
+			connect();
+		}
 		// Set up the login form.
 		mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
 		mEmailView = (EditText) findViewById(R.id.email);
@@ -71,9 +84,6 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 					}
 				});
 
-		mLoginFormView = findViewById(R.id.login_form);
-		mLoginStatusView = findViewById(R.id.login_status);
-		mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);
 
 		findViewById(R.id.sign_in_button).setOnClickListener(
 				new View.OnClickListener() {
@@ -142,12 +152,16 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 		} else {
 			// Show a progress spinner, and kick off a background task to
 			// perform the user login attempt.
-			mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
-			showProgress(true);
-			mAuthTask = new HTTPConnection(mEmail, mPassword);
-			mAuthTask.delegate = this;
-			mAuthTask.execute(HTTPConnection.PHOTOSYNQ_LOGIN_URL);
+			connect();
 		}
+	}
+
+	private void connect() {
+		mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
+		showProgress(true);
+		mAuthTask = new HTTPConnection(mEmail, mPassword);
+		mAuthTask.delegate = this;
+		mAuthTask.execute(HTTPConnection.PHOTOSYNQ_LOGIN_URL);
 	}
 
 	/**
@@ -193,14 +207,29 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 
 	@Override
 	public void onResponseReceived(String result) {
-		// TODO Set received token to preferences and launch main activity.
+		//Destroy Async task and stop showing spinning wheel.
 		mAuthTask = null;
 		showProgress(false);
 		if(null != result)
 		{
+			CheckBox isSaveCredentials = (CheckBox) findViewById(R.id.save_credentials);
+			if(isSaveCredentials.isChecked())
+			{
+				JSONObject jsonResult;
+				try {
+						jsonResult = new JSONObject(result);
+						//Save authentication values to preferences
+						PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, jsonResult.get("email").toString());
+						PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_LOGIN_PASSWORD_KEY, mPassword);
+						PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_AUTH_TOKEN_KEY, jsonResult.get("auth_token").toString());
+					} catch (JSONException e) {
+					// TODO Log error
+					e.printStackTrace();
+				}
+			}
 			Intent intent = new Intent(getApplicationContext(),MainActivity.class);
 			startActivity(intent);
-			finish();
+			//finish();
 		}
 		else
 		{

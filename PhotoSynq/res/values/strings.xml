@@ -6,5 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="login_button">Login</string>
     <string name="title_activity_dashboard">PhotoSynq</string>
+    <string name="save_credentials">Save Credentials</string>
 
 </resources>
