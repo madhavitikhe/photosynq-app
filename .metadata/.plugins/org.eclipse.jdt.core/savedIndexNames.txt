@@ -1,8 +1,0 @@
-INDEX VERSION 1.126+/Users/shekhar/photosynq/.metadata/.plugins/org.eclipse.jdt.core
-4241391948.index
-1018203519.index
-1794532838.index
-1377251446.index
-2219552004.index
-937184019.index
-3573244376.index
