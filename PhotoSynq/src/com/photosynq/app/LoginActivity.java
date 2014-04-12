@@ -226,6 +226,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 				// TODO Log error
 				e.printStackTrace();
 			}
+			
 			Intent intent = new Intent(getApplicationContext(),MainActivity.class);
 			startActivity(intent);
 			// finish();

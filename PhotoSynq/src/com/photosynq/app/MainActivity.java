@@ -1,28 +1,40 @@
 package com.photosynq.app;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.photosynq.app.HTTP.HTTPConnection;
+import com.photosynq.app.HTTP.PhotosynqResponse;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ResearchProject;
-import com.photosynq.app.utils.CommonUtils;
+import com.photosynq.app.utils.PrefUtils;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements PhotosynqResponse{
 
 	// Database Helper
     DatabaseHelper db;
+    
+    HTTPConnection mProjListTask = null;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		String authToken = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+		mProjListTask = new HTTPConnection();
+		mProjListTask.delegate = this;
+		mProjListTask.execute(HTTPConnection.PHOTOSYNQ_PROJECTS_LIST_URL+authToken, "GET");
+
 	}
 
 	@Override
@@ -51,92 +63,39 @@ public class MainActivity extends ActionBarActivity {
 		startActivity(intent);
 	}
 	
-	public void testCreateRecord(View view)
-	{
-		db = new DatabaseHelper(getApplicationContext());
-		ResearchProject rp = new ResearchProject();
-	    rp.setId("1");
-	    rp.setName("One");
-	    rp.setDesc("3");
-	    rp.setDir_to_collab("4");
-	    rp.setStart_date("5");
-	    rp.setEnd_date("6");
-	    rp.setImage_content_type("7");
-	    rp.setBeta("8");
-	    
-	    ResearchProject rp1 = new ResearchProject();
-	    rp1.setId("1");
-	    rp1.setName("two");
-	    rp1.setDesc("3");
-	    rp1.setDir_to_collab("4");
-	    rp1.setStart_date("5");
-	    rp1.setEnd_date("6");
-	    rp1.setImage_content_type("7");
-	    rp1.setBeta("8");
-	    
-	    ResearchProject rp2 = new ResearchProject();
-	    rp2.setId("1");
-	    rp2.setName("2");
-	    rp2.setDesc("three");
-	    rp2.setDir_to_collab("4");
-	    rp2.setStart_date("5");
-	    rp2.setEnd_date("6");
-	    rp2.setImage_content_type("7");
-	    rp2.setBeta("8");
-	    
-	    db.createResearchProject(rp);
-	    db.createResearchProject(rp1);
-	    db.createResearchProject(rp2);
-	    db.closeDB();
-	}
-	
-	public void testFetchRecord(View view)
-	{
-		db = new DatabaseHelper(getApplicationContext());
-		ResearchProject rp = new ResearchProject();
-	    rp.setId("1");
-	    rp.setName("One");
-	    rp.setDesc("3");
-	    rp.setDir_to_collab("4");
-	    rp.setStart_date("5");
-	    rp.setEnd_date("6");
-	    rp.setImage_content_type("7");
-	    rp.setBeta("8");
-	    
-	    ResearchProject rpreturn = db.getResearchProject(CommonUtils.getRecordHash(rp));
-	    System.out.println("$$$$$$$$$$$$$$$$ "+ rpreturn.name);
-	    db.closeDB();
-	}
-	
-	public void testFetchAllRecord(View view)
-	{
-		db = new DatabaseHelper(getApplicationContext());
-		List<ResearchProject> rps = new ArrayList<ResearchProject>();
-		rps = db.getAllResearchProjects();
-		for (ResearchProject researchProject : rps) {
-			System.out.println("########### "+ researchProject.name);
+	@Override
+	public void onResponseReceived(String result) {
+		JSONArray jArray;
+		if(null!= result)
+			{
+			try {
+				Log.d("PHOTOSYNQ-MainActivity", result);
+				jArray = new JSONArray(result);
+				for (int i = 0; i < jArray.length(); i++) {
+					ResearchProject rp = new ResearchProject("DUMMYHASH");
+					
+					JSONObject obj = jArray.getJSONObject(i);
+					rp.setId(obj.getString("id"));
+					rp.setName(obj.getString("name"));
+					rp.setStart_date(obj.getString("start_date"));
+					rp.setEnd_date(obj.getString("end_date"));
+					rp.setDir_to_collab(obj.getString("directions_to_collaborators"));
+					rp.setDesc(obj.getString("description"));
+					rp.setBeta(obj.getString("beta"));
+					rp.setImage_content_type(obj.getString("image_content_type"));
+					
+					db = new DatabaseHelper(getApplicationContext());
+					
+					db.updateResearchProject(rp);
+					db.closeDB();
+				}
+				
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		db.closeDB();
 	}
-	
-	public void testDeleteRecord(View view)
-	{
-		db = new DatabaseHelper(getApplicationContext());
-		
-	    ResearchProject rp2 = new ResearchProject();
-	    rp2.setId("1");
-	    rp2.setName("2");
-	    rp2.setDesc("three");
-	    rp2.setDir_to_collab("4");
-	    rp2.setStart_date("5");
-	    rp2.setEnd_date("6");
-	    rp2.setImage_content_type("7");
-	    rp2.setBeta("8");
-	    
-	    db.deleteResearchProject(CommonUtils.getRecordHash(rp2));
-		db.closeDB();
-	}
-	
 	
 	
 }

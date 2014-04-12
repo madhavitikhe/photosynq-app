@@ -1,38 +1,37 @@
 package com.photosynq.app;
 
-import org.json.JSONArray;
-import org.json.JSONException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.ResearchProject;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.photosynq.app.HTTP.HTTPConnection;
-import com.photosynq.app.HTTP.PhotosynqResponse;
-import com.photosynq.app.utils.PrefUtils;
-
-public class ProjectListActivity extends ActionBarActivity implements PhotosynqResponse {
+public class ProjectListActivity extends ActionBarActivity  {
 
 	ListView lstTest;
-    JsonArrayAdapter jSONAdapter ;
-    HTTPConnection mProjTask = null;
+	DatabaseHelper db;
+	
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_project_list);
-
-		String authToken = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-		mProjTask = new HTTPConnection();
-		mProjTask.delegate = this;
-		mProjTask.execute(HTTPConnection.PHOTOSYNQ_PROJECTS_LIST_URL+authToken, "GET");
 		
 		// Initialize ListView
 		lstTest = (ListView) findViewById(R.id.list_view);
+		
+		
+		db = new DatabaseHelper(getApplicationContext());
+		List<ResearchProject> researchProjectList = db.getAllResearchProjects();
+		ResearchProjectArrayAdapter arrayadapter = new ResearchProjectArrayAdapter(this, researchProjectList); 
+		lstTest.setAdapter(arrayadapter);
 		
 	}
 
@@ -56,24 +55,24 @@ public class ProjectListActivity extends ActionBarActivity implements PhotosynqR
 		return super.onOptionsItemSelected(item);
 	}
 
-	@Override
-	public void onResponseReceived(String result) {
-		JSONArray jArray;
-		if(null!= result)
-			{
-			try {
-				Log.d("PHOTOSYNQ-ProjectListActivity", result);
-				jArray = new JSONArray(result);
-				jSONAdapter = new JsonArrayAdapter(ProjectListActivity.this, jArray);
-				// Set the above adapter as the adapter of choice for our list
-				lstTest.addHeaderView(new View(getApplicationContext()));
-				lstTest.addFooterView(new View(getApplicationContext()));
-				lstTest.setAdapter(jSONAdapter);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
+//	@Override
+//	public void onResponseReceived(String result) {
+//		JSONArray jArray;
+//		if(null!= result)
+//			{
+//			try {
+//				Log.d("PHOTOSYNQ-ProjectListActivity", result);
+//				jArray = new JSONArray(result);
+//				jSONAdapter = new JsonArrayAdapter(ProjectListActivity.this, jArray);
+//				// Set the above adapter as the adapter of choice for our list
+//				lstTest.addHeaderView(new View(getApplicationContext()));
+//				lstTest.addFooterView(new View(getApplicationContext()));
+//				lstTest.setAdapter(jSONAdapter);
+//			} catch (JSONException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//	}
 
 }

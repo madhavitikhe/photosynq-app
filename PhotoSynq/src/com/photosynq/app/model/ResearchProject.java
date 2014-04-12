@@ -12,6 +12,14 @@ public class ResearchProject {
     public String image_content_type;
     public String beta;
     
+    public ResearchProject(String dummy_record_hash)
+    {
+    	this.record_hash = dummy_record_hash;
+    }
+    public ResearchProject()
+    {
+    	
+    }
 	public String getRecord_hash() {
 		return record_hash;
 	}
