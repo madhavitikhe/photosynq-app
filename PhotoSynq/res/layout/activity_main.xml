@@ -1,15 +1,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
-    android:layout_gravity="center"
-     >
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical" >
 
- <!--    <ImageView
+    <!--
+         <ImageView
         android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_marginRight="6dip"
-        android:src="@drawable/simple_leaf" /> -->
+        android:src="@drawable/simple_leaf" />
+    -->
 
     <LinearLayout
         android:layout_width="0dip"
@@ -21,8 +22,30 @@
             android:id="@+id/research_projects_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/research_project"
-            android:onClick="listResearchProjects" />
+            android:onClick="listResearchProjects"
+            android:text="@string/research_project_str"
+             />
+
+        <Button
+            android:id="@+id/recent_research_collab_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="listResearchProjects"
+            android:text="@string/recent_research_collab_str" />
+
+        <Button
+            android:id="@+id/research_near_me_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="listResearchProjects"
+            android:text="@string/research_near_me_str" />
+
+        <Button
+            android:id="@+id/calibrate_intru_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="listResearchProjects"
+            android:text="@string/calibrate_intru_str" />
     </LinearLayout>
 
 </LinearLayout>

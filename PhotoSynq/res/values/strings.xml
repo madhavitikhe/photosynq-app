@@ -6,6 +6,9 @@
     <string name="login_button">Login</string>
     <string name="save_credentials">Save Credentials</string>
     <string name="title_activity_project_list">Research Projects</string>
-    <string name="research_project">Research Projects</string>
+    <string name="research_project_str">Research Projects</string>
+    <string name="recent_research_collab_str">Recent Research Collaborations</string>
+    <string name="calibrate_intru_str">Calibrate Instrument</string>
+    <string name="research_near_me_str">Research Near Me</string>
 
 </resources>
