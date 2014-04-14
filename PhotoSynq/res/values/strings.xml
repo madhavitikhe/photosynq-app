@@ -16,5 +16,9 @@
     <string name="end_date_lbl">End Date:</string>
     <string name="start_date_lbl">Start Date:</string>
     <string name="beta_lbl">Beta:</string>
+    <string name="title_activity_directions">Directions</string>
+    <string name="image_desc">Image Description</string>
+    <string name="next">Next</string>
+    <string name="directions_to_collab">Directions to collaborators</string>
 
 </resources>

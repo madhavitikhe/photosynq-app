@@ -105,24 +105,19 @@
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp" >
+                android:orientation="horizontal" >
 
-                <ImageView
-                    android:id="@+id/projectImage"
-                    android:layout_width="300dp"
-                    android:src="@drawable/fall_leaves"
-                    android:layout_height="200dp"
-                    android:contentDescription="@string/image_desc"
-                    android:scaleType="fitCenter"
-                    android:background="#000000"
-                    android:padding="2dp" />
+                <TextView
+                    android:id="@+id/directions_to_collab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/directions_to_collab"
+                    android:textStyle="bold" />
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/project_desc"
+                android:id="@+id/project_directions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/no_data_found" />
@@ -137,11 +132,11 @@
         android:paddingTop="10dp" >
 
         <Button
-            android:id="@+id/participate_btn"
+            android:id="@+id/dir_next_btn"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:onClick="onParticipateClicked"
-            android:text="@string/participate" >
+            android:onClick="onDirNextClicked"
+            android:text="@string/next" >
         </Button>
     </RelativeLayout>
 

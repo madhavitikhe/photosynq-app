@@ -39,6 +39,10 @@
             android:name="com.photosynq.app.ProjectDescriptionActivity"
             android:label="@string/title_activity_project_description" >
         </activity>
+        <activity
+            android:name="com.photosynq.app.DirectionsActivity"
+            android:label="@string/title_activity_directions" >
+        </activity>
     </application>
 
 </manifest>
