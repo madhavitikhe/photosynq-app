@@ -10,5 +10,11 @@
     <string name="recent_research_collab_str">Recent Research Collaborations</string>
     <string name="calibrate_intru_str">Calibrate Instrument</string>
     <string name="research_near_me_str">Research Near Me</string>
+    <string name="title_activity_project_description">Project Details</string>
+    <string name="no_data_found">No Data Found</string>
+    <string name="participate">Participate</string>
+    <string name="end_date_lbl">End Date:</string>
+    <string name="start_date_lbl">Start Date:</string>
+    <string name="beta_lbl">Beta:</string>
 
 </resources>

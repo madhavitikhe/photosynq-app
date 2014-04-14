@@ -6,6 +6,8 @@ import java.util.List;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -22,15 +24,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String TABLE_RESEARCH_PROJECT = "research_project";
 
 	// Reasearch Project Table - column names
-	private static final String C_RECORD_HASH = "record_hash";
-	private static final String C_ID = "id";
-	private static final String C_NAME = "name";
-	private static final String C_DESC = "desc";
-	private static final String C_DIR_TO_COLLAB = "dir_to_collab";
-	private static final String C_START_DATE = "start_date";
-	private static final String C_END_DATE = "end_date";
-	private static final String C_IMAGE_CONTENT_TYPE = "image_content_type";
-	private static final String C_BETA = "beta";
+	public static final String C_RECORD_HASH = "record_hash";
+	public static final String C_ID = "id";
+	public static final String C_NAME = "name";
+	public static final String C_DESC = "desc";
+	public static final String C_DIR_TO_COLLAB = "dir_to_collab";
+	public static final String C_START_DATE = "start_date";
+	public static final String C_END_DATE = "end_date";
+	public static final String C_IMAGE_CONTENT_TYPE = "image_content_type";
+	public static final String C_BETA = "beta";
 
 	// Reaserch Project table create statement
 	private static final String CREATE_TABLE_RESEARCH_PROJECT = "CREATE TABLE "
@@ -63,25 +65,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	// Insert row in db
 	public boolean createResearchProject(ResearchProject rp) {
-
-		SQLiteDatabase db = this.getWritableDatabase();
-										
-		ContentValues values = new ContentValues();
-		values.put(C_ID, null != rp.getId() ? rp.getId() : "");
-		values.put(C_NAME, null != rp.getName() ? rp.getName() : "");
-		values.put(C_DESC, null != rp.getDesc() ? rp.getDesc() : "");
-		values.put(C_DIR_TO_COLLAB,null != rp.getDir_to_collab() ? rp.getDir_to_collab() : "");
-		values.put(C_START_DATE,null != rp.getStart_date() ? rp.getStart_date() : "");
-		values.put(C_END_DATE, null != rp.getEnd_date() ? rp.getEnd_date() : "");
-		values.put(C_BETA, null != rp.getBeta() ? rp.getBeta() : "");
-		values.put(C_IMAGE_CONTENT_TYPE,null != rp.getImage_content_type() ? rp.getImage_content_type(): "");
-		values.put(C_RECORD_HASH, CommonUtils.getRecordHash(rp));
-		// insert row
-		long row_id = db.insert(TABLE_RESEARCH_PROJECT, null, values);
-
-		if (row_id >= 0) {
-			return true;
-		} else {
+		try
+		{
+			SQLiteDatabase db = this.getWritableDatabase();
+											
+			ContentValues values = new ContentValues();
+			values.put(C_ID, null != rp.getId() ? rp.getId() : "");
+			values.put(C_NAME, null != rp.getName() ? rp.getName() : "");
+			values.put(C_DESC, null != rp.getDesc() ? rp.getDesc() : "");
+			values.put(C_DIR_TO_COLLAB,null != rp.getDir_to_collab() ? rp.getDir_to_collab() : "");
+			values.put(C_START_DATE,null != rp.getStart_date() ? rp.getStart_date() : "");
+			values.put(C_END_DATE, null != rp.getEnd_date() ? rp.getEnd_date() : "");
+			values.put(C_BETA, null != rp.getBeta() ? rp.getBeta() : "");
+			values.put(C_IMAGE_CONTENT_TYPE,null != rp.getImage_content_type() ? rp.getImage_content_type(): "");
+			values.put(C_RECORD_HASH, CommonUtils.getRecordHash(rp));
+			// insert row
+			long row_id = db.insert(TABLE_RESEARCH_PROJECT, null, values);
+	
+			if (row_id >= 0) {
+				return true;
+			} else {
+				return false;
+			}
+		}catch (SQLiteConstraintException contraintException)
+		{
+			// If data already present then handle the case here.
+			Log.d("DATABASE_HELPER_RESEARCH_PROJECTS", "Record already present in database for record hash ="+CommonUtils.getRecordHash(rp));
+			return false;
+			
+		}
+		catch (SQLException sqliteException){
 			return false;
 		}
 

@@ -16,25 +16,21 @@
 		android:paddingBottom="15dp"
 		android:paddingRight="15dp"
 		android:background="@drawable/selector_card_background"
-		android:descendantFocusability="afterDescendants">
+		android:descendantFocusability="afterDescendants"
+		>
 
 		<TextView
 			android:id="@+id/project_name"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textStyle="bold"
-			android:text="Text line 1"/>
+			android:text=""/>
 
 		<TextView
 			android:id="@+id/project_desc"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="Text line 2"/>
+			android:text=""/>
 
-		<!-- <TextView
-			android:id="@+id/text3"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="Text line 3"/> -->
 	</LinearLayout>
 </FrameLayout>

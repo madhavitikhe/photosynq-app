@@ -2,10 +2,15 @@ package com.photosynq.app;
 
 import java.util.List;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.photosynq.app.db.DatabaseHelper;
@@ -13,7 +18,7 @@ import com.photosynq.app.model.ResearchProject;
 
 public class ProjectListActivity extends ActionBarActivity  {
 
-	ListView lstTest;
+	ListView projectList;
 	DatabaseHelper db;
 	
     
@@ -23,14 +28,25 @@ public class ProjectListActivity extends ActionBarActivity  {
 		setContentView(R.layout.activity_project_list);
 		
 		// Initialize ListView
-		lstTest = (ListView) findViewById(R.id.list_view);
+		projectList = (ListView) findViewById(R.id.list_view);
 		
 		
 		db = new DatabaseHelper(getApplicationContext());
 		List<ResearchProject> researchProjectList = db.getAllResearchProjects();
 		ResearchProjectArrayAdapter arrayadapter = new ResearchProjectArrayAdapter(this, researchProjectList); 
-		lstTest.setAdapter(arrayadapter);
+		projectList.setAdapter(arrayadapter);
 		db.closeDB();
+		
+		projectList.setOnItemClickListener(new OnItemClickListener() {
+		    @Override
+		    public void onItemClick(AdapterView<?> adapter, View view, int position, long id){
+		    	ResearchProject rp = (ResearchProject) projectList.getItemAtPosition(position);
+				Log.d("GEtting record hash : ", rp.getRecord_hash());
+				Intent intent = new Intent(getApplicationContext(),ProjectDescriptionActivity.class);
+				intent.putExtra(DatabaseHelper.C_RECORD_HASH, rp.getRecord_hash());
+				startActivity(intent);
+		    }
+		});
 		
 	}
 

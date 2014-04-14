@@ -1,6 +1,5 @@
 package com.photosynq.app;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -58,14 +57,13 @@ class ResearchProjectArrayAdapter extends BaseAdapter implements ListAdapter {
 
 		ResearchProject researchProject = getItem(position);
 		if (null != researchProject) {
-			String projectTitle;
 			String projectDesc;
 			try {
-				projectTitle = researchProject.getName();
 				projectDesc = researchProject.getDesc();
-				tvProjectTitle.setText(projectTitle);
-				//tvProjectDesc.setText(projectDesc.substring(0, (projectDesc.length()<40?projectDesc.length():40)));
-				tvProjectDesc.setText(projectDesc);
+				tvProjectTitle.setText(researchProject.getName());
+				// only show 100 chars of descr.
+				tvProjectDesc.setText(projectDesc.substring(0, (projectDesc.length()<100?projectDesc.length():100))+"...");
+				//tvProjectDesc.setText(projectDesc);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

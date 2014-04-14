@@ -3,6 +3,9 @@ package com.photosynq.app.utils;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -48,6 +51,22 @@ public class CommonUtils {
 		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 		System.out.println("$$$$$$$$$$$ Internet connection ? "+ (activeNetwork != null && activeNetwork.isConnected()));
 		return activeNetwork != null && activeNetwork.isConnected();
+	}
+	
+	public static Date convertToDate(String rawdate)
+	{
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");//new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
+	    Date convertedDate = new Date();
+	    try {
+	        convertedDate = dateFormat.parse(rawdate);
+	        System.out.println(convertedDate);
+			return convertedDate;
+	    } catch (ParseException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	    }
+		return null;
+	 
 	}
 
 }
