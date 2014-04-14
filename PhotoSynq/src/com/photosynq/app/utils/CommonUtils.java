@@ -4,6 +4,10 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import com.photosynq.app.model.ResearchProject;
 
 public class CommonUtils {
@@ -36,6 +40,14 @@ public class CommonUtils {
 				+ (null != rp.getImage_content_type() ? rp.getImage_content_type() : "");
 		System.out.println("$$$$$$ record string : "+recordString);
 		return getMD5EncryptedString(recordString);
+	}
+	
+	public static boolean isConnected(Context context)
+	{
+		ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+		System.out.println("$$$$$$$$$$$ Internet connection ? "+ (activeNetwork != null && activeNetwork.isConnected()));
+		return activeNetwork != null && activeNetwork.isConnected();
 	}
 
 }

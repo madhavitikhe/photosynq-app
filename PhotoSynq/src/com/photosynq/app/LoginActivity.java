@@ -18,9 +18,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.HTTP.PhotosynqResponse;
+import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.PrefUtils;
 
 /**
@@ -62,8 +64,16 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 		mEmail = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		mPassword = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_PASSWORD_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		if(!mEmail.equals(PrefUtils.PREFS_DEFAULT_VAL) && !mPassword.equals(PrefUtils.PREFS_DEFAULT_VAL) )
-		{
-			connect();
+		{ 
+			if(CommonUtils.isConnected(getApplicationContext()))
+			{
+				connect();
+			}
+			else
+			{
+				Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+				startActivity(intent);
+			}
 		}
 		// Set up the login form.
 		mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
@@ -152,7 +162,14 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 		} else {
 			// Show a progress spinner, and kick off a background task to
 			// perform the user login attempt.
-			connect();
+			if(CommonUtils.isConnected(getApplicationContext()))
+			{
+				connect();
+			}
+			else
+			{
+				Toast.makeText(getApplicationContext(), "No Internet connection available.", Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 

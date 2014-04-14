@@ -1,17 +1,15 @@
 package com.photosynq.app;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import com.photosynq.app.db.DatabaseHelper;
-import com.photosynq.app.model.ResearchProject;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.ResearchProject;
 
 public class ProjectListActivity extends ActionBarActivity  {
 
@@ -32,6 +30,7 @@ public class ProjectListActivity extends ActionBarActivity  {
 		List<ResearchProject> researchProjectList = db.getAllResearchProjects();
 		ResearchProjectArrayAdapter arrayadapter = new ResearchProjectArrayAdapter(this, researchProjectList); 
 		lstTest.setAdapter(arrayadapter);
+		db.closeDB();
 		
 	}
 
@@ -54,25 +53,4 @@ public class ProjectListActivity extends ActionBarActivity  {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
-//	@Override
-//	public void onResponseReceived(String result) {
-//		JSONArray jArray;
-//		if(null!= result)
-//			{
-//			try {
-//				Log.d("PHOTOSYNQ-ProjectListActivity", result);
-//				jArray = new JSONArray(result);
-//				jSONAdapter = new JsonArrayAdapter(ProjectListActivity.this, jArray);
-//				// Set the above adapter as the adapter of choice for our list
-//				lstTest.addHeaderView(new View(getApplicationContext()));
-//				lstTest.addFooterView(new View(getApplicationContext()));
-//				lstTest.setAdapter(jSONAdapter);
-//			} catch (JSONException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//	}
-
 }

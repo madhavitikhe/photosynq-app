@@ -62,7 +62,18 @@ public class MainActivity extends ActionBarActivity implements PhotosynqResponse
 		Intent intent = new Intent(getApplicationContext(),ProjectListActivity.class);
 		startActivity(intent);
 	}
-	
+	public void recentResearchCollab(View view)
+	{
+		
+	}
+	public void researchNearMe(View view)
+	{
+		
+	}
+	public void calibrate_intru_btn(View view)
+	{
+		
+	}
 	@Override
 	public void onResponseReceived(String result) {
 		JSONArray jArray;

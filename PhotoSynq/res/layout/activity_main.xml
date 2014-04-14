@@ -30,28 +30,23 @@
             android:id="@+id/recent_research_collab_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="testCreateRecord"
+            android:onClick="recentResearchCollab"
             android:text="@string/recent_research_collab_str" />
 
         <Button
             android:id="@+id/research_near_me_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="testFetchRecord"
+            android:onClick="researchNearMe"
             android:text="@string/research_near_me_str" />
 
         <Button
             android:id="@+id/calibrate_intru_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="testFetchAllRecord"
+            android:onClick="calibrateIntrument"
             android:text="@string/calibrate_intru_str" />
-         <Button
-            android:id="@+id/testDelete"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="testDeleteRecord"
-            android:text="@string/calibrate_intru_str" />
-    </LinearLayout>
+
+        </LinearLayout>
 
 </LinearLayout>
