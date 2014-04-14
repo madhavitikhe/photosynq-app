@@ -70,7 +70,7 @@ public class MainActivity extends ActionBarActivity implements PhotosynqResponse
 	{
 		
 	}
-	public void calibrate_intru_btn(View view)
+	public void calibrateIntrument(View view)
 	{
 		
 	}
