@@ -60,7 +60,7 @@ class BluetoothArrayAdapter extends BaseAdapter implements ListAdapter {
 		TextView tvDeviceName = (TextView) convertView.findViewById(R.id.device_name);
 		TextView tvDeviceAddress = (TextView) convertView.findViewById(R.id.device_address);
 		TextView tvDevicePaired = (TextView) convertView.findViewById(R.id.device_paired);
-		Button pairDeviceBtn = (Button) convertView.findViewById(R.id.pair_bluetooth_btn);
+		TextView pairDeviceBtn = (TextView) convertView.findViewById(R.id.pair_bluetooth_device);
 
 		BluetoothDevice bluetoothDevice = getItem(position);
 		if (null != bluetoothDevice) {

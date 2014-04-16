@@ -1,5 +1,6 @@
 package com.photosynq.app;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -15,15 +16,18 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
 public class BluetoothActivity extends ActionBarActivity {
 	private BluetoothAdapter bluetoothAdapter;
-	private View lst;
+	private ListView lst;
 	private View bluetoothStatus;
 	private TextView bluetoothStatusMsg;
 	private ArrayList<BluetoothDevice> btDeviceList = new ArrayList<BluetoothDevice>();
@@ -50,7 +54,21 @@ public class BluetoothActivity extends ActionBarActivity {
 		
 		BluetoothArrayAdapter btArrayAdapter = new BluetoothArrayAdapter(this, btDeviceList);
 		
-		((ListView) lst).setAdapter(btArrayAdapter);
+		lst.setAdapter(btArrayAdapter);
+		
+		lst.setOnItemClickListener(new OnItemClickListener() {
+		    @Override
+		    public void onItemClick(AdapterView<?> adapter, View view, int position, long id){
+		    	BluetoothDevice btDevice = (BluetoothDevice) lst.getItemAtPosition(position);
+				Log.d("Pairing device : ", btDevice.getName());
+				try {
+					System.out.println(createBond(btDevice));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    }
+		});
 	}
 
 	@Override
@@ -156,10 +174,26 @@ public class BluetoothActivity extends ActionBarActivity {
 		}
 		unregisterReceiver(ActionFoundReceiver);
 	}
-	public void pairDevice(View view)
-	{
-		System.out.println("Pairing request ....");
-	}
+
+	
+    public boolean removeBond(BluetoothDevice btDevice)  
+    throws Exception  
+    {  
+        Class btClass = Class.forName("android.bluetooth.BluetoothDevice");
+        Method removeBondMethod = btClass.getMethod("removeBond");  
+        Boolean returnValue = (Boolean) removeBondMethod.invoke(btDevice);  
+        return returnValue.booleanValue();  
+    }
+
+
+    public boolean createBond(BluetoothDevice btDevice)  
+    throws Exception  
+    { 
+        Class class1 = Class.forName("android.bluetooth.BluetoothDevice");
+        Method createBondMethod = class1.getMethod("createBond");  
+        Boolean returnValue = (Boolean) createBondMethod.invoke(btDevice);  
+        return returnValue.booleanValue();  
+    }  
 	private final BroadcastReceiver ActionFoundReceiver = new BroadcastReceiver(){
 	    
 	    @Override

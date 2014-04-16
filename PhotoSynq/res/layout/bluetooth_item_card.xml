@@ -43,14 +43,15 @@
 
 	</LinearLayout>
 
-	<Button
-	    android:id="@+id/pair_bluetooth_btn"
+	<TextView
+	    android:id="@+id/pair_bluetooth_device"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_alignParentRight="true"
 	    android:layout_centerVertical="true"
-	    android:onClick="pairDevice"
-	    android:text="Pair Device" />
+	    android:paddingRight="15dp"
+	    android:text="Pair Device"
+	    android:textStyle="bold" />
 
 	</RelativeLayout>
 </FrameLayout>
