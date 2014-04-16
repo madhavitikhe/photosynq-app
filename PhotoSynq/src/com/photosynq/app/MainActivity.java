@@ -64,7 +64,8 @@ public class MainActivity extends ActionBarActivity implements PhotosynqResponse
 	}
 	public void recentResearchCollab(View view)
 	{
-		
+		Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);
+		startActivity(intent);
 	}
 	public void researchNearMe(View view)
 	{

@@ -3,6 +3,7 @@ package com.photosynq.app;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
@@ -11,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ResearchProject;
@@ -91,7 +91,8 @@ public class DirectionsActivity extends ActionBarActivity {
 	
 	public void onDirNextClicked(View view)
 	{
-		
+		Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);
+		startActivity(intent);
 	}
 	
 }

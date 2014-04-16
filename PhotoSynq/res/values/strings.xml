@@ -20,5 +20,7 @@
     <string name="image_desc">Image Description</string>
     <string name="next">Next</string>
     <string name="directions_to_collab">Directions to collaborators</string>
+    <string name="title_activity_bluetooth">BluetoothActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
