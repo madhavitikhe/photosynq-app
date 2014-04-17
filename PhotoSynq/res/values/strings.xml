@@ -20,7 +20,23 @@
     <string name="image_desc">Image Description</string>
     <string name="next">Next</string>
     <string name="directions_to_collab">Directions to collaborators</string>
-    <string name="title_activity_bluetooth">BluetoothActivity</string>
+    <string name="title_activity_bluetooth">Bluetooth</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_new_measurment">New Measurment</string>
+    
+     <string-array name="measurment_question_color">
+        <item>Green</item>
+        <item>Blue</item>
+        <item>Red</item>
+        <item>Yellow</item>
+    </string-array>
+     <string-array name="measurment_question_plant">
+        <item>No Found</item>
+    </string-array>
+    <string-array name="measurment_question_array">
+        <item>On Ground</item>
+        <item>On The Tree</item>
+    </string-array>
+    
 
 </resources>

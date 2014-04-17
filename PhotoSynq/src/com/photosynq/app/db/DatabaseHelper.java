@@ -12,6 +12,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.photosynq.app.model.Option;
+import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.CommonUtils;
 
@@ -42,6 +44,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ " TEXT," + C_END_DATE + " TEXT," + C_BETA + " TEXT,"
 			+ C_IMAGE_CONTENT_TYPE + " TEXT" + ")";
 
+	
+	// Table Names
+	private static final String TABLE_QUESTION = "question";
+	private static final String TABLE_OPTION = "option";
+
+	// Question and Option Table - column names
+	public static final String C_PROJECT_HASH = "project_hash";//project_id
+	public static final String C_QUESTION_TEXT = "que";//Question
+	public static final String C_OPTION_TEXT = "option";//Option
+	public static final String C_QUESTION_ID = "question_id";
+
+	// Question table create statement
+	private static final String CREATE_TABLE_QUESTION = "CREATE TABLE "
+			+ TABLE_QUESTION + "(" + C_PROJECT_HASH
+			+ " TEXT," + C_QUESTION_TEXT + " TEXT )";
+	
+	// Answer table create statement
+	private static final String CREATE_TABLE_OPTION = "CREATE TABLE "
+			+ TABLE_OPTION + "(" + C_OPTION_TEXT + " TEXT ," + C_QUESTION_ID + " TEXT)";
+	
+	
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
@@ -50,6 +73,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		// creating required tables
 		db.execSQL(CREATE_TABLE_RESEARCH_PROJECT);
+		db.execSQL(CREATE_TABLE_QUESTION);
+		System.out.println(CREATE_TABLE_QUESTION);
+		db.execSQL(CREATE_TABLE_OPTION);
 
 	}
 
@@ -57,7 +83,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase db, int oldVer, int newVer) {
 		// on upgrade drop older tables
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESEARCH_PROJECT);
-
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_QUESTION);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_OPTION);
 		// create new tables;
 		onCreate(db);
 
@@ -203,6 +230,110 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	    db.delete(TABLE_RESEARCH_PROJECT, C_RECORD_HASH + " = ?",
 	            new String[] { String.valueOf(recordHash) });
 	}
+	
+	public boolean createQuestion(Question que) {
+		try
+		{
+			SQLiteDatabase db = this.getWritableDatabase();
+											
+			ContentValues values = new ContentValues();
+			values.put(C_QUESTION_TEXT, null != que.getQuestion_text() ? que.getQuestion_text() : "");
+			values.put(C_PROJECT_HASH, que.getProject_hash());
+			// insert row
+			long row_id = db.insert(TABLE_QUESTION, null, values);
+			System.out.println("This is row ID" + row_id);
+			if (row_id >= 0) {
+				return true;
+			} else {
+				return false;
+			}
+		}catch (SQLiteConstraintException contraintException)
+		{
+			// If data already present then handle the case here.
+			return false;
+		}
+		catch (SQLException sqliteException){
+			return false;
+		}
+	}
+	
+	//Insert option row in db.
+	public boolean createOption(Option op) {
+		try
+		{
+			SQLiteDatabase db = this.getWritableDatabase();
+											
+			ContentValues values = new ContentValues();
+			values.put(C_OPTION_TEXT, null != op.getOption_text() ? op.getOption_text() : "");
+			values.put(C_QUESTION_ID,op.getQuestion_id());
+		//	values.put(C_PROJECT_HASH, CommonUtils.getRecordHash(que));
+			// insert row
+			long row_id = db.insert(TABLE_OPTION, null, values);
+			if (row_id >= 0) {
+				return true;
+			} else {
+				return false;
+			}
+		}catch (SQLiteConstraintException contraintException)
+		{
+			// If data already present then handle the case here.
+			return false;
+		}
+		catch (SQLException sqliteException){
+			return false;
+		}
+	}
+	
+	public List<Question> getAllQuestionForProject(String project_hash) {
+	    SQLiteDatabase db = this.getReadableDatabase();
+	    List<Question> questions = new ArrayList<Question>();
+	    String selectQuery = "SELECT  * FROM " + TABLE_QUESTION + " WHERE " + C_PROJECT_HASH + " = " + project_hash;
+	    System.out.println(selectQuery);
+	    Log.e("DATABASE_HELPER_getAllQuestion", selectQuery);
+	 
+	    Cursor c = db.rawQuery(selectQuery, null);
+	 
+	    if (c.moveToFirst()) {
+	        do {
+	        	Question que = new Question();
+			    que.setQuestion_text(c.getString(c.getColumnIndex(C_QUESTION_TEXT)));
+			    que.setProject_hash(c.getString(c.getColumnIndex(C_PROJECT_HASH)));
+			    que.setQuestion_id(c.getString(c.getColumnIndex(C_ID)));
+			    //que.setRecord_hash(c.getString(c.getColumnIndex(C_RECORD_HASH)));			 
+	            
+			    // adding to todo list
+			    questions.add(que);
+	        } while (c.moveToNext());
+	    }
+	    return questions;
+	}
+	
+	//Fetch row from Option db
+	public List<Option> getAllOptionsForQuestion(String question_id) {
+	    SQLiteDatabase db = this.getReadableDatabase();
+	    List<Option> option = new ArrayList<Option>();
+	    String selectQuery = "SELECT  * FROM " + TABLE_OPTION + " WHERE " + C_ID + " = " + question_id;
+	    System.out.println(selectQuery);
+	    Log.e("DATABASE_HELPER_getAllOption", selectQuery);
+	 
+	    Cursor c = db.rawQuery(selectQuery, null);
+	 
+	    if (c.moveToFirst()) {
+	        do {
+	        	Option op = new Option();
+			    op.setOption_id(c.getString(c.getColumnIndex(C_ID)));
+			    op.setQuestion_id(c.getString(c.getColumnIndex(C_QUESTION_ID)));
+			    op.setOption_text(c.getString(c.getColumnIndex(C_OPTION_TEXT)));
+			    //que.setRecord_hash(c.getString(c.getColumnIndex(C_RECORD_HASH)));			 
+			    
+			    // adding to todo list
+			    option.add(op);
+	        } while (c.moveToNext());
+	    }
+
+	    return option;
+	}
+	
 	
 	// closing database
     public void closeDB() {
