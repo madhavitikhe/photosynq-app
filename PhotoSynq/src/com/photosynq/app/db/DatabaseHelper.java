@@ -363,7 +363,6 @@ public boolean updateQuestion(Question question) {
 		{
 			return createOption(option);
 		}
-		// updating row
 		return false;
 	}
 
@@ -455,6 +454,29 @@ public boolean updateQuestion(Question question) {
 		}
 	}
 
+	public boolean updateProtocol(Protocol protocol) {
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues values = new ContentValues();
+		values.put(C_RECORD_HASH,protocol.getRecordHash());
+		values.put(C_ID, null != protocol.getId()? protocol.getId(): "");
+		values.put(C_NAME, null != protocol.getName()? protocol.getName(): "");
+		values.put(C_QUICK_DESCRIPTION, null != protocol.getQuickDescription()? protocol.getQuickDescription(): "");
+		values.put(C_PROTOCOL_NAME_IN_ARDUINO_CODE, null != protocol.getProtocolNameInArduino_code()? protocol.getProtocolNameInArduino_code(): "");
+		values.put(C_DESCRIPTION, null != protocol.getDescription()? protocol.getDescription(): "");
+		values.put(C_MACRO_ID, null != protocol.getMacroId()? protocol.getMacroId(): "");
+		values.put(C_SLUG,null != protocol.getSlug() ? protocol.getSlug(): "");
+
+		
+		int rowsaffected = db.update(TABLE_PROTOCOL, values, C_ID + " = ?",
+							new String[] { String.valueOf(protocol.getId()) });
+		// if update fails that indicates there is no then create new row
+		if(rowsaffected <= 0)
+		{
+			return createProtocol(protocol);
+		}
+		return false;
+	}
 	//Get all protocols 
 	public List<Protocol> getAllProtocolsList() {
 	    SQLiteDatabase db = this.getReadableDatabase();
@@ -518,6 +540,31 @@ public boolean updateQuestion(Question question) {
 		catch (SQLException sqliteException){
 			return false;
 		}
+	}
+	
+	public boolean updateMacro(Macro macro) {
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues values = new ContentValues();
+		values.put(C_RECORD_HASH,macro.getRecordHash());
+		values.put(C_ID, null != macro.getId()? macro.getId(): "");
+		values.put(C_NAME, null != macro.getName()? macro.getName(): "");
+		values.put(C_DESCRIPTION, null != macro.getDescription()? macro.getDescription(): "");
+		values.put(C_SLUG,null != macro.getSlug() ? macro.getSlug(): "");
+		values.put(C_DEFAULT_X_AXIS,null != macro.getDefaultXAxis() ? macro.getDefaultXAxis(): "");
+		values.put(C_DEFAULT_Y_AXIS,null != macro.getDefaultYAxis() ? macro.getDefaultYAxis(): "");
+		values.put(C_JAVASCRIPT_CODE,null != macro.getJavascriptCode()? macro.getJavascriptCode(): "");
+		values.put(C_JSON_DATA,null != macro.getJsonData() ? macro.getJsonData(): "");
+
+		
+		int rowsaffected = db.update(TABLE_MACRO, values, C_ID + " = ?",
+							new String[] { String.valueOf(macro.getId()) });
+		// if update fails that indicates there is no then create new row
+		if(rowsaffected <= 0)
+		{
+			return createMacro(macro);
+		}
+		return false;
 	}
     //get macro from database
 	public Macro getMacro(String id ) {

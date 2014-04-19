@@ -47,7 +47,7 @@ public class UpdateMacro implements PhotosynqResponse{
 					
 					db = new DatabaseHelper(context);
 					
-					db.createMacro(macro);
+					db.updateMacro(macro);
 					System.out.println("DBCLosing");
 					db.closeDB();
 				}

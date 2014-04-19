@@ -45,7 +45,7 @@ public class UpdateProtocol implements PhotosynqResponse {
 					
 					db = new DatabaseHelper(context);
 					
-					db.createProtocol(protocol);
+					db.updateProtocol(protocol);
 					System.out.println("DBCLosing");
 					db.closeDB();
 				}

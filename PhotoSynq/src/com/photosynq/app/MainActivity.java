@@ -32,16 +32,16 @@ public class MainActivity extends ActionBarActivity {
 		mProjListTask.delegate = updateProjects;
 		mProjListTask.execute(HTTPConnection.PHOTOSYNQ_PROJECTS_LIST_URL+ "user_email="+email+"&user_token="+authToken, "GET");
 		
-//		UpdateProtocol upprotoProtocol = new UpdateProtocol(getApplicationContext());
-//		mProtocolListTask = new HTTPConnection();
-//		mProtocolListTask.delegate = upprotoProtocol;
-//		mProtocolListTask.execute(HTTPConnection.PHOTOSYNQ_PROTOCOLS_LIST_URL+ "user_email="+email+"&user_token="+authToken, "GET");
-//		
-//
-//		UpdateMacro updateMacro = new UpdateMacro(getApplicationContext());
-//		mMacroListTask = new HTTPConnection();
-//		mMacroListTask.delegate = updateMacro;
-//		mMacroListTask.execute(HTTPConnection.PHOTOSYNQ_MACROS_LIST_URL+ "user_email="+email+"&user_token="+authToken, "GET");
+		UpdateProtocol upprotoProtocol = new UpdateProtocol(getApplicationContext());
+		mProtocolListTask = new HTTPConnection();
+		mProtocolListTask.delegate = upprotoProtocol;
+		mProtocolListTask.execute(HTTPConnection.PHOTOSYNQ_PROTOCOLS_LIST_URL+ "user_email="+email+"&user_token="+authToken, "GET");
+		
+
+		UpdateMacro updateMacro = new UpdateMacro(getApplicationContext());
+		mMacroListTask = new HTTPConnection();
+		mMacroListTask.delegate = updateMacro;
+		mMacroListTask.execute(HTTPConnection.PHOTOSYNQ_MACROS_LIST_URL+ "user_email="+email+"&user_token="+authToken, "GET");
 
 	}
 
