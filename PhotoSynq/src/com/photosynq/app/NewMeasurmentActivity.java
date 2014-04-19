@@ -2,10 +2,12 @@ package com.photosynq.app;
 
 import java.util.List;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 
 import com.photosynq.app.db.DatabaseHelper;
@@ -51,6 +53,12 @@ public class NewMeasurmentActivity extends ActionBarActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	public void displayresult(View view)
+	{
+		Intent intent = new Intent(getApplicationContext(),DisplayResultsActivity.class);
+		startActivity(intent);
 	}
 
 }

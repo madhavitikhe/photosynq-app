@@ -53,7 +53,18 @@
             android:name="com.photosynq.app.NewMeasurmentActivity"
             android:label="@string/title_activity_new_measurment" >
         </activity>
-        
+        <activity
+            android:name="com.photosynq.app.DisplayResultsActivity"
+            android:label="@string/title_activity_display_results" >
+        </activity>
+        <activity
+            android:name="com.photosynq.app.ResultActivity"
+            android:label="@string/title_activity_result" >
+        </activity>
+        <activity
+            android:name="com.photosynq.app.SelectProtocolActivity"
+            android:label="@string/title_activity_select_protocol" >
+        </activity>
     </application>
 
 </manifest>

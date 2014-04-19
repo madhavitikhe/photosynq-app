@@ -79,11 +79,14 @@ public class MainActivity extends ActionBarActivity {
 	}
 	public void researchNearMe(View view)
 	{
-		
+		Intent intent = new Intent(getApplicationContext(),NewMeasurmentActivity.class);
+		intent.putExtra(DatabaseHelper.C_PROJECT_ID, "3");
+		startActivity(intent);
 	}
 	public void calibrateIntrument(View view)
 	{
-		
+		Intent intent = new Intent(getApplicationContext(),SelectProtocolActivity.class);
+		startActivity(intent);
 	}
 	
 	

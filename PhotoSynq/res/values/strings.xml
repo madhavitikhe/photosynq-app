@@ -23,8 +23,9 @@
     <string name="title_activity_bluetooth">Bluetooth</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_new_measurment">New Measurement</string>
-    
     <string name="choose_option">Choose Option</string>
-    
+    <string name="title_activity_display_results">DisplayResultsActivity</string>
+    <string name="title_activity_result">ResultActivity</string>
+    <string name="title_activity_select_protocol">SelectProtocolActivity</string>
 
 </resources>

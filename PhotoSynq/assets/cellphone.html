@@ -1,0 +1,129 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="css/bootstrap.min.css" media="all" rel="stylesheet" type="text/css">
+<script src="js/jquery.min.js"></script>
+<script src="js/highcharts.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/math.js"></script>
+<script src="js/macros.js"></script>
+<script src="js/initalvariables.js"></script>
+<script src="data.js"></script>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	
+	// Loop through array from data.js
+	//------------------------------------------------------------------------------------------------------------------
+	
+	
+	// Generate and display graps function
+	//-----------------------------------------------------------------------------------------------------------------------------------
+	var summary = [];
+	var c= 0;
+	data = data[0];
+	for(measurementID in data['sample']){
+		// initial variables in loop
+		for(protocolID in data['sample'][measurementID]){
+		
+			var macro = "";
+			var protocolname = data['sample'][measurementID][protocolID].protocol_name;
+			
+			if(replacements[protocolname] != undefined)
+				protocolname = replacements[protocolname];
+			var HTML = "";
+			
+			// Build graph with container
+			var container ='<div class="col-md-12">';
+			container += '<div class="panel panel-default">';
+			container += '<div class="panel-heading">';
+			container += '<h3 class="panel-title">'+protocolname+'</h3>';
+			container += '</div>';
+			container += '<div class="panel-body">';
+			container += '<div id="plotRawData'+c+'"></div>';
+			
+			// apply macros to data
+			if(data['sample'][measurementID][protocolID].protocol_name == 'fluorescence')
+				macro = Phi2LEF(data['sample'][measurementID][protocolID]);
+			else if(data['sample'][measurementID][protocolID].protocol_name == 'chlorophyll_spad')
+				macro = SPAD(data['sample'][measurementID][protocolID]);
+			else if(data['sample'][measurementID][protocolID].protocol_name == '810_dirk')
+				macro = DIRK810(data['sample'][measurementID][protocolID]);
+			else if(data['sample'][measurementID][protocolID].protocol_name == '940_dirk')
+				macro = DIRK940(data['sample'][measurementID][protocolID]);		
+			else if(data['sample'][measurementID][protocolID].protocol_name == 'dirk')
+				macro = ECS520Dirk(data['sample'][measurementID][protocolID]);
+			else if(data['sample'][measurementID][protocolID].protocol_name == 'baseline_sample')
+				macro = baseline_sample(data['sample'][measurementID][protocolID]);
+			else if(data['sample'][measurementID][protocolID].protocol_name == 'chlorophyll_spad_ndvi')
+				macro = chlorophyll_spad_ndvi(data['sample'][measurementID][protocolID]);
+			else
+				macro = {'HTML':'No macro available'};
+			HTML = macro.HTML;
+			
+			// add environmental data
+			for(values in data['sample'][measurementID][protocolID]){
+				if($.inArray(values, variablehidephone) == -1){
+					if(summary[values] == undefined)
+						summary[values] = [];
+					summary[values].push(data['sample'][measurementID][protocolID][values]);
+					
+					if(replacements[values] != undefined)
+						HTML += ' | <b>'+replacements[values]+':</b> <i>'+data['sample'][measurementID][protocolID][values]+'</i>';
+					else
+						HTML += ' | <b>'+values+':</b> <i>'+data['sample'][measurementID][protocolID][values]+'</i>';
+				}
+			}
+
+			// add macro data
+			for(var values in macro){
+				if(values == 'HTML' || values == 'GraphType' || values == 'Macro')
+					continue;
+					
+				if(summary[values] == undefined)
+					summary[values] = [];
+				summary[values].push(macro[values]);			
+			
+			}
+
+			
+			container += '<div class="alert alert-success">'+HTML+'</div>';
+			container += '</div>';
+			container += '</div>';
+			container += '</div>';
+			
+			// Add container
+			$('#PlotsContainer').append(container);
+
+			
+			// Make graph changes according to macro
+			if(macro.GraphType){
+				if(macro.GraphType == 'line'){
+					plotoptionsphone['series'][0]['marker'] = { enabled: false};
+					plotoptionsphone['series'][0]['lineWidth'] = 4;
+				}
+				else if(macro.GraphType == 'points'){
+					plotoptionsphone['series'][0]['marker'] = { enabled: true};
+					plotoptionsphone['series'][0]['lineWidth'] = 0;
+				}
+				else if(macro.GraphType == 'pointline'){
+					plotoptionsphone['series'][0]['marker'] = { enabled: true};
+					plotoptionsphone['series'][0]['lineWidth'] = 4;
+				}
+			}
+			// add data to graph
+			plotoptionsphone['series'][0]['data'] = data['sample'][measurementID][protocolID].data_raw;
+			
+			// built graph
+			$('#plotRawData'+c+'').highcharts(plotoptionsphone);
+			c++;
+		}
+	}	
+	
+	
+});
+</script>
+</head>
+<body>
+<div class="container" id="PlotsContainer"></div>
+</body>
+</html>

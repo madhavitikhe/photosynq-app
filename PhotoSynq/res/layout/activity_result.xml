@@ -1,0 +1,36 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    tools:context=".ResultsActivity" >
+    
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" >
+
+        <TextView
+            android:id="@+id/waiting_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Waiting For Results"
+            android:textColor="#000000"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+  
+
+    <ProgressBar
+        android:id="@+id/results_progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="58dp" />
+      </RelativeLayout>
+
+   
+
+</RelativeLayout>

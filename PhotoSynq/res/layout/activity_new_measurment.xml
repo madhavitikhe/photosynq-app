@@ -1,19 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-   	android:orientation="vertical"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="#D6D6D6"
-    >
-<ListView
-		android:id="@+id/measurement_list_view"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:headerDividersEnabled="true"
-		android:footerDividersEnabled="true"
-		android:listSelector="@android:color/transparent"
-		android:cacheColorHint="@android:color/transparent"
-		android:divider="@null"
-		android:dividerHeight="10dp"
-		 />
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#D6D6D6"
+    android:orientation="vertical" >
+
+    <ListView
+        android:id="@+id/measurement_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@null"
+        android:dividerHeight="10dp"
+        android:footerDividersEnabled="true"
+        android:headerDividersEnabled="true"
+        android:listSelector="@android:color/transparent" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="60dip"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:paddingTop="10dp" >
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:onClick="displayresult"
+            android:text="Take Measurement" />
+    </RelativeLayout>
+
 </LinearLayout>
