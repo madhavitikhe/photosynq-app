@@ -49,6 +49,10 @@
             android:name="com.photosynq.app.BluetoothActivity"
             android:label="@string/title_activity_bluetooth" >
         </activity>
+        <activity
+            android:name="com.photosynq.app.NewMeasurmentActivity"
+            android:label="@string/title_activity_new_measurment" >
+        </activity>
         
     </application>
 

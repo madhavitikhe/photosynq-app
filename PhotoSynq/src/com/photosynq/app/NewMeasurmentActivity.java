@@ -1,22 +1,36 @@
 package com.photosynq.app;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
+import java.util.List;
+
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
+import android.widget.ListView;
+
+import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.Question;
 
 public class NewMeasurmentActivity extends ActionBarActivity {
 
+	private DatabaseHelper db;
+	private String projectId;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_new_measurment);
+		
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
+		}
+		db = new DatabaseHelper(getApplicationContext());
+		List<Question> questions = db.getAllQuestionForProject(projectId);
+		ListView lst = (ListView) findViewById(R.id.measurement_list_view);
+		
+		QuestionArrayAdapter questionAdapter = new QuestionArrayAdapter(this, questions );
+		
+		lst.setAdapter(questionAdapter);
 	}
 
 	@Override

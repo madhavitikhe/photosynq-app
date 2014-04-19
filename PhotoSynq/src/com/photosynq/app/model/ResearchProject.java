@@ -1,30 +1,54 @@
 package com.photosynq.app.model;
 
+import com.photosynq.app.utils.CommonUtils;
+
 public class ResearchProject {
 
-	public String record_hash;
+	public String recordHash;
     public String id;
     public String name;
-    public String desc;
-    public String dir_to_collab;
-    public String start_date;
-    public String end_date;
-    public String image_content_type;
+    public String description;
+    public String dirToCollab;
+    public String startDate;
+    public String endDate;
+    public String imageUrl;
     public String beta;
     
-    public ResearchProject(String dummy_record_hash)
+    public ResearchProject(String id, String name, String description, String dirToCollab,
+    		String startDate, String endDate, String imageUrl, String beta)
     {
-    	this.record_hash = dummy_record_hash;
+    	this.id = id;
+    	this.name = name;
+    	this.description= description;
+    	this.dirToCollab = dirToCollab;
+    	this.startDate =startDate;
+    	this.endDate = endDate;
+    	this.imageUrl = imageUrl;
+    	this.beta = beta;
+    	this.recordHash = getProjectRecordHash();
     }
     public ResearchProject()
     {
     	
     }
-	public String getRecord_hash() {
-		return record_hash;
+    
+    public String getProjectRecordHash() {
+		String recordString = (null != getId() ? getId() : "") 
+				+ (null != getName() ? getName() : "" )
+				+ (null != getDescription() ? getDescription() : "" )
+				+ (null != getDirToCollab() ? getDirToCollab() : "")
+				+ (null != getStartDate() ? getStartDate() : "") 
+				+ (null != getEndDate() ? getEndDate() : "") 
+				+ (null != getBeta() ? getBeta() : "")
+				+ (null != getImageUrl() ? getImageUrl() : "");
+		System.out.println("$$$$$$ Project record string : "+recordString);
+		return CommonUtils.getMD5EncryptedString(recordString);
 	}
-	public void setRecord_hash(String record_hash) {
-		this.record_hash = record_hash;
+	public String getRecordHash() {
+		return recordHash;
+	}
+	public void setRecordHash(String recordHash) {
+		this.recordHash = recordHash;
 	}
 	public String getId() {
 		return id;
@@ -38,35 +62,35 @@ public class ResearchProject {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getDesc() {
-		return desc;
+	public String getDescription() {
+		return description;
 	}
-	public void setDesc(String desc) {
-		this.desc = desc;
+	public void setDescription(String description) {
+		this.description = description;
 	}
-	public String getDir_to_collab() {
-		return dir_to_collab;
+	public String getDirToCollab() {
+		return dirToCollab;
 	}
-	public void setDir_to_collab(String dir_to_collab) {
-		this.dir_to_collab = dir_to_collab;
+	public void setDirToCollab(String dirToCollab) {
+		this.dirToCollab = dirToCollab;
 	}
-	public String getStart_date() {
-		return start_date;
+	public String getStartDate() {
+		return startDate;
 	}
-	public void setStart_date(String start_date) {
-		this.start_date = start_date;
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
 	}
-	public String getEnd_date() {
-		return end_date;
+	public String getEndDate() {
+		return endDate;
 	}
-	public void setEnd_date(String end_date) {
-		this.end_date = end_date;
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
 	}
-	public String getImage_content_type() {
-		return image_content_type;
+	public String getImageUrl() {
+		return imageUrl;
 	}
-	public void setImage_content_type(String image_content_type) {
-		this.image_content_type = image_content_type;
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 	public String getBeta() {
 		return beta;

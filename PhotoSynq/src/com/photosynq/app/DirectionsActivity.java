@@ -19,7 +19,7 @@ import com.photosynq.app.utils.CommonUtils;
 
 public class DirectionsActivity extends ActionBarActivity {
 
-	private String recordHash = ""; 
+	private String projectId = ""; 
 	DatabaseHelper db;
 	
 	@Override
@@ -29,8 +29,8 @@ public class DirectionsActivity extends ActionBarActivity {
 		db = new DatabaseHelper(getApplicationContext());
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
-			recordHash = extras.getString(DatabaseHelper.C_RECORD_HASH);
-			ResearchProject rp = db.getResearchProject(recordHash);
+			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
+			ResearchProject rp = db.getResearchProject(projectId);
 			SimpleDateFormat outputDate = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
 			
 			DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -45,19 +45,19 @@ public class DirectionsActivity extends ActionBarActivity {
 			TextView tvBeta = (TextView) findViewById(R.id.beta);
 			tvProjetTitle.setText(rp.getName());
 			tvProjetTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX,(int)(screenWidth*0.06));
-			if(!"null".equals(rp.getDir_to_collab()))
+			if(!"null".equals(rp.getDirToCollab()))
 			{
-				tvProjetDirections.setText(rp.getDir_to_collab());
+				tvProjetDirections.setText(rp.getDirToCollab());
 			}else{tvProjetDirections.setText(getResources().getString(R.string.no_data_found));}
 			
-			if(!"null".equals(rp.getStart_date()))
+			if(!"null".equals(rp.getStartDate()))
 			{
-				tvStartDate.setText(outputDate.format(CommonUtils.convertToDate(rp.getStart_date())));
+				tvStartDate.setText(outputDate.format(CommonUtils.convertToDate(rp.getStartDate())));
 			}else{tvStartDate.setText(getResources().getString(R.string.no_data_found));}
 			
-			if(!"null".equals(rp.getEnd_date()))
+			if(!"null".equals(rp.getEndDate()))
 			{
-				tvEndDate.setText(outputDate.format(CommonUtils.convertToDate(rp.getEnd_date())));
+				tvEndDate.setText(outputDate.format(CommonUtils.convertToDate(rp.getEndDate())));
 			}else{tvEndDate.setText(getResources().getString(R.string.no_data_found));}
 			
 			if(!	"null".equals(rp.getBeta()))
@@ -66,6 +66,7 @@ public class DirectionsActivity extends ActionBarActivity {
 			}else{tvBeta.setText(getResources().getString(R.string.no_data_found));}
 
 		}
+		System.out.println("DBCLosing");
 		db.closeDB();
 	}
 
@@ -92,6 +93,7 @@ public class DirectionsActivity extends ActionBarActivity {
 	public void onDirNextClicked(View view)
 	{
 		Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);
+		intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
 		startActivity(intent);
 	}
 	

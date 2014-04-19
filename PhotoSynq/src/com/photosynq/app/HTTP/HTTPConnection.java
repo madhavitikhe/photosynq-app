@@ -20,8 +20,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 public class HTTPConnection extends AsyncTask<String, String, String>{
-	public static final String PHOTOSYNQ_LOGIN_URL = "http://photosynq.venturit.org/api/v1/sign_in.json";
-	public static final String PHOTOSYNQ_PROJECTS_LIST_URL = "http://photosynq.venturit.org/api/v1/projects.json?auth_token=";
+	public static final String PHOTOSYNQ_LOGIN_URL = "http://photosynq.venturit.net/api/v1/sign_in.json";
+	public static final String PHOTOSYNQ_PROJECTS_LIST_URL = "http://photosynq.venturit.net/api/v1/projects.json?";
+	public static final String PHOTOSYNQ_PROTOCOLS_LIST_URL = "http://photosynq.venturit.net/api/v1/protocols.json?";
+	public static final String PHOTOSYNQ_MACROS_LIST_URL = "http://photosynq.venturit.net/api/v1/macros.json?";
 	public PhotosynqResponse delegate = null;
 	private String username;
 	private String password;
@@ -48,6 +50,7 @@ public class HTTPConnection extends AsyncTask<String, String, String>{
 					credentials.put("password", password);
 					user.put("user", credentials);
 					input = new StringEntity(user.toString());
+					System.out.println("request params = "+user.toString());
 					input.setContentType("application/json");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block

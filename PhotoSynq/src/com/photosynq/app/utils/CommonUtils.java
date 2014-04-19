@@ -11,8 +11,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.photosynq.app.model.ResearchProject;
-
 public class CommonUtils {
 
 	//Generate a MD5 hash from given string
@@ -32,18 +30,6 @@ public class CommonUtils {
         return md5;
     }
 	
-	public static String getRecordHash(ResearchProject rp) {
-		String recordString = (null != rp.getId() ? rp.getId() : "") 
-				+ (null != rp.getName() ? rp.getName() : "" )
-				+ (null != rp.getDesc() ? rp.getDesc() : "" )
-				+ (null != rp.getDir_to_collab() ? rp.getDir_to_collab() : "")
-				+ (null != rp.getStart_date() ? rp.getStart_date() : "") 
-				+ (null != rp.getEnd_date() ? rp.getEnd_date() : "") 
-				+ (null != rp.getBeta() ? rp.getBeta() : "")
-				+ (null != rp.getImage_content_type() ? rp.getImage_content_type() : "");
-		System.out.println("$$$$$$ record string : "+recordString);
-		return getMD5EncryptedString(recordString);
-	}
 	
 	public static boolean isConnected(Context context)
 	{

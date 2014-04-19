@@ -4,6 +4,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Set;
 
+import com.photosynq.app.db.DatabaseHelper;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -31,12 +33,15 @@ public class BluetoothActivity extends ActionBarActivity {
 	private View bluetoothStatus;
 	private TextView bluetoothStatusMsg;
 	private ArrayList<BluetoothDevice> btDeviceList = new ArrayList<BluetoothDevice>();
-	
+	private String projectId;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_bluetooth);
-		
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
+		}
 	    IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 	    filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
 	    filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
@@ -62,7 +67,11 @@ public class BluetoothActivity extends ActionBarActivity {
 		    	BluetoothDevice btDevice = (BluetoothDevice) lst.getItemAtPosition(position);
 				Log.d("Pairing device : ", btDevice.getName());
 				try {
-					System.out.println(createBond(btDevice));
+					createBond(btDevice);
+					Intent intent = new Intent(getApplicationContext(),NewMeasurmentActivity.class);
+					intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+					startActivity(intent);
+
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

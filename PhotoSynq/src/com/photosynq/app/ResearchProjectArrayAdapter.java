@@ -50,7 +50,7 @@ class ResearchProjectArrayAdapter extends BaseAdapter implements ListAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null)
-			convertView = activity.getLayoutInflater().inflate(R.layout.list_item_card, null);
+			convertView = activity.getLayoutInflater().inflate(R.layout.project_list_item_card, null);
 
 		TextView tvProjectTitle = (TextView) convertView.findViewById(R.id.project_name);
 		TextView tvProjectDesc = (TextView) convertView.findViewById(R.id.project_desc);
@@ -59,7 +59,7 @@ class ResearchProjectArrayAdapter extends BaseAdapter implements ListAdapter {
 		if (null != researchProject) {
 			String projectDesc;
 			try {
-				projectDesc = researchProject.getDesc();
+				projectDesc = researchProject.getDescription();
 				tvProjectTitle.setText(researchProject.getName());
 				// only show 100 chars of descr.
 				tvProjectDesc.setText(projectDesc.substring(0, (projectDesc.length()<100?projectDesc.length():100))+"...");

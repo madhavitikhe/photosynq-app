@@ -1,39 +1,82 @@
 package com.photosynq.app.model;
 
+import java.util.List;
+
+import com.photosynq.app.utils.CommonUtils;
+
 public class Question {
-	public String project_hash;
-    public String question_id;
-    public String question_text;
+	
+	private String projectId;
+	private String questionId;
+    private String recordHash;
+    private String questionText;
+    
+    private List<String> options;
    
     
-    public Question(String project_hash,String question_text)
+    public Question(String questionId,String project_id,String question_text)
     {
-    	this.question_text=question_text;
-    	this.project_hash=project_hash;
+    	this.questionId = questionId;
+    	this.questionText=question_text;
+    	this.projectId=project_id;
+    	this.recordHash = getQuestionRecordHash();
     }
-    public Question()
-    {
-    	
-    }
-	public String getProject_hash() {
-		return project_hash;
+   
+	public Question()
+	{
+		
 	}
-	public void setProject_hash(String project_hash) {
-		this.project_hash = project_hash;
+	private  String getQuestionRecordHash() {
+		String recordString =  (null != getProjectId()? getProjectId() : "" )
+				+ (null != getQuestionId()? getQuestionId() : "" )
+				+ (null != getQuestionText()? getQuestionText() : "" );
+		System.out.println("$$$$$$ Question record string : "+recordString);
+		return CommonUtils.getMD5EncryptedString(recordString);
 	}
-	public String getQuestion_id() {
-		return question_id;
-	}
-	public void setQuestion_id(String question_id) {
-		this.question_id = question_id;
-	}
-	public String getQuestion_text() {
-		return question_text;
-	}
-	public void setQuestion_text(String question_text) {
-		this.question_text = question_text;
-	}
-	
-	
 
+
+	public String getProjectId() {
+		return projectId;
+	}
+
+
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
+
+
+	public String getQuestionText() {
+		return questionText;
+	}
+
+
+	public void setQuestionText(String questionText) {
+		this.questionText = questionText;
+	}
+
+
+	public void setRecordHash(String recordHash) {
+		this.recordHash = recordHash;
+	}
+	public String getRecordHash() {
+		return this.recordHash;
+	}
+
+	public String getQuestionId() {
+		return questionId;
+	}
+
+	public void setQuestionId(String questionId) {
+		this.questionId = questionId;
+	}
+
+	public List<String> getOptions() {
+		return options;
+	}
+
+	public void setOptions(List<String> options) {
+		this.options = options;
+	}
+	
+	
 }

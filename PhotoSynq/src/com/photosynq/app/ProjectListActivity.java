@@ -35,15 +35,16 @@ public class ProjectListActivity extends ActionBarActivity  {
 		List<ResearchProject> researchProjectList = db.getAllResearchProjects();
 		ResearchProjectArrayAdapter arrayadapter = new ResearchProjectArrayAdapter(this, researchProjectList); 
 		projectList.setAdapter(arrayadapter);
+		System.out.println("DBCLosing");
 		db.closeDB();
 		
 		projectList.setOnItemClickListener(new OnItemClickListener() {
 		    @Override
 		    public void onItemClick(AdapterView<?> adapter, View view, int position, long id){
 		    	ResearchProject rp = (ResearchProject) projectList.getItemAtPosition(position);
-				Log.d("GEtting record hash : ", rp.getRecord_hash());
+				Log.d("GEtting record id : ", rp.getId());
 				Intent intent = new Intent(getApplicationContext(),ProjectDescriptionActivity.class);
-				intent.putExtra(DatabaseHelper.C_RECORD_HASH, rp.getRecord_hash());
+				intent.putExtra(DatabaseHelper.C_ID, rp.getId());
 				startActivity(intent);
 		    }
 		});

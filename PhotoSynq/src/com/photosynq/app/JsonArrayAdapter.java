@@ -52,7 +52,7 @@ class JsonArrayAdapter extends BaseAdapter implements ListAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null)
-			convertView = activity.getLayoutInflater().inflate(R.layout.list_item_card, null);
+			convertView = activity.getLayoutInflater().inflate(R.layout.project_list_item_card, null);
 
 		TextView tvProjectTitle = (TextView) convertView.findViewById(R.id.project_name);
 		TextView tvProjectDesc = (TextView) convertView.findViewById(R.id.project_desc);
