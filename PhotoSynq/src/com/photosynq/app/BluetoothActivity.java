@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.utils.BluetoothService;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -70,6 +71,7 @@ public class BluetoothActivity extends ActionBarActivity {
 					createBond(btDevice);
 					Intent intent = new Intent(getApplicationContext(),NewMeasurmentActivity.class);
 					intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+					intent.putExtra(BluetoothService.DEVICE_ADDRESS, btDevice.getAddress());
 					startActivity(intent);
 
 				} catch (Exception e) {

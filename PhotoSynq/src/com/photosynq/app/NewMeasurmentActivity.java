@@ -12,11 +12,13 @@ import android.widget.ListView;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Question;
+import com.photosynq.app.utils.BluetoothService;
 
 public class NewMeasurmentActivity extends ActionBarActivity {
 
 	private DatabaseHelper db;
 	private String projectId;
+	private String deviceAddress;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -25,6 +27,7 @@ public class NewMeasurmentActivity extends ActionBarActivity {
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
+			deviceAddress = extras.getString(BluetoothService.DEVICE_ADDRESS);
 		}
 		db = new DatabaseHelper(getApplicationContext());
 		List<Question> questions = db.getAllQuestionForProject(projectId);
@@ -55,10 +58,18 @@ public class NewMeasurmentActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 	
-	public void displayresult(View view)
+	public void takeMeasurement(View view)
 	{
-		Intent intent = new Intent(getApplicationContext(),DisplayResultsActivity.class);
+		Intent intent = new Intent(getApplicationContext(),ResultActivity.class);
+		intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+		intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress);
 		startActivity(intent);
+		
 	}
+//	public void displayresult(View view)
+//	{
+//		Intent intent = new Intent(getApplicationContext(),DisplayResultsActivity.class);
+//		startActivity(intent);
+//	}
 
 }

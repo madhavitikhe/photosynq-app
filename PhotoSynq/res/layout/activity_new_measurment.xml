@@ -27,7 +27,7 @@
             android:id="@+id/button1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:onClick="displayresult"
+            android:onClick="takeMeasurement"
             android:text="Take Measurement" />
     </RelativeLayout>
 
