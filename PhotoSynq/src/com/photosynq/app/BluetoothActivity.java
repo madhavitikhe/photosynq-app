@@ -35,6 +35,7 @@ public class BluetoothActivity extends ActionBarActivity {
 	private TextView bluetoothStatusMsg;
 	private ArrayList<BluetoothDevice> btDeviceList = new ArrayList<BluetoothDevice>();
 	private String projectId;
+	private boolean quick_measure = false;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -42,6 +43,7 @@ public class BluetoothActivity extends ActionBarActivity {
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
+			quick_measure = extras.getBoolean(MainActivity.QUICK_MEASURE);
 		}
 	    IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 	    filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
@@ -69,10 +71,18 @@ public class BluetoothActivity extends ActionBarActivity {
 				Log.d("Pairing device : ", btDevice.getName());
 				try {
 					createBond(btDevice);
-					Intent intent = new Intent(getApplicationContext(),NewMeasurmentActivity.class);
-					intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
-					intent.putExtra(BluetoothService.DEVICE_ADDRESS, btDevice.getAddress());
-					startActivity(intent);
+					if(!quick_measure)
+					{
+						Intent intent = new Intent(getApplicationContext(),NewMeasurmentActivity.class);
+						intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+						intent.putExtra(BluetoothService.DEVICE_ADDRESS, btDevice.getAddress());
+						startActivity(intent);
+					}else
+					{
+						Intent intent = new Intent(getApplicationContext(),SelectProtocolActivity.class);
+						intent.putExtra(BluetoothService.DEVICE_ADDRESS, btDevice.getAddress());
+						startActivity(intent);
+					}
 
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -105,9 +115,9 @@ public class BluetoothActivity extends ActionBarActivity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
+//		if (id == R.id.action_settings) {
+//			return true;
+//		}
 		return super.onOptionsItemSelected(item);
 	}
 	

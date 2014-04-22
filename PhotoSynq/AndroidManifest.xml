@@ -2,12 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.photosynq.app"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0"
+    android:installLocation="preferExternal" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -51,15 +53,18 @@
         </activity>
         <activity
             android:name="com.photosynq.app.NewMeasurmentActivity"
-            android:label="@string/title_activity_new_measurment" >
+            android:label="@string/title_activity_new_measurment" 
+            >
         </activity>
         <activity
             android:name="com.photosynq.app.DisplayResultsActivity"
-            android:label="@string/title_activity_display_results" >
+            android:label="@string/title_activity_display_results"
+             >
         </activity>
         <activity
             android:name="com.photosynq.app.ResultActivity"
-            android:label="@string/title_activity_result" >
+            android:label="@string/title_activity_result"
+             >
         </activity>
         <activity
             android:name="com.photosynq.app.SelectProtocolActivity"

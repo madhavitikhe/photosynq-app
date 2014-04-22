@@ -14,8 +14,7 @@ import com.photosynq.app.utils.PrefUtils;
 public class MainActivity extends ActionBarActivity {
 
 	// Database Helper
-    DatabaseHelper db;
-    
+    public static final String QUICK_MEASURE ="quick";
     HTTPConnection mProjListTask = null;
     HTTPConnection mProtocolListTask = null;
     HTTPConnection mMacroListTask = null;
@@ -59,9 +58,9 @@ public class MainActivity extends ActionBarActivity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
+//		if (id == R.id.action_settings) {
+//			return true;
+//		}
 		return super.onOptionsItemSelected(item);
 	}
 	
@@ -79,7 +78,7 @@ public class MainActivity extends ActionBarActivity {
 	}
 	public void researchNearMe(View view)
 	{
-		Intent intent = new Intent(getApplicationContext(),NewMeasurmentActivity.class);
+		Intent intent = new Intent(getApplicationContext(),DisplayResultsActivity.class);
 		intent.putExtra(DatabaseHelper.C_PROJECT_ID, "3");
 		startActivity(intent);
 	}
@@ -89,6 +88,12 @@ public class MainActivity extends ActionBarActivity {
 		startActivity(intent);
 	}
 	
+	public void quickMeasurement(View view)
+	{
+		Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);
+		intent.putExtra(QUICK_MEASURE, true);
+		startActivity(intent);
+	}
 	
 	
 }

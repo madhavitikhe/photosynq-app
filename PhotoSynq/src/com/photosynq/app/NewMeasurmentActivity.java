@@ -29,13 +29,15 @@ public class NewMeasurmentActivity extends ActionBarActivity {
 			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
 			deviceAddress = extras.getString(BluetoothService.DEVICE_ADDRESS);
 		}
-		db = new DatabaseHelper(getApplicationContext());
-		List<Question> questions = db.getAllQuestionForProject(projectId);
-		ListView lst = (ListView) findViewById(R.id.measurement_list_view);
-		
-		QuestionArrayAdapter questionAdapter = new QuestionArrayAdapter(this, questions );
-		
-		lst.setAdapter(questionAdapter);
+			db = new DatabaseHelper(getApplicationContext());
+			List<Question> questions = db.getAllQuestionForProject(projectId);
+			ListView lst = (ListView) findViewById(R.id.measurement_list_view);
+
+			QuestionArrayAdapter questionAdapter = new QuestionArrayAdapter(
+					this, questions);
+
+			lst.setAdapter(questionAdapter);
+			db.closeDB();
 	}
 
 	@Override
@@ -52,9 +54,9 @@ public class NewMeasurmentActivity extends ActionBarActivity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
+//		if (id == R.id.action_settings) {
+//			return true;
+//		}
 		return super.onOptionsItemSelected(item);
 	}
 	

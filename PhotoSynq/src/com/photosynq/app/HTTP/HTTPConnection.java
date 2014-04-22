@@ -24,6 +24,7 @@ public class HTTPConnection extends AsyncTask<String, String, String>{
 	public static final String PHOTOSYNQ_PROJECTS_LIST_URL = "http://photosynq.venturit.net/api/v1/projects.json?";
 	public static final String PHOTOSYNQ_PROTOCOLS_LIST_URL = "http://photosynq.venturit.net/api/v1/protocols.json?";
 	public static final String PHOTOSYNQ_MACROS_LIST_URL = "http://photosynq.venturit.net/api/v1/macros.json?";
+	public static final String PHOTOSYNQ_DATA_URL = "http://photosynq.venturit.net/api/v1/data.json?";
 	public PhotosynqResponse delegate = null;
 	private String username;
 	private String password;
@@ -33,6 +34,11 @@ public class HTTPConnection extends AsyncTask<String, String, String>{
 	{
 		this.username=username;
 		this.password=password;
+	}
+	
+	public HTTPConnection(StringEntity input)
+	{
+		this.input = input;
 	}
 	
 	public HTTPConnection()

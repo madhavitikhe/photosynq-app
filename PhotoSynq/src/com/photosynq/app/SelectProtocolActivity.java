@@ -1,35 +1,63 @@
 package com.photosynq.app;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
+import java.util.List;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.os.Build;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+
+import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.Protocol;
+import com.photosynq.app.model.ResearchProject;
+import com.photosynq.app.utils.BluetoothService;
 
 public class SelectProtocolActivity extends ActionBarActivity {
 
-	WebView webview;
-	String outputFromDevice;
+
+	ListView protocolList;
+	DatabaseHelper db;
+	private String deviceAddress; 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_select_protocol);
-
-		Intent intent=getIntent();
-		String output=intent.getStringExtra("output");
-		Log.d("Test Thread", "output"+" "+output);
 		
-		webview = (WebView) findViewById(R.id.webView1);
-		webview.loadUrl("file:///android_asset/cellphone.html");
-		webview.getSettings().setJavaScriptEnabled(true);
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			deviceAddress = extras.getString(BluetoothService.DEVICE_ADDRESS);
+		}
+		
+		
+		// Initialize ListView
+		protocolList = (ListView) findViewById(R.id.protocol_list_view);
+		
+		
+		db = new DatabaseHelper(getApplicationContext());
+		List<Protocol> protocols = db.getAllProtocolsList();
+		ProtocolArrayAdapter arrayadapter = new ProtocolArrayAdapter(this, protocols); 
+		protocolList.setAdapter(arrayadapter);
+		System.out.println("DBCLosing");
+		db.closeDB();
+		
+		protocolList.setOnItemClickListener(new OnItemClickListener() {
+		    @Override
+		    public void onItemClick(AdapterView<?> adapter, View view, int position, long id){
+		    	Protocol protocol = (Protocol) protocolList.getItemAtPosition(position);
+				Log.d("GEtting protocol id : ", protocol.getId());
+				Intent intent = new Intent(getApplicationContext(),ResultActivity.class);
+				intent.putExtra(DatabaseHelper.C_PROTOCOL_NAME_IN_ARDUINO_CODE, protocol.getProtocolNameInArduino_code());
+				intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress );
+				startActivity(intent);
+		    }
+		});
+
 	}
 
 	@Override
@@ -46,10 +74,21 @@ public class SelectProtocolActivity extends ActionBarActivity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
+//		if (id == R.id.action_settings) {
+//			return true;
+//		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	public void takeMeasurement(View view)
+	{
+		finish();
+		startActivity(getIntent());
+	}
+	
+	public void selectProtocol(View view)
+	{
+		
 	}
 
 }

@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.photosynq.app.model.Macro;
 import com.photosynq.app.model.Option;
+import com.photosynq.app.model.ProjectResult;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
@@ -29,9 +30,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String TABLE_OPTION = "option";
 	private static final String TABLE_PROTOCOL = "protocol";
 	private static final String TABLE_MACRO = "macro";
+	private static final String TABLE_RESULTS = "results";
+	
 
 	//column names
 	public static final String C_RECORD_HASH = "record_hash";
+	public static final String C_ROW_ID = "rowid";
 	public static final String C_ID = "id";
 	private static final String C_NAME = "name";
 	private static final String C_DESCRIPTION = "description";
@@ -53,7 +57,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	// Protocol column names
 
 	private static final String C_QUICK_DESCRIPTION = "quick_description";
-	private static final String C_PROTOCOL_NAME_IN_ARDUINO_CODE = "protocol_name_in_arduino_code";
+	public static final String C_PROTOCOL_NAME_IN_ARDUINO_CODE = "protocol_name_in_arduino_code";
 	private static final String C_MACRO_ID = "macro_id";
 	
 
@@ -62,6 +66,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String C_DEFAULT_Y_AXIS = "default_y_axis";
 	private static final String C_JAVASCRIPT_CODE = "javascript_code";
 	private static final String C_JSON_DATA = "json_data";
+	
+	//Results column name
+	private static final String C_RECORD_TIME = "record_time";
+	public static final String C_READING= "reading";
+	private static final String C_UPLOADED = "uploaded";
 	
 	
 	
@@ -96,6 +105,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ C_DESCRIPTION + " TEXT ,"+ C_DEFAULT_X_AXIS + " TEXT ,"+ C_DEFAULT_Y_AXIS + " TEXT ,"
 			+ C_JAVASCRIPT_CODE + " TEXT ,"+ C_JSON_DATA + " TEXT ," + C_SLUG + " TEXT)";
 
+	private static final String CREATE_TABLE_RESULTS = "CREATE TABLE "
+			+ TABLE_RESULTS + "(" + C_RECORD_HASH + " TEXT ,"+ C_PROJECT_ID + " TEXT ,"
+			+ C_UPLOADED + " TEXT ,"+ C_READING + " TEXT)";
 	
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -109,6 +121,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(CREATE_TABLE_OPTION);
 		db.execSQL(CREATE_TABLE_PROTOCOL);
 		db.execSQL(CREATE_TABLE_MACRO);
+		db.execSQL(CREATE_TABLE_RESULTS);
 
 	}
 
@@ -120,10 +133,112 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_OPTION);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROTOCOL);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_MACRO);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESULTS);
 		// create new tables;
 		onCreate(db);
 
 	}
+	
+	public boolean createResult(ProjectResult result) {
+		try
+		{
+			SQLiteDatabase db = this.getWritableDatabase();
+											
+			ContentValues values = new ContentValues();
+			values.put(C_PROJECT_ID, null != result.getProjectId() ? result.getProjectId() : "");
+			values.put(C_READING, null != result.getReading() ? result.getReading() : "");
+			values.put(C_UPLOADED, null != result.getUploaded()? result.getUploaded() : "");
+			// insert row
+			long row_id = db.insert(TABLE_RESULTS, null, values);
+	
+			if (row_id >= 0) {
+				return true;
+			} else {
+				return false;
+			}
+		}catch (SQLiteConstraintException contraintException)
+		{
+			return false;
+		}
+		catch (SQLException sqliteException){
+			return false;
+		}
+	}
+	
+	public List<ProjectResult> getAllResultsForProject(String projectId) {
+	    SQLiteDatabase db = this.getReadableDatabase();
+	    List<ProjectResult> projectsResults = new ArrayList<ProjectResult>();
+	    String selectQuery = "SELECT  rowid,* FROM " + TABLE_RESULTS +" WHERE "+C_PROJECT_ID +" = "+projectId;
+	 
+	    Log.e("DATABASE_HELPER_getAllResearchProject", selectQuery);
+	 
+	    Cursor c = db.rawQuery(selectQuery, null);
+	 
+	    if (c.moveToFirst()) {
+	        do {
+	        	ProjectResult rp = new ProjectResult();
+			    rp.setId(c.getString(c.getColumnIndex(C_ROW_ID)));
+			    rp.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
+			    rp.setReading(c.getString(c.getColumnIndex(C_READING)));
+			    rp.setUploaded(c.getString(c.getColumnIndex(C_UPLOADED)));
+			    
+	            // adding to todo list
+			    projectsResults.add(rp);
+	        } while (c.moveToNext());
+	    }
+
+	    c.close();
+	    return projectsResults;
+	}
+	
+	public List<ProjectResult> getAllUnUploadedResults() {
+	    SQLiteDatabase db = this.getReadableDatabase();
+	    List<ProjectResult> projectsResults = new ArrayList<ProjectResult>();
+	    String selectQuery = "SELECT rowid,* FROM " + TABLE_RESULTS +" WHERE "+C_UPLOADED +" = 'N'";
+	 
+	    Log.e("DATABASE_HELPER_getAllResearchProject", selectQuery);
+	 
+	    Cursor c = db.rawQuery(selectQuery, null);
+	 
+	    if (c.moveToFirst()) {
+	        do {
+	        	ProjectResult rp = new ProjectResult();
+			    rp.setId(c.getString(c.getColumnIndex(C_ROW_ID)));
+			    rp.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
+			    rp.setReading(c.getString(c.getColumnIndex(C_READING)));
+			    rp.setUploaded(c.getString(c.getColumnIndex(C_UPLOADED)));
+			    
+	            // adding to todo list
+			    projectsResults.add(rp);
+	        } while (c.moveToNext());
+	    }
+
+	    c.close();
+	    return projectsResults;
+	}
+
+	public boolean updateResults(ProjectResult result) {
+		
+
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues values = new ContentValues();
+		values.put(C_PROJECT_ID, null != result.getProjectId() ? result.getProjectId() : "");
+		values.put(C_READING, null != result.getReading() ? result.getReading() : "");
+		values.put(C_UPLOADED, null != result.getUploaded()? result.getUploaded() : "");
+
+		
+		int rowsaffected = db.update(TABLE_RESULTS, values, C_PROJECT_ID+ " = ? and "+C_ROW_ID + " =?",
+							new String[] { String.valueOf(result.getProjectId()),String.valueOf(result.getId()) });
+		// if update fails that indicates there is no then create new row
+		if(rowsaffected <= 0)
+		{
+			return false;
+		}
+		// updating row
+		return false;
+	}
+	
 
 	// Insert research project information in database
 	public boolean createResearchProject(ResearchProject rp) {

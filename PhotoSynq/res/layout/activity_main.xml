@@ -26,7 +26,7 @@
             android:text="@string/research_project_str"
              />
 
-        <Button
+<!--         <Button
             android:id="@+id/recent_research_collab_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,7 +45,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="calibrateIntrument"
-            android:text="@string/calibrate_intru_str" />
+            android:text="@string/calibrate_intru_str" /> -->
+            
+             <Button
+            android:id="@+id/quick_measurement_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="quickMeasurement"
+            android:text="@string/quick_measurement_str"
+             />
 
         </LinearLayout>
 

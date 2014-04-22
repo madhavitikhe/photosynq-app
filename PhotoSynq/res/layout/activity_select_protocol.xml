@@ -1,44 +1,19 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    tools:context=".DisplayResultsActivity" >
-
-    <WebView
-        android:id="@+id/webView1"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_above="@+id/discard_btn"
-        android:layout_below="@+id/select_protocol_btn" />
-
-    <RelativeLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/webView1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp" >
-    </RelativeLayout>
-
-    <Button
-        android:id="@+id/discard_btn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/select_protocol_btn"
-        android:layout_alignParentBottom="true"
-        android:text="Take Measurement"
-        android:textColor="#000000"
-        android:width="150dp" />
-
-    <Button
-        android:id="@+id/select_protocol_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:text="Select Protocol"
-        android:textColor="#000000"
-        android:width="150dp" />
-
-</RelativeLayout>
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="#D6D6D6"
+    >
+<ListView
+		android:id="@+id/protocol_list_view"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:headerDividersEnabled="true"
+		android:footerDividersEnabled="true"
+		android:listSelector="@android:color/transparent"
+		android:cacheColorHint="@android:color/transparent"
+		android:divider="@null"
+		android:dividerHeight="10dp"
+		 />
+</LinearLayout>

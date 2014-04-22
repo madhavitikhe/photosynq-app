@@ -7,6 +7,7 @@
     <string name="save_credentials">Save Credentials</string>
     <string name="title_activity_project_list">Research Projects</string>
     <string name="research_project_str">Research Projects</string>
+    <string name="quick_measurement_str">Quick Measurement</string>
     <string name="recent_research_collab_str">Recent Research Collaborations</string>
     <string name="calibrate_intru_str">Calibrate Instrument</string>
     <string name="research_near_me_str">Research Near Me</string>
@@ -27,5 +28,15 @@
     <string name="title_activity_display_results">DisplayResultsActivity</string>
     <string name="title_activity_result">ResultActivity</string>
     <string name="title_activity_select_protocol">SelectProtocolActivity</string>
+    <string name="not_connected">You are not connected to a device</string>
+    <string name="title_connecting">connecting...</string>
+    <string name="title_connected_to">connected: </string>
+    <string name="title_not_connected">not connected</string>
+    
+    <string name="action_different_device">Select Device</string>
+    <string name="action_criteria">Direction Details</string>
+    <string name="action_protocol_desc">Protocol Details</string>
+    <string name="action_back_to_projects">Project List</string>
+    
 
 </resources>

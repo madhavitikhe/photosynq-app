@@ -1,5 +1,10 @@
 package com.photosynq.app.utils;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -8,8 +13,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 public class CommonUtils {
 
@@ -54,5 +61,7 @@ public class CommonUtils {
 		return null;
 	 
 	}
+	
+
 
 }
