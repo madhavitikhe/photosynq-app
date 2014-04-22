@@ -14,6 +14,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +68,9 @@ public class ResultActivity extends ActionBarActivity {
 			protocolNameInArduino = extras.getString(DatabaseHelper.C_PROTOCOL_NAME_IN_ARDUINO_CODE);
 			System.out.println(" protocol name in arduion :"+protocolNameInArduino);
 		}		
+		
+
+		
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		if (!mBluetoothAdapter.isEnabled()) {
 			Intent enableIntent = new Intent(
@@ -146,7 +151,9 @@ public class ResultActivity extends ActionBarActivity {
                 		sendData(obj);
                 	}else
                 	{
+                		//change this once you get actual protocol
                 		System.out.println("Setting protocol :"+protocolNameInArduino);
+                		//String obj = "[{\"measurements\":2,\"protocol_name\":\"baseline_sample\",\"averages\":1,\"wait\":0,\"cal_true\":2,\"analog_averages\":1,\"pulsesize\":10,\"pulsedistance\":3000,\"actintensity1\":1,\"actintensity2\":1,\"measintensity\":255,\"calintensity\":255,\"pulses\":[400],\"detectors\":[[34]],\"measlights\":[[14]]},{\"measurements\":2,\"protocol_name\":\"fluorescence\",\"baselines\":[1,1,1,1],\"environmental\":[[\"relative_humidity\",1],[\"temperature\",1]],\"averages\":2,\"wait\":0,\"cal_true\":0,\"analog_averages\":1,\"act_light\":20,\"pulsesize\":10,\"pulsedistance\":10000,\"actintensity1\":100,\"actintensity2\":100,\"measintensity\":3,\"calintensity\":255,\"pulses\":[50,50,50,50],\"detectors\":[[34],[34],[34],[34]],\"measlights\":[[15],[15],[15],[15]],\"act\":[2,1,2,2]}]";
                 		sendData(protocolNameInArduino);
                 	}
                     

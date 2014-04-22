@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.photosynq.app.HTTP.HTTPConnection;
@@ -44,6 +45,14 @@ public class DisplayResultsActivity extends ActionBarActivity {
 			reading = extras.getString(DatabaseHelper.C_READING);
 			protocolName = extras.getString(DatabaseHelper.C_PROTOCOL_NAME_IN_ARDUINO_CODE);
 		}	
+		Button keep = (Button)findViewById(R.id.keep_btn);
+		Button discard = (Button)findViewById(R.id.discard_btn);
+		
+		if(protocolName.length()>0)
+		{
+			keep.setVisibility(View.INVISIBLE);
+			discard.setVisibility(View.INVISIBLE);
+		}
 		webview = (WebView) findViewById(R.id.webView1);
 		String url = "file:///" + this.getExternalFilesDir(null)+ File.separator+"cellphone.html";
 		webview.loadUrl(url);
@@ -114,6 +123,7 @@ public class DisplayResultsActivity extends ActionBarActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
+		if ( !(protocolName.length() > 0))
 		getMenuInflater().inflate(R.menu.display_results, menu);
 		return true;
 	}
