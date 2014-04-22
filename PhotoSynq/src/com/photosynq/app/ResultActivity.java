@@ -51,6 +51,7 @@ public class ResultActivity extends ActionBarActivity {
 	private String deviceAddress;
 	private TextView mStatusLine;
 	private String protocolNameInArduino="";
+	private String options="";
 	
 	DatabaseHelper db;
 
@@ -62,11 +63,10 @@ public class ResultActivity extends ActionBarActivity {
 		mStatusLine = (TextView) findViewById(R.id.statusMessage);
  		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
-			System.out.println("Project ID 1 "+projectId);
-			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
+			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID)!=null?extras.getString(DatabaseHelper.C_PROJECT_ID):"";
 			deviceAddress = extras.getString(BluetoothService.DEVICE_ADDRESS);
-			protocolNameInArduino = extras.getString(DatabaseHelper.C_PROTOCOL_NAME_IN_ARDUINO_CODE);
-			System.out.println(" protocol name in arduion :"+protocolNameInArduino);
+			protocolNameInArduino = extras.getString(DatabaseHelper.C_PROTOCOL_NAME_IN_ARDUINO_CODE)!=null?extras.getString(DatabaseHelper.C_PROTOCOL_NAME_IN_ARDUINO_CODE):"";
+			options = extras.getString(DatabaseHelper.C_OPTION_TEXT)!=null?extras.getString(DatabaseHelper.C_OPTION_TEXT):"";
 		}		
 		
 
@@ -104,7 +104,6 @@ public class ResultActivity extends ActionBarActivity {
         if (data.length() > 0) {
             // Get the message bytes and tell the BluetoothChatService to write
             byte[] send;
-            System.out.println("sending data to device");
 				send = data.getBytes();
 				 mBluetoothService.write(send);
             //byte[] bytes = ByteBuffer.allocate(4).putInt(9).array();
@@ -152,7 +151,6 @@ public class ResultActivity extends ActionBarActivity {
                 	}else
                 	{
                 		//change this once you get actual protocol
-                		System.out.println("Setting protocol :"+protocolNameInArduino);
                 		//String obj = "[{\"measurements\":2,\"protocol_name\":\"baseline_sample\",\"averages\":1,\"wait\":0,\"cal_true\":2,\"analog_averages\":1,\"pulsesize\":10,\"pulsedistance\":3000,\"actintensity1\":1,\"actintensity2\":1,\"measintensity\":255,\"calintensity\":255,\"pulses\":[400],\"detectors\":[[34]],\"measlights\":[[14]]},{\"measurements\":2,\"protocol_name\":\"fluorescence\",\"baselines\":[1,1,1,1],\"environmental\":[[\"relative_humidity\",1],[\"temperature\",1]],\"averages\":2,\"wait\":0,\"cal_true\":0,\"analog_averages\":1,\"act_light\":20,\"pulsesize\":10,\"pulsedistance\":10000,\"actintensity1\":100,\"actintensity2\":100,\"measintensity\":3,\"calintensity\":255,\"pulses\":[50,50,50,50],\"detectors\":[[34],[34],[34],[34]],\"measlights\":[[15],[15],[15],[15]],\"act\":[2,1,2,2]}]";
                 		sendData(protocolNameInArduino);
                 	}
@@ -183,25 +181,20 @@ public class ResultActivity extends ActionBarActivity {
                 mStatusLine.setText("Receiving data from device");
                 try {
                     String filename = "data.js";
-                    System.out.println("@@@@@@@@@ writing file data.js");
                     File myFile = new File(getExternalFilesDir(null), filename);
                     if (myFile.exists()){
-                    	System.out.println("@@@@@@@@@ deleting file data.js");
                     	myFile.delete();
-                    	System.out.println("@@@@@@@@@ creating file data.js");
                     	myFile.createNewFile();
                     }else
                     {
                         myFile.createNewFile();
                     }
-                    System.out.println("@@@@@@@@@ path"+myFile.getAbsolutePath());
                     FileOutputStream fos;
-                    String dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "")+"\n];";
                     long time= System.currentTimeMillis();
-                    dataString = dataString.replaceAll("\\{", "{\"time\":\""+time+"\",");
-                    System.out.println("@@@@@@@@@ writing data to data.js");
+                    String dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
+                    
+                    //dataString = dataString.replaceAll("\\{", "{\"time\":\""+time+"\",");
                     byte[] data = dataString.getBytes();
-                    System.out.println("@@@@@@@@@ "+data.length);
                     try {
                         fos = new FileOutputStream(myFile);
                         fos.write(data);
@@ -217,7 +210,10 @@ public class ResultActivity extends ActionBarActivity {
                 Intent intent = new Intent(getApplicationContext(),DisplayResultsActivity.class);
         		intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
         		intent.putExtra(DatabaseHelper.C_PROTOCOL_NAME_IN_ARDUINO_CODE, protocolNameInArduino);
-        		intent.putExtra(DatabaseHelper.C_READING, measurement.toString().replaceAll("\\r\\n", ""));
+        		long time= System.currentTimeMillis();
+        		String reading = measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",");
+        		//reading = reading.replaceFirst("\\{", "{"+options);
+        		intent.putExtra(DatabaseHelper.C_READING, reading);
         		startActivity(intent);
 
                 

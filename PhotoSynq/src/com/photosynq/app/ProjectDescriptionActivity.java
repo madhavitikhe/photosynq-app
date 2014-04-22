@@ -99,7 +99,6 @@ public class ProjectDescriptionActivity extends ActionBarActivity {
 	public void onParticipateClicked(View view)
 	{
 		Intent intent = new Intent(getApplicationContext(),DirectionsActivity.class);
-		Log.d("##### Project description record hash :", recordid);
 		intent.putExtra(DatabaseHelper.C_PROJECT_ID, recordid);
 		startActivity(intent);
 	}

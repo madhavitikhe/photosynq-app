@@ -28,7 +28,6 @@ public class UpdateResearchProjects implements PhotosynqResponse {
 		if(null!= result)
 			{
 			try {
-				Log.d("PHOTOSYNQ-MainActivity", result);
 				jArray = new JSONArray(result);
 				for (int i = 0; i < jArray.length(); i++) {
 					
@@ -45,13 +44,10 @@ public class UpdateResearchProjects implements PhotosynqResponse {
 					jsonProject.getString("beta"));
 					
 					JSONArray customFields = jsonProject.getJSONArray("custom_fields");
-					System.out.println("$$$$$$$ question String :"+customFields.toString());
-					System.out.println("$$$$$$$ question String length:"+customFields.length());
 					db = new DatabaseHelper(context);
 					
 					for (int j = 0; j < customFields.length(); j++) {
 						JSONObject jsonQuestion = customFields.getJSONObject(j);
-						System.out.println("###### jsonquestion "+jsonQuestion.toString());
 						Question question = new Question(jsonQuestion.getString("id"),
 								jsonProject.getString("id"), 
 								jsonQuestion.getString("label"));

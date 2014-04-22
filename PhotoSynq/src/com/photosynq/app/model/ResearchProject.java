@@ -41,7 +41,6 @@ public class ResearchProject {
 				+ (null != getEndDate() ? getEndDate() : "") 
 				+ (null != getBeta() ? getBeta() : "")
 				+ (null != getImageUrl() ? getImageUrl() : "");
-		System.out.println("$$$$$$ Project record string : "+recordString);
 		return CommonUtils.getMD5EncryptedString(recordString);
 	}
 	public String getRecordHash() {

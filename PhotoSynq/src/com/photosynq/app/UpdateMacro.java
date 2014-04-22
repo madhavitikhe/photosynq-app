@@ -22,13 +22,11 @@ public class UpdateMacro implements PhotosynqResponse{
 	@Override
 	public void onResponseReceived(String result) {
 	
-		System.out.println("$$$$$$$ Macro : "+result);
 		JSONArray jArray;
 		
 		if(null!= result)
 			{
 			try {
-				Log.d("PHOTOSYNQ-MainActivity", result);
 				jArray = new JSONArray(result);
 				for (int i = 0; i < jArray.length(); i++) {
 					

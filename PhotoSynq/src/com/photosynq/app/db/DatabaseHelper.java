@@ -52,7 +52,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	// Question and Option Table - column names
 	private static final String C_QUESTION_TEXT = "question_text";//Question
-	private static final String C_OPTION_TEXT = "option";//Option
+	public static final String C_OPTION_TEXT = "option";//Option
 	
 	// Protocol column names
 
@@ -239,6 +239,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return false;
 	}
 	
+	public void deleteResult(String rowid) {
+	    SQLiteDatabase db = this.getWritableDatabase();
+	    db.delete(TABLE_RESULTS, C_ROW_ID + " = ?",
+	            new String[] { String.valueOf(rowid) });
+	}
 
 	// Insert research project information in database
 	public boolean createResearchProject(ResearchProject rp) {
@@ -391,7 +396,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			values.put(C_PROJECT_ID, que.getProjectId());
 			// insert row
 			long row_id = db.insert(TABLE_QUESTION, null, values);
-			System.out.println("This is row ID" + row_id);
 			if (row_id >= 0) {
 				return true;
 			} else {
@@ -509,7 +513,6 @@ public boolean updateQuestion(Question question) {
 			    if(!que.getQuestionText().equals(""))
 			    {
 				    String selectOptionsQuery = "SELECT  * FROM " + TABLE_OPTION + " WHERE " + C_QUESTION_ID + " = " + questionId +" and "+C_PROJECT_ID +" = "+project_id;
-				    System.out.println("############ selectOptionsQuery : "+selectOptionsQuery);
 				    
 				    Cursor optionCursor = db.rawQuery(selectOptionsQuery, null);
 				    if(optionCursor.moveToFirst())
@@ -518,7 +521,6 @@ public boolean updateQuestion(Question question) {
 				    	do
 				    	{
 				    		String option = optionCursor.getString(optionCursor.getColumnIndex(C_OPTION_TEXT));
-				    		System.out.println("######### $$$ option "+option);
 				    		optionlist.add(option);
 				    		
 				    	}while(optionCursor.moveToNext());

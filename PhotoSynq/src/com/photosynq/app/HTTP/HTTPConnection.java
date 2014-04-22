@@ -24,7 +24,7 @@ public class HTTPConnection extends AsyncTask<String, String, String>{
 	public static final String PHOTOSYNQ_PROJECTS_LIST_URL = "http://photosynq.venturit.net/api/v1/projects.json?";
 	public static final String PHOTOSYNQ_PROTOCOLS_LIST_URL = "http://photosynq.venturit.net/api/v1/protocols.json?";
 	public static final String PHOTOSYNQ_MACROS_LIST_URL = "http://photosynq.venturit.net/api/v1/macros.json?";
-	public static final String PHOTOSYNQ_DATA_URL = "http://photosynq.venturit.net/api/v1/data.json?";
+	public static final String PHOTOSYNQ_DATA_URL = "http://photosynq.venturit.net/api/v1/projects/";
 	public PhotosynqResponse delegate = null;
 	private String username;
 	private String password;
@@ -56,7 +56,6 @@ public class HTTPConnection extends AsyncTask<String, String, String>{
 					credentials.put("password", password);
 					user.put("user", credentials);
 					input = new StringEntity(user.toString());
-					System.out.println("request params = "+user.toString());
 					input.setContentType("application/json");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -126,7 +125,6 @@ public class HTTPConnection extends AsyncTask<String, String, String>{
         delegate.onResponseReceived(result);
         if (null != result)
         {
-        	Log.d("PHOTOSYNQ-HTTPConnection",result);
         }
         else 
         {

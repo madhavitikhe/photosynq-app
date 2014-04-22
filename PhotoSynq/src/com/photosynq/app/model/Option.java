@@ -24,7 +24,6 @@ public class Option {
 			String recordString = (null != getQuestionId()? getQuestionId() : "" )
 					+ (null != getProjectId()? getProjectId() : "" )
 					+ (null != getOptionText()? getOptionText() : "" );
-			System.out.println("$$$$$$ Option record string : "+recordString);
 			return CommonUtils.getMD5EncryptedString(recordString);
 		}
 

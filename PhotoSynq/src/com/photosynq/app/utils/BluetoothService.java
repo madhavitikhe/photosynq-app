@@ -160,7 +160,6 @@ public class BluetoothService {
             r = mConnectedThread;
         }
         // Perform the write unsynchronized
-        System.out.println("putting data on out stream.");
         r.write(out);
     }
 
@@ -299,14 +298,12 @@ public class BluetoothService {
 					// Read from the InputStream
 					bytes = mmInStream.read(buffer);
 
-					// System.out.println("$$$$$#####"+ buffer.toString());
 					// Send the obtained bytes to the UI Activity
 //					mHandler.obtainMessage(ResultActivity.MESSAGE_READ, bytes,-1, buffer).sendToTarget();
 					String readMessage = new String(buffer, 0, bytes);
 					measurement.append(readMessage);
 					totalbytes += bytes;
 					if (readMessage.replaceAll("\\r\\n", "######").contains("############")) {
-						System.out.println("BREAKING >>>>>>>>>>>>>>>>>");
 						mHandler.obtainMessage(ResultActivity.MESSAGE_READ, totalbytes,-1, measurement).sendToTarget();
 //						Message msg = mHandler.obtainMessage(ResultActivity.MESSAGE_STOP);
 //				        Bundle bundle = new Bundle();

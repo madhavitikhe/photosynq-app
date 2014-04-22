@@ -27,7 +27,6 @@ public class UpdateProtocol implements PhotosynqResponse {
 		if(null!= result)
 			{
 			try {
-				Log.d("PHOTOSYNQ-MainActivity", result);
 				jArray = new JSONArray(result);
 				for (int i = 0; i < jArray.length(); i++) {
 					

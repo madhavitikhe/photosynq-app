@@ -68,11 +68,9 @@ class BluetoothArrayAdapter extends BaseAdapter implements ListAdapter {
 				tvDeviceAddress.setText(bluetoothDevice.getAddress());
 				tvDevicePaired.setText((bluetoothDevice.getBondState()==10)?"Not Paired":(bluetoothDevice.getBondState()==12)?"Paired":"Pairing");
 				if(bluetoothDevice.getBondState() == 10){
-					System.out.println("making button visible");
 					pairDeviceBtn.setVisibility(View.VISIBLE);
 				}else 
 				{
-					System.out.println("making button invisible");
 					pairDeviceBtn.setVisibility(View.INVISIBLE);
 				}
 				

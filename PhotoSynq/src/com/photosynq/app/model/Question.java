@@ -30,7 +30,6 @@ public class Question {
 		String recordString =  (null != getProjectId()? getProjectId() : "" )
 				+ (null != getQuestionId()? getQuestionId() : "" )
 				+ (null != getQuestionText()? getQuestionText() : "" );
-		System.out.println("$$$$$$ Question record string : "+recordString);
 		return CommonUtils.getMD5EncryptedString(recordString);
 	}
 

@@ -33,9 +33,11 @@ public class DisplayResultsActivity extends ActionBarActivity {
 	private DatabaseHelper db;
 	private HTTPConnection mDataTask = null;
 	private String protocolName="";
-	
+	Button keep;
+	Button discard;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_results);
 		
@@ -45,8 +47,8 @@ public class DisplayResultsActivity extends ActionBarActivity {
 			reading = extras.getString(DatabaseHelper.C_READING);
 			protocolName = extras.getString(DatabaseHelper.C_PROTOCOL_NAME_IN_ARDUINO_CODE);
 		}	
-		Button keep = (Button)findViewById(R.id.keep_btn);
-		Button discard = (Button)findViewById(R.id.discard_btn);
+		 keep = (Button)findViewById(R.id.keep_btn);
+		 discard = (Button)findViewById(R.id.discard_btn);
 		
 		if(protocolName.length()>0)
 		{
@@ -60,19 +62,21 @@ public class DisplayResultsActivity extends ActionBarActivity {
 		webview.getSettings().setJavaScriptEnabled(true);
 	}
 
-	public void keep_click(View view) throws UnsupportedEncodingException {
+	public void keep_click(View view) throws UnsupportedEncodingException, JSONException {
 		
 		if (CommonUtils.isConnected(getApplicationContext()))
 		{
 			String authToken = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 			String email = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 			StringEntity input = null;
-			JSONObject request_data = new JSONObject();	
+			System.out.println(reading);
+			
+			JSONObject request_data = new JSONObject();
+			JSONObject jo = new JSONObject(reading);
 			try {
 					request_data.put("user_email", email);
 					request_data.put("user_token", authToken);
-					request_data.put("project_id", projectId);
-					request_data.put("data", reading);
+					request_data.put("data", jo);
 					 input = new StringEntity(request_data.toString());
 					input.setContentType("application/json");
 			} catch (JSONException e) {
@@ -84,37 +88,31 @@ public class DisplayResultsActivity extends ActionBarActivity {
 			}
 			
 			
-			UpdateData updateData = new UpdateData();
+			UpdateData updateData = new UpdateData(getApplicationContext(), "NONE");
 			mDataTask = new HTTPConnection(input);
 			mDataTask.delegate = updateData;
-			mDataTask.execute(HTTPConnection.PHOTOSYNQ_DATA_URL, "POST");
+			mDataTask.execute(HTTPConnection.PHOTOSYNQ_DATA_URL+projectId+"/data.json", "POST");
+			view.setVisibility(View.INVISIBLE);
 
 		}else
 		{
 		Toast.makeText(getApplicationContext(), "No internet conncetion",Toast.LENGTH_SHORT).show();
 		db = new DatabaseHelper(getApplicationContext());
 		ProjectResult result = new ProjectResult(projectId, reading, "N");
-		db = new DatabaseHelper(getApplicationContext());
 		db.createResult(result);
-
-		List<ProjectResult> readings = db.getAllResultsForProject(projectId);
-
-		for (ProjectResult projectResult : readings) {
-			System.out.println("Project Id" + projectId);
-			System.out.println(">> " + projectResult.getId());
-			System.out.println(">> " + projectResult.getUploaded());
-			System.out.println(">> " + projectResult.getReading());
-		}
 		db.closeDB();
 		
 		Toast.makeText(getApplicationContext(), "Results Saved Locally",Toast.LENGTH_SHORT).show();
-		view.setVisibility(View.INVISIBLE);
+		discard.setVisibility(View.INVISIBLE);
+		view.setVisibility(View.INVISIBLE); 
 		}
 	}
 	
 	public void discard_click(View view) {
 		Toast.makeText(getApplicationContext(), "Results discarded",
 				Toast.LENGTH_SHORT).show();
+		view.setVisibility(View.INVISIBLE); 
+		keep.setVisibility(View.INVISIBLE);
 //		Intent intent = new Intent(this, ProjectListActivity.class);
 //		startActivity(intent);
 	}

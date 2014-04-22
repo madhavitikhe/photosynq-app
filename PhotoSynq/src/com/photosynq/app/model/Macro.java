@@ -39,7 +39,6 @@ public class Macro {
 				+ (null != getJavascriptCode()? getJavascriptCode() : "" )
 				+ (null != getJsonData()? getJsonData() : "" )
 				+ (null != getSlug()? getSlug() : "" );
-		System.out.println("$$$$$$ Macro record string : "+recordString);
 		return CommonUtils.getMD5EncryptedString(recordString);
 	}
 	public String getRecordHash() {

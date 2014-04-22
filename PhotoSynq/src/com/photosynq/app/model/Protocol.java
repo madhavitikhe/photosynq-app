@@ -36,7 +36,6 @@ public class Protocol {
 				+ (null != getDescription()? getDescription() : "" )
 				+ (null != getMacroId()? getMacroId() : "" )
 				+ (null != getSlug()? getSlug() : "" );
-		System.out.println("$$$$$$ Protocol record string : "+recordString);
 		return CommonUtils.getMD5EncryptedString(recordString);
 	}
 	public String getRecordHash() {

@@ -222,13 +222,11 @@ public class BluetoothActivity extends ActionBarActivity {
 	     String action = intent.getAction();
 	     if(BluetoothDevice.ACTION_FOUND.equals(action)) {
 	       BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-	       System.out.println("\n  Device: " + device.getName() + ", " + device);
 	       btDeviceList.add(device);
 	     } else {
 	         if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
 	        	 bluetoothStatusMsg.setText(R.string.searching_devices);
 	        	 showProgress(true);
-	           System.out.println("\nDiscovery Started...");
 	         } else {
 	           if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
 	        	   showProgress(false);
@@ -237,7 +235,6 @@ public class BluetoothActivity extends ActionBarActivity {
 						btDeviceList.add(device);
 					}
 
-	        	   System.out.println("\nDiscovery Finished");
 	         }
 	       }
 	      }

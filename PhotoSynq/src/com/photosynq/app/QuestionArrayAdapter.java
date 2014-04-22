@@ -70,6 +70,19 @@ public class QuestionArrayAdapter extends BaseAdapter implements ListAdapter  {
 			        ArrayAdapter<String> adapter= new ArrayAdapter<String>(parent.getContext(), android.R.layout.simple_spinner_item,  question.getOptions());   
 			        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			        spinOptions.setAdapter(adapter);
+			        if(position==0)
+			        {
+			        	((NewMeasurmentActivity)parent.getContext()).option1= spinOptions.getSelectedItem().toString();
+			        	((NewMeasurmentActivity)parent.getContext()).question1= question.getQuestionText();
+			        }else if(position==1)
+			        {
+			        	((NewMeasurmentActivity)parent.getContext()).option2= spinOptions.getSelectedItem().toString();
+			        	((NewMeasurmentActivity)parent.getContext()).question2= question.getQuestionText();
+			        }else if (position ==2)
+			        {
+			        	((NewMeasurmentActivity)parent.getContext()).option3= spinOptions.getSelectedItem().toString();
+			        	((NewMeasurmentActivity)parent.getContext()).question3= question.getQuestionText();
+			        }
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -272,21 +272,24 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 	        Log.e("tag", "Failed to get asset file list.", e);
 	    }
 	    for(String filename : files) {
-	        InputStream in = null;
-	        OutputStream out = null;
-	        try {
-	          in = assetManager.open(filename);
-	          File outFile = new File(getExternalFilesDir(null), filename);
-	          out = new FileOutputStream(outFile);
-	          copyFile(in, out);
-	          in.close();
-	          in = null;
-	          out.flush();
-	          out.close();
-	          out = null;
-	        } catch(IOException e) {
-	            Log.e("tag", "Failed to copy asset file: " + filename, e);
-	        }       
+	    	if ( !filename.startsWith("images") && !filename.startsWith("sounds") && !filename.startsWith("webkit"))
+	    	{
+		        InputStream in = null;
+		        OutputStream out = null;
+		        try {
+		          in = assetManager.open(filename);
+		          File outFile = new File(getExternalFilesDir(null), filename);
+		          out = new FileOutputStream(outFile);
+		          copyFile(in, out);
+		          in.close();
+		          in = null;
+		          out.flush();
+		          out.close();
+		          out = null;
+		        } catch(IOException e) {
+		            Log.e("tag", "Failed to copy asset file: " + filename, e);
+		        }       
+	    	}
 	    }
 	}
 	private void copyFile(InputStream in, OutputStream out) throws IOException {
