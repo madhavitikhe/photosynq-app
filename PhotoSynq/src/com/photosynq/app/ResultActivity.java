@@ -191,7 +191,15 @@ public class ResultActivity extends ActionBarActivity {
                     }
                     FileOutputStream fos;
                     long time= System.currentTimeMillis();
-                    String dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
+                    String dataString;
+                    if (options.equals(""))
+                    {
+                    	 dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
+                    }
+                    else
+                    {
+                    	 dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
+                    }
                     
                     //dataString = dataString.replaceAll("\\{", "{\"time\":\""+time+"\",");
                     byte[] data = dataString.getBytes();
@@ -215,7 +223,7 @@ public class ResultActivity extends ActionBarActivity {
         		//reading = reading.replaceFirst("\\{", "{"+options);
         		intent.putExtra(DatabaseHelper.C_READING, reading);
         		startActivity(intent);
-
+        		finish();
                 
 //                /// Write records to DB.
 //                System.out.println("Project ID 2"+projectId);

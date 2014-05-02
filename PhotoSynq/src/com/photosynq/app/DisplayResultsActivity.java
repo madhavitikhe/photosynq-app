@@ -93,6 +93,7 @@ public class DisplayResultsActivity extends ActionBarActivity {
 			mDataTask.delegate = updateData;
 			mDataTask.execute(HTTPConnection.PHOTOSYNQ_DATA_URL+projectId+"/data.json", "POST");
 			view.setVisibility(View.INVISIBLE);
+			discard.setVisibility(View.INVISIBLE);
 
 		}else
 		{
