@@ -2,12 +2,10 @@ package com.photosynq.app;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
-
 import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.IntentCompat;
@@ -18,7 +16,6 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ProjectResult;
@@ -32,9 +29,10 @@ public class DisplayResultsActivity extends ActionBarActivity {
 	private String reading;
 	private DatabaseHelper db;
 	private HTTPConnection mDataTask = null;
-	private String protocolName="";
+	private String protocolJson="";
 	Button keep;
 	Button discard;
+	@SuppressLint("SetJavaScriptEnabled")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -45,12 +43,12 @@ public class DisplayResultsActivity extends ActionBarActivity {
 		if (extras != null) {
 			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
 			reading = extras.getString(DatabaseHelper.C_READING);
-			protocolName = extras.getString(DatabaseHelper.C_PROTOCOL_NAME_IN_ARDUINO_CODE);
+			protocolJson = extras.getString(DatabaseHelper.C_PROTOCOL_JSON);
 		}	
 		 keep = (Button)findViewById(R.id.keep_btn);
 		 discard = (Button)findViewById(R.id.discard_btn);
 		
-		if(protocolName.length()>0)
+		if(protocolJson.length()>0)
 		{
 			keep.setVisibility(View.INVISIBLE);
 			discard.setVisibility(View.INVISIBLE);
@@ -122,7 +120,7 @@ public class DisplayResultsActivity extends ActionBarActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
-		if ( !(protocolName.length() > 0))
+		if ( !(protocolJson.length() > 0))
 		getMenuInflater().inflate(R.menu.display_results, menu);
 		return true;
 	}

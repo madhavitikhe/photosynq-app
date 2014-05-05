@@ -1,23 +1,20 @@
 package com.photosynq.app.utils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
+@SuppressLint("SimpleDateFormat")
 public class CommonUtils {
 
 	//Generate a MD5 hash from given string
@@ -60,6 +57,34 @@ public class CommonUtils {
 	    }
 		return null;
 	 
+	}
+	
+	public static void writeStringToFile(Context context,String fileName, String dataString)
+	{
+        try {
+            File myFile = new File(context.getExternalFilesDir(null), fileName);
+            if (myFile.exists()){
+            	myFile.delete();
+            	myFile.createNewFile();
+            }else
+            {
+                myFile.createNewFile();
+            }
+            FileOutputStream fos;
+            //dataString = dataString.replaceAll("\\{", "{\"time\":\""+time+"\",");
+            byte[] data = dataString.getBytes();
+            try {
+                fos = new FileOutputStream(myFile);
+                fos.write(data);
+                fos.flush();
+                fos.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }catch (Exception e) {
+        	e.printStackTrace();
+		}
+
 	}
 	
 

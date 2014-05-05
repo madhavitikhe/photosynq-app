@@ -3,7 +3,6 @@ package com.photosynq.app;
 import java.util.List;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -65,7 +64,7 @@ public class NewMeasurmentActivity extends ActionBarActivity {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
+//		int id = item.getItemId();
 //		if (id == R.id.action_settings) {
 //			return true;
 //		}

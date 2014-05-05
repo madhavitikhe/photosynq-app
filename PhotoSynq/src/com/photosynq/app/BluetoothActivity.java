@@ -4,9 +4,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Set;
 
-import com.photosynq.app.db.DatabaseHelper;
-import com.photosynq.app.utils.BluetoothService;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -27,6 +24,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.utils.BluetoothService;
 
 public class BluetoothActivity extends ActionBarActivity {
 	private BluetoothAdapter bluetoothAdapter;
@@ -114,7 +114,7 @@ public class BluetoothActivity extends ActionBarActivity {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
+//		int id = item.getItemId();
 //		if (id == R.id.action_settings) {
 //			return true;
 //		}
@@ -181,7 +181,7 @@ public class BluetoothActivity extends ActionBarActivity {
 				bluetoothAdapter.startDiscovery();
 			} else {
 				Intent enableBtIntent = new Intent(
-						bluetoothAdapter.ACTION_REQUEST_ENABLE);
+						BluetoothAdapter.ACTION_REQUEST_ENABLE);
 				startActivityForResult(enableBtIntent, 1);
 			}
 		}
@@ -200,17 +200,21 @@ public class BluetoothActivity extends ActionBarActivity {
     public boolean removeBond(BluetoothDevice btDevice)  
     throws Exception  
     {  
-        Class btClass = Class.forName("android.bluetooth.BluetoothDevice");
-        Method removeBondMethod = btClass.getMethod("removeBond");  
+        @SuppressWarnings("rawtypes")
+		Class btClass = Class.forName("android.bluetooth.BluetoothDevice");
+        @SuppressWarnings("unchecked")
+		Method removeBondMethod = btClass.getMethod("removeBond");  
         Boolean returnValue = (Boolean) removeBondMethod.invoke(btDevice);  
         return returnValue.booleanValue();  
     }
 
 
-    public boolean createBond(BluetoothDevice btDevice)  
+    @SuppressWarnings("unchecked")
+	public boolean createBond(BluetoothDevice btDevice)  
     throws Exception  
     { 
-        Class class1 = Class.forName("android.bluetooth.BluetoothDevice");
+        @SuppressWarnings("rawtypes")
+		Class class1 = Class.forName("android.bluetooth.BluetoothDevice");
         Method createBondMethod = class1.getMethod("createBond");  
         Boolean returnValue = (Boolean) createBondMethod.invoke(btDevice);  
         return returnValue.booleanValue();  

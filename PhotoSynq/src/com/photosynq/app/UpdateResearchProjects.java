@@ -4,7 +4,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.photosynq.app.HTTP.PhotosynqResponse;
 import com.photosynq.app.db.DatabaseHelper;
@@ -30,9 +29,9 @@ public class UpdateResearchProjects implements PhotosynqResponse {
 			try {
 				jArray = new JSONArray(result);
 				for (int i = 0; i < jArray.length(); i++) {
-					
-					
 					JSONObject jsonProject = jArray.getJSONObject(i);
+					String protocol_ids = jsonProject.getJSONArray("protocols_ids").toString().trim();
+
 					ResearchProject rp = new ResearchProject(
 					jsonProject.getString("id"),
 					jsonProject.getString("name"),
@@ -41,7 +40,8 @@ public class UpdateResearchProjects implements PhotosynqResponse {
 					jsonProject.getString("start_date"),
 					jsonProject.getString("end_date"),
 					jsonProject.getString("medium_image_url"),
-					jsonProject.getString("beta"));
+					jsonProject.getString("beta"),
+					protocol_ids.substring(1, protocol_ids.length()-1)); // remove first and last square bracket and store as a comma separated string
 					
 					JSONArray customFields = jsonProject.getJSONArray("custom_fields");
 					db = new DatabaseHelper(context);

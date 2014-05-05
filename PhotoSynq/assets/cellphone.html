@@ -7,6 +7,7 @@
 <script src="bootstrap.min.js"></script>
 <script src="math.js"></script>
 <script src="macros.js"></script>
+<script src="macros_variable.js"></script>
 <script src="initalvariables.js"></script>
 <script src="data.js"></script>
 <script type="text/javascript">
@@ -41,21 +42,14 @@ jQuery(document).ready(function(){
 			container += '<div class="panel-body">';
 			container += '<div id="plotRawData'+c+'"></div>';
 			
-			// apply macros to data
-			if(data['sample'][measurementID][protocolID].protocol_name == 'fluorescence')
-				macro = Phi2LEF(data['sample'][measurementID][protocolID]);
-			else if(data['sample'][measurementID][protocolID].protocol_name == 'chlorophyll_spad')
-				macro = SPAD(data['sample'][measurementID][protocolID]);
-			else if(data['sample'][measurementID][protocolID].protocol_name == '810_dirk')
-				macro = DIRK810(data['sample'][measurementID][protocolID]);
-			else if(data['sample'][measurementID][protocolID].protocol_name == '940_dirk')
-				macro = DIRK940(data['sample'][measurementID][protocolID]);		
-			else if(data['sample'][measurementID][protocolID].protocol_name == 'dirk')
-				macro = ECS520Dirk(data['sample'][measurementID][protocolID]);
-			else if(data['sample'][measurementID][protocolID].protocol_name == 'baseline_sample')
-				macro = baseline_sample(data['sample'][measurementID][protocolID]);
-			else if(data['sample'][measurementID][protocolID].protocol_name == 'chlorophyll_spad_ndvi')
-				macro = chlorophyll_spad_ndvi(data['sample'][measurementID][protocolID]);
+			
+			// find function
+			var fn = window[data['sample'][measurementID][protocolID].protocol_name];
+			
+			// Run function if exists
+			if (typeof fn === "function"){
+				macro = fn.apply(null, new Array(data['sample'][measurementID][protocolID]));
+			}
 			else
 				macro = {'HTML':'No macro available'};
 			HTML = macro.HTML;

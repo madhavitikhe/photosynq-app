@@ -15,7 +15,6 @@ import android.widget.ListView;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Protocol;
-import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.BluetoothService;
 
 public class SelectProtocolActivity extends ActionBarActivity {
@@ -52,7 +51,7 @@ public class SelectProtocolActivity extends ActionBarActivity {
 		    	Protocol protocol = (Protocol) protocolList.getItemAtPosition(position);
 				Log.d("GEtting protocol id : ", protocol.getId());
 				Intent intent = new Intent(getApplicationContext(),ResultActivity.class);
-				intent.putExtra(DatabaseHelper.C_PROTOCOL_NAME_IN_ARDUINO_CODE, protocol.getProtocolNameInArduino_code());
+				intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocol.getProtocol_json());
 				intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress );
 				startActivity(intent);
 		    }
@@ -73,7 +72,7 @@ public class SelectProtocolActivity extends ActionBarActivity {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
+//		int id = item.getItemId();
 //		if (id == R.id.action_settings) {
 //			return true;
 //		}

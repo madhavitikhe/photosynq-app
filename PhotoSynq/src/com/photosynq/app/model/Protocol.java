@@ -7,8 +7,7 @@ public class Protocol {
 	private String recordHash;
 	private String id;
 	private String name;
-	private String quickDescription;
-	private String protocolNameInArduino_code;
+	private String protocol_json;
 	private String description;
 	private String macroId;
 	private String slug;
@@ -17,12 +16,11 @@ public class Protocol {
 	{
 		
 	}
-	public Protocol(String id, String name, String quickDescription, String protocolNameInArduino,String description, String macroId, String slug)
+	public Protocol(String id, String name, String protocol_json,String description, String macroId, String slug)
 	{
 		this.id = id;
 		this.name = name;
-		this.quickDescription = quickDescription;
-		this.protocolNameInArduino_code = protocolNameInArduino;
+		this.setProtocol_json(protocol_json);
 		this.description = description;
 		this.macroId = macroId;
 		this.slug = slug;
@@ -31,8 +29,7 @@ public class Protocol {
 	private String getProtocolRecordHash() {
 		String recordString = (null != getId() ? getId(): "") 
 				+ (null != getName()? getName() : "" )
-				+ (null != getQuickDescription()? getQuickDescription() : "" )
-				+ (null != getProtocolNameInArduino_code()? getProtocolNameInArduino_code() : "" )
+				+ (null != getProtocol_json()? getProtocol_json() : "" )
 				+ (null != getDescription()? getDescription() : "" )
 				+ (null != getMacroId()? getMacroId() : "" )
 				+ (null != getSlug()? getSlug() : "" );
@@ -56,18 +53,6 @@ public class Protocol {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getQuickDescription() {
-		return quickDescription;
-	}
-	public void setQuickDescription(String quickDescription) {
-		this.quickDescription = quickDescription;
-	}
-	public String getProtocolNameInArduino_code() {
-		return protocolNameInArduino_code;
-	}
-	public void setProtocolNameInArduino_code(String protocolNameInArduino_code) {
-		this.protocolNameInArduino_code = protocolNameInArduino_code;
-	}
 	public String getDescription() {
 		return description;
 	}
@@ -85,6 +70,12 @@ public class Protocol {
 	}
 	public void setSlug(String slug) {
 		this.slug = slug;
+	}
+	public String getProtocol_json() {
+		return protocol_json;
+	}
+	public void setProtocol_json(String protocol_json) {
+		this.protocol_json = protocol_json;
 	}
 	
 	

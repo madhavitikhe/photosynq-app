@@ -10,7 +10,6 @@ public class Macro {
 	private String defaultXAxis;
 	private String defaultYAxis;
 	private String javascriptCode;
-	private String jsonData;
 	private String description;
 	private String slug;
 	
@@ -18,7 +17,7 @@ public class Macro {
 	{
 		
 	}
-	public Macro(String id, String name, String description, String defaultXAxis,String defaultYAxis, String javascriptCode, String jsonData, String slug)
+	public Macro(String id, String name, String description, String defaultXAxis,String defaultYAxis, String javascriptCode, String slug)
 	{
 		this.id = id;
 		this.name = name;
@@ -26,7 +25,6 @@ public class Macro {
 		this.defaultXAxis = defaultXAxis;
 		this.defaultYAxis = defaultYAxis;
 		this.javascriptCode = javascriptCode;
-		this.jsonData = jsonData;
 		this.slug = slug;
 		this.recordHash = getMacroRecordHash();
 	}
@@ -37,7 +35,6 @@ public class Macro {
 				+ (null != getDefaultXAxis()? getDefaultXAxis() : "" )
 				+ (null != getDefaultYAxis()? getDefaultYAxis() : "" )
 				+ (null != getJavascriptCode()? getJavascriptCode() : "" )
-				+ (null != getJsonData()? getJsonData() : "" )
 				+ (null != getSlug()? getSlug() : "" );
 		return CommonUtils.getMD5EncryptedString(recordString);
 	}
@@ -76,12 +73,6 @@ public class Macro {
 	}
 	public void setJavascriptCode(String javascriptCode) {
 		this.javascriptCode = javascriptCode;
-	}
-	public String getJsonData() {
-		return jsonData;
-	}
-	public void setJsonData(String jsonData) {
-		this.jsonData = jsonData;
 	}
 	public String getDescription() {
 		return description;

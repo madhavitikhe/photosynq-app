@@ -49,6 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String C_BETA = "beta";
 	public static final String C_PROJECT_ID = "project_id";
 	private static final String C_QUESTION_ID = "question_id";
+	private static final String C_PROTOCOL_IDS = "protocols_ids";
 	
 	// Question and Option Table - column names
 	private static final String C_QUESTION_TEXT = "question_text";//Question
@@ -56,8 +57,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	// Protocol column names
 
-	private static final String C_QUICK_DESCRIPTION = "quick_description";
-	public static final String C_PROTOCOL_NAME_IN_ARDUINO_CODE = "protocol_name_in_arduino_code";
+	public static final String C_PROTOCOL_JSON = "protocol_json";
 	private static final String C_MACRO_ID = "macro_id";
 	
 
@@ -65,10 +65,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String C_DEFAULT_X_AXIS = "default_x_axis";
 	private static final String C_DEFAULT_Y_AXIS = "default_y_axis";
 	private static final String C_JAVASCRIPT_CODE = "javascript_code";
-	private static final String C_JSON_DATA = "json_data";
 	
 	//Results column name
-	private static final String C_RECORD_TIME = "record_time";
+	//private static final String C_RECORD_TIME = "record_time";
 	public static final String C_READING= "reading";
 	private static final String C_UPLOADED = "uploaded";
 	
@@ -80,7 +79,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ TABLE_RESEARCH_PROJECT + "(" + C_RECORD_HASH
 			+ " TEXT PRIMARY KEY," + C_ID + " TEXT," + C_NAME + " TEXT,"
 			+ C_DESCRIPTION + " TEXT," + C_DIR_TO_COLLAB + " TEXT," + C_START_DATE
-			+ " TEXT," + C_END_DATE + " TEXT," + C_BETA + " TEXT,"
+			+ " TEXT," + C_END_DATE + " TEXT," + C_BETA + " TEXT,"+ C_PROTOCOL_IDS + " TEXT,"
 			+ C_IMAGE_URL + " TEXT" + ")";
 
 	// Question table create statement
@@ -96,14 +95,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	// Protocol table create statement
 	private static final String CREATE_TABLE_PROTOCOL = "CREATE TABLE "
 			+ TABLE_PROTOCOL + "(" + C_RECORD_HASH + " TEXT ,"+ C_ID + " TEXT ,"+ C_NAME + " TEXT ,"
-			+ C_QUICK_DESCRIPTION + " TEXT ,"+ C_PROTOCOL_NAME_IN_ARDUINO_CODE + " TEXT ," 
+			+ C_PROTOCOL_JSON + " TEXT ," 
 			+ C_DESCRIPTION + " TEXT ,"+ C_MACRO_ID + " TEXT ," + C_SLUG + " TEXT)";
 
 	// Macro table create statement
 	private static final String CREATE_TABLE_MACRO = "CREATE TABLE "
 			+ TABLE_MACRO + "(" + C_RECORD_HASH + " TEXT ,"+ C_ID + " TEXT ,"+ C_NAME + " TEXT ,"
 			+ C_DESCRIPTION + " TEXT ,"+ C_DEFAULT_X_AXIS + " TEXT ,"+ C_DEFAULT_Y_AXIS + " TEXT ,"
-			+ C_JAVASCRIPT_CODE + " TEXT ,"+ C_JSON_DATA + " TEXT ," + C_SLUG + " TEXT)";
+			+ C_JAVASCRIPT_CODE + " TEXT ," + C_SLUG + " TEXT)";
 
 	private static final String CREATE_TABLE_RESULTS = "CREATE TABLE "
 			+ TABLE_RESULTS + "(" + C_RECORD_HASH + " TEXT ,"+ C_PROJECT_ID + " TEXT ,"
@@ -259,6 +258,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			values.put(C_START_DATE,null != rp.getStartDate() ? rp.getStartDate() : "");
 			values.put(C_END_DATE, null != rp.getEndDate()? rp.getEndDate(): "");
 			values.put(C_BETA, null != rp.getBeta() ? rp.getBeta() : "");
+			values.put(C_PROTOCOL_IDS, null != rp.getProtocols_ids() ? rp.getProtocols_ids() : "");
 			values.put(C_IMAGE_URL,null != rp.getImageUrl() ? rp.getImageUrl(): "");
 			values.put(C_RECORD_HASH, rp.getRecordHash());
 			// insert row
@@ -305,6 +305,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	    rp.setEndDate(c.getString(c.getColumnIndex(C_END_DATE)));
 	    rp.setImageUrl(c.getString(c.getColumnIndex(C_IMAGE_URL)));
 	    rp.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
+	    rp.setProtocols_ids(c.getString(c.getColumnIndex(C_PROTOCOL_IDS)));
 	    rp.setBeta(c.getString(c.getColumnIndex(C_BETA)));
 
 	    c.close();
@@ -332,6 +333,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				    rp.setEndDate(c.getString(c.getColumnIndex(C_END_DATE)));
 				    rp.setImageUrl(c.getString(c.getColumnIndex(C_IMAGE_URL)));
 				    rp.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
+				    rp.setProtocols_ids(c.getString(c.getColumnIndex(C_PROTOCOL_IDS)));
 				    rp.setBeta(c.getString(c.getColumnIndex(C_BETA)));
 		 
 		            // adding to todo list
@@ -360,6 +362,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		values.put(C_END_DATE, null != rp.getEndDate()? rp.getEndDate(): "");
 		values.put(C_BETA, null != rp.getBeta() ? rp.getBeta() : "");
 		values.put(C_IMAGE_URL,null != rp.getImageUrl() ? rp.getImageUrl(): "");
+		values.put(C_PROTOCOL_IDS, null != rp.getProtocols_ids() ? rp.getProtocols_ids() : "");
 		values.put(C_RECORD_HASH, rp.getRecordHash());
 
 		
@@ -549,8 +552,7 @@ public boolean updateQuestion(Question question) {
 			values.put(C_RECORD_HASH,protocol.getRecordHash());
 			values.put(C_ID, null != protocol.getId()? protocol.getId(): "");
 			values.put(C_NAME, null != protocol.getName()? protocol.getName(): "");
-			values.put(C_QUICK_DESCRIPTION, null != protocol.getQuickDescription()? protocol.getQuickDescription(): "");
-			values.put(C_PROTOCOL_NAME_IN_ARDUINO_CODE, null != protocol.getProtocolNameInArduino_code()? protocol.getProtocolNameInArduino_code(): "");
+			values.put(C_PROTOCOL_JSON, null != protocol.getProtocol_json()? protocol.getProtocol_json(): "");
 			values.put(C_DESCRIPTION, null != protocol.getDescription()? protocol.getDescription(): "");
 			values.put(C_MACRO_ID, null != protocol.getMacroId()? protocol.getMacroId(): "");
 			values.put(C_SLUG,null != protocol.getSlug() ? protocol.getSlug(): "");
@@ -578,8 +580,7 @@ public boolean updateQuestion(Question question) {
 		values.put(C_RECORD_HASH,protocol.getRecordHash());
 		values.put(C_ID, null != protocol.getId()? protocol.getId(): "");
 		values.put(C_NAME, null != protocol.getName()? protocol.getName(): "");
-		values.put(C_QUICK_DESCRIPTION, null != protocol.getQuickDescription()? protocol.getQuickDescription(): "");
-		values.put(C_PROTOCOL_NAME_IN_ARDUINO_CODE, null != protocol.getProtocolNameInArduino_code()? protocol.getProtocolNameInArduino_code(): "");
+		values.put(C_PROTOCOL_JSON, null != protocol.getProtocol_json()? protocol.getProtocol_json(): "");
 		values.put(C_DESCRIPTION, null != protocol.getDescription()? protocol.getDescription(): "");
 		values.put(C_MACRO_ID, null != protocol.getMacroId()? protocol.getMacroId(): "");
 		values.put(C_SLUG,null != protocol.getSlug() ? protocol.getSlug(): "");
@@ -611,8 +612,7 @@ public boolean updateQuestion(Question question) {
 			    protocol.setId(c.getString(c.getColumnIndex(C_ID)));
 			    protocol.setDescription(c.getString(c.getColumnIndex(C_DESCRIPTION)));
 			    protocol.setName(c.getString(c.getColumnIndex(C_NAME)));
-			    protocol.setQuickDescription(c.getString(c.getColumnIndex(C_QUICK_DESCRIPTION)));
-			    protocol.setProtocolNameInArduino_code(c.getString(c.getColumnIndex(C_PROTOCOL_NAME_IN_ARDUINO_CODE)));
+			    protocol.setProtocol_json(c.getString(c.getColumnIndex(C_PROTOCOL_JSON)));
 			    protocol.setSlug(c.getString(c.getColumnIndex(C_SLUG)));
 			    protocol.setMacroId(c.getString(c.getColumnIndex(C_MACRO_ID)));
 			    
@@ -625,6 +625,28 @@ public boolean updateQuestion(Question question) {
 
 	}
 	
+	public Protocol getProtocol(String protocolId) {
+	    SQLiteDatabase db = this.getReadableDatabase();
+	    Protocol protocol = new Protocol();
+	    String selectQuery = "SELECT  * FROM " + TABLE_PROTOCOL + " WHERE " + C_ID+ " = " + protocolId;;
+	    System.out.println(selectQuery);
+	    Log.e("DATABASE_HELPER_getProtocol", selectQuery);
+	 
+	    Cursor c = db.rawQuery(selectQuery, null);
+	 
+	    if (c.moveToFirst()) {
+	        
+			    protocol.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
+			    protocol.setId(c.getString(c.getColumnIndex(C_ID)));
+			    protocol.setDescription(c.getString(c.getColumnIndex(C_DESCRIPTION)));
+			    protocol.setName(c.getString(c.getColumnIndex(C_NAME)));
+			    protocol.setProtocol_json(c.getString(c.getColumnIndex(C_PROTOCOL_JSON)));
+			    protocol.setSlug(c.getString(c.getColumnIndex(C_SLUG)));
+			    protocol.setMacroId(c.getString(c.getColumnIndex(C_MACRO_ID)));
+	    }
+	    c.close();
+	    return protocol;
+	}
 	
 	//Insert Macro in database 
 	public boolean createMacro(Macro macro) {
@@ -641,7 +663,6 @@ public boolean updateQuestion(Question question) {
 			values.put(C_DEFAULT_X_AXIS,null != macro.getDefaultXAxis() ? macro.getDefaultXAxis(): "");
 			values.put(C_DEFAULT_Y_AXIS,null != macro.getDefaultYAxis() ? macro.getDefaultYAxis(): "");
 			values.put(C_JAVASCRIPT_CODE,null != macro.getJavascriptCode()? macro.getJavascriptCode(): "");
-			values.put(C_JSON_DATA,null != macro.getJsonData() ? macro.getJsonData(): "");
 			// insert row
 			long row_id = db.insert(TABLE_MACRO, null, values);
 			if (row_id >= 0) {
@@ -671,7 +692,6 @@ public boolean updateQuestion(Question question) {
 		values.put(C_DEFAULT_X_AXIS,null != macro.getDefaultXAxis() ? macro.getDefaultXAxis(): "");
 		values.put(C_DEFAULT_Y_AXIS,null != macro.getDefaultYAxis() ? macro.getDefaultYAxis(): "");
 		values.put(C_JAVASCRIPT_CODE,null != macro.getJavascriptCode()? macro.getJavascriptCode(): "");
-		values.put(C_JSON_DATA,null != macro.getJsonData() ? macro.getJsonData(): "");
 
 		
 		int rowsaffected = db.update(TABLE_MACRO, values, C_ID + " = ?",
@@ -706,10 +726,38 @@ public boolean updateQuestion(Question question) {
 	    macro.setDefaultXAxis(c.getString(c.getColumnIndex(C_DEFAULT_X_AXIS)));
 	    macro.setDefaultYAxis(c.getString(c.getColumnIndex(C_DEFAULT_Y_AXIS)));
 	    macro.setJavascriptCode(c.getString(c.getColumnIndex(C_JAVASCRIPT_CODE)));
-	    macro.setJsonData(c.getString(c.getColumnIndex(C_JSON_DATA)));
 	    return macro;
 	}
-	
+
+	public List<Macro> getAllMacros() {
+	    SQLiteDatabase db = this.getReadableDatabase();
+	    List<Macro> macros = new ArrayList<Macro>();
+	    String selectQuery = "SELECT  * FROM " + TABLE_MACRO;
+	    System.out.println(selectQuery);
+	    Log.e("DATABASE_HELPER_getAllMacros", selectQuery);
+	 
+	    Cursor c = db.rawQuery(selectQuery, null);
+	 
+	    if (c.moveToFirst()) {
+	        do {
+	        	Macro macro = new Macro();
+	    	    macro.setId(c.getString(c.getColumnIndex(C_ID)));
+	    	    macro.setName(c.getString(c.getColumnIndex(C_NAME)));
+	    	    macro.setDescription(c.getString(c.getColumnIndex(C_DESCRIPTION)));
+	    	    macro.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
+	    	    macro.setSlug(c.getString(c.getColumnIndex(C_SLUG)));
+	    	    macro.setDefaultXAxis(c.getString(c.getColumnIndex(C_DEFAULT_X_AXIS)));
+	    	    macro.setDefaultYAxis(c.getString(c.getColumnIndex(C_DEFAULT_Y_AXIS)));
+	    	    macro.setJavascriptCode(c.getString(c.getColumnIndex(C_JAVASCRIPT_CODE)));
+			    
+			    // adding to todo list
+			    macros.add(macro);
+	        } while (c.moveToNext());
+	    }
+	    c.close();
+	    return macros;
+	}
+
 	// closing database
     public void closeDB() {
         SQLiteDatabase db = this.getReadableDatabase();
