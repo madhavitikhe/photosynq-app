@@ -2,7 +2,12 @@ package com.photosynq.app;
 
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.CommonUtils;
 import com.squareup.picasso.Picasso;
@@ -70,7 +76,32 @@ public class ProjectDescriptionActivity extends ActionBarActivity {
 			}else{tvBeta.setText(getResources().getString(R.string.no_data_found));}
 			ImageView imageview = (ImageView) findViewById(R.id.projectImage); 
 			Picasso.with(getApplicationContext()).load(rp.getImageUrl()).into(imageview);
+			try {
+				StringBuffer dataString = new StringBuffer();
+				
+				String[] projectProtocols = rp.getProtocols_ids().split(",");
+				
+				JSONArray protocolJsonArray = new JSONArray();
+				for (String protocolId : projectProtocols) {
+					Protocol protocol = db.getProtocol(protocolId);
+					JSONObject protocolObject = new JSONObject();
+					protocolObject.put("protocolid", protocol.getId());
+					protocolObject.put("macroid", protocol.getMacroId());
+					protocolJsonArray.put(protocolObject);
+				}
+				
+				dataString.append("var protocols=" + protocolJsonArray.toString());
+				CommonUtils.writeStringToFile(getApplicationContext(), "macros_variable.js",dataString.toString());
+
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		
+		
+		// Writing macros_variable.js file with protocol and macro relations
+		
 		System.out.println("DBCLosing");
 		db.closeDB();
 	}

@@ -44,7 +44,7 @@ jQuery(document).ready(function(){
 			
 			
 			// find function
-			var fn = window[data['sample'][measurementID][protocolID].protocol_name];
+			var fn = window['macro_'+protocols[protocolID].macroid];
 			
 			// Run function if exists
 			if (typeof fn === "function"){
@@ -75,7 +75,7 @@ jQuery(document).ready(function(){
 					
 				if(summary[values] == undefined)
 					summary[values] = [];
-				summary[values].push(macro[values]);			
+				summary[values].push(macro[values]);
 			
 			}
 

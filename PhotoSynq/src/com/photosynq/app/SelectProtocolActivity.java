@@ -2,6 +2,10 @@ package com.photosynq.app;
 
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -16,6 +20,7 @@ import android.widget.ListView;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.utils.BluetoothService;
+import com.photosynq.app.utils.CommonUtils;
 
 public class SelectProtocolActivity extends ActionBarActivity {
 
@@ -53,6 +58,20 @@ public class SelectProtocolActivity extends ActionBarActivity {
 				Intent intent = new Intent(getApplicationContext(),ResultActivity.class);
 				intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocol.getProtocol_json());
 				intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress );
+				try {
+					StringBuffer dataString = new StringBuffer();
+					JSONArray protocolJsonArray = new JSONArray();
+					JSONObject protocolObject = new JSONObject();
+					protocolObject.put("protocolid", protocol.getId());
+					protocolObject.put("macroid", protocol.getMacroId());
+					protocolJsonArray.put(protocolObject);
+					dataString.append("var protocols=" + protocolJsonArray.toString());
+					CommonUtils.writeStringToFile(getApplicationContext(), "macros_variable.js",dataString.toString());
+
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				startActivity(intent);
 		    }
 		});

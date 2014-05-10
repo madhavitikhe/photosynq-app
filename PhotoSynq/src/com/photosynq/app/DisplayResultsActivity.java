@@ -2,11 +2,14 @@ package com.photosynq.app;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+
 import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.IntentCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -16,6 +19,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.Toast;
+
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ProjectResult;
@@ -32,7 +36,7 @@ public class DisplayResultsActivity extends ActionBarActivity {
 	private String protocolJson="";
 	Button keep;
 	Button discard;
-	@SuppressLint("SetJavaScriptEnabled")
+	@SuppressLint({ "SetJavaScriptEnabled", "NewApi" })
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -53,13 +57,38 @@ public class DisplayResultsActivity extends ActionBarActivity {
 			keep.setVisibility(View.INVISIBLE);
 			discard.setVisibility(View.INVISIBLE);
 		}
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+		    WebView.setWebContentsDebuggingEnabled(true);
+		}
+		reloadWebview();
+	}
+
+	@Override
+	protected void onResume() {
+		reloadWebview();
+		super.onResume();
+	}
+	@Override
+	protected void onRestart() {
+		reloadWebview();
+		super.onRestart();
+	}
+	@Override
+	protected void onStart() {
+		reloadWebview();
+		super.onStart();
+	}
+	
+	private void  reloadWebview()
+	{
 		webview = (WebView) findViewById(R.id.webView1);
+		webview.clearCache(true); // Clear cache. This Mandates to load webview fresh. This is required because we are dynamically writing javascript files.
 		String url = "file:///" + this.getExternalFilesDir(null)+ File.separator+"cellphone.html";
 		webview.loadUrl(url);
 		//webview.loadUrl("file:///android_asset/cellphone.html");
 		webview.getSettings().setJavaScriptEnabled(true);
-	}
 
+	}
 	public void keep_click(View view) throws UnsupportedEncodingException, JSONException {
 		
 		if (CommonUtils.isConnected(getApplicationContext()))

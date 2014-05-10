@@ -49,26 +49,26 @@ public class UpdateProtocol implements PhotosynqResponse {
 			}
 		}
 
-		// Writing macros_variable.js file with protocol and macro relations
-		try {
-			StringBuffer dataString = new StringBuffer(); 
-			db = new DatabaseHelper(context);
-			List<Protocol> protocols = db.getAllProtocolsList();
-			JSONArray protocolJsonArray = new JSONArray();
-			for (Protocol protocol : protocols) {
-				JSONObject protocolObject = new JSONObject();
-				protocolObject.put("protocolid", protocol.getId());
-				protocolObject.put("macroid", protocol.getMacroId());
-				protocolJsonArray.put(protocolObject);
-			}
-			db.closeDB();
-			dataString.append("var protocols="+protocolJsonArray.toString());
-			CommonUtils.writeStringToFile(context, "macros_variable.js",dataString.toString());
-			
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		// Writing macros_variable.js file with protocol and macro relations
+//		try {
+//			StringBuffer dataString = new StringBuffer(); 
+//			db = new DatabaseHelper(context);
+//			List<Protocol> protocols = db.getAllProtocolsList();
+//			JSONArray protocolJsonArray = new JSONArray();
+//			for (Protocol protocol : protocols) {
+//				JSONObject protocolObject = new JSONObject();
+//				protocolObject.put("protocolid", protocol.getId());
+//				protocolObject.put("macroid", protocol.getMacroId());
+//				protocolJsonArray.put(protocolObject);
+//			}
+//			db.closeDB();
+//			dataString.append("var protocols="+protocolJsonArray.toString());
+//			CommonUtils.writeStringToFile(context, "macros_variable.js",dataString.toString());
+//			
+//		} catch (JSONException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		
 		

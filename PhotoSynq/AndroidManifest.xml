@@ -58,7 +58,8 @@
         </activity>
         <activity
             android:name="com.photosynq.app.DisplayResultsActivity"
-            android:label="@string/title_activity_display_results" >
+            android:label="@string/title_activity_display_results"
+            android:noHistory="true" >
         </activity>
         <activity
             android:name="com.photosynq.app.ResultActivity"
