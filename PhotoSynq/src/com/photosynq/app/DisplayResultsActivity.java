@@ -137,6 +137,7 @@ public class DisplayResultsActivity extends ActionBarActivity {
 		discard.setVisibility(View.INVISIBLE);
 		view.setVisibility(View.INVISIBLE); 
 		}
+		finish();
 	}
 	
 	public void discard_click(View view) {
@@ -144,6 +145,7 @@ public class DisplayResultsActivity extends ActionBarActivity {
 				Toast.LENGTH_SHORT).show();
 		view.setVisibility(View.INVISIBLE); 
 		keep.setVisibility(View.INVISIBLE);
+		finish();
 //		Intent intent = new Intent(this, ProjectListActivity.class);
 //		startActivity(intent);
 	}
