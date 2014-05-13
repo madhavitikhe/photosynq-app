@@ -20,6 +20,7 @@ import com.photosynq.app.utils.CommonUtils;
 public class DirectionsActivity extends ActionBarActivity {
 
 	private String projectId = ""; 
+	private boolean quick_measure;
 	DatabaseHelper db;
 	
 	@Override
@@ -30,6 +31,8 @@ public class DirectionsActivity extends ActionBarActivity {
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
+			quick_measure = extras.getBoolean(MainActivity.QUICK_MEASURE);
+			System.out.println(this.getClass().getName()+"############quickmeasure="+quick_measure);
 			ResearchProject rp = db.getResearchProject(projectId);
 			SimpleDateFormat outputDate = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
 			
@@ -93,6 +96,7 @@ public class DirectionsActivity extends ActionBarActivity {
 	public void onDirNextClicked(View view)
 	{
 		Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);
+		intent.putExtra(MainActivity.QUICK_MEASURE, quick_measure);
 		intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
 		startActivity(intent);
 	}

@@ -44,6 +44,7 @@ public class BluetoothActivity extends ActionBarActivity {
 		if (extras != null) {
 			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
 			quick_measure = extras.getBoolean(MainActivity.QUICK_MEASURE);
+			System.out.println(this.getClass().getName()+"############quickmeasure="+quick_measure);
 		}
 	    IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 	    filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
@@ -75,12 +76,14 @@ public class BluetoothActivity extends ActionBarActivity {
 					{
 						Intent intent = new Intent(getApplicationContext(),NewMeasurmentActivity.class);
 						intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+						intent.putExtra(MainActivity.QUICK_MEASURE, false);
 						intent.putExtra(BluetoothService.DEVICE_ADDRESS, btDevice.getAddress());
 						startActivity(intent);
 					}else
 					{
 						Intent intent = new Intent(getApplicationContext(),SelectProtocolActivity.class);
 						intent.putExtra(BluetoothService.DEVICE_ADDRESS, btDevice.getAddress());
+						intent.putExtra(MainActivity.QUICK_MEASURE, true);
 						startActivity(intent);
 					}
 

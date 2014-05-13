@@ -9,6 +9,7 @@ public class PrefUtils {
     public static final String PREFS_LOGIN_PASSWORD_KEY = "PASSWORD" ;
     public static final String PREFS_AUTH_TOKEN_KEY = "AUTHTOKEN" ;
     public static final String PREFS_DEFAULT_VAL = "DEFAULT" ;
+    public static final String PREFS_CURRENT_LOCATION = "CURRENT_LOCATION" ;
 
     /**
      * Called to save supplied value in shared preferences against given key.

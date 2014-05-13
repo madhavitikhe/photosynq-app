@@ -21,6 +21,7 @@ public class NewMeasurmentActivity extends ActionBarActivity {
 	private DatabaseHelper db;
 	private String projectId;
 	private String deviceAddress;
+	private boolean quick_measure;
 	public String option1="";
 	public String option3="";
 	public String option2="";
@@ -37,6 +38,8 @@ public class NewMeasurmentActivity extends ActionBarActivity {
 		if (extras != null) {
 			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
 			deviceAddress = extras.getString(BluetoothService.DEVICE_ADDRESS);
+			quick_measure = extras.getBoolean(MainActivity.QUICK_MEASURE);
+			System.out.println(this.getClass().getName()+"############quickmeasure="+quick_measure);
 		}
 			db = new DatabaseHelper(getApplicationContext());
 			List<Question> questions = db.getAllQuestionForProject(projectId);
@@ -77,6 +80,7 @@ public class NewMeasurmentActivity extends ActionBarActivity {
 		
 		String options = new String ("\"user_questions\": [\""+question1+"\","+"\""+question2+"\","+"\""+question3+"\" ],\"user_answers\": [\""+option1+"\","+"\""+option2+"\","+"\""+option3+"\" ],");
 		Intent intent = new Intent(getApplicationContext(),ResultActivity.class);
+		intent.putExtra(MainActivity.QUICK_MEASURE, quick_measure);
 		intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
 		intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress);
 		intent.putExtra(DatabaseHelper.C_OPTION_TEXT, options);

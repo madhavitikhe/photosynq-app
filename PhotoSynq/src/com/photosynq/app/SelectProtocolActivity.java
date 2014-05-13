@@ -27,7 +27,8 @@ public class SelectProtocolActivity extends ActionBarActivity {
 
 	ListView protocolList;
 	DatabaseHelper db;
-	private String deviceAddress; 
+	private String deviceAddress;
+	private boolean quick_measure;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -36,6 +37,7 @@ public class SelectProtocolActivity extends ActionBarActivity {
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			deviceAddress = extras.getString(BluetoothService.DEVICE_ADDRESS);
+			quick_measure = extras.getBoolean(MainActivity.QUICK_MEASURE);
 		}
 		
 		
@@ -56,6 +58,7 @@ public class SelectProtocolActivity extends ActionBarActivity {
 		    	Protocol protocol = (Protocol) protocolList.getItemAtPosition(position);
 				Log.d("GEtting protocol id : ", protocol.getId());
 				Intent intent = new Intent(getApplicationContext(),ResultActivity.class);
+				intent.putExtra(MainActivity.QUICK_MEASURE, true);
 				intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocol.getProtocol_json());
 				intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress );
 				try {

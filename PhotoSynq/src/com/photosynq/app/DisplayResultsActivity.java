@@ -34,6 +34,7 @@ public class DisplayResultsActivity extends ActionBarActivity {
 	private DatabaseHelper db;
 	private HTTPConnection mDataTask = null;
 	private String protocolJson="";
+	private boolean quick_measure;
 	Button keep;
 	Button discard;
 	@SuppressLint({ "SetJavaScriptEnabled", "NewApi" })
@@ -48,11 +49,13 @@ public class DisplayResultsActivity extends ActionBarActivity {
 			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
 			reading = extras.getString(DatabaseHelper.C_READING);
 			protocolJson = extras.getString(DatabaseHelper.C_PROTOCOL_JSON);
+			quick_measure = extras.getBoolean(MainActivity.QUICK_MEASURE);
+			System.out.println(this.getClass().getName()+"############quickmeasure="+quick_measure);
 		}	
 		 keep = (Button)findViewById(R.id.keep_btn);
 		 discard = (Button)findViewById(R.id.discard_btn);
 		
-		if(protocolJson.length()>0)
+		if(quick_measure)
 		{
 			keep.setVisibility(View.INVISIBLE);
 			discard.setVisibility(View.INVISIBLE);
@@ -96,7 +99,7 @@ public class DisplayResultsActivity extends ActionBarActivity {
 			String authToken = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 			String email = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 			StringEntity input = null;
-			System.out.println(reading);
+			//System.out.println(reading);
 			
 			JSONObject request_data = new JSONObject();
 			JSONObject jo = new JSONObject(reading);

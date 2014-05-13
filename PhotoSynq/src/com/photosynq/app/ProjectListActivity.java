@@ -44,6 +44,7 @@ public class ProjectListActivity extends ActionBarActivity  {
 		    	ResearchProject rp = (ResearchProject) projectList.getItemAtPosition(position);
 				Log.d("GEtting record id : ", rp.getId());
 				Intent intent = new Intent(getApplicationContext(),ProjectDescriptionActivity.class);
+				intent.putExtra(MainActivity.QUICK_MEASURE, false);
 				intent.putExtra(DatabaseHelper.C_ID, rp.getId());
 				startActivity(intent);
 		    }

@@ -22,6 +22,8 @@ import com.photosynq.app.utils.PrefUtils;
 
 public class MainActivity extends ActionBarActivity {
 
+	protected String latitude,longitude; 
+	protected boolean gps_enabled,network_enabled;
 	// Database Helper
     public static final String QUICK_MEASURE ="quick";
     HTTPConnection mProjListTask = null;
@@ -110,6 +112,7 @@ public class MainActivity extends ActionBarActivity {
 	public void listResearchProjects(View view)
 	{
 		Intent intent = new Intent(getApplicationContext(),ProjectListActivity.class);
+		intent.putExtra(QUICK_MEASURE, false);
 		startActivity(intent);
 	}
 	public void recentResearchCollab(View view)

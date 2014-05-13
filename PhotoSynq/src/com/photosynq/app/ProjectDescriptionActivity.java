@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Protocol;
@@ -29,6 +30,7 @@ import com.squareup.picasso.Picasso;
 public class ProjectDescriptionActivity extends ActionBarActivity {
 
 	private String recordid = ""; 
+	private boolean quick_measure;
 	DatabaseHelper db;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +41,10 @@ public class ProjectDescriptionActivity extends ActionBarActivity {
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			recordid = extras.getString(DatabaseHelper.C_ID);
+			quick_measure = extras.getBoolean(MainActivity.QUICK_MEASURE);
+			System.out.println(this.getClass().getName()+"############quickmeasure="+quick_measure);
 			ResearchProject rp = db.getResearchProject(recordid);
+			
 			
 			SimpleDateFormat outputDate = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
 			
@@ -80,18 +85,25 @@ public class ProjectDescriptionActivity extends ActionBarActivity {
 				StringBuffer dataString = new StringBuffer();
 				
 				String[] projectProtocols = rp.getProtocols_ids().split(",");
-				
-				JSONArray protocolJsonArray = new JSONArray();
-				for (String protocolId : projectProtocols) {
-					Protocol protocol = db.getProtocol(protocolId);
-					JSONObject protocolObject = new JSONObject();
-					protocolObject.put("protocolid", protocol.getId());
-					protocolObject.put("macroid", protocol.getMacroId());
-					protocolJsonArray.put(protocolObject);
+				if(rp.getProtocols_ids().length() >=1)
+				{
+					JSONArray protocolJsonArray = new JSONArray();
+					for (String protocolId : projectProtocols) {
+						Protocol protocol = db.getProtocol(protocolId);
+						JSONObject protocolObject = new JSONObject();
+						protocolObject.put("protocolid", protocol.getId());
+						protocolObject.put("macroid", protocol.getMacroId());
+						protocolJsonArray.put(protocolObject);
+					}
+					
+					dataString.append("var protocols=" + protocolJsonArray.toString());
+					CommonUtils.writeStringToFile(getApplicationContext(), "macros_variable.js",dataString.toString());
 				}
-				
-				dataString.append("var protocols=" + protocolJsonArray.toString());
-				CommonUtils.writeStringToFile(getApplicationContext(), "macros_variable.js",dataString.toString());
+				else
+				{
+					Toast.makeText(getApplicationContext(), "No protocols assigned to this project, cannot continue.", Toast.LENGTH_SHORT).show();
+					finish();
+				}
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -129,6 +141,7 @@ public class ProjectDescriptionActivity extends ActionBarActivity {
 	public void onParticipateClicked(View view)
 	{
 		Intent intent = new Intent(getApplicationContext(),DirectionsActivity.class);
+		intent.putExtra(MainActivity.QUICK_MEASURE, quick_measure);
 		intent.putExtra(DatabaseHelper.C_PROJECT_ID, recordid);
 		startActivity(intent);
 	}
