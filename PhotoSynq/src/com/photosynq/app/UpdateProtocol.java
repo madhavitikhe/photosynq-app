@@ -1,9 +1,6 @@
 package com.photosynq.app;
 
-import java.util.List;
-
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -11,7 +8,6 @@ import android.content.Context;
 import com.photosynq.app.HTTP.PhotosynqResponse;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Protocol;
-import com.photosynq.app.utils.CommonUtils;
 
 public class UpdateProtocol implements PhotosynqResponse {
 	DatabaseHelper db;
@@ -32,9 +28,11 @@ public class UpdateProtocol implements PhotosynqResponse {
 				for (int i = 0; i < jArray.length(); i++) {
 
 					JSONObject obj = jArray.getJSONObject(i);
-					Protocol protocol = new Protocol(obj.getString("id"),
+					String id = obj.getString("id");
+					String protocoljson = obj.getString("protocol_json").replaceFirst("\\{", "{\"protocol_id\"="+id+",");
+					Protocol protocol = new Protocol(id,
 							obj.getString("name"),
-							obj.getString("protocol_json"),
+							protocoljson,
 							obj.getString("description"),
 							obj.getString("macro_id"), obj.getString("slug"));
 					db = new DatabaseHelper(context);
