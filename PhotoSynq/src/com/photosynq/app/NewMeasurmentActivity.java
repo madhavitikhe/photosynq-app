@@ -78,7 +78,7 @@ public class NewMeasurmentActivity extends ActionBarActivity {
 	{
 		
 		
-		String options = new String ("\"user_questions\": [\""+question1+"\","+"\""+question2+"\","+"\""+question3+"\" ],\"user_answers\": [\""+option1+"\","+"\""+option2+"\","+"\""+option3+"\" ],");
+		String options = new String ("\"user_answers\": [\""+option1+"\","+"\""+option2+"\","+"\""+option3+"\" ],");
 		Intent intent = new Intent(getApplicationContext(),ResultActivity.class);
 		intent.putExtra(MainActivity.QUICK_MEASURE, quick_measure);
 		intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);

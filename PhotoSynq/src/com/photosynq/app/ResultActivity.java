@@ -534,7 +534,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
                 	String currentLocation = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, "NONE");
                 	if(!currentLocation.equals("NONE"))
                 	{
-                		options = "\"location\":["+currentLocation+"],";
+                		options = options+"\"location\":["+currentLocation+"],";
                 		dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
                 	}
                 	else
