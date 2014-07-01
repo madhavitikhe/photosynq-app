@@ -42,7 +42,7 @@ public class ProjectListActivity extends ActionBarActivity  {
 		    @Override
 		    public void onItemClick(AdapterView<?> adapter, View view, int position, long id){
 		    	ResearchProject rp = (ResearchProject) projectList.getItemAtPosition(position);
-				Log.d("GEtting record id : ", rp.getId());
+				Log.d("Getting record id : ", rp.getId());
 				Intent intent = new Intent(getApplicationContext(),ProjectDescriptionActivity.class);
 				intent.putExtra(MainActivity.QUICK_MEASURE, false);
 				intent.putExtra(DatabaseHelper.C_ID, rp.getId());

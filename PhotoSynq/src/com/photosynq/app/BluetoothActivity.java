@@ -54,8 +54,18 @@ public class BluetoothActivity extends ActionBarActivity {
 	    // Getting the Bluetooth adapter
 	    bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 	    System.out.println("\nAdapter: " + bluetoothAdapter);
+
+	    //enable bluetooth and show list of paired devices
+		if (!bluetoothAdapter.isEnabled()) {
+			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+			startActivityForResult(enableBtIntent, 1);
+		}
+			Set<BluetoothDevice> btDevices =  bluetoothAdapter.getBondedDevices();
+		for (BluetoothDevice device : btDevices) {
+			btDeviceList.add(device);
+		}
 	    
-	    CheckBTState();
+	    //CheckBTState();
 
 		lst = (ListView) findViewById(R.id.bluetooth_list_view);
 		bluetoothStatus = findViewById(R.id.bluetooth_status);
@@ -95,6 +105,7 @@ public class BluetoothActivity extends ActionBarActivity {
 		});
 	}
 
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -121,7 +132,16 @@ public class BluetoothActivity extends ActionBarActivity {
 //		if (id == R.id.action_settings) {
 //			return true;
 //		}
-		return super.onOptionsItemSelected(item);
+		//Button for searching unpaired devices.
+		 switch(item.getItemId())
+	     {
+	     case R.id.Search :
+	    	 btDeviceList.clear();
+	    	 CheckBTState();
+	    	 return true;
+	    	 default :
+	    		 return super.onOptionsItemSelected(item);
+	     }
 	}
 	
 	/**
@@ -234,7 +254,8 @@ public class BluetoothActivity extends ActionBarActivity {
 	         if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
 	        	 bluetoothStatusMsg.setText(R.string.searching_devices);
 	        	 showProgress(true);
-	         } else {
+	         }
+	         else {
 	           if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
 	        	   showProgress(false);
 					Set<BluetoothDevice> btDevices =  bluetoothAdapter.getBondedDevices();
