@@ -47,4 +47,7 @@
     </string>
     <string name="play_services_available">Google Play services is available</string>
     
+    <string name="refresh">Refresh</string>
+     <string name="Pro_list_status">Loading....&#8230;</string>
+    
 </resources>

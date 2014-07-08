@@ -64,6 +64,7 @@ public class HTTPConnection extends AsyncTask<String, String, String>{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		}
 		super.onPreExecute();	
 	}
