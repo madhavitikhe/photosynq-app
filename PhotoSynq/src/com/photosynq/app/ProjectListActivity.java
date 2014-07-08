@@ -81,24 +81,8 @@ public class ProjectListActivity extends ActionBarActivity  {
 		    }
 		});
 		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#AA0000")));//it change option bar color.
-		//checkDataOnList();
 	}
 
-	public void checkDataOnList()
-	{
-		if(researchProjectList.isEmpty())
-		{
-			showProgress(true);
-			downloadData();
-		}
-		else
-		{
-			Toast.makeText(getApplicationContext(), "List is Up to Date", 5).show();
-			//showProgress(false);
-			//downloadData();
-			//projectList.setVisibility(View.VISIBLE);
-		}
-	}
 	@SuppressLint("NewApi")
 	private void showProgress(final boolean show) {
 		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
@@ -182,6 +166,7 @@ public class ProjectListActivity extends ActionBarActivity  {
 		System.out.println("DBCLosing");
 		db.closeDB();
 		projectList.setVisibility(View.VISIBLE);
+		showProgress(false);
 	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -203,26 +188,7 @@ public class ProjectListActivity extends ActionBarActivity  {
 		/**
 		 * After Clicking Refresh Option Menu Button, Research Project List Get Refresh, And You Will Get Updated list. 
 		 */
-		switch (item.getItemId()) {
-		  case R.id.refresh:
-			  if(researchProjectList.isEmpty())
-				{
-		           Toast.makeText(getApplicationContext(), "Loading.......", 5).show();
-		           //downloadData();
-			       showProgress(false);
-			       projectList.setVisibility(View.VISIBLE);
-				}
-			  else
-			  {
-				  Toast.makeText(getApplicationContext(), "Refreshing......", 5).show();
-				  projectList.setVisibility(View.GONE);
-				  showProgress(true);
-				//  downloadData();
-			  }
-		          
-        	return true;
-		default:
+		
 			return super.onOptionsItemSelected(item);
   }
-}
 }
