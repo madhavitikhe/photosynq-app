@@ -476,7 +476,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	                			System.out.println("######## protocol :"+protocol.getProtocol_json());
 	                			if(protocol.getProtocol_json().trim().length() > 1)
 	                			{
-	                				protocolJson +=  protocol.getProtocol_json().trim().substring(1, protocol.getProtocol_json().trim().length()-1)+",";
+	                				protocolJson +=  "{"+protocol.getProtocol_json().trim().substring(1, protocol.getProtocol_json().trim().length()-1)+"},";
 	                			}
 							}
 	                		protocolJson = "["+protocolJson.substring(0, protocolJson.length()-1) +"]"; // remove last comma and add suqare brackets and start and end.
@@ -542,6 +542,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
                 		dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
                 	}
                 }
+                System.out.println("###### writing data.js :"+dataString);
                 CommonUtils.writeStringToFile(getApplicationContext(), "data.js", dataString);
                 mBluetoothService.stop();
                 Intent intent = new Intent(getApplicationContext(),DisplayResultsActivity.class);

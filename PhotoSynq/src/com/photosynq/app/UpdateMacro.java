@@ -66,6 +66,7 @@ public class UpdateMacro implements PhotosynqResponse {
 			dataString.append(System.getProperty("line.separator"));
 		}
 		db.closeDB();
+		System.out.println("###### writing macros :"+dataString);
 		CommonUtils.writeStringToFile(context, "macros.js",dataString.toString());
 	}
 }

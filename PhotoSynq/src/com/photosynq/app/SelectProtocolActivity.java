@@ -69,6 +69,7 @@ public class SelectProtocolActivity extends ActionBarActivity {
 					protocolObject.put("macroid", protocol.getMacroId());
 					protocolJsonArray.put(protocolObject);
 					dataString.append("var protocols=" + protocolJsonArray.toString());
+					System.out.println("###### writing macros_variable.js :"+dataString);
 					CommonUtils.writeStringToFile(getApplicationContext(), "macros_variable.js",dataString.toString());
 
 				} catch (JSONException e) {
