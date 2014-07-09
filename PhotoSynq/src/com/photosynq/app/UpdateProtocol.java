@@ -29,10 +29,9 @@ public class UpdateProtocol implements PhotosynqResponse {
 
 					JSONObject obj = jArray.getJSONObject(i);
 					String id = obj.getString("id");
-					String protocoljson = obj.getString("protocol_json2").replaceFirst("\\{", "{\"protocol_id\"="+id+",");
 					Protocol protocol = new Protocol(id,
 							obj.getString("name"),
-							protocoljson,
+							obj.getString("protocol_json2"),
 							obj.getString("description"),
 							obj.getString("macro_id"), "slug");
 					db = new DatabaseHelper(context);

@@ -38,7 +38,7 @@ public class UpdateMacro implements PhotosynqResponse {
 							obj.getString("default_x_axis"),
 							obj.getString("default_y_axis"),
 							obj.getString("javascript_code"),
-							obj.getString("slug"));
+							"slug");
 
 					db = new DatabaseHelper(context);
 
