@@ -13,8 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-
-import com.photosynq.app.ResultActivity;
+import static com.photosynq.app.NewMeasurmentActivity.*;
 
 
 public class BluetoothService {
@@ -62,7 +61,7 @@ public class BluetoothService {
         mState = state;
 
         // Give the new state to the Handler so the UI Activity can update
-        mHandler.obtainMessage(ResultActivity.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
+        mHandler.obtainMessage(MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
     }
 
     /**
@@ -127,9 +126,9 @@ public class BluetoothService {
         mConnectedThread.start();
 
         // Send the name of the connected device back to the UI Activity
-        Message msg = mHandler.obtainMessage(ResultActivity.MESSAGE_DEVICE_NAME);
+        Message msg = mHandler.obtainMessage(MESSAGE_DEVICE_NAME);
         Bundle bundle = new Bundle();
-        bundle.putString(ResultActivity.DEVICE_NAME, device.getName());
+        bundle.putString(DEVICE_NAME, device.getName());
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 
@@ -170,9 +169,9 @@ public class BluetoothService {
         setState(STATE_LISTEN);
 
         // Send a failure message back to the Activity
-        Message msg = mHandler.obtainMessage(ResultActivity.MESSAGE_TOAST);
+        Message msg = mHandler.obtainMessage(MESSAGE_TOAST);
         Bundle bundle = new Bundle();
-        bundle.putString(ResultActivity.TOAST, "Unable to connect device");
+        bundle.putString(TOAST, "Unable to connect device");
         msg.setData(bundle);
         mHandler.sendMessage(msg);
     }
@@ -184,9 +183,9 @@ public class BluetoothService {
         setState(STATE_LISTEN);
 
         // Send a failure message back to the Activity
-        Message msg = mHandler.obtainMessage(ResultActivity.MESSAGE_TOAST);
+        Message msg = mHandler.obtainMessage(MESSAGE_TOAST);
         Bundle bundle = new Bundle();
-        bundle.putString(ResultActivity.TOAST, "Device connection was lost");
+        bundle.putString(TOAST, "Device connection was lost");
         msg.setData(bundle);
         mHandler.sendMessage(msg);
     }
@@ -304,7 +303,7 @@ public class BluetoothService {
 					measurement.append(readMessage);
 					totalbytes += bytes;
 					if (readMessage.replaceAll("\\r\\n", "######").contains("############")) {
-						mHandler.obtainMessage(ResultActivity.MESSAGE_READ, totalbytes,-1, measurement).sendToTarget();
+						mHandler.obtainMessage(MESSAGE_READ, totalbytes,-1, measurement).sendToTarget();
 //						Message msg = mHandler.obtainMessage(ResultActivity.MESSAGE_STOP);
 //				        Bundle bundle = new Bundle();
 //				        bundle.putString(ResultActivity.TOAST, "Measurement Complete");
@@ -329,7 +328,7 @@ public class BluetoothService {
                 mmOutStream.write(buffer);
 
 //                // Share the sent message back to the UI Activity
-                mHandler.obtainMessage(ResultActivity.MESSAGE_WRITE, -1, -1, buffer)
+                mHandler.obtainMessage(MESSAGE_WRITE, -1, -1, buffer)
                         .sendToTarget();
             } catch (IOException e) {
                 Log.e(TAG, "Exception during write", e);

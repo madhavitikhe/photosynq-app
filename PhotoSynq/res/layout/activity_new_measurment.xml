@@ -4,7 +4,9 @@
     android:layout_height="match_parent"
     android:background="#D6D6D6"
     android:orientation="vertical" >
-
+	<RelativeLayout 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content">
     <ListView
         android:id="@+id/measurement_list_view"
         android:layout_width="match_parent"
@@ -15,13 +17,13 @@
         android:footerDividersEnabled="true"
         android:headerDividersEnabled="true"
         android:listSelector="@android:color/transparent" />
-
-    <RelativeLayout
+	</RelativeLayout>
+    <!-- <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="60dip"
         android:gravity="bottom"
         android:orientation="horizontal"
-        android:paddingTop="10dp" >
+        android:paddingTop="10dp" > -->
 
         <Button
             android:id="@+id/button1"
@@ -29,6 +31,11 @@
             android:layout_height="wrap_content"
             android:onClick="takeMeasurement"
             android:text="Take Measurement" />
-    </RelativeLayout>
 
+        <TextView
+            android:id="@+id/statusMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_data_found"
+            android:textSize="24sp" />
 </LinearLayout>

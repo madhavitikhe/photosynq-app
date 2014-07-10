@@ -116,31 +116,23 @@ public class BluetoothActivity extends ActionBarActivity {
 	}
 	
 	 /* This routine is called when an activity completes.*/
-	//  @Override
-	  /*protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    super.onActivityResult(requestCode, resultCode, data);
-	    if (requestCode == 1) {
-	      CheckBTState();
-	    }
-	  }*/
-	  
-	  @Override 
-	  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	@Override 
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	 // TODO Auto-generated method stub
-		  super.onActivityResult(requestCode, resultCode, data);
-		    if (requestCode == 1) {
+	  super.onActivityResult(requestCode, resultCode, data);
+	  if(resultCode == RESULT_OK){
+		if (requestCode == 1) {
 		      CheckBTState();
-		    }
-	  if(resultCode == RESULT_CANCELED){
-	// Toast.makeText(getApplicationContext(), "Error occured while enabling.Leaving the application..", Toast.LENGTH_LONG).show();
-	// bluetoothAdapter.disable();
-	  finish();
-	  }
+		 }
+		else if(resultCode == RESULT_CANCELED){
+			// Toast.makeText(getApplicationContext(), "Error occured while enabling.Leaving the application..", Toast.LENGTH_LONG).show();
+			// bluetoothAdapter.disable();
+	     finish();
+	     }
+	    }
 	  }
 	
 	  
-	  
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
