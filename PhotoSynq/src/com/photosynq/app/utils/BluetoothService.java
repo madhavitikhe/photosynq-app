@@ -304,12 +304,15 @@ public class BluetoothService {
 					totalbytes += bytes;
 					if (readMessage.replaceAll("\\r\\n", "######").contains("############")) {
 						mHandler.obtainMessage(MESSAGE_READ, totalbytes,-1, measurement).sendToTarget();
+						measurement=new StringBuffer();
+						buffer = new byte[10485];
 //						Message msg = mHandler.obtainMessage(ResultActivity.MESSAGE_STOP);
 //				        Bundle bundle = new Bundle();
 //				        bundle.putString(ResultActivity.TOAST, "Measurement Complete");
 //				        msg.setData(bundle);
 //				        mHandler.sendMessage(msg);
-						break;
+						//System.out.println("Quitting while loop ....................");
+						//break;
 					}
 				} catch (IOException e) {
 					Log.e(TAG, "disconnected", e);

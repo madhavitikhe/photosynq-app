@@ -80,7 +80,7 @@ public class MainActivity extends ActionBarActivity {
 					e.printStackTrace();
 				}
 				
-				UpdateData updateData = new UpdateData(getApplicationContext(),projectResult.getId());
+				UpdateData updateData = new UpdateData(getApplicationContext(),this,projectResult.getId());
 				mUpdateDataTask = new HTTPConnection(input);
 				mUpdateDataTask.delegate = updateData;
 				mUpdateDataTask.execute(HTTPConnection.PHOTOSYNQ_DATA_URL+projectResult.getProjectId()+"/data.json", "POST");

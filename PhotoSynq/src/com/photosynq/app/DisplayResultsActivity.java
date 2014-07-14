@@ -8,6 +8,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.db.DatabaseHelper;
@@ -37,6 +39,9 @@ public class DisplayResultsActivity extends ActionBarActivity {
 	private boolean quick_measure;
 	Button keep;
 	Button discard;
+	AlertDialog.Builder alertDialogBuilder;
+	final Context context = this;
+	AlertDialog alert;
 	@SuppressLint({ "SetJavaScriptEnabled", "NewApi" })
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -118,36 +123,49 @@ public class DisplayResultsActivity extends ActionBarActivity {
 			}
 			
 			
-			UpdateData updateData = new UpdateData(getApplicationContext(), "NONE");
+			UpdateData updateData = new UpdateData(getApplicationContext(),this, "NONE");
 			mDataTask = new HTTPConnection(input);
 			mDataTask.delegate = updateData;
 			mDataTask.execute(HTTPConnection.PHOTOSYNQ_DATA_URL+projectId+"/data.json", "POST");
 			view.setVisibility(View.INVISIBLE);
 			discard.setVisibility(View.INVISIBLE);
-
 		}else
 		{
-		Toast.makeText(getApplicationContext(), "No internet conncetion",Toast.LENGTH_SHORT).show();
+		
+		
 		db = new DatabaseHelper(getApplicationContext());
 		ProjectResult result = new ProjectResult(projectId, reading, "N");
 		db.createResult(result);
 		db.closeDB();
 		
-		Toast.makeText(getApplicationContext(), "Results Saved Locally",Toast.LENGTH_SHORT).show();
+		alertDialogBuilder = new AlertDialog.Builder(context);
+		alertDialogBuilder.setTitle(R.string.no_internet_connection);
+		alertDialogBuilder.setMessage(R.string.error_sending_data);
+		alertDialogBuilder.setPositiveButton(R.string.ok,  new DialogInterface.OnClickListener() {
+		 public void onClick(DialogInterface dialog, int which) {
+			        	finish();
+			 }
+	      });
+		alert = alertDialogBuilder.create();
+        alert.show();
 		discard.setVisibility(View.INVISIBLE);
 		view.setVisibility(View.INVISIBLE); 
 		}
-		finish();
 	}
 	
 	public void discard_click(View view) {
-		Toast.makeText(getApplicationContext(), "Results discarded",
-				Toast.LENGTH_SHORT).show();
+		alertDialogBuilder = new AlertDialog.Builder(context);
+		alertDialogBuilder.setTitle(R.string.discard);
+		alertDialogBuilder.setMessage(R.string.result_discarded);
+		alertDialogBuilder.setPositiveButton(R.string.ok,  new DialogInterface.OnClickListener() {
+	        public void onClick(DialogInterface dialog, int which) {
+	        	finish();
+	          }
+	      });
+		alert = alertDialogBuilder.create();
+		alert.show();
 		view.setVisibility(View.INVISIBLE); 
 		keep.setVisibility(View.INVISIBLE);
-		finish();
-//		Intent intent = new Intent(this, ProjectListActivity.class);
-//		startActivity(intent);
 	}
 
 	@Override

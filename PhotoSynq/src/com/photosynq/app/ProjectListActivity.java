@@ -21,10 +21,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.db.DatabaseHelper;
@@ -153,7 +152,7 @@ public class ProjectListActivity extends ActionBarActivity  {
 					e.printStackTrace();
 				}
 				
-				UpdateData updateData = new UpdateData(getApplicationContext(),projectResult.getId());
+				UpdateData updateData = new UpdateData(getApplicationContext(),this,projectResult.getId());
 				mUpdateDataTask = new HTTPConnection(input);
 				mUpdateDataTask.delegate = updateData;
 				mUpdateDataTask.execute(HTTPConnection.PHOTOSYNQ_DATA_URL+projectResult.getProjectId()+"/data.json", "POST");

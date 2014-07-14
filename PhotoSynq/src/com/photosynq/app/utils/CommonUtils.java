@@ -65,11 +65,10 @@ public class CommonUtils {
             File myFile = new File(context.getExternalFilesDir(null), fileName);
             if (myFile.exists()){
             	myFile.delete();
-            	myFile.createNewFile();
-            }else
-            {
-                myFile.createNewFile();
             }
+
+                myFile.createNewFile();
+
             FileOutputStream fos;
             //dataString = dataString.replaceAll("\\{", "{\"time\":\""+time+"\",");
             byte[] data = dataString.getBytes();

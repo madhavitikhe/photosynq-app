@@ -5,12 +5,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
@@ -23,11 +22,11 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.WebView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.HTTP.PhotosynqResponse;
 import com.photosynq.app.utils.CommonUtils;
@@ -60,9 +59,13 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 	private View mLoginStatusView;
 	private TextView mLoginStatusMessageView;
 
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+		    WebView.setWebContentsDebuggingEnabled(true);
+		}
 		setContentView(R.layout.activity_login);
 		
 		copyAssets();
