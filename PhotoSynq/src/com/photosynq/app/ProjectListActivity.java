@@ -10,9 +10,11 @@ import org.json.JSONObject;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -24,8 +26,10 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.photosynq.app.HTTP.HTTPConnection;
+import com.photosynq.app.MainActivity.ASTask;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ProjectResult;
 import com.photosynq.app.model.ResearchProject;
@@ -46,7 +50,7 @@ public class ProjectListActivity extends ActionBarActivity  {
     ResearchProjectArrayAdapter arrayadapter;
     private View mProListStatusView;
 	private TextView mProListStatusMessageView;
-    
+    String image_url;
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +84,22 @@ public class ProjectListActivity extends ActionBarActivity  {
 		    }
 		});
 		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#AA0000")));//it change option bar color.
+		//checkDataOnList();
 	}
+	
+	public void checkDataOnList()
+	{
+		if(researchProjectList == null){
+			Toast.makeText(getApplicationContext(), "List is Up to Date", 5).show();
+			showProgress(true);
+//			downloadData();
+		}
+		else{
+			downloadData();
+			//showProgress(true);
+		}
+	}
+
 
 	@SuppressLint("NewApi")
 	private void showProgress(final boolean show) {
@@ -167,6 +186,7 @@ public class ProjectListActivity extends ActionBarActivity  {
 		projectList.setVisibility(View.VISIBLE);
 		showProgress(false);
 	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -187,7 +207,78 @@ public class ProjectListActivity extends ActionBarActivity  {
 		/**
 		 * After Clicking Refresh Option Menu Button, Research Project List Get Refresh, And You Will Get Updated list. 
 		 */
-		
+		switch (item.getItemId()) {
+		  case R.id.refresh:
+			  if(researchProjectList != null)
+			  {
+		          new ASycTask().execute("foo", "bar");
+				 // showProgress(true);
+				 // downloadData();
+			  }
+			  else
+			  {
+		           showProgress(false);		           
+			  }
+		           return true;
+		  default:
 			return super.onOptionsItemSelected(item);
+		}		
   }
+	/**
+	 * this asynchronous task is only for ProjectListActivity. 
+	 * onPreExecute function returns list of project list and show progress till downloadData() function complete.
+	 * onPostExecute function dismiss dialog after show the list of research projects.
+	 *  ASycTask call from refresh button click. e.g.new ASycTask().execute("foo", "bar");
+	 */
+	public class ASycTask extends AsyncTask<String, String, String>
+    {
+		ProgressDialog dialog;
+	    String image_url;
+    protected void onPreExecute()
+    {
+         
+        dialog= new ProgressDialog(ProjectListActivity.this);
+        dialog.setIndeterminate(true);
+      //  dialog.setIndeterminateDrawable(getResources().getDrawable(R.anim.pro));
+        dialog.setCancelable(false);
+        downloadData();
+        System.out.println("------------======== onPreExecute method========-----------");
+        dialog.setMessage("Refreshing.....!");
+        dialog.show();
+    }
+   
+     
+    protected String doInBackground(String... params)
+    {
+        //don't interact with UI
+        //do something in the background over here
+         
+        String url=params[0];
+         
+        for (int i = 0; i <= 100; i += 5) 
+        {
+                 try{     
+                    Thread.sleep(100);
+                    } catch (InterruptedException e) 
+                    {
+                      e.printStackTrace();
+                    }
+                  
+         }
+        System.out.println("------------========in doInBackground method========-----------");
+         
+    return "Done!";        
+  }
+
+    protected void onPostExecute(String result) 
+    {
+        //super.onPostExecute(result);
+        Log.i("result","" +result);
+        if(result!=null)
+            dialog.dismiss();
+        Intent intent = new Intent(getApplicationContext(),ProjectListActivity.class);
+		startActivity(intent);
+    }
+    }
+       
 }

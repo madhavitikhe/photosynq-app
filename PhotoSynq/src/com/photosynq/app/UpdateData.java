@@ -1,7 +1,5 @@
 package com.photosynq.app;
 
-import java.util.Vector;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,7 +12,7 @@ import android.widget.Toast;
 import com.photosynq.app.HTTP.PhotosynqResponse;
 import com.photosynq.app.db.DatabaseHelper;
 
-public class UpdateData implements PhotosynqResponse{
+public class UpdateData extends Activity implements PhotosynqResponse{
 
 	private Activity activity;
 	private Context context;
@@ -40,7 +38,7 @@ public class UpdateData implements PhotosynqResponse{
 			alertDialogBuilder.setMessage(R.string.data_uploaded_to_server);
 			alertDialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 				 public void onClick(DialogInterface dialog, int which) {
-					 
+					 activity.finish();
 			 }
 	      });
 			alert = alertDialogBuilder.create();

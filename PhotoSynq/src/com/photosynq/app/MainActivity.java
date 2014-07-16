@@ -7,9 +7,12 @@ import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +34,8 @@ public class MainActivity extends ActionBarActivity {
     HTTPConnection mMacroListTask = null;
     HTTPConnection mUpdateDataTask = null;
     DatabaseHelper db;
+    String authToken;
+    String email;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +43,13 @@ public class MainActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_main);
 		//reset location.
 		PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, null);
-		String authToken = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-		String email = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+		 authToken = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+		 email = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+		
+	}
+	
+	public void download()
+	{
 		if(CommonUtils.isConnected(getApplicationContext()))
 		{
 			UpdateResearchProjects updateProjects = new UpdateResearchProjects(getApplicationContext());
@@ -86,8 +96,8 @@ public class MainActivity extends ActionBarActivity {
 				mUpdateDataTask.execute(HTTPConnection.PHOTOSYNQ_DATA_URL+projectResult.getProjectId()+"/data.json", "POST");
 
 		}
+			System.out.println("------------========in Download complete========-----------");
 		}
-
 	}
 
 	@Override
@@ -112,9 +122,9 @@ public class MainActivity extends ActionBarActivity {
 	
 	public void listResearchProjects(View view)
 	{
-		Intent intent = new Intent(getApplicationContext(),ProjectListActivity.class);
-		intent.putExtra(QUICK_MEASURE, false);
-		startActivity(intent);
+		 new ASTask().execute("foo", "bar");
+         System.out.println("-----------------new ASTask().execute------------------");
+		
 	}
 	public void recentResearchCollab(View view)
 	{
@@ -142,5 +152,65 @@ public class MainActivity extends ActionBarActivity {
 		startActivity(intent);
 	}
 	
+	
+	/**
+	 * this asynchronous task is only for MainActivity. 
+	 * onPreExecute function returns list of project list and show progress till downloadData() function complete.
+	 * onPostExecute function dismiss dialog after show the list of research projects.
+	 *  ASTask call from Research Project button click. e.g.new ASTask().execute("foo", "bar");
+	 */
+	
+  public class ASTask extends AsyncTask<String, String, String>
+    {
+		ProgressDialog dialog;
+	    String image_url;
+    protected void onPreExecute()
+    {
+         
+        dialog= new ProgressDialog(MainActivity.this);
+        dialog.setIndeterminate(true);
+      //  dialog.setIndeterminateDrawable(getResources().getDrawable(R.anim.pro));
+        dialog.setCancelable(false);
+        download();
+        System.out.println("------------======== onPreExecute method========-----------");
+        dialog.setMessage("Loading Project List...!");
+        dialog.show();
+                         
+    }
+   
+     
+    protected String doInBackground(String... params)
+    {
+        //don't interact with UI
+        //do something in the background over here
+         
+        String url=params[0];
+         
+        for (int i = 0; i <= 100; i += 5) 
+        {
+                 try{     
+                    Thread.sleep(100);
+                    } catch (InterruptedException e) 
+                    {
+                      e.printStackTrace();
+                    }
+                  
+         }
+        System.out.println("------------========in doInBackground method========-----------");
+         
+    return "Done!";        
+  }
+
+    protected void onPostExecute(String result) 
+    {
+        //super.onPostExecute(result);
+        Log.i("result","" +result);
+        if(result!=null)
+            dialog.dismiss();
+        Intent intent = new Intent(getApplicationContext(),ProjectListActivity.class);
+		intent.putExtra(QUICK_MEASURE, false);
+		startActivity(intent);
+    }
+    }
 	
 }

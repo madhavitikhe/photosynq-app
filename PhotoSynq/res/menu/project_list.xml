@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.photosynq.app.ProjectListActivity" >
 
-   
+   <item
+        android:id="@+id/refresh"
+        app:showAsAction="always"
+        android:title="@string/refresh"
+        android:icon="@drawable/refresh"/>
     
 </menu>
