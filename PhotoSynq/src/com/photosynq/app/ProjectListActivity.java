@@ -7,15 +7,12 @@ import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -29,7 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.photosynq.app.HTTP.HTTPConnection;
-import com.photosynq.app.MainActivity.ASTask;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ProjectResult;
 import com.photosynq.app.model.ResearchProject;
@@ -50,7 +46,9 @@ public class ProjectListActivity extends ActionBarActivity  {
     ResearchProjectArrayAdapter arrayadapter;
     private View mProListStatusView;
 	private TextView mProListStatusMessageView;
+	private ProgressDialog pDialog;
     String image_url;
+    
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,12 +63,7 @@ public class ProjectListActivity extends ActionBarActivity  {
 		authToken = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		email = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		
-		db = new DatabaseHelper(getApplicationContext());
-		researchProjectList = db.getAllResearchProjects();
-		arrayadapter = new ResearchProjectArrayAdapter(this, researchProjectList); 
-		projectList.setAdapter(arrayadapter);
-		System.out.println("DBCLosing");
-		db.closeDB();
+		refreshProjectList();
 		
 		projectList.setOnItemClickListener(new OnItemClickListener() {
 		    @Override
@@ -84,51 +77,22 @@ public class ProjectListActivity extends ActionBarActivity  {
 		    }
 		});
 		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#AA0000")));//it change option bar color.
-		//checkDataOnList();
+		checkDataOnList();
 	}
 	
 	public void checkDataOnList()
 	{
-		if(researchProjectList == null){
-			Toast.makeText(getApplicationContext(), "List is Up to Date", 5).show();
-			showProgress(true);
-//			downloadData();
+		if(arrayadapter.isEmpty())
+		{
+			System.out.println("-------------------arrayadapter.isEmpty()--------------");
+			new GetDataAsync().execute();
 		}
-		else{
-			downloadData();
-			//showProgress(true);
-		}
-	}
-
-
-	@SuppressLint("NewApi")
-	private void showProgress(final boolean show) {
-		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-		// for very easy animations. If available, use these APIs to fade-in
-		// the progress spinner.
-		
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-			int shortAnimTime = getResources().getInteger(
-					android.R.integer.config_shortAnimTime);
-
-			mProListStatusView.setVisibility(View.VISIBLE);
-			mProListStatusView.animate().setDuration(shortAnimTime)
-					.alpha(show ? 1 : 0)
-					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
-							mProListStatusView.setVisibility(show ? View.VISIBLE
-									: View.GONE);
-						}
-					});
-
-		} else {
-			// The ViewPropertyAnimator APIs are not available, so simply show
-			// and hide the relevant UI components.
-			mProListStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
+		else
+		{
+			System.out.println("-------------------arrayadapter.isNotEmpty()--------------");
 		}
 	}
-	
+
 	public void downloadData()
 	{
 		if(CommonUtils.isConnected(getApplicationContext()))
@@ -177,14 +141,15 @@ public class ProjectListActivity extends ActionBarActivity  {
 				mUpdateDataTask.execute(HTTPConnection.PHOTOSYNQ_DATA_URL+projectResult.getProjectId()+"/data.json", "POST");
 		   }
 		}
+	}
+
+	private void refreshProjectList() {
 		db = new DatabaseHelper(getApplicationContext());
 		researchProjectList = db.getAllResearchProjects();
 		arrayadapter = new ResearchProjectArrayAdapter(this, researchProjectList); 
 		projectList.setAdapter(arrayadapter);
 		System.out.println("DBCLosing");
 		db.closeDB();
-		projectList.setVisibility(View.VISIBLE);
-		showProgress(false);
 	}
 
 	@Override
@@ -209,76 +174,41 @@ public class ProjectListActivity extends ActionBarActivity  {
 		 */
 		switch (item.getItemId()) {
 		  case R.id.refresh:
-			  if(researchProjectList != null)
-			  {
-		          new ASycTask().execute("foo", "bar");
-				 // showProgress(true);
-				 // downloadData();
-			  }
-			  else
-			  {
-		           showProgress(false);		           
-			  }
-		           return true;
+			  new GetDataAsync().execute();
+			  return true;
 		  default:
-			return super.onOptionsItemSelected(item);
+			  return super.onOptionsItemSelected(item);
 		}		
-  }
-	/**
-	 * this asynchronous task is only for ProjectListActivity. 
-	 * onPreExecute function returns list of project list and show progress till downloadData() function complete.
-	 * onPostExecute function dismiss dialog after show the list of research projects.
-	 *  ASycTask call from refresh button click. e.g.new ASycTask().execute("foo", "bar");
-	 */
-	public class ASycTask extends AsyncTask<String, String, String>
-    {
-		ProgressDialog dialog;
-	    String image_url;
-    protected void onPreExecute()
-    {
-         
-        dialog= new ProgressDialog(ProjectListActivity.this);
-        dialog.setIndeterminate(true);
-      //  dialog.setIndeterminateDrawable(getResources().getDrawable(R.anim.pro));
-        dialog.setCancelable(false);
-        downloadData();
-        System.out.println("------------======== onPreExecute method========-----------");
-        dialog.setMessage("Refreshing.....!");
-        dialog.show();
+	}
+	
+	
+	private class GetDataAsync extends AsyncTask<Void, Void, Void> {
+		 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Showing progress dialog
+            downloadData();
+            pDialog = new ProgressDialog(ProjectListActivity.this);
+            pDialog.setMessage("Please wait...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+ 
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            // Creating service handler class instance
+             return null;
+        }
+ 
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            // Dismiss the progress dialog
+            if (pDialog.isShowing())
+                pDialog.dismiss();
+            refreshProjectList();
+         Toast.makeText(getApplicationContext(), "List is up to date", Toast.LENGTH_SHORT).show();
+        }
     }
-   
-     
-    protected String doInBackground(String... params)
-    {
-        //don't interact with UI
-        //do something in the background over here
-         
-        String url=params[0];
-         
-        for (int i = 0; i <= 100; i += 5) 
-        {
-                 try{     
-                    Thread.sleep(100);
-                    } catch (InterruptedException e) 
-                    {
-                      e.printStackTrace();
-                    }
-                  
-         }
-        System.out.println("------------========in doInBackground method========-----------");
-         
-    return "Done!";        
-  }
-
-    protected void onPostExecute(String result) 
-    {
-        //super.onPostExecute(result);
-        Log.i("result","" +result);
-        if(result!=null)
-            dialog.dismiss();
-        Intent intent = new Intent(getApplicationContext(),ProjectListActivity.class);
-		startActivity(intent);
-    }
-    }
-       
 }
