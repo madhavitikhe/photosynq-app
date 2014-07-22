@@ -33,6 +33,8 @@ public class UpdateData extends Activity implements PhotosynqResponse{
 			JSONObject jo = new JSONObject(result);
 			String status = jo.getString("status");
 			Toast.makeText(context, jo.getString("notice"), Toast.LENGTH_SHORT).show();
+			if(null != activity)
+			{
 			alertDialogBuilder = new AlertDialog.Builder(activity);
 			alertDialogBuilder.setTitle(R.string.keep_data);
 			alertDialogBuilder.setMessage(R.string.data_uploaded_to_server);
@@ -43,6 +45,7 @@ public class UpdateData extends Activity implements PhotosynqResponse{
 	      });
 			alert = alertDialogBuilder.create();
 	        alert.show();
+			}
 			if (status.toUpperCase().equals("SUCCESS"))
 			{
 			

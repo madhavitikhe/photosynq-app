@@ -3,6 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.photosynq.app.MainActivity" >
 
-
-
+  <!--  <item 
+        android:id="@+id/start_action"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/start_text" />
+    
+   <item 
+        android:id="@+id/cancel_action"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/cancel_text" /> -->
+  
 </menu>

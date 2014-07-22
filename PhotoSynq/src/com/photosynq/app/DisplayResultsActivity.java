@@ -65,9 +65,6 @@ public class DisplayResultsActivity extends ActionBarActivity {
 			keep.setVisibility(View.INVISIBLE);
 			discard.setVisibility(View.INVISIBLE);
 		}
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-		    WebView.setWebContentsDebuggingEnabled(true);
-		}
 		reloadWebview();
 	}
 

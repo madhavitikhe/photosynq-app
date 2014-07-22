@@ -73,9 +73,14 @@
             android:label="@string/title_activity_select_protocol" >
         </activity>
         
+        <service android:name=".MyAlarmService"
+                 android:enabled="true" />
+         
+        <receiver android:name=".MyReceiver"/>
+        
                 <meta-data android:name="com.google.android.gms.version"
     				android:value="@integer/google_play_services_version" />
-        
-    </application>
-
+       </application>
+	
+    
 </manifest>
