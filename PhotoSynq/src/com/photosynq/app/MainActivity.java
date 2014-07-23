@@ -48,7 +48,7 @@ public class MainActivity extends ActionBarActivity {
 	    Intent intent = new Intent(context, MyReceiver.class);
 	    alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 	    alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-	    alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),900000, alarmIntent);
+	    alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),7200000, alarmIntent);
 	    System.out.println("-----------setalarm");
 		}
 	

@@ -57,7 +57,7 @@
     <string name="connection_error">connection_error</string>
     <string name="doodle_found">doodle_found</string>
     <string name="no_doodle">no_doodle</string>
-    <string name="title_activity_image_button">ImageButtonActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="sync_successful">Sync successful!</string>
 
 </resources>
