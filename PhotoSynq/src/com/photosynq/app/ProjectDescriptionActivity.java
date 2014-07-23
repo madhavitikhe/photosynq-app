@@ -92,11 +92,14 @@ public class ProjectDescriptionActivity extends ActionBarActivity {
 						Protocol protocol = db.getProtocol(protocolId);
 						JSONObject protocolObject = new JSONObject();
 						protocolObject.put("protocolid", protocol.getId());
-						protocolObject.put("macroid", protocol.getMacroId());
+						protocolObject.put("protocol_name", protocol.getId());
+						protocolObject.put("macro_id", protocol.getMacroId());
 						protocolJsonArray.put(protocolObject);
 					}
 					
 					dataString.append("var protocols=" + protocolJsonArray.toString());
+					// Writing macros_variable.js file with protocol and macro relations
+					System.out.println("######Writing macros_variable.js file:"+dataString);
 					CommonUtils.writeStringToFile(getApplicationContext(), "macros_variable.js",dataString.toString());
 				}
 				else
@@ -112,7 +115,7 @@ public class ProjectDescriptionActivity extends ActionBarActivity {
 		}
 		
 		
-		// Writing macros_variable.js file with protocol and macro relations
+		
 		
 		System.out.println("DBCLosing");
 		db.closeDB();

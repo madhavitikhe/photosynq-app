@@ -19,50 +19,62 @@ import com.photosynq.app.model.ProjectResult;
 
 public class DataUtils {
 
-	public static void download(Context context)
-	{  
-		DatabaseHelper db;
-		String authToken;
-		String email;
-		HTTPConnection mProtocolListTask = null;
-		HTTPConnection mMacroListTask = null;
-		HTTPConnection mUpdateDataTask = null;
-		
-		PrefUtils.saveToPrefs(context, PrefUtils.PREFS_CURRENT_LOCATION, null);
-		 authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-		 email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-		if(CommonUtils.isConnected(context))
-		{
-			UpdateResearchProjects updateProjects = new UpdateResearchProjects(context);
+	public static void download(Context context) {
+		if (CommonUtils.isConnected(context)) {
+			DatabaseHelper db;
+			String authToken;
+			String email;
+			HTTPConnection mProtocolListTask = null;
+			HTTPConnection mMacroListTask = null;
+			HTTPConnection mUpdateDataTask = null;
+
+			PrefUtils.saveToPrefs(context, PrefUtils.PREFS_CURRENT_LOCATION,
+					null);
+			authToken = PrefUtils
+					.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY,
+							PrefUtils.PREFS_DEFAULT_VAL);
+			email = PrefUtils.getFromPrefs(context,
+					PrefUtils.PREFS_LOGIN_USERNAME_KEY,
+					PrefUtils.PREFS_DEFAULT_VAL);
+
+			UpdateResearchProjects updateProjects = new UpdateResearchProjects(
+					context);
 			HTTPConnection mProjListTask = new HTTPConnection();
 			mProjListTask.delegate = updateProjects;
-			mProjListTask.execute(HTTPConnection.PHOTOSYNQ_PROJECTS_LIST_URL+ "user_email="+email+"&user_token="+authToken, "GET");
-			
+			mProjListTask
+					.execute(HTTPConnection.PHOTOSYNQ_PROJECTS_LIST_URL
+							+ "user_email=" + email + "&user_token="
+							+ authToken, "GET");
+
 			UpdateProtocol upprotoProtocol = new UpdateProtocol(context);
 			mProtocolListTask = new HTTPConnection();
 			mProtocolListTask.delegate = upprotoProtocol;
-			mProtocolListTask.execute(HTTPConnection.PHOTOSYNQ_PROTOCOLS_LIST_URL+ "user_email="+email+"&user_token="+authToken, "GET");
-			
-	
+			mProtocolListTask.execute(
+					HTTPConnection.PHOTOSYNQ_PROTOCOLS_LIST_URL + "user_email="
+							+ email + "&user_token=" + authToken, "GET");
+
 			UpdateMacro updateMacro = new UpdateMacro(context);
 			mMacroListTask = new HTTPConnection();
 			mMacroListTask.delegate = updateMacro;
-			mMacroListTask.execute(HTTPConnection.PHOTOSYNQ_MACROS_LIST_URL+ "user_email="+email+"&user_token="+authToken, "GET");
-			
+			mMacroListTask
+					.execute(HTTPConnection.PHOTOSYNQ_MACROS_LIST_URL
+							+ "user_email=" + email + "&user_token="
+							+ authToken, "GET");
+
 			db = new DatabaseHelper(context);
-			List<ProjectResult> listRecords =  db.getAllUnUploadedResults();
+			List<ProjectResult> listRecords = db.getAllUnUploadedResults();
 			db.closeDB();
 			for (ProjectResult projectResult : listRecords) {
 				StringEntity input = null;
-				JSONObject request_data = new JSONObject();	
-				
+				JSONObject request_data = new JSONObject();
+
 				try {
-						JSONObject jo = new JSONObject(projectResult.getReading());
-						request_data.put("user_email", email);
-						request_data.put("user_token", authToken);
-						request_data.put("data", jo);
-						 input = new StringEntity(request_data.toString());
-						input.setContentType("application/json");
+					JSONObject jo = new JSONObject(projectResult.getReading());
+					request_data.put("user_email", email);
+					request_data.put("user_token", authToken);
+					request_data.put("data", jo);
+					input = new StringEntity(request_data.toString());
+					input.setContentType("application/json");
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -70,12 +82,14 @@ public class DataUtils {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
-				UpdateData updateData = new UpdateData(context,null,projectResult.getId());
+
+				UpdateData updateData = new UpdateData(context, null,
+						projectResult.getId());
 				mUpdateDataTask = new HTTPConnection(input);
 				mUpdateDataTask.delegate = updateData;
-				mUpdateDataTask.execute(HTTPConnection.PHOTOSYNQ_DATA_URL+projectResult.getProjectId()+"/data.json", "POST");
-		}
+				mUpdateDataTask.execute(HTTPConnection.PHOTOSYNQ_DATA_URL
+						+ projectResult.getProjectId() + "/data.json", "POST");
+			}
 		}
 	}
 }

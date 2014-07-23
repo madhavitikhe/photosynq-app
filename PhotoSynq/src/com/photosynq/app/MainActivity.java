@@ -2,15 +2,18 @@ package com.photosynq.app;
 
 import java.util.Calendar;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
 
 import com.photosynq.app.db.DatabaseHelper;
 
@@ -26,11 +29,15 @@ public class MainActivity extends ActionBarActivity {
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
     
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+		    WebView.setWebContentsDebuggingEnabled(true);
+		}
 		//setAlarm method sets interval time to executing sync in background and show notification to user.
 		setAlarm(this);
 	}
@@ -112,5 +119,6 @@ public class MainActivity extends ActionBarActivity {
 		Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);
 		intent.putExtra(QUICK_MEASURE, true);
 		startActivity(intent);
+		
 	}
 }

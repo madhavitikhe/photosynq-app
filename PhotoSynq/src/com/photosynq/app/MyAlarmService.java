@@ -1,14 +1,13 @@
 package com.photosynq.app;
 
-import com.photosynq.app.utils.DataUtils;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.widget.Toast;
+
+import com.photosynq.app.utils.DataUtils;
 
 public class MyAlarmService extends Service 
 {
@@ -40,12 +39,12 @@ public class MyAlarmService extends Service
 	       mManager = (NotificationManager) this.getApplicationContext().getSystemService(this.getApplicationContext().NOTIFICATION_SERVICE);
 	       Intent intent1 = new Intent(this.getApplicationContext(),MainActivity.class);
 	     
-	       Notification notification = new Notification(R.drawable.ic_launcher,"Sync perform successfully", System.currentTimeMillis());
+	       Notification notification = new Notification(R.drawable.ic_launcher,"Sync successfully", System.currentTimeMillis());
 	       intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP| Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	 
 	       PendingIntent pendingNotificationIntent = PendingIntent.getActivity( this.getApplicationContext(),0, intent1,PendingIntent.FLAG_UPDATE_CURRENT);
 	       notification.flags |= Notification.FLAG_AUTO_CANCEL;
-	       notification.setLatestEventInfo(this.getApplicationContext(), "Sync perform successfully", "List is up to date!", pendingNotificationIntent);
+	       notification.setLatestEventInfo(this.getApplicationContext(), "Sync successfully", "List is up to date!", pendingNotificationIntent);
 	       System.out.println("-------------------MyAlarmService--------------------");
 	       mManager.notify(0, notification);
 	    }

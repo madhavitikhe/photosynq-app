@@ -65,7 +65,8 @@ public class SelectProtocolActivity extends ActionBarActivity {
 					JSONArray protocolJsonArray = new JSONArray();
 					JSONObject protocolObject = new JSONObject();
 					protocolObject.put("protocolid", protocol.getId());
-					protocolObject.put("macroid", protocol.getMacroId());
+					protocolObject.put("protocol_name", protocol.getId());
+					protocolObject.put("macro_id", protocol.getMacroId());
 					protocolJsonArray.put(protocolObject);
 					dataString.append("var protocols=" + protocolJsonArray.toString());
 					System.out.println("###### writing macros_variable.js :"+dataString);
