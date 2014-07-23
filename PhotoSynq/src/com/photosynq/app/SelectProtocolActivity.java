@@ -62,13 +62,16 @@ public class SelectProtocolActivity extends ActionBarActivity {
 				intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress );
 				try {
 					StringBuffer dataString = new StringBuffer();
-					JSONArray protocolJsonArray = new JSONArray();
-					JSONObject protocolObject = new JSONObject();
-					protocolObject.put("protocolid", protocol.getId());
-					protocolObject.put("protocol_name", protocol.getId());
-					protocolObject.put("macro_id", protocol.getMacroId());
-					protocolJsonArray.put(protocolObject);
-					dataString.append("var protocols=" + protocolJsonArray.toString());
+					dataString.append("var protocols={");
+					//JSONArray protocolJsonArray = new JSONArray();					
+					JSONObject detailProtocolObject = new JSONObject();
+					detailProtocolObject.put("protocolid", protocol.getId());
+					detailProtocolObject.put("protocol_name", protocol.getId());
+					detailProtocolObject.put("macro_id", protocol.getMacroId());
+					//protocolJsonArray.put(deatilProtocolObject);
+					dataString.append("\""+protocol.getId()+"\""+":"+detailProtocolObject.toString());
+					dataString.append("}");
+
 					System.out.println("###### writing macros_variable.js :"+dataString);
 					CommonUtils.writeStringToFile(getApplicationContext(), "macros_variable.js",dataString.toString());
 

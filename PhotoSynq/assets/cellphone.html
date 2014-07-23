@@ -74,8 +74,8 @@ jQuery(document).ready(function(){
 			
 			var protocol = data['sample'][measurementID][protocolkey];
 			var protocolID = protocol.protocol_id || false;
-			var protocolname  = protocols[0].protocol_name || "Unknown";
-			var macrcoID = protocols[0].macro_id || false;
+			var protocolname  = protocols[protocolID].protocol_name || "Unknown";
+			var macrcoID = protocols[protocolID].macro_id || false;
 			var data_raw = protocol.data_raw || [];
 			
 			// Build graph with container

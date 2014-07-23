@@ -83,24 +83,25 @@ public class ProjectDescriptionActivity extends ActionBarActivity {
 			Picasso.with(getApplicationContext()).load(rp.getImageUrl()).into(imageview);
 			try {
 				StringBuffer dataString = new StringBuffer();
-				
 				String[] projectProtocols = rp.getProtocols_ids().split(",");
 				if(rp.getProtocols_ids().length() >=1)
 				{
-					JSONArray protocolJsonArray = new JSONArray();
+					//JSONArray protocolJsonArray = new JSONArray();
 					for (String protocolId : projectProtocols) {
 						Protocol protocol = db.getProtocol(protocolId);
-						JSONObject protocolObject = new JSONObject();
-						protocolObject.put("protocolid", protocol.getId());
-						protocolObject.put("protocol_name", protocol.getId());
-						protocolObject.put("macro_id", protocol.getMacroId());
-						protocolJsonArray.put(protocolObject);
+						JSONObject detailProtocolObject = new JSONObject();
+						detailProtocolObject.put("protocolid", protocol.getId());
+						detailProtocolObject.put("protocol_name", protocol.getId());
+						detailProtocolObject.put("macro_id", protocol.getMacroId());
+						//protocolJsonArray.put(detailProtocolObject);
+						dataString.append("\""+protocol.getId()+"\""+":"+detailProtocolObject.toString()+",");
+						
 					}
+					String data = "var protocols={"+dataString.substring(0, dataString.length()-1) +"}";
 					
-					dataString.append("var protocols=" + protocolJsonArray.toString());
 					// Writing macros_variable.js file with protocol and macro relations
-					System.out.println("######Writing macros_variable.js file:"+dataString);
-					CommonUtils.writeStringToFile(getApplicationContext(), "macros_variable.js",dataString.toString());
+					System.out.println("######Writing macros_variable.js file:"+data);
+					CommonUtils.writeStringToFile(getApplicationContext(), "macros_variable.js",data);
 				}
 				else
 				{
