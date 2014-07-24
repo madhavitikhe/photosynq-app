@@ -507,7 +507,8 @@ GooglePlayServicesClient.OnConnectionFailedListener{
                 		String[] protocol_ids = rp.getProtocols_ids().trim().split(",");
                 		if(rp.getProtocols_ids().length() >=1)
                 		{
-	                		for (String protocol_id : protocol_ids) {
+	                		for (String protocol_id : protocol_ids) 
+	                		{
 	                			Protocol protocol = db.getProtocol(protocol_id);
 	                			System.out.println("######## protocol :"+protocol.getProtocol_json());
 	                			if(protocol.getProtocol_json().trim().length() > 1)

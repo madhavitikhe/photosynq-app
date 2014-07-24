@@ -25,7 +25,7 @@ public class MyAlarmService extends Service
 	    public void onCreate() 
 	    {
 	       // TODO Auto-generated method stub 
-	    	DataUtils.download(getApplicationContext());
+	    	DataUtils.downloadData(getApplicationContext());
 	    	System.out.println("**********Display Notification******");
 	       super.onCreate();
 	    }

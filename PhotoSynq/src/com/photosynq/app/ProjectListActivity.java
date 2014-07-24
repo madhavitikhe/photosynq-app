@@ -1,11 +1,6 @@
 package com.photosynq.app;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
-
-import org.apache.http.entity.StringEntity;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -27,9 +22,8 @@ import android.widget.Toast;
 
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.db.DatabaseHelper;
-import com.photosynq.app.model.ProjectResult;
 import com.photosynq.app.model.ResearchProject;
-import com.photosynq.app.utils.CommonUtils;
+import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.PrefUtils;
 
 public class ProjectListActivity extends ActionBarActivity  {
@@ -93,56 +87,6 @@ public class ProjectListActivity extends ActionBarActivity  {
 		}
 	}
 
-	public void downloadData()
-	{
-		if(CommonUtils.isConnected(getApplicationContext()))
-		{
-			UpdateResearchProjects updateProjects = new UpdateResearchProjects(getApplicationContext());
-			mProjListTask = new HTTPConnection();
-			mProjListTask.delegate = updateProjects;
-			mProjListTask.execute(HTTPConnection.PHOTOSYNQ_PROJECTS_LIST_URL+ "user_email="+email+"&user_token="+authToken, "GET");
-			
-			UpdateProtocol upprotoProtocol = new UpdateProtocol(getApplicationContext());
-			mProtocolListTask = new HTTPConnection();
-			mProtocolListTask.delegate = upprotoProtocol;
-			mProtocolListTask.execute(HTTPConnection.PHOTOSYNQ_PROTOCOLS_LIST_URL+ "user_email="+email+"&user_token="+authToken, "GET");
-			
-	
-			UpdateMacro updateMacro = new UpdateMacro(getApplicationContext());
-			mMacroListTask = new HTTPConnection();
-			mMacroListTask.delegate = updateMacro;
-			mMacroListTask.execute(HTTPConnection.PHOTOSYNQ_MACROS_LIST_URL+ "user_email="+email+"&user_token="+authToken, "GET");
-			
-			db = new DatabaseHelper(getApplicationContext());
-			List<ProjectResult> listRecords =  db.getAllUnUploadedResults();
-			db.closeDB();
-			for (ProjectResult projectResult : listRecords) {
-				StringEntity input = null;
-				JSONObject request_data = new JSONObject();	
-				
-				try {
-						JSONObject jo = new JSONObject(projectResult.getReading());
-						request_data.put("user_email", email);
-						request_data.put("user_token", authToken);
-						request_data.put("data", jo);
-						 input = new StringEntity(request_data.toString());
-						input.setContentType("application/json");
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				UpdateData updateData = new UpdateData(getApplicationContext(),this,projectResult.getId());
-				mUpdateDataTask = new HTTPConnection(input);
-				mUpdateDataTask.delegate = updateData;
-				mUpdateDataTask.execute(HTTPConnection.PHOTOSYNQ_DATA_URL+projectResult.getProjectId()+"/data.json", "POST");
-		   }
-		}
-	}
-
 	private void refreshProjectList() {
 		db = new DatabaseHelper(getApplicationContext());
 		researchProjectList = db.getAllResearchProjects();
@@ -188,7 +132,8 @@ public class ProjectListActivity extends ActionBarActivity  {
         protected void onPreExecute() {
             super.onPreExecute();
             // Showing progress dialog
-            downloadData();
+            //downloadData();
+            DataUtils.downloadData(getApplicationContext());
             pDialog = new ProgressDialog(ProjectListActivity.this);
             pDialog.setMessage("Please wait...");
             pDialog.setCancelable(false);

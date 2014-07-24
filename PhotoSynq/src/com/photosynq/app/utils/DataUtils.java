@@ -18,9 +18,13 @@ import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ProjectResult;
 
 public class DataUtils {
-
-	public static void download(Context context) {
-		if (CommonUtils.isConnected(context)) {
+/**
+ * Download data from photosynq website, it return projects, protocols and macros list. 
+ */
+	public static void downloadData(Context context) 
+	{
+		if (CommonUtils.isConnected(context)) 
+		{
 			DatabaseHelper db;
 			String authToken;
 			String email;

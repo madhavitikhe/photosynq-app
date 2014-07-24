@@ -2,10 +2,8 @@ package com.photosynq.app;
 
 
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.Locale;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

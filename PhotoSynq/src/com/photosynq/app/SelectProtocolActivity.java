@@ -2,11 +2,12 @@ package com.photosynq.app;
 
 import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -16,11 +17,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
+import com.photosynq.app.utils.DataUtils;
 
 public class SelectProtocolActivity extends ActionBarActivity {
 
@@ -28,7 +31,9 @@ public class SelectProtocolActivity extends ActionBarActivity {
 	ListView protocolList;
 	DatabaseHelper db;
 	private String deviceAddress;
-	
+	List<Protocol> protocols;
+	ProtocolArrayAdapter arrayadapter;
+	private ProgressDialog pDialog;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -43,13 +48,17 @@ public class SelectProtocolActivity extends ActionBarActivity {
 		// Initialize ListView
 		protocolList = (ListView) findViewById(R.id.protocol_list_view);
 		
+		refreshProtocolList();
 		
-		db = new DatabaseHelper(getApplicationContext());
-		List<Protocol> protocols = db.getAllProtocolsList();
-		ProtocolArrayAdapter arrayadapter = new ProtocolArrayAdapter(this, protocols); 
-		protocolList.setAdapter(arrayadapter);
-		System.out.println("DBCLosing");
-		db.closeDB();
+		if(arrayadapter.isEmpty())
+		{
+			System.out.println("-------------------Protocol list arrayadapter is Empty()--------------");
+			new ProtocolListAsync().execute();
+		}
+		else
+		{
+			System.out.println("-------------------Protocol list arrayadapter is not Empty()--------------");
+		}
 		
 		protocolList.setOnItemClickListener(new OnItemClickListener() {
 		    @Override
@@ -82,9 +91,48 @@ public class SelectProtocolActivity extends ActionBarActivity {
 				startActivity(intent);
 		    }
 		});
-
 	}
-
+	
+	private void refreshProtocolList() {
+		db = new DatabaseHelper(getApplicationContext());
+		protocols = db.getAllProtocolsList();
+		arrayadapter = new ProtocolArrayAdapter(this, protocols); 
+		protocolList.setAdapter(arrayadapter);
+		System.out.println("DBCLosing");
+		db.closeDB();
+	}
+	
+	private class ProtocolListAsync extends AsyncTask<Void, Void, Void> {
+		 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Showing progress dialog
+           DataUtils.downloadData(getApplicationContext());
+            pDialog = new ProgressDialog(SelectProtocolActivity.this);
+            pDialog.setMessage("Please wait...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+ 
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            // Creating service handler class instance
+             return null;
+        }
+ 
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            // Dismiss the progress dialog
+            if (pDialog.isShowing())
+                pDialog.dismiss();
+            refreshProtocolList();
+         Toast.makeText(getApplicationContext(), "Protocol list up to date", Toast.LENGTH_SHORT).show();
+        }
+    }
+	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
