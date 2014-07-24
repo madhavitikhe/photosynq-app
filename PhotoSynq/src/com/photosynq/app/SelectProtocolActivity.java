@@ -66,7 +66,7 @@ public class SelectProtocolActivity extends ActionBarActivity {
 					//JSONArray protocolJsonArray = new JSONArray();					
 					JSONObject detailProtocolObject = new JSONObject();
 					detailProtocolObject.put("protocolid", protocol.getId());
-					detailProtocolObject.put("protocol_name", protocol.getId());
+					detailProtocolObject.put("protocol_name", protocol.getName());
 					detailProtocolObject.put("macro_id", protocol.getMacroId());
 					//protocolJsonArray.put(deatilProtocolObject);
 					dataString.append("\""+protocol.getId()+"\""+":"+detailProtocolObject.toString());

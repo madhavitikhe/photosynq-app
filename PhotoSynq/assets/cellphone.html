@@ -6,8 +6,8 @@
 <link href="font-awesome.min.css" media="all" rel="stylesheet" type="text/css">
 <script src="jquery.min.js"></script>
 <script src="jquery.touchSwipe.min.js"></script>
-<script src="highcharts.js"></script>
 <script src="bootstrap.min.js"></script>
+<script src="highcharts.js"></script>
 <script src="jquery.sparkline.min.js"></script>
 <script src="math.js"></script>
 <script src="initalvariables.js"></script>
@@ -28,12 +28,15 @@ jQuery(document).ready(function(){
 	//------------------------------------------------------------------------------------
 	// Toggle Views
 	//------------------------------------------------------------------------------------
-	$('nav [name="BtnView"]').on('change',function(){
-		$('#PlotsContainer, #ListContainer').hide();
-		$('#NavFooter').toggle();
-		$($(this).val()).show();
-		if($('#NavFooter').is(':visible'))
+	$('#BtnPlotsContainer, #BtnListContainer').on('click',function(){
+		if($($(this).val()).is(":visible"))
+			return false;
+		$('#BtnPlotsContainer, #BtnListContainer').removeClass('active');
+		$(this).addClass('active');
+		$('#PlotsContainer, #ListContainer, #NavFooter').toggle();
+		if($(this).val() == '#PlotsContainer'){
 			$('body').css('padding-bottom', '40px');
+		}
 		else
 			$('body').css('padding-bottom', '0px');
 	});
@@ -45,13 +48,15 @@ jQuery(document).ready(function(){
 		interval: false
 	});
 	
-	$('#carousel').swipe({
+	$('body').swipe({
 		//Generic swipe handler for all directions
 		swipeLeft:function(event, direction, distance, duration, fingerCount) {
-			$('#carousel').carousel('next');
+			if($('#PlotsContainer').is(":visible"))
+				$('#carousel').carousel('next');
 		},
 		swipeRight: function() {
-			$('#carousel').carousel('prev');
+			if($('#PlotsContainer').is(":visible"))
+				$('#carousel').carousel('prev');
 		},
 		threshold:75
 	});
@@ -68,8 +73,11 @@ jQuery(document).ready(function(){
 	//------------------------------------------------------------------------------------
 	var c= 0;
 	data = data[0];
+	// Loop through measurements
+	//---------------------------------------------------------------------
 	for(measurementID in data['sample']){
-		// initial variables in loop
+		// Loop through Protocols
+		//---------------------------------------------------------------------
 		for(protocolkey in data['sample'][measurementID]){
 			
 			var protocol = data['sample'][measurementID][protocolkey];
@@ -209,7 +217,7 @@ jQuery(document).ready(function(){
 			// Add data to graph
 			//---------------------------------------------------------------------
 			plotoptionsphone['series'][0]['data'] = data_raw;
-			plotoptionsphone['chart']['width'] = $('#plotRawData0').width();
+			plotoptionsphone['chart']['width'] = $('#listplotRawData0').width();
 			plotoptionsphone['chart']['reflow'] = true;
 			
 			// Build graph
@@ -235,37 +243,37 @@ jQuery(document).ready(function(){
 			c++;
 		}
 	}
+	
+	// Workaround to show icons (webfont loading issue)
+	//---------------------------------------------------------------------	
+	$('#BtnPlotsContainer').click();
+	$('#BtnListContainer').click();
 });
 </script>
 </head>
 <body>
-<nav class="navbar navbar-default navbar-fixed-top" id="NavHeader" role="navigation">
+<div class="navbar navbar-default navbar-fixed-top" id="NavHeader" role="navigation">
   <div class="container">
     <div class="col-xs-6 navbar-brand">
-    	<span class=" text-success"><i class="fa fa-check-circle"></i>&nbsp; Done</span>
+    	<span class="text-success"><i class="fa fa-check-circle"></i>&nbsp; Done</span>
     </div>
 	<div class="col-xs-6">	
-		<div class="btn-group pull-right" style="margin-top:12px" data-toggle="buttons">
-			<label class="btn btn-default active">
-				<input type="radio" name="BtnView" value="#PlotsContainer"><i class="fa fa-list"></i>
-			</label>
-			<label class="btn btn-default">
-				<input type="radio" name="BtnView" value="#ListContainer"><i class="fa fa-th-large"></i>
-			</label>
+		<div class="btn-group pull-right" style="margin-top:12px">
+			<button class="btn btn-default active" id="BtnListContainer" value="#ListContainer"><i class="fa fa-th-large"></i></button>
+			<button class="btn btn-default" id="BtnPlotsContainer" value="#PlotsContainer"><i class="fa fa-list"></i></button>
 		</div>
 	</div>
   </div>
-</nav>
+</div>
 <div class="container">
-	<div class="row" id="PlotsContainer">
+	<div id="ListContainer"></div>
+	<div class="row" id="PlotsContainer" style="display:none;">
 		<div id="carousel" class="carousel slide">
 			<!-- Wrapper for slides -->
 			<div class="carousel-inner col-xs-12"></div>	
 		</div>
 	</div>
-	<div id="ListContainer" style="display:none;"></div>
-
-<nav class="navbar navbar-default navbar-fixed-bottom" id="NavFooter" role="navigation">
+<nav class="navbar navbar-default navbar-fixed-bottom" id="NavFooter" role="navigation" style="display:none;">
 	<ol class="carousel-indicators"></ol>
 </nav>
 </body>
