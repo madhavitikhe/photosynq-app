@@ -59,5 +59,6 @@
     <string name="no_doodle">no_doodle</string>
     <string name="hello_world">Hello world!</string>
     <string name="sync_successful">Sync successful!</string>
+    <string name="title_activity_image_button">ImageButtonActivity</string>
 
 </resources>

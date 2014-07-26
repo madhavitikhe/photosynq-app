@@ -48,8 +48,8 @@ public class MainActivity extends ActionBarActivity {
 	    Intent intent = new Intent(context, MyReceiver.class);
 	    alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 	    alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-	    alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),7200000, alarmIntent);
-	    System.out.println("-----------setalarm");
+	    alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),3600000*2, alarmIntent);
+	    System.out.println("-----------alarm is set-------");
 		}
 	
 	public void cancelAlarm(Context context) {
@@ -116,8 +116,10 @@ public class MainActivity extends ActionBarActivity {
 	
 	public void quickMeasurement(View view)
 	{
-		Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);
-		intent.putExtra(QUICK_MEASURE, true);
+//		Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);
+//		intent.putExtra(QUICK_MEASURE, true);
+//		startActivity(intent);
+		Intent intent = new Intent(getApplicationContext(),ImageButtonActivity.class);
 		startActivity(intent);
 		
 	}

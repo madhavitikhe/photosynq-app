@@ -12,7 +12,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.IntentCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -62,7 +61,8 @@ public class DisplayResultsActivity extends ActionBarActivity {
 		
 		if(quick_measure)
 		{
-			keep.setVisibility(View.INVISIBLE);
+			keep.setText("Return to Quick Measurement");
+			keep.setVisibility(View.VISIBLE);
 			discard.setVisibility(View.INVISIBLE);
 		}
 		reloadWebview();
@@ -96,6 +96,10 @@ public class DisplayResultsActivity extends ActionBarActivity {
 	}
 	public void keep_click(View view) throws UnsupportedEncodingException, JSONException {
 		
+		if(quick_measure)
+		{
+			finish();
+		}
 		if (CommonUtils.isConnected(getApplicationContext()))
 		{
 			String authToken = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);

@@ -5,6 +5,7 @@ import android.location.Location;
 
 import com.photosynq.app.R;
 
+
 public final class LocationUtils {
 
     /*

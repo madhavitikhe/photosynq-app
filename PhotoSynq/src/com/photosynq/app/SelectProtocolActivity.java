@@ -109,7 +109,7 @@ public class SelectProtocolActivity extends ActionBarActivity {
             super.onPreExecute();
             // Showing progress dialog
            DataUtils.downloadData(getApplicationContext());
-            pDialog = new ProgressDialog(SelectProtocolActivity.this);
+           pDialog = new ProgressDialog(SelectProtocolActivity.this);
             pDialog.setMessage("Please wait...");
             pDialog.setCancelable(false);
             pDialog.show();
