@@ -116,11 +116,11 @@ public class MainActivity extends ActionBarActivity {
 	
 	public void quickMeasurement(View view)
 	{
-//		Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);
-//		intent.putExtra(QUICK_MEASURE, true);
-//		startActivity(intent);
-		Intent intent = new Intent(getApplicationContext(),ImageButtonActivity.class);
+		Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);
+		intent.putExtra(QUICK_MEASURE, true);
 		startActivity(intent);
+//		Intent intent = new Intent(getApplicationContext(),ImageButtonActivity.class);
+//		startActivity(intent);
 		
 	}
 }
