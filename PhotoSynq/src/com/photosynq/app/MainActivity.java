@@ -45,10 +45,10 @@ public class MainActivity extends ActionBarActivity {
 	public void setAlarm(Context context) {   
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.SECOND, 10);
-	    Intent intent = new Intent(context, MyReceiver.class);
+	    Intent intent = new Intent(context, AlarmReceiver.class);
 	    alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 	    alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-	    alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),3600000*2, alarmIntent);
+	    alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),20000, alarmIntent);//3600000*2 means 2 Hours
 	    System.out.println("-----------alarm is set-------");
 		}
 	
@@ -108,19 +108,18 @@ public class MainActivity extends ActionBarActivity {
 		intent.putExtra(DatabaseHelper.C_PROJECT_ID, "3");
 		startActivity(intent);
 	}
-	public void calibrateIntrument(View view)
-	{
-		Intent intent = new Intent(getApplicationContext(),SelectProtocolActivity.class);
-		startActivity(intent);
-	}
 	
 	public void quickMeasurement(View view)
 	{
 		Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);
 		intent.putExtra(QUICK_MEASURE, true);
 		startActivity(intent);
-//		Intent intent = new Intent(getApplicationContext(),ImageButtonActivity.class);
-//		startActivity(intent);
-		
 	}
+	
+	public void test(View view)
+	{
+		Intent intent = new Intent(getApplicationContext(),StreamlinedModeActivity.class);
+		startActivity(intent);
+	}
+	
 }

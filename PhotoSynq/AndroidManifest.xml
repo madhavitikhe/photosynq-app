@@ -72,18 +72,18 @@
         </activity>
 
         <service
-            android:name="com.photosynq.app.MyAlarmService"
+            android:name="com.photosynq.app.AlarmService"
             android:enabled="true" />
 
-        <receiver android:name="com.photosynq.app.MyReceiver" />
+        <receiver android:name="com.photosynq.app.AlarmReceiver" />
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name="com.photosynq.app.ImageButtonActivity"
-            android:label="@string/title_activity_image_button" >
+            android:name="com.photosynq.app.StreamlinedModeActivity"
+            android:label="@string/title_activity_streamlined_mode" >
         </activity>
     </application>
 

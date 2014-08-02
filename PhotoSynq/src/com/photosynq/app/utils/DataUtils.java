@@ -10,9 +10,6 @@ import org.json.JSONObject;
 import android.content.Context;
 
 import com.photosynq.app.UpdateData;
-import com.photosynq.app.UpdateMacro;
-import com.photosynq.app.UpdateProtocol;
-import com.photosynq.app.UpdateResearchProjects;
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ProjectResult;
@@ -23,6 +20,7 @@ public class DataUtils {
  */
 	public static void downloadData(Context context) 
 	{
+		System.out.println("Downloading data..............");
 		if (CommonUtils.isConnected(context)) 
 		{
 			DatabaseHelper db;
@@ -41,33 +39,30 @@ public class DataUtils {
 					PrefUtils.PREFS_LOGIN_USERNAME_KEY,
 					PrefUtils.PREFS_DEFAULT_VAL);
 
-			UpdateResearchProjects updateProjects = new UpdateResearchProjects(
-					context);
+			
 			HTTPConnection mProjListTask = new HTTPConnection();
-			mProjListTask.delegate = updateProjects;
 			mProjListTask
-					.execute(HTTPConnection.PHOTOSYNQ_PROJECTS_LIST_URL
+					.execute(context,HTTPConnection.PHOTOSYNQ_PROJECTS_LIST_URL
 							+ "user_email=" + email + "&user_token="
 							+ authToken, "GET");
 
-			UpdateProtocol upprotoProtocol = new UpdateProtocol(context);
+			
 			mProtocolListTask = new HTTPConnection();
-			mProtocolListTask.delegate = upprotoProtocol;
-			mProtocolListTask.execute(
+			mProtocolListTask.execute(context,
 					HTTPConnection.PHOTOSYNQ_PROTOCOLS_LIST_URL + "user_email="
 							+ email + "&user_token=" + authToken, "GET");
 
-			UpdateMacro updateMacro = new UpdateMacro(context);
+			
 			mMacroListTask = new HTTPConnection();
-			mMacroListTask.delegate = updateMacro;
 			mMacroListTask
-					.execute(HTTPConnection.PHOTOSYNQ_MACROS_LIST_URL
+					.execute(context,HTTPConnection.PHOTOSYNQ_MACROS_LIST_URL
 							+ "user_email=" + email + "&user_token="
 							+ authToken, "GET");
 
-			db = new DatabaseHelper(context);
+			//db = new DatabaseHelper(context);
+			db = DatabaseHelper.getHelper(context);
 			List<ProjectResult> listRecords = db.getAllUnUploadedResults();
-			db.closeDB();
+			//db.closeDB();
 			for (ProjectResult projectResult : listRecords) {
 				StringEntity input = null;
 				JSONObject request_data = new JSONObject();
@@ -90,8 +85,7 @@ public class DataUtils {
 				UpdateData updateData = new UpdateData(context, null,
 						projectResult.getId());
 				mUpdateDataTask = new HTTPConnection(input);
-				mUpdateDataTask.delegate = updateData;
-				mUpdateDataTask.execute(HTTPConnection.PHOTOSYNQ_DATA_URL
+				mUpdateDataTask.execute(context,HTTPConnection.PHOTOSYNQ_DATA_URL
 						+ projectResult.getProjectId() + "/data.json", "POST");
 			}
 		}

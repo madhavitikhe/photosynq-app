@@ -108,10 +108,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ TABLE_RESULTS + "(" + C_RECORD_HASH + " TEXT ,"+ C_PROJECT_ID + " TEXT ,"
 			+ C_UPLOADED + " TEXT ,"+ C_READING + " TEXT)";
 	
-	public DatabaseHelper(Context context) {
+	private DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
+	private static DatabaseHelper instance;
+
+    public static synchronized DatabaseHelper getHelper(Context context)
+    {
+        if (instance == null)
+            instance = new DatabaseHelper(context);
+
+        return instance;
+    }
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// creating required tables

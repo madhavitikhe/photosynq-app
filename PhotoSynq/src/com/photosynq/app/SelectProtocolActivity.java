@@ -94,12 +94,13 @@ public class SelectProtocolActivity extends ActionBarActivity {
 	}
 	
 	private void refreshProtocolList() {
-		db = new DatabaseHelper(getApplicationContext());
+		//db = new DatabaseHelper(getApplicationContext());
+		db = DatabaseHelper.getHelper(getApplicationContext());
 		protocols = db.getAllProtocolsList();
 		arrayadapter = new ProtocolArrayAdapter(this, protocols); 
 		protocolList.setAdapter(arrayadapter);
-		System.out.println("DBCLosing");
-		db.closeDB();
+		//System.out.println("DBCLosing");
+		//db.closeDB();
 	}
 	
 	private class ProtocolListAsync extends AsyncTask<Void, Void, Void> {

@@ -88,12 +88,13 @@ public class ProjectListActivity extends ActionBarActivity  {
 	}
 
 	private void refreshProjectList() {
-		db = new DatabaseHelper(getApplicationContext());
+		//db = new DatabaseHelper(getApplicationContext());
+		db = DatabaseHelper.getHelper(getApplicationContext());
 		researchProjectList = db.getAllResearchProjects();
 		arrayadapter = new ResearchProjectArrayAdapter(this, researchProjectList); 
 		projectList.setAdapter(arrayadapter);
-		System.out.println("DBCLosing");
-		db.closeDB();
+		//System.out.println("DBCLosing");
+		//db.closeDB();
 	}
 
 	@Override

@@ -27,7 +27,8 @@ public class DirectionsActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_directions);
-		db = new DatabaseHelper(getApplicationContext());
+		//db = new DatabaseHelper(getApplicationContext());
+		db = DatabaseHelper.getHelper(getApplicationContext());
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
@@ -69,8 +70,8 @@ public class DirectionsActivity extends ActionBarActivity {
 			}else{tvBeta.setText(getResources().getString(R.string.no_data_found));}
 
 		}
-		System.out.println("DBCLosing");
-		db.closeDB();
+		//System.out.println("DBCLosing");
+		//db.closeDB();
 	}
 
 	@Override

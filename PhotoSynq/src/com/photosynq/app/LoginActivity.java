@@ -190,7 +190,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 		showProgress(true);
 		mAuthTask = new HTTPConnection(mEmail, mPassword);
 		mAuthTask.delegate = this;
-		mAuthTask.execute(HTTPConnection.PHOTOSYNQ_LOGIN_URL,"POST");
+		mAuthTask.execute(getApplicationContext(),HTTPConnection.PHOTOSYNQ_LOGIN_URL,"POST");
 	}
 
 	/**

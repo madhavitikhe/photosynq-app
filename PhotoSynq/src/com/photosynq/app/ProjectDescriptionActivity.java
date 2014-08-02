@@ -34,8 +34,8 @@ public class ProjectDescriptionActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_project_description);
-		db = new DatabaseHelper(getApplicationContext());
-		
+		//db = new DatabaseHelper(getApplicationContext());
+		db = DatabaseHelper.getHelper(getApplicationContext());
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			recordid = extras.getString(DatabaseHelper.C_ID);
@@ -116,8 +116,8 @@ public class ProjectDescriptionActivity extends ActionBarActivity {
 		
 		
 		
-		System.out.println("DBCLosing");
-		db.closeDB();
+		//System.out.println("DBCLosing");
+		//db.closeDB();
 	}
 
 	@Override

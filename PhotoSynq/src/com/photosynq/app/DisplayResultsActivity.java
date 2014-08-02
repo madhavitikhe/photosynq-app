@@ -47,6 +47,7 @@ public class DisplayResultsActivity extends ActionBarActivity {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_results);
+		getActionBar().hide();
 		
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
@@ -127,17 +128,18 @@ public class DisplayResultsActivity extends ActionBarActivity {
 			UpdateData updateData = new UpdateData(getApplicationContext(),this, "NONE");
 			mDataTask = new HTTPConnection(input);
 			mDataTask.delegate = updateData;
-			mDataTask.execute(HTTPConnection.PHOTOSYNQ_DATA_URL+projectId+"/data.json", "POST");
+			mDataTask.execute(context,HTTPConnection.PHOTOSYNQ_DATA_URL+projectId+"/data.json", "POST");
 			view.setVisibility(View.INVISIBLE);
 			discard.setVisibility(View.INVISIBLE);
 		}else
 		{
 		
 		
-		db = new DatabaseHelper(getApplicationContext());
+		//db = new DatabaseHelper(getApplicationContext());
+			db = DatabaseHelper.getHelper(getApplicationContext());
 		ProjectResult result = new ProjectResult(projectId, reading, "N");
 		db.createResult(result);
-		db.closeDB();
+		//db.closeDB();
 		
 		alertDialogBuilder = new AlertDialog.Builder(context);
 		alertDialogBuilder.setTitle(R.string.no_internet_connection);
