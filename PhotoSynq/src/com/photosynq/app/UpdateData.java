@@ -41,16 +41,17 @@ public class UpdateData implements PhotosynqResponse{
 			Toast.makeText(context, jo.getString("notice"), Toast.LENGTH_SHORT).show();
 			if(null != activity)
 			{
-			alertDialogBuilder = new AlertDialog.Builder(activity);
-			alertDialogBuilder.setTitle(R.string.keep_data);
-			alertDialogBuilder.setMessage(R.string.data_uploaded_to_server);
-			alertDialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-				 public void onClick(DialogInterface dialog, int which) {
-					 activity.finish();
-			 }
-	      });
-			alert = alertDialogBuilder.create();
-	        alert.show();
+//			alertDialogBuilder = new AlertDialog.Builder(activity);
+//			alertDialogBuilder.setTitle(R.string.keep_data);
+//			alertDialogBuilder.setMessage(R.string.data_uploaded_to_server);
+//			alertDialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//				 public void onClick(DialogInterface dialog, int which) {
+//					 activity.finish();
+//			 }
+//	      });
+//			alert = alertDialogBuilder.create();
+//	        alert.show();
+				Toast.makeText(context, R.string.data_uploaded_to_server, Toast.LENGTH_LONG).show();
 			}
 			if (status.toUpperCase().equals("SUCCESS"))
 			{

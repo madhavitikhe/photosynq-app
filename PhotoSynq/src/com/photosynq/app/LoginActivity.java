@@ -244,12 +244,12 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 			JSONObject jsonResult = null;
 			try {
 				jsonResult = new JSONObject(result);
-				CheckBox isSaveCredentials = (CheckBox) findViewById(R.id.save_credentials);
-				if (isSaveCredentials.isChecked()) {
+				//CheckBox isSaveCredentials = (CheckBox) findViewById(R.id.save_credentials);
+				//if (isSaveCredentials.isChecked()) {
 					// Save authentication values to preferences
 					PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_LOGIN_USERNAME_KEY,jsonResult.get("email").toString());
 					PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_LOGIN_PASSWORD_KEY, mPassword);
-				}
+				//}
 				PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_AUTH_TOKEN_KEY,jsonResult.get("auth_token").toString());
 			} catch (JSONException e) {
 				// TODO Log error

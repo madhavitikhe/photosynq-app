@@ -64,12 +64,12 @@
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true" />
-            <CheckBox
+           <!--  <CheckBox
                 android:id="@+id/save_credentials"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" 
                 android:layout_marginTop="23dp"
-                android:text="@string/save_credentials"/>
+                android:text="@string/save_credentials"/> -->
             
             <Button
                 android:id="@+id/sign_in_button"

@@ -8,9 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.IntentCompat;
@@ -20,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.db.DatabaseHelper;
@@ -38,9 +37,9 @@ public class DisplayResultsActivity extends ActionBarActivity {
 	private boolean quick_measure;
 	Button keep;
 	Button discard;
-	AlertDialog.Builder alertDialogBuilder;
+	//AlertDialog.Builder alertDialogBuilder;
 	final Context context = this;
-	AlertDialog alert;
+	//AlertDialog alert;
 	@SuppressLint({ "SetJavaScriptEnabled", "NewApi" })
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -141,34 +140,39 @@ public class DisplayResultsActivity extends ActionBarActivity {
 		db.createResult(result);
 		//db.closeDB();
 		
-		alertDialogBuilder = new AlertDialog.Builder(context);
-		alertDialogBuilder.setTitle(R.string.no_internet_connection);
-		alertDialogBuilder.setMessage(R.string.error_sending_data);
-		alertDialogBuilder.setPositiveButton(R.string.ok,  new DialogInterface.OnClickListener() {
-		 public void onClick(DialogInterface dialog, int which) {
-			        	finish();
-			 }
-	      });
-		alert = alertDialogBuilder.create();
-        alert.show();
+//		alertDialogBuilder = new AlertDialog.Builder(context);
+//		alertDialogBuilder.setTitle(R.string.no_internet_connection);
+//		alertDialogBuilder.setMessage(R.string.error_sending_data);
+//		alertDialogBuilder.setPositiveButton(R.string.ok,  new DialogInterface.OnClickListener() {
+//		 public void onClick(DialogInterface dialog, int which) {
+//			        	finish();
+//			 }
+//	      });
+//		alert = alertDialogBuilder.create();
+//        alert.show();
+		Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+		Toast.makeText(context, R.string.error_sending_data, Toast.LENGTH_LONG).show();
 		discard.setVisibility(View.INVISIBLE);
 		view.setVisibility(View.INVISIBLE); 
+		finish();
 		}
 	}
 	
 	public void discard_click(View view) {
-		alertDialogBuilder = new AlertDialog.Builder(context);
-		alertDialogBuilder.setTitle(R.string.discard);
-		alertDialogBuilder.setMessage(R.string.result_discarded);
-		alertDialogBuilder.setPositiveButton(R.string.ok,  new DialogInterface.OnClickListener() {
-	        public void onClick(DialogInterface dialog, int which) {
-	        	finish();
-	          }
-	      });
-		alert = alertDialogBuilder.create();
-		alert.show();
+//		alertDialogBuilder = new AlertDialog.Builder(context);
+//		alertDialogBuilder.setTitle(R.string.discard);
+//		alertDialogBuilder.setMessage(R.string.result_discarded);
+//		alertDialogBuilder.setPositiveButton(R.string.ok,  new DialogInterface.OnClickListener() {
+//	        public void onClick(DialogInterface dialog, int which) {
+//	        	finish();
+//	          }
+//	      });
+//		alert = alertDialogBuilder.create();
+//		alert.show();
+		Toast.makeText(context, R.string.result_discarded, Toast.LENGTH_LONG).show();
 		view.setVisibility(View.INVISIBLE); 
 		keep.setVisibility(View.INVISIBLE);
+		finish();
 	}
 
 	@Override

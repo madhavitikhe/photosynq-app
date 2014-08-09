@@ -61,5 +61,46 @@
     <string name="sync_successful">Sync successful!</string>
     <string name="title_activity_streamlined_mode">Streamlined Mode</string>
     <string name="test">Test</string>
+    <string name="title_activity_display_selected_questions_options">DisplaySelectedQuestionsOptionsActivity</string>
+    <string name="option_text">Option  :-</string>
+    <string name="questionText">Question</string>
+    <string name="measure_btn"> MEASURE </string>
+    <string name="drawer_title">PhotosynQ</string>
+    
+      <string name="clear"></string>
+        
+    <string name="drawer_open">Drawer Open</string>
+    <string name="drawer_close">Drawer Close</string>  
+    
+    <string name="sign_out">Sign Out</string>
+    <string name="user_email">test@gmail.com</string>   
+
+    <string name="tab_one">Mode</string>
+    <string name="tab_two">User</string>
+    <string name="tab_three">Connection</string>
+    <string name="tab_four">Project</string>
+    <string name="tab_five">Data</string>  
+    <string name="tab_six">Review</string>
+    <string name="tab_seven">Sync</string>
+    
+    <string name="fragment_my_apps">Fragment my Apps</string>    
+    <string name="fragment_shop_apps">Fragment Shops App</string>
+    <string name="fragment_tab_one">Fragment Tab One</string>    
+    <string name="fragment_tab_two">Fragment Tab Two</string>
+    <string name="fragment_tab_three">Fragment Tab Three</string> 
+    <string name="title_activity_navigation_main">Navigation Drawer</string>
+    <string name="title_activity_View_pager_fragment">View Pager Fragment</string>
+    
+    <string-array name="planets_array">
+        <item>Mode</item>
+        <item>User</item>
+        <item>Connection</item>
+        <item>Project</item>
+        <item>Data</item>
+        <item>Review</item>
+        <item>Sync</item>
+    </string-array>
+    <string name="sign_out_btn">Sign Out</string>
+    <string name="app_not_available">Sorry, there\'s no web browser available</string>
 
 </resources>

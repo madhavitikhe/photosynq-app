@@ -6,11 +6,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,11 +22,12 @@ import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Protocol;
+import com.photosynq.app.navigationDrawer.NavigationMain;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.DataUtils;
 
-public class SelectProtocolActivity extends ActionBarActivity {
+public class SelectProtocolActivity extends NavigationMain {
 
 
 	ListView protocolList;
@@ -37,7 +39,11 @@ public class SelectProtocolActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_select_protocol);
+		//setContentView(R.layout.activity_select_protocol);
+		LayoutInflater inflater = (LayoutInflater) this
+	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	    View contentView = inflater.inflate(R.layout.activity_select_protocol, null, false);
+	    layoutDrawer.addView(contentView, 0); 
 		
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {

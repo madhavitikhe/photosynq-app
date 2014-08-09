@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,9 +22,10 @@ import android.widget.ViewFlipper;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Question;
+import com.photosynq.app.navigationDrawer.NavigationMain;
 import com.squareup.picasso.Picasso;
 
-public class StreamlinedModeActivity extends ActionBarActivity {
+public class StreamlinedModeActivity extends NavigationMain {
 
 	ViewFlipper viewFlipper;
 	Button Next, Previous;
@@ -31,21 +33,29 @@ public class StreamlinedModeActivity extends ActionBarActivity {
 	private String projectId;
 	private Context ctx;
 	ArrayList<String> allSelectedOptions= new ArrayList<String>();
+	ArrayList<String> allSelectedQuestions = new ArrayList<String>();
 	//String[n] array;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_streamlined_mode);
+		//setContentView(R.layout.activity_streamlined_mode);
+		LayoutInflater inflater = (LayoutInflater) this
+	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	    View contentView = inflater.inflate(R.layout.activity_streamlined_mode, null, false);
+	    layoutDrawer.addView(contentView, 0); 
+	    
 		ctx = getApplicationContext();
 		// it returns questions and options of projectId-7 only, and show
 		// question and option on viewflipper.
 		//db = new DatabaseHelper(ctx);
 		db = DatabaseHelper.getHelper(ctx);
 		projectId = "12";
-		List<Question> questions = db.getAllQuestionForProject(projectId);
+		final List<Question> questions = db.getAllQuestionForProject(projectId);
 		//db.closeDB();
 		viewFlipper = (ViewFlipper) findViewById(R.id.ViewFlipper01);
 		for (final Question question : questions) {
+			System.out.println("question size"+ question.getOptions());
+			System.out.println("questions"+question.getQuestionText());
 			/*
 			 * Creating following layout programmatically to display each 
 			 * question as a single view in ViewFlipper
@@ -53,14 +63,14 @@ public class StreamlinedModeActivity extends ActionBarActivity {
 			 * LinearLayout ->  (mainLinearLayout)		
 			 * 		ScrollView -> 
 			 * 			LinearLayout -> (subLinearLayout)
-			 * 				TextView
+			 * 				TextView(for question)
 			 * 				</TV>
 			 * 				LinearLayout -> (detailsLinearLayout)
 			 * 					RelativeLayout -> 
-			 * 						TextView , ImageView
+			 * 						TextView , ImageView(for option)
 			 * 					</RL>
 			 * 					RelativeLayout -> 
-			 * 						TextView , ImageView
+			 * 						TextView , ImageView(for option)....
 			 * 					</RL>
 			 * 				</LL>
 			 * 			</LL>
@@ -122,12 +132,26 @@ public class StreamlinedModeActivity extends ActionBarActivity {
 				        public void onClick(View v) {
 				        	//Toast.makeText(ctx, "You clicked on option", 5).show();
 				        	//System.out.println(question.getOptions().get(v.getId()));
-				        	allSelectedOptions.add(question.getOptions().get(v.getId()));
-				        	for(int i=0;i<allSelectedOptions.size();i++)
-				        	{
-				        		System.out.println(allSelectedOptions.get(i));
-				        	}
-				        	viewFlipper.showNext();
+				        	int displayedChild = viewFlipper.getDisplayedChild();
+				            int childCount = viewFlipper.getChildCount();
+
+				            if (displayedChild == childCount - 1) {
+				                viewFlipper.stopFlipping();
+				                Intent intent = new Intent(ctx,DisplaySelectedQuestionsOptionsActivity.class);
+				                intent.putExtra("All_Questions", allSelectedQuestions);
+				                intent.putExtra("All_Options", allSelectedOptions);
+				                intent.putExtra("Question_Size", questions.size());
+				                intent.putExtra("Question_Text", question.getQuestionText());
+				                startActivity(intent);
+				            }
+				            
+				            	allSelectedQuestions.add(question.getQuestionText());
+					        	allSelectedOptions.add(question.getOptions().get(v.getId()));
+					        	for(int i=0;i<allSelectedOptions.size();i++)
+					        	{
+					        		System.out.println(allSelectedOptions.get(i));
+					        	}
+					        	viewFlipper.showNext();
 				        }
 				    });
 					
@@ -165,12 +189,25 @@ public class StreamlinedModeActivity extends ActionBarActivity {
 					        	
 					        	//Toast.makeText(ctx, "You clicked on option", 5).show();
 					        	//System.out.println(""+ question.getOptions().get(v.getId()));
-					        	allSelectedOptions.add(question.getOptions().get(v.getId()));
-					        	for(int i=0;i<allSelectedOptions.size();i++)
-					        	{
-					        		System.out.println(allSelectedOptions.get(i));
-					        	}
-					        	viewFlipper.showNext();
+					        	int displayedChild = viewFlipper.getDisplayedChild();
+					            int childCount = viewFlipper.getChildCount();
+					        	if (displayedChild == childCount - 1) {
+					                viewFlipper.stopFlipping();
+					                Intent intent = new Intent(ctx,DisplaySelectedQuestionsOptionsActivity.class);
+					                intent.putExtra("All_Questions", allSelectedQuestions);
+					                intent.putExtra("All_Options", allSelectedOptions);
+					                intent.putExtra("Question_Size", questions.size());
+					                intent.putExtra("Question_Text", question.getQuestionText());
+					                startActivity(intent);
+					            }
+					        	
+					        		allSelectedQuestions.add(question.getQuestionText());
+						        	allSelectedOptions.add(question.getOptions().get(v.getId()));
+						        	for(int i=0;i<allSelectedOptions.size();i++)
+						        	{
+						        		System.out.println(allSelectedOptions.get(i));
+						        	}
+						        	viewFlipper.showNext();
 					        }
 					    });
 						

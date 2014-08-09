@@ -15,8 +15,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,9 +26,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.navigationDrawer.NavigationMain;
 import com.photosynq.app.utils.BluetoothService;
 
-public class BluetoothActivity extends ActionBarActivity {
+public class BluetoothActivity extends NavigationMain {
 	private BluetoothAdapter bluetoothAdapter;
 	private ListView lst;
 	private View bluetoothStatus;
@@ -39,7 +40,12 @@ public class BluetoothActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_bluetooth);
+		//setContentView(R.layout.activity_bluetooth);
+		LayoutInflater inflater = (LayoutInflater) this
+	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	    View contentView = inflater.inflate(R.layout.activity_bluetooth, null, false);
+	    layoutDrawer.addView(contentView, 0); 
+		
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);

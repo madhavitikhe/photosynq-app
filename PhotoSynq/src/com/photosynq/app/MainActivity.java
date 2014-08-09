@@ -7,13 +7,16 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
 
@@ -70,23 +73,20 @@ public class MainActivity extends ActionBarActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
 
-//		switch (item.getItemId()) {
-//		  case R.id.start_action:
-//			   setAlarm(this);
-//	           Toast.makeText(getApplicationContext(), "start", 5).show();
-//	           return true;
-//		  case R.id.cancel_action:
-//			 cancelAlarm(this);
-//			  Toast.makeText(getApplicationContext(), "cancel.......", 5).show();
-//			  return true;  
-//		  default:
-//			  return super.onOptionsItemSelected(item);
-//		}		
-		return super.onOptionsItemSelected(item);
+		switch (item.getItemId()) {
+		  case R.id.sign_out:
+			  Toast.makeText(getApplicationContext(), "Sign Out Successfully", Toast.LENGTH_LONG).show();
+			  SharedPreferences settings =  PreferenceManager.getDefaultSharedPreferences(getBaseContext());                          
+		        SharedPreferences.Editor editor = settings.edit();
+		        editor.clear();
+		        editor.commit();
+		        finish();
+	           return true;
+		  default:
+			  return super.onOptionsItemSelected(item);
+		}		
+	//	return super.onOptionsItemSelected(item);
 	}
 	
 	public void listResearchProjects(View view)

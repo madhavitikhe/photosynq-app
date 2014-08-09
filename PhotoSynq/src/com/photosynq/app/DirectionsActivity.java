@@ -3,11 +3,12 @@ package com.photosynq.app;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,9 +16,10 @@ import android.widget.TextView;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ResearchProject;
+import com.photosynq.app.navigationDrawer.NavigationMain;
 import com.photosynq.app.utils.CommonUtils;
 
-public class DirectionsActivity extends ActionBarActivity {
+public class DirectionsActivity extends NavigationMain {
 
 	private String projectId = ""; 
 	private boolean quick_measure;
@@ -26,7 +28,12 @@ public class DirectionsActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_directions);
+		//setContentView(R.layout.activity_directions);
+		LayoutInflater inflater = (LayoutInflater) this
+	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	    View contentView = inflater.inflate(R.layout.activity_directions, null, false);
+	    layoutDrawer.addView(contentView, 0); 
+		
 		//db = new DatabaseHelper(getApplicationContext());
 		db = DatabaseHelper.getHelper(getApplicationContext());
 		Bundle extras = getIntent().getExtras();

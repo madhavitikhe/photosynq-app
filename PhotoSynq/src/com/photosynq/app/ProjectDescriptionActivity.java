@@ -3,37 +3,48 @@ package com.photosynq.app;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.ResearchProject;
+import com.photosynq.app.navigationDrawer.NavigationMain;
 import com.photosynq.app.utils.CommonUtils;
 import com.squareup.picasso.Picasso;
 
-public class ProjectDescriptionActivity extends ActionBarActivity {
+@SuppressLint("NewApi")
+public class ProjectDescriptionActivity extends NavigationMain {
 
 	private String recordid = ""; 
 	private boolean quick_measure;
 	DatabaseHelper db;
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_project_description);
+		//setContentView(R.layout.activity_project_description);
+		LayoutInflater inflater = (LayoutInflater) this
+	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	    View contentView = inflater.inflate(R.layout.activity_project_description, null, false);
+	    layoutDrawer.addView(contentView, 0); 
+	    
+	    getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#AA0000")));//it change option bar color.
+	    
 		//db = new DatabaseHelper(getApplicationContext());
 		db = DatabaseHelper.getHelper(getApplicationContext());
 		Bundle extras = getIntent().getExtras();
