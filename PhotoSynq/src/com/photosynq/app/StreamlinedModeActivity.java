@@ -22,10 +22,10 @@ import android.widget.ViewFlipper;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Question;
-import com.photosynq.app.navigationDrawer.NavigationMain;
+import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.squareup.picasso.Picasso;
 
-public class StreamlinedModeActivity extends NavigationMain {
+public class StreamlinedModeActivity extends NavigationDrawer {
 
 	ViewFlipper viewFlipper;
 	Button Next, Previous;

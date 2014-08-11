@@ -12,9 +12,9 @@ import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.photosynq.app.navigationDrawer.NavigationMain;
+import com.photosynq.app.navigationDrawer.NavigationDrawer;
 
-public class DisplaySelectedQuestionsOptionsActivity extends NavigationMain {
+public class DisplaySelectedQuestionsOptionsActivity extends NavigationDrawer {
 
 	ArrayList<CharSequence> getAllSelectedOptions = new ArrayList<CharSequence>();
 	ArrayList<CharSequence> getAllSelectedQuestions = new ArrayList<CharSequence>();

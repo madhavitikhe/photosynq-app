@@ -22,12 +22,12 @@ import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Protocol;
-import com.photosynq.app.navigationDrawer.NavigationMain;
+import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.DataUtils;
 
-public class SelectProtocolActivity extends NavigationMain {
+public class SelectProtocolActivity extends NavigationDrawer {
 
 
 	ListView protocolList;

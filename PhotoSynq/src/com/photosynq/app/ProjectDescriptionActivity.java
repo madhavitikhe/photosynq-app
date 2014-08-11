@@ -23,12 +23,12 @@ import android.widget.Toast;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.ResearchProject;
-import com.photosynq.app.navigationDrawer.NavigationMain;
+import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.utils.CommonUtils;
 import com.squareup.picasso.Picasso;
 
 @SuppressLint("NewApi")
-public class ProjectDescriptionActivity extends NavigationMain {
+public class ProjectDescriptionActivity extends NavigationDrawer {
 
 	private String recordid = ""; 
 	private boolean quick_measure;

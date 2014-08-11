@@ -1,0 +1,63 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/white" >
+
+ <!--   <ImageView
+        android:id="@+id/imgLiveo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="121dp"
+        android:contentDescription="@string/clear"
+        android:src="@drawable/ic_liveo" /> 
+
+    <TextView
+        android:id="@+id/txtFragmentOne"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn1"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:text="@string/clear"
+        android:textAppearance="?android:attr/textAppearanceMedium" /> -->
+
+    <RadioGroup
+        android:id="@+id/radios"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_gravity="right"
+        android:layout_marginTop="110dp"
+        android:inputType="text"
+        android:orientation="vertical" >
+
+        <RadioButton
+            android:id="@+id/first"
+            android:layout_width="fill_parent"
+            android:layout_height="92dp"
+            android:layout_weight="0.90"
+            android:background="@color/white"
+            android:button="@null"
+            android:drawablePadding="30dp"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:text="@string/normal_mode"
+            android:textColor="@color/black"
+            android:textSize="30sp" />
+
+        <RadioButton
+            android:id="@+id/second"
+            android:layout_width="fill_parent"
+            android:layout_height="92dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/white"
+            android:button="@null"
+            android:drawablePadding="30dp"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:text="@string/streamlined_mode"
+            android:textColor="@color/black"
+            android:textSize="30sp" />
+    </RadioGroup>
+
+</RelativeLayout>

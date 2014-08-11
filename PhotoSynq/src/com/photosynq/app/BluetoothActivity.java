@@ -26,10 +26,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.photosynq.app.db.DatabaseHelper;
-import com.photosynq.app.navigationDrawer.NavigationMain;
+import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.utils.BluetoothService;
 
-public class BluetoothActivity extends NavigationMain {
+public class BluetoothActivity extends NavigationDrawer {
 	private BluetoothAdapter bluetoothAdapter;
 	private ListView lst;
 	private View bluetoothStatus;

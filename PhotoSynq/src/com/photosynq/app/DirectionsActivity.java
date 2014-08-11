@@ -16,10 +16,10 @@ import android.widget.TextView;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ResearchProject;
-import com.photosynq.app.navigationDrawer.NavigationMain;
+import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.utils.CommonUtils;
 
-public class DirectionsActivity extends NavigationMain {
+public class DirectionsActivity extends NavigationDrawer {
 
 	private String projectId = ""; 
 	private boolean quick_measure;
