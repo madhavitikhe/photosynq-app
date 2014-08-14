@@ -1,7 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/white" >
+    android:background="@color/white"
+    android:clickable="true"
+	android:focusable="true"
+	android:focusableInTouchMode="true" >
 
    <!--  <ImageView
         android:id="@+id/imgLiveo"
@@ -14,12 +17,12 @@
         android:src="@drawable/ic_liveo" /> -->
 
     <TextView
-        android:id="@+id/txtFragmentTwo"
+        android:id="@+id/userNameText"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
        	android:layout_marginTop="220dp"
         android:gravity="center"
-        android:textSize="60sp"
+        android:textSize="35sp"
         android:text="@string/clear"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -33,14 +36,15 @@
         android:src="@drawable/abc_ab_share_pack_holo_light" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/changeUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/txtFragmentTwo"
+        android:layout_below="@+id/userNameText"
         android:layout_marginBottom="20dp"
         android:layout_centerHorizontal="true"
-        android:text="Change User"
-        android:textSize="40sp" />
+        android:text="@string/change_user"
+        android:textSize="40sp" 
+        android:background="@drawable/rounded_corner"/>
 
 </RelativeLayout>

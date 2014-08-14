@@ -1,0 +1,27 @@
+ <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentRight="true"
+      android:layout_below="@+id/txtFragmentThree"
+      android:background="@color/gray"
+      android:clickable="true"
+	  android:focusable="true"
+	  android:focusableInTouchMode="true" >
+
+        <ListView
+            android:id="@+id/project_list"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@null"
+            android:dividerHeight="10dp"
+            android:footerDividersEnabled="true"
+            android:headerDividersEnabled="true"
+            android:listSelector="@android:color/transparent" >
+
+        </ListView>
+        
+</RelativeLayout>

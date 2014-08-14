@@ -8,13 +8,12 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.TextView;
 
 import com.photosynq.app.R;
 
 public class FragmentMode extends Fragment{
 
-	private TextView txtFragmentone;
+	//private TextView txtFragmentone;
 	    
     public static FragmentMode newInstance() {
         FragmentMode fragment = new FragmentMode();

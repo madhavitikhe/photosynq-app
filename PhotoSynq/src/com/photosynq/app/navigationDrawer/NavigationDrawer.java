@@ -1,6 +1,7 @@
 
 package com.photosynq.app.navigationDrawer;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.photosynq.app.MainActivity;
 import com.photosynq.app.R;
 import com.photosynq.app.utils.PrefUtils;
 
@@ -40,7 +42,7 @@ public class NavigationDrawer extends ActionBarActivity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);		
 		getSupportActionBar().setIcon(R.drawable.ic_action_play);
-		setContentView(R.layout.navigation_main);		
+		setContentView(R.layout.navigation_drawer);		
 		
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);		
@@ -77,7 +79,11 @@ public class NavigationDrawer extends ActionBarActivity{
     		        SharedPreferences.Editor editor = settings.edit();
     		        editor.clear();
     		        editor.commit();
-    		        finish();
+    		        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+    		        intent.putExtra("finish", true);
+	            	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	                startActivity(intent);
+	                finish();	
                 }
             });
 	
@@ -192,10 +198,19 @@ public class NavigationDrawer extends ActionBarActivity{
 			break;			
 		case 2:			
 			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentConnection()).commit();						
-			break;				
+			break;
+		case 3:			
+			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();						
+			break;
+		case 4:
+			Toast.makeText(getApplicationContext(), "implementing fragments here", Toast.LENGTH_SHORT).show();
+			break;
+		case 5:			
+			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentReview()).commit();						
+			break;
 			
 		default:
-			Toast.makeText(getApplicationContext(), "implement other fragments here", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "Sync.............", Toast.LENGTH_SHORT).show();
 			break;	
 		}			
 	

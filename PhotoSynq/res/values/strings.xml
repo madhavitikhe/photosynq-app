@@ -101,5 +101,7 @@
     <string name="sign_out_btn">Sign Out</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
     <string name="title_activity_tabs_view_pager_fragment">TabsViewPagerFragmentActivity</string>
+    <string name="searchNew">Search New</string>
+    <string name="change_user">Change User</string>
 
 </resources>

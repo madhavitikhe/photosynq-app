@@ -37,8 +37,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.photosynq.app.navigationDrawer.NavigationDrawer"
+        
+         <activity
+            android:name="com.photosynq.app.navigationDrawer.NavigationMain"
             android:label="@string/title_activity_navigation_main" >
         </activity>
         <activity
@@ -63,7 +64,7 @@
         </activity>
         <activity
             android:name="com.photosynq.app.NewMeasurmentActivity"
-            android:configChanges="orientation|screenSize"
+          	android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_new_measurment" >
         </activity>
         <activity
@@ -97,10 +98,6 @@
         <activity
             android:name="com.photosynq.app.DisplaySelectedQuestionsOptionsActivity"
             android:label="@string/title_activity_display_selected_questions_options" >
-        </activity>
-        <activity
-            android:name="com.photosynq.app.TabsViewPagerFragmentActivity"
-            android:label="@string/title_activity_tabs_view_pager_fragment" >
         </activity>
     </application>
 

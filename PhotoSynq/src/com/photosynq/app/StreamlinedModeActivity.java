@@ -49,7 +49,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 		// question and option on viewflipper.
 		//db = new DatabaseHelper(ctx);
 		db = DatabaseHelper.getHelper(ctx);
-		projectId = "12";
+		projectId = "7";
 		final List<Question> questions = db.getAllQuestionForProject(projectId);
 		//db.closeDB();
 		viewFlipper = (ViewFlipper) findViewById(R.id.ViewFlipper01);

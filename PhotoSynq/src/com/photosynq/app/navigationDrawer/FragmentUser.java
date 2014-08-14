@@ -1,9 +1,7 @@
 package com.photosynq.app.navigationDrawer;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,10 +15,12 @@ import android.widget.TextView;
 
 import com.photosynq.app.LoginActivity;
 import com.photosynq.app.R;
+import com.photosynq.app.utils.PrefUtils;
 
 public class FragmentUser extends Fragment{
 
-	private TextView txtFragmenttwo;
+	private TextView userText;
+	private String mEmail;
 	
     public static FragmentUser newInstance() {
         Bundle bundle = new Bundle();
@@ -37,21 +37,23 @@ public class FragmentUser extends Fragment{
 			
 		View rootView = inflater.inflate(R.layout.fragment_user, container, false);
 		
-		txtFragmenttwo = (TextView) rootView.findViewById(R.id.txtFragmentTwo);
-		txtFragmenttwo.setText(R.string.fragment_tab_two);
+		mEmail = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+		userText = (TextView) rootView.findViewById(R.id.userNameText);
+		userText.setText(mEmail);
 		
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));	
-		 Button button = (Button) rootView.findViewById(R.id.button1);
-			   button.setOnClickListener(new OnClickListener()
+		 Button changeUserButton = (Button) rootView.findViewById(R.id.changeUser);
+			   changeUserButton.setOnClickListener(new OnClickListener()
 			   {
 			             @Override
 			             public void onClick(View v)
 			             {
-			            	 SharedPreferences settings =  PreferenceManager.getDefaultSharedPreferences(getActivity());                          
-			    		     SharedPreferences.Editor editor = settings.edit();
-			    		     editor.clear();
-			    		     editor.commit();
+//			            	 SharedPreferences settings =  PreferenceManager.getDefaultSharedPreferences(getActivity());                          
+//			    		     SharedPreferences.Editor editor = settings.edit();
+//			    		     editor.clear();
+//			    		     editor.commit();
 			            	 Intent intent = new Intent(getActivity(),LoginActivity.class);
+			            	 intent.putExtra("change_user", true);
 			            	 startActivity(intent);
 			             } 
 			   }); 

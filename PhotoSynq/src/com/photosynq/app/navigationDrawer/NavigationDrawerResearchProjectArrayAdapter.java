@@ -1,4 +1,4 @@
-package com.photosynq.app;
+package com.photosynq.app.navigationDrawer;
 
 import java.util.List;
 
@@ -7,16 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.photosynq.app.R;
 import com.photosynq.app.model.ResearchProject;
 
-public class ResearchProjectArrayAdapter extends BaseAdapter implements ListAdapter {
-
+public class NavigationDrawerResearchProjectArrayAdapter extends BaseAdapter implements ListAdapter {
+	
 	private final Activity activity;
 	private final List<ResearchProject> researchProjectList;
+	int selectedPosition = 0;
 
-	public ResearchProjectArrayAdapter(Activity activity, List<ResearchProject> researchProjectList) {
+	public NavigationDrawerResearchProjectArrayAdapter(Activity activity, List<ResearchProject> researchProjectList) {
 		assert activity != null;
 		assert researchProjectList != null;
 
@@ -50,10 +53,11 @@ public class ResearchProjectArrayAdapter extends BaseAdapter implements ListAdap
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null)
-			convertView = activity.getLayoutInflater().inflate(R.layout.project_list_item_card, null);
+			convertView = activity.getLayoutInflater().inflate(R.layout.nav_drawer_project_list_item_card, null);
 
-		TextView tvProjectTitle = (TextView) convertView.findViewById(R.id.project_name);
-		TextView tvProjectDesc = (TextView) convertView.findViewById(R.id.project_desc);
+		TextView tvProjectTitle = (TextView) convertView.findViewById(R.id.nav_project_name);
+		//TextView tvProjectDesc = (TextView) convertView.findViewById(R.id.nav_project_desc);
+		RadioButton projectListRadio = (RadioButton) convertView.findViewById(R.id.nav_radiobtn);
 
 		ResearchProject researchProject = getItem(position);
 		if (null != researchProject) {
@@ -62,8 +66,18 @@ public class ResearchProjectArrayAdapter extends BaseAdapter implements ListAdap
 				projectDesc = researchProject.getDescription();
 				tvProjectTitle.setText(researchProject.getName());
 				// only show 100 chars of descr.
-				tvProjectDesc.setText(projectDesc.substring(0, (projectDesc.length()<100?projectDesc.length():100))+"...");
+			//	tvProjectDesc.setText(projectDesc.substring(0, (projectDesc.length()<100?projectDesc.length():100))+"...");
 				//tvProjectDesc.setText(projectDesc);
+				
+				projectListRadio.setChecked(position == selectedPosition);
+				projectListRadio.setTag(position);
+				projectListRadio.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        selectedPosition = (Integer)view.getTag();
+                        notifyDataSetInvalidated();
+                    }
+                });
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -73,4 +87,5 @@ public class ResearchProjectArrayAdapter extends BaseAdapter implements ListAdap
 
 		return convertView;
 	}
+
 }

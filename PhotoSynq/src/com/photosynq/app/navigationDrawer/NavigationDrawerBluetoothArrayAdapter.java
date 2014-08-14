@@ -1,4 +1,4 @@
-package com.photosynq.app;
+package com.photosynq.app.navigationDrawer;
 
 import java.util.List;
 
@@ -8,14 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
-public class BluetoothArrayAdapter extends BaseAdapter implements ListAdapter {
+import com.photosynq.app.R;
 
+public class NavigationDrawerBluetoothArrayAdapter extends BaseAdapter implements ListAdapter {
+	
 	private final Activity activity;
 	private final List<BluetoothDevice> bluetoothDeviceList;
+	int selectedPosition=0;
 
-	public BluetoothArrayAdapter(Activity activity, List<BluetoothDevice> bluetoothDeviceList) {
+	public NavigationDrawerBluetoothArrayAdapter(Activity activity, List<BluetoothDevice> bluetoothDeviceList) {
 		assert activity != null;
 		assert bluetoothDeviceList != null;
 
@@ -54,12 +58,13 @@ public class BluetoothArrayAdapter extends BaseAdapter implements ListAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null)
-			convertView = activity.getLayoutInflater().inflate(R.layout.bluetooth_item_card, null);
+			convertView = activity.getLayoutInflater().inflate(R.layout.nav_drawer_bluetooth_item_card, null);
 
-		TextView tvDeviceName = (TextView) convertView.findViewById(R.id.device_name);
-		TextView tvDeviceAddress = (TextView) convertView.findViewById(R.id.device_address);
-		TextView tvDevicePaired = (TextView) convertView.findViewById(R.id.device_paired);
-		TextView pairDeviceBtn = (TextView) convertView.findViewById(R.id.pair_bluetooth_device);
+		TextView tvDeviceName = (TextView) convertView.findViewById(R.id.deviceName);
+		TextView tvDeviceAddress = (TextView) convertView.findViewById(R.id.deviceAddress);
+		TextView tvDevicePaired = (TextView) convertView.findViewById(R.id.devicePaired);
+		TextView pairDeviceBtn = (TextView) convertView.findViewById(R.id.pairBluetoothDevice);
+		RadioButton radiobtn = (RadioButton)convertView.findViewById(R.id.radiobtn);
 
 		BluetoothDevice bluetoothDevice = getItem(position);
 		if (null != bluetoothDevice) {
@@ -67,8 +72,18 @@ public class BluetoothArrayAdapter extends BaseAdapter implements ListAdapter {
 				tvDeviceName.setText(bluetoothDevice.getName());
 				tvDeviceAddress.setText(bluetoothDevice.getAddress());
 				tvDevicePaired.setText((bluetoothDevice.getBondState()==10)?"Not Paired":(bluetoothDevice.getBondState()==12)?"Paired":"Pairing");
+				radiobtn.setChecked(position == selectedPosition);
+				radiobtn.setTag(position);
+				radiobtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        selectedPosition = (Integer)view.getTag();
+                        notifyDataSetInvalidated();
+                    }
+                });
 				if(bluetoothDevice.getBondState() == 10){
 					pairDeviceBtn.setVisibility(View.VISIBLE);
+					radiobtn.setVisibility(View.INVISIBLE);
 				}else 
 				{
 					pairDeviceBtn.setVisibility(View.INVISIBLE);
@@ -82,4 +97,5 @@ public class BluetoothArrayAdapter extends BaseAdapter implements ListAdapter {
 
 		return convertView;
 	}
+
 }

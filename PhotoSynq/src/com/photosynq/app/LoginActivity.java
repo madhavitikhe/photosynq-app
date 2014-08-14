@@ -5,8 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
@@ -23,10 +25,10 @@ import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.webkit.WebView;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.HTTP.PhotosynqResponse;
 import com.photosynq.app.utils.CommonUtils;
@@ -58,6 +60,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 	private View mLoginFormView;
 	private View mLoginStatusView;
 	private TextView mLoginStatusMessageView;
+	boolean getChangeUserIntent;
 
 	@SuppressLint("NewApi")
 	@Override
@@ -75,6 +78,14 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 
 		mEmail = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		mPassword = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_PASSWORD_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+		
+		getChangeUserIntent = getIntent().getBooleanExtra("change_user", false);
+        if (getChangeUserIntent) {
+            Toast.makeText(getApplicationContext(), "Navigation comes from User", Toast.LENGTH_LONG).show();
+           // return;
+        }
+        else
+        {
 		if(!mEmail.equals(PrefUtils.PREFS_DEFAULT_VAL) && !mPassword.equals(PrefUtils.PREFS_DEFAULT_VAL) )
 		{ 
 			if(CommonUtils.isConnected(getApplicationContext()))
@@ -87,6 +98,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 				startActivity(intent);
 			}
 		}
+        }
 		// Set up the login form.
 		mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
 		mEmailView = (EditText) findViewById(R.id.email);
@@ -256,8 +268,15 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 				e.printStackTrace();
 			}
 			
+			if(getChangeUserIntent)
+			{
+				finish();
+			}
+			else
+			{
 			Intent intent = new Intent(getApplicationContext(),MainActivity.class);
 			startActivity(intent);
+			}
 			// finish();
 		}		else
 		{
