@@ -39,12 +39,12 @@
         </activity>
         
          <activity
-            android:name="com.photosynq.app.navigationDrawer.NavigationMain"
+            android:name="com.photosynq.app.navigationDrawer.NavigationDrawer"
             android:label="@string/title_activity_navigation_main" >
         </activity>
         <activity
-            android:name="com.photosynq.app.navigationDrawer.ViewPagerFragment"
-            android:label="@string/title_activity_View_pager_fragment" >
+            android:name="com.photosynq.app.navigationDrawer.DataActivity"
+            android:label="@string/title_activity_fragment_data" >
         </activity>
         <activity
             android:name="com.photosynq.app.ProjectListActivity"

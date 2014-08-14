@@ -28,18 +28,18 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textStyle="bold"
-			android:text="Name"/>
+			android:text="@string/name"/>
 
 		<TextView
 			android:id="@+id/device_address"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="address"/>
+			android:text="@string/address"/>
 		<TextView
 			android:id="@+id/device_paired"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="paired"/>
+			android:text="@string/paired"/>
 
 	</LinearLayout>
 
@@ -50,7 +50,7 @@
 	    android:layout_alignParentRight="true"
 	    android:layout_centerVertical="true"
 	    android:paddingRight="15dp"
-	    android:text="Pair Device"
+	    android:text="@string/pairDevice"
 	    android:textStyle="bold" />
 
 	</RelativeLayout>

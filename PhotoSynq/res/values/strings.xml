@@ -86,22 +86,16 @@
     <string name="fragment_tab_two">Kelvin M.</string>
     <string name="fragment_tab_three">List of paired bluetooth devices</string>
     <string name="title_activity_navigation_main">Navigation Drawer</string>
-    <string name="title_activity_View_pager_fragment">View Pager Fragment</string>
-
-    <string-array name="planets_array">
-        <item>Mode</item>
-        <item>User</item>
-        <item>Connection</item>
-        <item>Project</item>
-        <item>Data</item>
-        <item>Review</item>
-        <item>Sync</item>
-    </string-array>
+    <string name="title_activity_fragment_data">Fragment Data</string>
 
     <string name="sign_out_btn">Sign Out</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
     <string name="title_activity_tabs_view_pager_fragment">TabsViewPagerFragmentActivity</string>
     <string name="searchNew">Search New</string>
     <string name="change_user">Change User</string>
+    <string name="name">Name</string>
+    <string name="address">Address</string>
+    <string name="paired">Paired</string>
+    <string name="pairDevice">Pair Device</string>
 
 </resources>

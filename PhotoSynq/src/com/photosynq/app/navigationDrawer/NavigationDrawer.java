@@ -203,7 +203,9 @@ public class NavigationDrawer extends ActionBarActivity{
 			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();						
 			break;
 		case 4:
-			Toast.makeText(getApplicationContext(), "implementing fragments here", Toast.LENGTH_SHORT).show();
+			fragmentManager.beginTransaction().replace(R.id.content_frame, new DataFirstFragment()).commit();
+//			Intent i = new Intent(getApplicationContext(),DataActivity.class);
+//			startActivity(i);
 			break;
 		case 5:			
 			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentReview()).commit();						

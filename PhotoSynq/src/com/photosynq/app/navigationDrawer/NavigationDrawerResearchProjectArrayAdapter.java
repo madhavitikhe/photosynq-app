@@ -61,6 +61,7 @@ public class NavigationDrawerResearchProjectArrayAdapter extends BaseAdapter imp
 
 		ResearchProject researchProject = getItem(position);
 		if (null != researchProject) {
+			@SuppressWarnings("unused")
 			String projectDesc;
 			try {
 				projectDesc = researchProject.getDescription();

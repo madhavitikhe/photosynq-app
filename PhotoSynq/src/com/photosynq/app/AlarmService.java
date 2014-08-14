@@ -28,8 +28,8 @@ public class AlarmService extends Service
 	       super.onCreate();
 	    }
 	 
-	   @SuppressWarnings("static-access")
-	   @Override
+	   @SuppressWarnings("deprecation")
+	@Override
 	   public void onStart(Intent intent, int startId)
 	   {
 	       super.onStart(intent, startId);
