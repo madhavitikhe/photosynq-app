@@ -87,7 +87,6 @@
     <string name="fragment_tab_three">List of paired bluetooth devices</string>
     <string name="title_activity_navigation_main">Navigation Drawer</string>
     <string name="title_activity_fragment_data">Fragment Data</string>
-
     <string name="sign_out_btn">Sign Out</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
     <string name="title_activity_tabs_view_pager_fragment">TabsViewPagerFragmentActivity</string>
@@ -97,5 +96,9 @@
     <string name="address">Address</string>
     <string name="paired">Paired</string>
     <string name="pairDevice">Pair Device</string>
+    <string name="title_activity_test">TestActivity</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
 
 </resources>

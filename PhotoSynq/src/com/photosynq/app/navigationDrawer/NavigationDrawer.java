@@ -203,9 +203,10 @@ public class NavigationDrawer extends ActionBarActivity{
 			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();						
 			break;
 		case 4:
-			fragmentManager.beginTransaction().replace(R.id.content_frame, new DataFirstFragment()).commit();
-//			Intent i = new Intent(getApplicationContext(),DataActivity.class);
-//			startActivity(i);
+		//	fragmentManager.beginTransaction().replace(R.id.content_frame, new DataFirstFragment()).commit();
+			Intent i = new Intent(getApplicationContext(),DataActivity.class);
+			startActivity(i);
+			finish();
 			break;
 		case 5:			
 			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentReview()).commit();						

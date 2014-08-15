@@ -11,19 +11,21 @@ import android.view.ViewGroup.LayoutParams;
 
 import com.photosynq.app.R;
 
-public class FragmentReview extends Fragment {
+public class DataThirdFragment extends Fragment {
 	
-	public static String newInstance() {
-		Bundle bundle = new Bundle();
-		String mail = bundle.getString("USER_EMAIL");
-		System.out.println("------------------- Mail------"+mail);
-		return mail;
+	public static FragmentUser newInstance() {
+        Bundle bundle = new Bundle();
+
+        FragmentUser fragment = new FragmentUser();
+        fragment.setArguments(bundle);
+        
+        return fragment;
     }	
     
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_review, container, false);
+		View rootView = inflater.inflate(R.layout.data_third_fragment, container, false);
 		
 		
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));	
@@ -45,6 +47,4 @@ public class FragmentReview extends Fragment {
 		super.onCreateOptionsMenu(menu, inflater);		
 		inflater.inflate(R.menu.menu, menu);
 	}
-
-
 }
