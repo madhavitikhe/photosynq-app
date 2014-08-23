@@ -38,14 +38,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.photosynq.app.navigationDrawer.NavigationDrawer"
-            android:label="@string/title_activity_navigation_main" >
-        </activity>
-        <activity
-            android:name="com.photosynq.app.navigationDrawer.DataActivity"
-            android:label="@string/title_activity_fragment_data" >
-        </activity>
-        <activity
             android:name="com.photosynq.app.ProjectListActivity"
             android:label="@string/title_activity_project_list" >
         </activity>
@@ -97,6 +89,10 @@
         <activity
             android:name="com.photosynq.app.DisplaySelectedQuestionsOptionsActivity"
             android:label="@string/title_activity_display_selected_questions_options" >
+        </activity>
+        <activity
+            android:name="com.photosynq.app.navigationDrawer.NavigationDrawer"
+            android:label="@string/title_activity_navigation_main" >
         </activity>
     </application>
 

@@ -19,7 +19,9 @@
             android:layout_alignParentRight="true"
             android:text="@string/searchNew"
             android:textSize="25sp"
-            android:background="@color/green_google_play" />
+            android:background="@color/green_google_play"
+            android:focusable="false"
+  			android:focusableInTouchMode="false" />
 
         <ListView
             android:id="@+id/pairedDevices"
@@ -35,7 +37,7 @@
             android:headerDividersEnabled="true"
             android:listSelector="@android:color/transparent" >
         </ListView>
-        <LinearLayout
+     <!--    <LinearLayout
         android:id="@+id/bluetooth_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -58,5 +60,5 @@
             android:fontFamily="sans-serif-light"
             android:text="@string/login_progress_signing_in"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-    </LinearLayout>
+    </LinearLayout> -->
 </RelativeLayout>

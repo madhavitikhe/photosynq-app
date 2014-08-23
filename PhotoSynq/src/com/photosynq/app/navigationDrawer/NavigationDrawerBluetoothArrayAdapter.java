@@ -72,6 +72,7 @@ public class NavigationDrawerBluetoothArrayAdapter extends BaseAdapter implement
 				tvDeviceName.setText(bluetoothDevice.getName());
 				tvDeviceAddress.setText(bluetoothDevice.getAddress());
 				tvDevicePaired.setText((bluetoothDevice.getBondState()==10)?"Not Paired":(bluetoothDevice.getBondState()==12)?"Paired":"Pairing");
+				
 				radiobtn.setChecked(position == selectedPosition);
 				radiobtn.setTag(position);
 				radiobtn.setOnClickListener(new View.OnClickListener() {

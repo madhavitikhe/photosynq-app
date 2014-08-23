@@ -8,18 +8,22 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
-import com.photosynq.app.BluetoothArrayAdapter;
 import com.photosynq.app.R;
+import com.photosynq.app.utils.PrefUtils;
 
 public class FragmentConnection extends Fragment{
 	
@@ -27,6 +31,7 @@ public class FragmentConnection extends Fragment{
 	private ArrayList<BluetoothDevice> btDeviceList = new ArrayList<BluetoothDevice>();
 	private BluetoothAdapter bluetoothAdapter;
 	private Button searchNewBtn;
+	String loggedInUserName;
 	
     public static FragmentConnection newInstance() {
         Bundle bundle = new Bundle();
@@ -43,6 +48,7 @@ public class FragmentConnection extends Fragment{
 			
 		View rootView = inflater.inflate(R.layout.fragment_connection, container, false);
 		
+		String loggedInUserName = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_USER,null);
 		pairedDeviceList = (ListView) rootView.findViewById(R.id.pairedDevices);
 		searchNewBtn = (Button) rootView.findViewById(R.id.searchNewButton);
 		searchNewBtn.setOnClickListener(new View.OnClickListener() {
@@ -62,6 +68,23 @@ public class FragmentConnection extends Fragment{
 		
 		NavigationDrawerBluetoothArrayAdapter btArrayAdapter = new NavigationDrawerBluetoothArrayAdapter(getActivity(), btDeviceList);
 		pairedDeviceList.setAdapter(btArrayAdapter);
+		
+		pairedDeviceList.setOnItemClickListener(new OnItemClickListener() {
+		    @Override
+		    public void onItemClick(AdapterView<?> adapter, View view, int position, long id){
+		    	BluetoothDevice btDevice = (BluetoothDevice) pairedDeviceList.getItemAtPosition(position);
+				Log.d("Pairing device : ", btDevice.getName());
+				
+				String bluetoothName = btDevice.getName();
+				//String bluetoothAddress = adapter.getItemAtPosition(position).toString();
+				PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_CONNECTION_ID,bluetoothName);
+				Toast.makeText(getActivity(), "Clicked "+bluetoothName, Toast.LENGTH_SHORT).show();
+				pairedDeviceList.setItemsCanFocus(true);
+				RadioButton radiolistitem=(RadioButton) view.findViewById(R.id.radiobtn);
+				radiolistitem.performClick();
+				
+		    }
+		});
 		
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));		
 		return rootView;

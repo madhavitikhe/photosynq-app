@@ -68,13 +68,13 @@ public class NavigationDrawer extends ActionBarActivity{
 		drawerToggle = new ActionBarDrawerToggleCompat(this, layoutDrawer);		
 		layoutDrawer.setDrawerListener(drawerToggle);
        		
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-     
+		//user sign out after click on signout option from navigation drawer.
         TextView sign_out=(TextView) findViewById(R.id.signOut);
         sign_out.setOnClickListener(new OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
+                	//Delete user preferences(Credentials).
                 	SharedPreferences settings =  PreferenceManager.getDefaultSharedPreferences(getBaseContext());                          
     		        SharedPreferences.Editor editor = settings.edit();
     		        editor.clear();
@@ -203,10 +203,10 @@ public class NavigationDrawer extends ActionBarActivity{
 			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();						
 			break;
 		case 4:
-		//	fragmentManager.beginTransaction().replace(R.id.content_frame, new DataFirstFragment()).commit();
-			Intent i = new Intent(getApplicationContext(),DataActivity.class);
-			startActivity(i);
-			finish();
+			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentData()).commit();
+//			Intent i = new Intent(getApplicationContext(),DataActivity.class);
+//			startActivity(i);
+//			finish();
 			break;
 		case 5:			
 			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentReview()).commit();						

@@ -81,7 +81,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 		
 		getChangeUserIntent = getIntent().getBooleanExtra("change_user", false);
         if (getChangeUserIntent) {
-            Toast.makeText(getApplicationContext(), "Navigation comes from User", Toast.LENGTH_LONG).show();
+            System.out.println("---------User Changed-----");
            // return;
         }
         else

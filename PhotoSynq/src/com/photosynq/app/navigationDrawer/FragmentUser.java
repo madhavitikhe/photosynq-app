@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.photosynq.app.LoginActivity;
 import com.photosynq.app.R;
@@ -21,7 +22,7 @@ public class FragmentUser extends Fragment{
 
 	private TextView userText;
 	private String mEmail;
-	
+	String loggedInUserName;
     public static FragmentUser newInstance() {
         Bundle bundle = new Bundle();
 
@@ -38,6 +39,17 @@ public class FragmentUser extends Fragment{
 		View rootView = inflater.inflate(R.layout.fragment_user, container, false);
 		
 		mEmail = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+		PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_USER,mEmail);
+		loggedInUserName = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_MODE_TYPE,null);
+	//	Toast.makeText(getActivity(), ""+loggedInUserName,Toast.LENGTH_SHORT).show();
+		if(loggedInUserName == 0+"")
+		{
+			Toast.makeText(getActivity(), "Normal Mode",Toast.LENGTH_SHORT).show();	
+		}
+		else
+		{
+			Toast.makeText(getActivity(), "Streamlined Mode",Toast.LENGTH_SHORT).show();	
+		}
 		userText = (TextView) rootView.findViewById(R.id.userNameText);
 		userText.setText(mEmail);
 		

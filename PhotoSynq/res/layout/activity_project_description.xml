@@ -140,7 +140,6 @@
             android:id="@+id/participate_btn"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:onClick="onParticipateClicked"
             android:text="@string/participate" >
         </Button>
     </RelativeLayout>

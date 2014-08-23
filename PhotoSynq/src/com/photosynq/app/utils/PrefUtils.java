@@ -10,6 +10,10 @@ public class PrefUtils {
     public static final String PREFS_AUTH_TOKEN_KEY = "AUTHTOKEN" ;
     public static final String PREFS_DEFAULT_VAL = "DEFAULT" ;
     public static final String PREFS_CURRENT_LOCATION = "CURRENT_LOCATION" ;
+    public static final String PREFS_MODE_TYPE = "MODE_TYPE" ;
+    public static final String PREFS_USER = "USER";
+    public static final String PREFS_CONNECTION_ID = "CONNECTION_ID";
+    public static final String PREFS_PROJECT_ID = "PROJECT_ID";
 
     /**
      * Called to save supplied value in shared preferences against given key.
