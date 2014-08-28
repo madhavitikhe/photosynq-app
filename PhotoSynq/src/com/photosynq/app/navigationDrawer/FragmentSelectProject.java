@@ -3,18 +3,12 @@ package com.photosynq.app.navigationDrawer;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -22,20 +16,18 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.photosynq.app.MainActivity;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
-import com.photosynq.app.model.Protocol;
+import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.CommonUtils;
+import com.photosynq.app.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
 
 public class FragmentSelectProject extends Fragment{
 	
 	private String recordid = ""; 
-	private boolean quick_measure;
 	DatabaseHelper db;
     public static FragmentSelectProject newInstance() {
         Bundle bundle = new Bundle();
@@ -46,7 +38,6 @@ public class FragmentSelectProject extends Fragment{
         return fragment;
     }	
     
-	@SuppressLint("NewApi")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -58,11 +49,8 @@ public class FragmentSelectProject extends Fragment{
 		Bundle extras = getArguments();
 		if (extras != null) {
 			recordid = extras.getString(DatabaseHelper.C_ID);
-			quick_measure = extras.getBoolean(MainActivity.QUICK_MEASURE);
-			System.out.println(this.getClass().getName()+"############quickmeasure="+quick_measure);
 			ResearchProject rp = db.getResearchProject(recordid);
-			
-			
+
 			SimpleDateFormat outputDate = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
 			
 			DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -81,12 +69,14 @@ public class FragmentSelectProject extends Fragment{
 				
 				@Override
 				public void onClick(View arg0) {
-					// TODO Auto-generated method stub
-					Toast.makeText(getActivity(), "Project is selected", 5).show();
 					FragmentManager fm = getActivity().getSupportFragmentManager();
-//				    fm.popBackStack();
-//			        fm.popBackStackImmediate();
-//					getActivity().finish();
+					
+					String userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+		    		AppSettings appSettings = db.getSettings(userId);
+
+					appSettings.setProjectID(recordid);
+					db.updateSettings(appSettings);
+					fm.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();	
 				}
 			});
 			
@@ -113,54 +103,9 @@ public class FragmentSelectProject extends Fragment{
 			}else{tvBeta.setText(getResources().getString(R.string.no_data_found));}
 			ImageView imageview = (ImageView) rootView.findViewById(R.id.projectImage); 
 			Picasso.with(getActivity()).load(rp.getImageUrl()).into(imageview);
-			try {
-				StringBuffer dataString = new StringBuffer();
-				String[] projectProtocols = rp.getProtocols_ids().split(",");
-				if(rp.getProtocols_ids().length() >=1)
-				{
-					//JSONArray protocolJsonArray = new JSONArray();
-					for (String protocolId : projectProtocols) {
-						Protocol protocol = db.getProtocol(protocolId);
-						JSONObject detailProtocolObject = new JSONObject();
-						detailProtocolObject.put("protocolid", protocol.getId());
-						detailProtocolObject.put("protocol_name", protocol.getId());
-						detailProtocolObject.put("macro_id", protocol.getMacroId());
-						//protocolJsonArray.put(detailProtocolObject);
-						dataString.append("\""+protocol.getId()+"\""+":"+detailProtocolObject.toString()+",");
-						
-					}
-					String data = "var protocols={"+dataString.substring(0, dataString.length()-1) +"}";
-					
-					// Writing macros_variable.js file with protocol and macro relations
-					System.out.println("######Writing macros_variable.js file:"+data);
-					CommonUtils.writeStringToFile(getActivity(), "macros_variable.js",data);
-				}
-				else
-				{
-					Toast.makeText(getActivity(), "No protocols assigned to this project, cannot continue.", Toast.LENGTH_SHORT).show();
-					//finish();
-				}
-
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
 		}
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));		
 		return rootView;
-	}
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onActivityCreated(savedInstanceState);
-		setHasOptionsMenu(true);
-	}
-	
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		// TODO Auto-generated method stub
-		super.onCreateOptionsMenu(menu, inflater);		
-		inflater.inflate(R.menu.menu, menu);
 	}
 }

@@ -55,7 +55,7 @@
 	    android:textStyle="bold" />
 
 	<RadioButton
-	    android:id="@+id/radiobtn"
+	    android:id="@+id/bluetooth_conn_radiobtn"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_alignParentRight="true"

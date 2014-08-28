@@ -135,7 +135,7 @@ public class DisplayResultsActivity extends ActionBarActivity {
 		
 		
 		//db = new DatabaseHelper(getApplicationContext());
-			db = DatabaseHelper.getHelper(getApplicationContext());
+		db = DatabaseHelper.getHelper(getApplicationContext());
 		ProjectResult result = new ProjectResult(projectId, reading, "N");
 		db.createResult(result);
 		//db.closeDB();

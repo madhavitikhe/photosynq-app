@@ -37,7 +37,7 @@
         android:orientation="vertical" >
 
         <RadioButton
-            android:id="@+id/first"
+            android:id="@+id/normal_mode_radio"
             android:layout_width="fill_parent"
             android:layout_height="92dp"
             android:layout_weight="0.90"
@@ -50,7 +50,7 @@
             android:textSize="30sp" />
 
         <RadioButton
-            android:id="@+id/second"
+            android:id="@+id/streamline_mode_radio"
             android:layout_width="fill_parent"
             android:layout_height="92dp"
             android:layout_marginTop="20dp"

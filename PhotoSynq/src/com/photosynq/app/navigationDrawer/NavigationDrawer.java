@@ -37,7 +37,7 @@ public class NavigationDrawer extends ActionBarActivity{
 	private NavigationAdapter navigationAdapter;
 	private ActionBarDrawerToggleCompat drawerToggle;
 	private String mEmail;
-		
+	private TextView user_email;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);		
@@ -48,10 +48,10 @@ public class NavigationDrawer extends ActionBarActivity{
         getSupportActionBar().setHomeButtonEnabled(true);		
         
         mEmail = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-        TextView user_email = (TextView) findViewById(R.id.userEmail);
+        user_email = (TextView) findViewById(R.id.userEmail);
         user_email.setText(mEmail);
-        
-        listDrawer = (ListView) findViewById(R.id.listDrawer);        
+
+		listDrawer = (ListView) findViewById(R.id.listDrawer);        
 		linearDrawer = (LinearLayout) findViewById(R.id.linearDrawer);		
 		layoutDrawer = (DrawerLayout) findViewById(R.id.layoutDrawer);	
 		
@@ -204,17 +204,13 @@ public class NavigationDrawer extends ActionBarActivity{
 			break;
 		case 4:
 			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentData()).commit();
-//			Intent i = new Intent(getApplicationContext(),DataActivity.class);
-//			startActivity(i);
-//			finish();
 			break;
 		case 5:			
 			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentReview()).commit();						
 			break;
-			
-		default:
-			Toast.makeText(getApplicationContext(), "Sync.............", Toast.LENGTH_SHORT).show();
-			break;	
+		case 6:			
+			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentSync()).commit();						
+			break;
 		}			
 	
 		if (position < 5){
@@ -234,5 +230,14 @@ public class NavigationDrawer extends ActionBarActivity{
 
 	public void setCounterItemDownloads(int value) {
 		this.counterItemDownloads = value;
+	}
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent intent) 
+	{
+		super.onActivityResult(requestCode, resultCode, intent);
+		Toast.makeText(getApplicationContext(), "111 onactivity result "+requestCode, Toast.LENGTH_LONG).show();
+		mEmail = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+		user_email.setText(mEmail);
+
 	}
 }

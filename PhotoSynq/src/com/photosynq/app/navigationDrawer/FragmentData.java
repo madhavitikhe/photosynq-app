@@ -1,93 +1,90 @@
 package com.photosynq.app.navigationDrawer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.Question;
+import com.photosynq.app.utils.PrefUtils;
 
-public class FragmentData extends Fragment{
-
+public class FragmentData extends Fragment {
+	MyPageAdapter pageAdapter;
 	ViewPager viewPager;
-	FragmentViewPagerAdapter fragmentViewPagerAdapter;
-	private String recordid = ""; 
-	private boolean quick_measure;
 	DatabaseHelper db;
-	
+	private String userID;
+
 	public static FragmentData newInstance() {
 		FragmentData fragment = new FragmentData();
-        return fragment;
-    }	
-	
+		return fragment;
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-			
-		final View rootView = inflater.inflate(R.layout.fragment_data, container, false);
+
+		final View rootView = inflater.inflate(R.layout.fragment_data,container, false);
 		viewPager = (ViewPager) rootView.findViewById(R.id.viewPager);
-	    fragmentViewPagerAdapter = new FragmentViewPagerAdapter(getActivity().getSupportFragmentManager());
-	    viewPager.setAdapter(fragmentViewPagerAdapter);
-	    
-	    db = DatabaseHelper.getHelper(getActivity());
-		Bundle extras = getArguments();
-		if (extras != null) {
-			recordid = extras.getString(DatabaseHelper.C_ID);
-		}
-	    
-		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));		
+		db = DatabaseHelper.getHelper(getActivity());
+		userID = PrefUtils.getFromPrefs(getActivity(),
+						PrefUtils.PREFS_LOGIN_USERNAME_KEY,
+						PrefUtils.PREFS_DEFAULT_VAL);
+		List<Fragment> fragments = getFragments();
+		pageAdapter = new MyPageAdapter(getActivity()
+				.getSupportFragmentManager(), fragments);
+		
+		viewPager.setAdapter(pageAdapter);
+
+		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
+				LayoutParams.MATCH_PARENT));
 		return rootView;
 	}
-	
-	private class FragmentViewPagerAdapter extends FragmentPagerAdapter{
-		 
-		 int numberOfPages = 3;
-		 public FragmentViewPagerAdapter(FragmentManager fm)   {
-		        super(fm);
-		    }
 
-		    @Override
-		    public android.support.v4.app.Fragment getItem(int index) {
+	private List<Fragment> getFragments() {
+		List<Fragment> fList = new ArrayList<Fragment>();
+		List<Question> questions = db.getAllQuestionForProject(db.getSettings(
+				userID).getProjectID());
 
-		    	if(index==0)
-		    	{
-		    		return new DataFirstFragment();
-		    	}
-		    	else if(index==1)
-		    	{
-		    		return new DataSecondFragment();
-		    	}
-		    	else
-		    	{
-		    		return new DataThirdFragment();
-		    	}
-		    }
-
-		    @Override
-		    public int getCount() {
-		        return numberOfPages;
-		    }
-	 }
-			
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onActivityCreated(savedInstanceState);
-		setHasOptionsMenu(true);
+		for (Question question : questions) {
+			Bundle bundle = new Bundle();
+			bundle.putString(DatabaseHelper.C_QUESTION_ID,
+					question.getQuestionId());
+			DataFirstFragment f = new DataFirstFragment();
+			f.setArguments(bundle);
+			fList.add(f);
+		}
+		return fList;
 	}
-	
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		// TODO Auto-generated method stub
-		super.onCreateOptionsMenu(menu, inflater);		
-		inflater.inflate(R.menu.menu, menu);
-	}	
+
+	private class MyPageAdapter extends FragmentPagerAdapter {
+		private List<Fragment> fragments;
+		private FragmentManager fm;
+
+		public MyPageAdapter(FragmentManager fm, List<Fragment> fragments) {
+			super(fm);
+			this.fragments = fragments;
+			this.fm = fm;
+		}
+
+		@Override
+		public Fragment getItem(int position) {
+			fm.beginTransaction().attach(fragments.get(position)).commit();
+			return this.fragments.get(position);
+		}
+
+		@Override
+		public int getCount() {
+			return this.fragments.size();
+		}
+	}
 }

@@ -5,10 +5,23 @@ import android.content.Context;
 import com.photosynq.app.R;
 
 public class Utils {
-
+	public enum SettingKey {
+		MODE("MODE"), USER("USER"), CONNECTION("CONNECTION"), PROJECT("PROJECT");
+	 
+		private String statusCode;
+	 
+		private SettingKey(String s) {
+			statusCode = s;
+		}
+	 
+		public String getStatusCode() {
+			return statusCode;
+		}
+	 
+	}
 	//Set all the navigation icons and always to set "zero 0" for the item is a category
 	public static int[] iconNavigation = new int[] { 
-		0, 0, 0, 0, 0, 0, R.drawable.refresh};	
+		0, 0, 0, 0, 0, 0, 0};	
 	
 	//get title of the item navigation
 	public static String getTitleItem(Context context, int posicao){		

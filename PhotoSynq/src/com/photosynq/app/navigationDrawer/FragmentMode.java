@@ -1,5 +1,6 @@
 package com.photosynq.app.navigationDrawer;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Toast;
 
 import com.photosynq.app.R;
+import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.utils.PrefUtils;
 
 public class FragmentMode extends Fragment{
@@ -22,6 +25,11 @@ public class FragmentMode extends Fragment{
 	int position;
 	int pos1;
 	RadioButton rb;
+	public static final String NORMAL_MODE= "Normal Mode"; 
+	public static final String STREAMLINE_MODE= "Streamline Mode"; 
+	private DatabaseHelper db;
+	private String userId;
+	
     public static FragmentMode newInstance() {
         FragmentMode fragment = new FragmentMode();
         return fragment;
@@ -32,39 +40,50 @@ public class FragmentMode extends Fragment{
 			Bundle savedInstanceState) {
 			
 		final View rootView = inflater.inflate(R.layout.fragment_mode, container, false);
+		db = DatabaseHelper.getHelper(getActivity());
+		userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+		AppSettings appSettings = db.getSettings(userId);
+		
+		//Set cuurent settings 
+		if(null != appSettings.getModeType())
+		{
+			if (appSettings.getModeType().equals(NORMAL_MODE))
+			{
+				RadioButton rb = (RadioButton)rootView.findViewById(R.id.normal_mode_radio);
+				rb.setChecked(true);
+			}
+			else if(appSettings.getModeType().equals(STREAMLINE_MODE))
+			{
+				RadioButton rb = (RadioButton)rootView.findViewById(R.id.streamline_mode_radio);
+				rb.setChecked(true);
+			}
+		}
 		
 		radioGroup = (RadioGroup) rootView.findViewById(R.id.radioGroup);
         radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 		public void onCheckedChanged(RadioGroup group, int checkedId) {
 			
 			position = radioGroup.indexOfChild(rootView.findViewById(checkedId));
-			PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_MODE_TYPE,""+position);
+			
+			userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+    		AppSettings appSettings = db.getSettings(userId);
+    		
 		    	switch (position)
 		    	{
 		    	case 0 :
-		    		Toast.makeText(getActivity(), "Normal Mode"+position,Toast.LENGTH_SHORT).show();	
-		    		//send arguments to FragmentReview screen.
-//		    		FragmentReview fragment = new FragmentReview();
-//		    		Bundle bundle = new Bundle();
-//		    		bundle.putInt("MODE", 1);
-//		    		fragment.setArguments(bundle);
+		    		appSettings.setModeType(NORMAL_MODE);
+		    		db.updateSettings(appSettings);
+		    		Toast.makeText(getActivity(), NORMAL_MODE,Toast.LENGTH_SHORT).show();	
 		    		break;
 		    	case 1 :
-			    	Toast.makeText(getActivity(), "Streamlined Mode"+position,Toast.LENGTH_SHORT).show(); 
+		    		appSettings.setModeType(STREAMLINE_MODE);
+		    		db.updateSettings(appSettings);
+			    	Toast.makeText(getActivity(), STREAMLINE_MODE,Toast.LENGTH_SHORT).show(); 
 			    	break;
 		    	}
 		}
 	});
 
-//		radioGroup = (RadioGroup) rootView.findViewById(R.id.radioGroup);
-//		position = radioGroup.getCheckedRadioButtonId();
-//        rb = (RadioButton) rootView.findViewById(position);
-//        String selectedValue = rb.getText().toString();
-//        Toast.makeText(getActivity(), rb.getText(), Toast.LENGTH_SHORT).show();
-
-
-
-		
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));		
 		return rootView;
 	}

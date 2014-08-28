@@ -23,6 +23,8 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.photosynq.app.R;
+import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.utils.PrefUtils;
 
 public class FragmentConnection extends Fragment{
@@ -32,6 +34,8 @@ public class FragmentConnection extends Fragment{
 	private BluetoothAdapter bluetoothAdapter;
 	private Button searchNewBtn;
 	String loggedInUserName;
+	private String userId;
+	private DatabaseHelper db;
 	
     public static FragmentConnection newInstance() {
         Bundle bundle = new Bundle();
@@ -48,7 +52,8 @@ public class FragmentConnection extends Fragment{
 			
 		View rootView = inflater.inflate(R.layout.fragment_connection, container, false);
 		
-		String loggedInUserName = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_USER,null);
+		db = DatabaseHelper.getHelper(getActivity());
+		//String loggedInUserName = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_USER,null);
 		pairedDeviceList = (ListView) rootView.findViewById(R.id.pairedDevices);
 		searchNewBtn = (Button) rootView.findViewById(R.id.searchNewButton);
 		searchNewBtn.setOnClickListener(new View.OnClickListener() {
@@ -69,20 +74,28 @@ public class FragmentConnection extends Fragment{
 		NavigationDrawerBluetoothArrayAdapter btArrayAdapter = new NavigationDrawerBluetoothArrayAdapter(getActivity(), btDeviceList);
 		pairedDeviceList.setAdapter(btArrayAdapter);
 		
+		
+		
 		pairedDeviceList.setOnItemClickListener(new OnItemClickListener() {
 		    @Override
 		    public void onItemClick(AdapterView<?> adapter, View view, int position, long id){
 		    	BluetoothDevice btDevice = (BluetoothDevice) pairedDeviceList.getItemAtPosition(position);
 				Log.d("Pairing device : ", btDevice.getName());
 				
-				String bluetoothName = btDevice.getName();
-				//String bluetoothAddress = adapter.getItemAtPosition(position).toString();
-				PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_CONNECTION_ID,bluetoothName);
-				Toast.makeText(getActivity(), "Clicked "+bluetoothName, Toast.LENGTH_SHORT).show();
-				pairedDeviceList.setItemsCanFocus(true);
-				RadioButton radiolistitem=(RadioButton) view.findViewById(R.id.radiobtn);
-				radiolistitem.performClick();
+				userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+	    		AppSettings appSettings = db.getSettings(userId);
 				
+				String bluetoothID = btDevice.getName();
+				
+				appSettings.setConnectionID(bluetoothID);
+				db.updateSettings(appSettings);
+				
+				//String bluetoothAddress = adapter.getItemAtPosition(position).toString();
+				PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_CONNECTION_ID,bluetoothID);
+				Toast.makeText(getActivity(), "Clicked "+bluetoothID, Toast.LENGTH_SHORT).show();
+				pairedDeviceList.setItemsCanFocus(true);
+				RadioButton radiolistitem=(RadioButton) view.findViewById(R.id.bluetooth_conn_radiobtn);
+				radiolistitem.performClick();
 		    }
 		});
 		

@@ -95,8 +95,8 @@
     <string name="address">Address</string>
     <string name="paired">Paired</string>
     <string name="pairDevice">Pair Device</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-
+    <string name="save_interval_btn">Save interval</string>
+    <string name="sync_btn">Sync Data</string>
+    <string name="sync_interval_lbl">Sync interval (in mins)</string>
+  
 </resources>

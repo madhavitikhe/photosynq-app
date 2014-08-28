@@ -10,14 +10,20 @@ import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.photosynq.app.R;
+import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.AppSettings;
+import com.photosynq.app.utils.PrefUtils;
 
 public class NavigationDrawerBluetoothArrayAdapter extends BaseAdapter implements ListAdapter {
 	
 	private final Activity activity;
 	private final List<BluetoothDevice> bluetoothDeviceList;
 	int selectedPosition=0;
+	private String userId;
+	private DatabaseHelper db;
 
 	public NavigationDrawerBluetoothArrayAdapter(Activity activity, List<BluetoothDevice> bluetoothDeviceList) {
 		assert activity != null;
@@ -34,7 +40,6 @@ public class NavigationDrawerBluetoothArrayAdapter extends BaseAdapter implement
 			return 0;
 		}
 		else
-			
 		{
 			return bluetoothDeviceList.size();
 		}
@@ -59,12 +64,12 @@ public class NavigationDrawerBluetoothArrayAdapter extends BaseAdapter implement
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null)
 			convertView = activity.getLayoutInflater().inflate(R.layout.nav_drawer_bluetooth_item_card, null);
-
+		db = DatabaseHelper.getHelper(convertView.getContext());
 		TextView tvDeviceName = (TextView) convertView.findViewById(R.id.deviceName);
 		TextView tvDeviceAddress = (TextView) convertView.findViewById(R.id.deviceAddress);
 		TextView tvDevicePaired = (TextView) convertView.findViewById(R.id.devicePaired);
 		TextView pairDeviceBtn = (TextView) convertView.findViewById(R.id.pairBluetoothDevice);
-		RadioButton radiobtn = (RadioButton)convertView.findViewById(R.id.radiobtn);
+		RadioButton radiobtn = (RadioButton)convertView.findViewById(R.id.bluetooth_conn_radiobtn);
 
 		BluetoothDevice bluetoothDevice = getItem(position);
 		if (null != bluetoothDevice) {
@@ -95,7 +100,17 @@ public class NavigationDrawerBluetoothArrayAdapter extends BaseAdapter implement
 				e.printStackTrace();
 			}
 		}
-
+		
+		//it retrieve selected radio button value from database and set selected button as previous.
+		radiobtn.setChecked(false);
+		userId = PrefUtils.getFromPrefs(convertView.getContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+		AppSettings appSettings = db.getSettings(userId);
+		
+		if (null != appSettings.getConnectionID() && appSettings.getConnectionID().equals(bluetoothDevice.getName()))
+			{
+				RadioButton rb = (RadioButton)convertView.findViewById(R.id.bluetooth_conn_radiobtn);
+				rb.setChecked(true);
+			}
 		return convertView;
 	}
 

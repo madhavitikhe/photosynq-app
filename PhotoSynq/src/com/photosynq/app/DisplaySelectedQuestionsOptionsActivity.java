@@ -32,52 +32,30 @@ public class DisplaySelectedQuestionsOptionsActivity extends NavigationDrawer {
 	    View contentView = inflater.inflate(R.layout.activity_display_selected_questions_options, null, false);
 	    layoutDrawer.addView(contentView, 0); 
 		
-		liLayout = (LinearLayout) findViewById(R.id.linearlayout);
-		questionText = (TextView) findViewById(R.id.questionText);
-		optionText = (TextView) findViewById(R.id.optionText);
+		liLayout = (LinearLayout) findViewById(R.id.linearlayoutoptions);
+		//questionText = (TextView) findViewById(R.id.questionText);
+		//optionText = (TextView) findViewById(R.id.optionText);
 		
 		Bundle extras = getIntent().getExtras();
 		getAllSelectedOptions = extras.getCharSequenceArrayList("All_Options");
 		getAllSelectedQuestions = extras.getCharSequenceArrayList("All_Questions");
 		
-		size = extras.getInt("Question_Size");
-		question_text = extras.getString("Question_Text");
+		//size = extras.getInt("Question_Size");
+		//question_text = extras.getString("Question_Text");
 		
-		System.out.println("--getAllSelectedOptions----"+ getAllSelectedOptions);
-		System.out.println("--getAllSelectedQuestions----"+ getAllSelectedQuestions);
-		System.out.println("--getSize---"+ size);
-		System.out.println("--getQuestion-------"+ question_text);
-		questionText.setText(""+question_text);
-		
-		optionText.setText(""+getAllSelectedOptions.get(0));
-		
-		final int N = 10; // total number of textviews to add
 
-		final TextView[] allopt = new TextView[N]; // create an empty array;
-		final TextView[] allque = new TextView[N];
-		
-		for (int i = 0; i < 2; i++) {
+		//optionText.setText(""+getAllSelectedOptions.get(0));
+		System.out.println("--getsize-------"+ getAllSelectedOptions.size());
+
+		for (int i = 0; i < getAllSelectedQuestions.size(); i++) {
+			System.out.println("--getQuestion-------"+ getAllSelectedQuestions.get(i));
+			System.out.println("--getOption-------"+ getAllSelectedOptions.get(i));
 		    final TextView que = new TextView(this);
 		    que.setText("Question -  " + getAllSelectedQuestions.get(i));
 		    liLayout.addView(que);
 		    final TextView opt = new TextView(this);
 		    opt.setText("Option -  " + getAllSelectedOptions.get(i));
 		    liLayout.addView(opt);
-		    allque[i] = que;
-		    allopt[i] = opt;
-		    allque[i].setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                	System.out.println("--------Clicked on Question---------");
-                }
-            });
-		    allopt[i].setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                	System.out.println("--------Clicked on Option---------");
-                }
-            });
-		    
 		}
 		
 		/*

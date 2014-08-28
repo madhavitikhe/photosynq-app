@@ -87,7 +87,8 @@ public class SelectProtocolActivity extends NavigationDrawer {
 					dataString.append("\""+protocol.getId()+"\""+":"+detailProtocolObject.toString());
 					dataString.append("}");
 
-					System.out.println("###### writing macros_variable.js :"+dataString);
+				//	System.out.println("###### writing macros_variable.js :"+dataString);
+					System.out.println("###### writing macros_variable.js :......");
 					CommonUtils.writeStringToFile(getApplicationContext(), "macros_variable.js",dataString.toString());
 
 				} catch (JSONException e) {

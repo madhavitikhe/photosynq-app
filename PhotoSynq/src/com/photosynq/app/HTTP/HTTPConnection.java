@@ -233,7 +233,8 @@ public class HTTPConnection extends AsyncTask<Object, String, String>{
 			dataString.append(System.getProperty("line.separator"));
 		}
 		//db.closeDB();
-		System.out.println("###### writing macros :"+dataString);
+		//System.out.println("###### writing macros :"+dataString);
+		System.out.println("###### writing macros :......");
 		CommonUtils.writeStringToFile(context, "macros.js",dataString.toString());
 	
     }

@@ -4,15 +4,17 @@ import java.util.List;
 
 import android.app.Activity;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.photosynq.app.R;
+import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.ResearchProject;
+import com.photosynq.app.utils.PrefUtils;
 
 public class NavigationDrawerResearchProjectArrayAdapter extends BaseAdapter implements ListAdapter {
 	
@@ -47,7 +49,6 @@ public class NavigationDrawerResearchProjectArrayAdapter extends BaseAdapter imp
 	@Override
 	public long getItemId(int position) {
 		ResearchProject researchProject = getItem(position);
-
 		return Long.parseLong(researchProject.getId());
 	}
 
@@ -56,27 +57,27 @@ public class NavigationDrawerResearchProjectArrayAdapter extends BaseAdapter imp
 		if (convertView == null)
 			convertView = activity.getLayoutInflater().inflate(R.layout.nav_drawer_project_list_item_card, null);
 
-		TextView tvProjectTitle = (TextView) convertView.findViewById(R.id.nav_project_name);
-		//TextView tvProjectDesc = (TextView) convertView.findViewById(R.id.nav_project_desc);
-		//final RadioButton projectListRadio = (RadioButton) convertView.findViewById(R.id.nav_radiobtn);
-
-//		tvProjectTitle.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//            	//projectListRadio.setChecked(position == selectedPosition);
-//				//projectListRadio.setTag(position);
-//				//selectedPosition = (Integer) view.getTag();
-//              //  notifyDataSetInvalidated();
-//            	projectListRadio.setChecked(true);
-//            }
-//        });
+		LinearLayout ll = (LinearLayout) convertView.findViewById(R.id.linLayout);
+		String userId = PrefUtils.getFromPrefs(convertView.getContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+		DatabaseHelper db = DatabaseHelper.getHelper(convertView.getContext());
+		AppSettings appSettings = db.getSettings(userId);
 		
+		
+		TextView tvProjectTitle = (TextView) convertView.findViewById(R.id.nav_project_name);
 		ResearchProject researchProject = getItem(position);
+		//change background color of item card.
+		if(researchProject.getId().equals(appSettings.getProjectID()))
+		{
+			ll.setBackgroundColor(convertView.getContext().getResources().getColor(R.color.green_google_play));
+			tvProjectTitle.setTextColor(convertView.getContext().getResources().getColor(R.color.black));
+		}
+		else
+		{
+			ll.setBackgroundColor(convertView.getContext().getResources().getColor(R.color.white));
+		}
 		if (null != researchProject) {
-			@SuppressWarnings("unused")
-			String projectDesc,projectName;
+			String projectName;
 			try {
-				projectDesc = researchProject.getDescription();
 				projectName = researchProject.getName();
 				if(projectName.length()<35)
 				{
@@ -85,27 +86,11 @@ public class NavigationDrawerResearchProjectArrayAdapter extends BaseAdapter imp
 				else
 				{
 					tvProjectTitle.setText(projectName.substring(0,(projectName.length()<35?projectName.length():35))+"...");
-					//tvProjectTitle.setText(projectName);
 				}
-				
-//				projectListRadio.setChecked(position == selectedPosition);
-//				projectListRadio.setTag(position);
-//				
-//				//Radio button is checked after clicked on radio button, single choice mode.
-//				projectListRadio.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        selectedPosition = (Integer)view.getTag();
-//                        notifyDataSetInvalidated();
-//                    }
-//                });
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 		}
-
 		return convertView;
 	}
 

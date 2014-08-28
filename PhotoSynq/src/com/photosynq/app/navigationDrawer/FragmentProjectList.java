@@ -6,14 +6,11 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.photosynq.app.R;
@@ -53,7 +50,6 @@ public class FragmentProjectList extends Fragment{
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 					long itemId) {
-				// TODO Auto-generated method stub
 				ResearchProject rp = (ResearchProject) projectList.getItemAtPosition(position);
 				FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 				Bundle bundle = new Bundle();
@@ -65,40 +61,11 @@ public class FragmentProjectList extends Fragment{
 				//String projectId = arg0.getItemAtPosition(position).toString();
 				PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_PROJECT_ID,projectName);
 				Toast.makeText(getActivity(), "Clicked "+projectName, Toast.LENGTH_SHORT).show();
-				
-//				RadioButton radiolistitem=(RadioButton) arg1.findViewById(R.id.nav_radiobtn);
-//				radiolistitem.performClick();
-			//	radiolistitem.setChecked(true);
 
-
-			
-			
-			
-			
-			
-			
-			
 			}
 		});
 		
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));	
 		return rootView;
 	}
-				
-	
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onActivityCreated(savedInstanceState);
-		setHasOptionsMenu(true);
-	}
-	
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		// TODO Auto-generated method stub
-		super.onCreateOptionsMenu(menu, inflater);		
-		inflater.inflate(R.menu.menu, menu);
-	}
-
 }

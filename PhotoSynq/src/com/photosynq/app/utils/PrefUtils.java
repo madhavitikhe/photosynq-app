@@ -14,6 +14,8 @@ public class PrefUtils {
     public static final String PREFS_USER = "USER";
     public static final String PREFS_CONNECTION_ID = "CONNECTION_ID";
     public static final String PREFS_PROJECT_ID = "PROJECT_ID";
+    public static final String PREFS_FIRST_RUN = "FIRST_RUN";
+    public static final String PREFS_SAVE_SYNC_INTERVAL = "SAVE_SYNC_INTERVAL";
 
     /**
      * Called to save supplied value in shared preferences against given key.

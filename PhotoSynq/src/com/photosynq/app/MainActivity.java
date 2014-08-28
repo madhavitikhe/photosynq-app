@@ -19,6 +19,7 @@ import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.utils.PrefUtils;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -50,16 +51,22 @@ public class MainActivity extends ActionBarActivity {
 		    WebView.setWebContentsDebuggingEnabled(true);
 		}
 		//setAlarm method sets interval time to executing sync in background and show notification to user.
-		setAlarm(this);
+		String first_run = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_FIRST_RUN,"YES");
+		if (first_run.equals("YES"))
+		{
+			System.out.println("First time running? = YES");
+			setAlarm(this);
+			PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_FIRST_RUN,"NO");
+		}
 	}
 	
-	public void setAlarm(Context context) {   
+	public void setAlarm(Context context) {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.SECOND, 10);
 	    Intent intent = new Intent(context, AlarmReceiver.class);
 	    alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 	    alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-	    alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),20000, alarmIntent);//3600000*2 means 2 Hours
+	    alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),3600000*2, alarmIntent);//3600000*2 means 2 Hours
 	    System.out.println("-----------alarm is set-------");
 		}
 	

@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -28,12 +27,11 @@ import com.squareup.picasso.Picasso;
 public class StreamlinedModeActivity extends NavigationDrawer {
 
 	ViewFlipper viewFlipper;
-	Button Next, Previous;
 	private DatabaseHelper db;
 	private String projectId;
 	private Context ctx;
-	ArrayList<String> allSelectedOptions= new ArrayList<String>();
-	ArrayList<String> allSelectedQuestions = new ArrayList<String>();
+	ArrayList<String> allSelectedOptions;
+	ArrayList<String> allSelectedQuestions ;
 	//String[n] array;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +41,8 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	    View contentView = inflater.inflate(R.layout.activity_streamlined_mode, null, false);
 	    layoutDrawer.addView(contentView, 0); 
-	    
+	    allSelectedOptions= new ArrayList<String>();
+		allSelectedQuestions = new ArrayList<String>();
 		ctx = getApplicationContext();
 		// it returns questions and options of projectId-7 only, and show
 		// question and option on viewflipper.
@@ -134,23 +133,21 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 				        	//System.out.println(question.getOptions().get(v.getId()));
 				        	int displayedChild = viewFlipper.getDisplayedChild();
 				            int childCount = viewFlipper.getChildCount();
-
+				        	allSelectedQuestions.add(question.getQuestionText());
+				        	allSelectedOptions.add(question.getOptions().get(v.getId()));
+				        	for(int i=0;i<allSelectedOptions.size();i++)
+				        	{
+				        		System.out.println(allSelectedOptions.get(i));
+				        	}
 				            if (displayedChild == childCount - 1) {
 				                viewFlipper.stopFlipping();
 				                Intent intent = new Intent(ctx,DisplaySelectedQuestionsOptionsActivity.class);
 				                intent.putExtra("All_Questions", allSelectedQuestions);
 				                intent.putExtra("All_Options", allSelectedOptions);
-				                intent.putExtra("Question_Size", questions.size());
-				                intent.putExtra("Question_Text", question.getQuestionText());
 				                startActivity(intent);
 				            }
 				            
-				            	allSelectedQuestions.add(question.getQuestionText());
-					        	allSelectedOptions.add(question.getOptions().get(v.getId()));
-					        	for(int i=0;i<allSelectedOptions.size();i++)
-					        	{
-					        		System.out.println(allSelectedOptions.get(i));
-					        	}
+				            
 					        	viewFlipper.showNext();
 				        }
 				    });
@@ -191,22 +188,23 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 					        	//System.out.println(""+ question.getOptions().get(v.getId()));
 					        	int displayedChild = viewFlipper.getDisplayedChild();
 					            int childCount = viewFlipper.getChildCount();
+					            allSelectedQuestions.add(question.getQuestionText());
+					        	allSelectedOptions.add(question.getOptions().get(v.getId()));
+					        	for(int i=0;i<allSelectedOptions.size();i++)
+					        	{
+					        		System.out.println(allSelectedOptions.get(i));
+					        	}
 					        	if (displayedChild == childCount - 1) {
 					                viewFlipper.stopFlipping();
 					                Intent intent = new Intent(ctx,DisplaySelectedQuestionsOptionsActivity.class);
 					                intent.putExtra("All_Questions", allSelectedQuestions);
 					                intent.putExtra("All_Options", allSelectedOptions);
-					                intent.putExtra("Question_Size", questions.size());
-					                intent.putExtra("Question_Text", question.getQuestionText());
+					               // intent.putExtra("Question_Size", questions.size());
+					              //  intent.putExtra("Question_Text", question.getQuestionText());
 					                startActivity(intent);
 					            }
 					        	
-					        		allSelectedQuestions.add(question.getQuestionText());
-						        	allSelectedOptions.add(question.getOptions().get(v.getId()));
-						        	for(int i=0;i<allSelectedOptions.size();i++)
-						        	{
-						        		System.out.println(allSelectedOptions.get(i));
-						        	}
+					        		
 						        	viewFlipper.showNext();
 					        }
 					    });
@@ -235,22 +233,10 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.streamlined_mode, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		allSelectedOptions= new ArrayList<String>();
+		 allSelectedQuestions = new ArrayList<String>();
 	}
 }

@@ -3,6 +3,7 @@ package com.photosynq.app.navigationDrawer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,16 +17,19 @@ import android.widget.Toast;
 
 import com.photosynq.app.LoginActivity;
 import com.photosynq.app.R;
+import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.utils.PrefUtils;
 
 public class FragmentUser extends Fragment{
 
 	private TextView userText;
 	private String mEmail;
-	String loggedInUserName;
+	int id;
+	String modeType, userName, connectionID, projectID;
+	private DatabaseHelper db;
     public static FragmentUser newInstance() {
         Bundle bundle = new Bundle();
-
+        
         FragmentUser fragment = new FragmentUser();
         fragment.setArguments(bundle);
 
@@ -37,43 +41,38 @@ public class FragmentUser extends Fragment{
 			Bundle savedInstanceState) {
 			
 		View rootView = inflater.inflate(R.layout.fragment_user, container, false);
-		
+		db = DatabaseHelper.getHelper(getActivity());
 		mEmail = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_USER,mEmail);
-		loggedInUserName = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_MODE_TYPE,null);
-	//	Toast.makeText(getActivity(), ""+loggedInUserName,Toast.LENGTH_SHORT).show();
-		if(loggedInUserName == 0+"")
-		{
-			Toast.makeText(getActivity(), "Normal Mode",Toast.LENGTH_SHORT).show();	
-		}
-		else
-		{
-			Toast.makeText(getActivity(), "Streamlined Mode",Toast.LENGTH_SHORT).show();	
-		}
+		
 		userText = (TextView) rootView.findViewById(R.id.userNameText);
 		userText.setText(mEmail);
 		
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));	
-		 Button changeUserButton = (Button) rootView.findViewById(R.id.changeUser);
+		Button changeUserButton = (Button) rootView.findViewById(R.id.changeUser);
 			   changeUserButton.setOnClickListener(new OnClickListener()
 			   {
 			             @Override
 			             public void onClick(View v)
 			             {
-//			            	 SharedPreferences settings =  PreferenceManager.getDefaultSharedPreferences(getActivity());                          
-//			    		     SharedPreferences.Editor editor = settings.edit();
-//			    		     editor.clear();
-//			    		     editor.commit();
 			            	 Intent intent = new Intent(getActivity(),LoginActivity.class);
 			            	 intent.putExtra("change_user", true);
-			            	 startActivity(intent);
+			            	 startActivityForResult(intent, 999);
 			             } 
 			   }); 
 		return rootView;
 	}
 				
 	
-	
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) 
+	{
+		if (requestCode == 999)
+		{
+			mEmail = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+			userText.setText(mEmail);
+			Toast.makeText(getActivity(), "onactivity result "+resultCode +" "+requestCode, Toast.LENGTH_LONG).show();
+		}
+	}
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
