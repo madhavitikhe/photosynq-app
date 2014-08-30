@@ -44,7 +44,7 @@ public class FragmentData extends Fragment {
 				.getSupportFragmentManager(), fragments);
 		
 		viewPager.setAdapter(pageAdapter);
-
+		
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT));
 		return rootView;
@@ -53,7 +53,7 @@ public class FragmentData extends Fragment {
 	private List<Fragment> getFragments() {
 		List<Fragment> fList = new ArrayList<Fragment>();
 		List<Question> questions = db.getAllQuestionForProject(db.getSettings(
-				userID).getProjectID());
+				userID).getProjectId());
 
 		for (Question question : questions) {
 			Bundle bundle = new Bundle();

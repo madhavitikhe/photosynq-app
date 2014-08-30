@@ -74,7 +74,7 @@ public class FragmentSelectProject extends Fragment{
 					String userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		    		AppSettings appSettings = db.getSettings(userId);
 
-					appSettings.setProjectID(recordid);
+					appSettings.setProjectId(recordid);
 					db.updateSettings(appSettings);
 					fm.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();	
 				}

@@ -3,16 +3,18 @@ package com.photosynq.app;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.navigationDrawer.NavigationDrawer;
+import com.photosynq.app.utils.BluetoothService;
 
 public class DisplaySelectedQuestionsOptionsActivity extends NavigationDrawer {
 
@@ -22,6 +24,10 @@ public class DisplaySelectedQuestionsOptionsActivity extends NavigationDrawer {
 	int size;
 	String question_text;
 	LinearLayout liLayout;
+	private String projectId;
+	private String deviceAddress;
+	private String protocolJson="";
+	private DatabaseHelper db;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,20 +37,17 @@ public class DisplaySelectedQuestionsOptionsActivity extends NavigationDrawer {
 	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	    View contentView = inflater.inflate(R.layout.activity_display_selected_questions_options, null, false);
 	    layoutDrawer.addView(contentView, 0); 
-		
+	    db = DatabaseHelper.getHelper(getApplicationContext());
+	    Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
+			deviceAddress = extras.getString(BluetoothService.DEVICE_ADDRESS);
+			protocolJson = extras.getString(DatabaseHelper.C_PROTOCOL_JSON);
+			if (null == protocolJson) protocolJson="";
+		}
 		liLayout = (LinearLayout) findViewById(R.id.linearlayoutoptions);
-		//questionText = (TextView) findViewById(R.id.questionText);
-		//optionText = (TextView) findViewById(R.id.optionText);
-		
-		Bundle extras = getIntent().getExtras();
 		getAllSelectedOptions = extras.getCharSequenceArrayList("All_Options");
 		getAllSelectedQuestions = extras.getCharSequenceArrayList("All_Questions");
-		
-		//size = extras.getInt("Question_Size");
-		//question_text = extras.getString("Question_Text");
-		
-
-		//optionText.setText(""+getAllSelectedOptions.get(0));
 		System.out.println("--getsize-------"+ getAllSelectedOptions.size());
 
 		for (int i = 0; i < getAllSelectedQuestions.size(); i++) {
@@ -57,50 +60,15 @@ public class DisplaySelectedQuestionsOptionsActivity extends NavigationDrawer {
 		    opt.setText("Option -  " + getAllSelectedOptions.get(i));
 		    liLayout.addView(opt);
 		}
-		
-		/*
-		 * <LL>
-		 * 	<SV>
-		 * 		<LL>
-		 * 			<RL>
-		 * 				<TextView>.....
-		 * 			</RL>
-		 * 			<RL>
-		 * 				<TextView>.....
-		 * 			</RL>
-		 * 		</LL>
-		 * 	</SV>
-		 * 	<RL>
-		 * 		<Measure_Btn>
-		 * 	</RL>
-		 * </LL>
-		 */
-		
-//		LinearLayout mainLL = new LinearLayout(ctx);
-//		mainLL.setOrientation(LinearLayout.VERTICAL);
-//	    mainLL.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
-//
-//		ScrollView scrollView = new ScrollView(ctx);
-//		scrollView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
-//		
-//		LinearLayout subLLayout = new LinearLayout(ctx);
-//		subLLayout.setOrientation(LinearLayout.VERTICAL);
-//	    subLLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
-//	    	
-//		RelativeLayout relativeLayout = new RelativeLayout(ctx);
-//		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-//		relativeLayout.setLayoutParams(params);
-//		 
-//		TextView questionText = new TextView(ctx);
-//		questionText.setId(1);
-//		questionText.setText("Hello Venturit");
-//		questionText.setTextColor(Color.BLACK);
-//		questionText.setTextSize(20); 
-//		
-//		relativeLayout.addView(questionText);
-//		subLLayout.addView(relativeLayout);
-//		scrollView.addView(subLLayout);
-//		mainLL.addView(scrollView);
+	}
+	
+	public void measure(View view)
+	{
+		Intent intent = new Intent(getApplicationContext(),DisplayResultsActivity.class);
+ 		intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+ 		intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocolJson);
+ 		System.out.println("---------DatabaseHelper.C_PROJECT_ID-------------      "+DatabaseHelper.C_PROJECT_ID);
+ 		startActivity(intent);
 	}
 
 	@Override

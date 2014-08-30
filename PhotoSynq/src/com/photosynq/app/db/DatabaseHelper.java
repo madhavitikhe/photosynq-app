@@ -80,7 +80,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	// Data table colimn names.
 	private static final String C_TYPE = "type";
-	private static final String C_VALUE = "value";
+	private static final String C_VALUES = "value";
 
 	// Reaserch Project table create statement
 	//
@@ -127,8 +127,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	private static final String CREATE_TABLE_DATA = "CREATE TABLE "
 			+ TABLE_DATA + "(" + C_USER_ID + " TEXT," + C_PROJECT_ID + " TEXT,"
-			+ C_QUESTION_ID + " TEXT," + C_TYPE + " TEXT," + C_VALUE
-			+ " TEXT )";
+			+ C_QUESTION_ID + " TEXT," + C_TYPE + " TEXT," + C_VALUES + " TEXT )";
 
 	private DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -154,7 +153,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(CREATE_TABLE_RESULTS);
 		db.execSQL(CREATE_TABLE_SETTINGS);
 		db.execSQL(CREATE_TABLE_DATA);
-
 	}
 
 	@Override
@@ -900,9 +898,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 			ContentValues values = new ContentValues();
 			values.put(C_MODE_TYPE, setting.getModeType());
-			values.put(C_USER_ID, setting.getUserID());
-			values.put(C_CONNECTION_ID, setting.getConnectionID());
-			values.put(C_PROJECT_ID, setting.getProjectID());
+			values.put(C_USER_ID, setting.getUserId());
+			values.put(C_CONNECTION_ID, setting.getConnectionId());
+			values.put(C_PROJECT_ID, setting.getProjectId());
 
 			// Inserting Row
 			long row_id = db.insert(TABLE_SETTINGS, null, values);
@@ -929,15 +927,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		System.out.println(selectQuery);
 		Log.e("DATABASE_HELPER_getSettings", selectQuery);
 		AppSettings setting = new AppSettings();
-		setting.setUserID(userID);
+		setting.setUserId(userID);
 		Cursor c = db.rawQuery(selectQuery, null);
 		if (c.moveToFirst()) {
 
-			setting.setUserID(c.getString(c.getColumnIndex(C_USER_ID)));
+			setting.setUserId(c.getString(c.getColumnIndex(C_USER_ID)));
 			setting.setModeType(c.getString(c.getColumnIndex(C_MODE_TYPE)));
-			setting.setConnectionID(c.getString(c
+			setting.setConnectionId(c.getString(c
 					.getColumnIndex(C_CONNECTION_ID)));
-			setting.setProjectID(c.getString(c.getColumnIndex(C_PROJECT_ID)));
+			setting.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
 		}
 		c.close();
 		return setting;
@@ -948,14 +946,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
-		values.put(C_USER_ID, setting.getUserID());
+		values.put(C_USER_ID, setting.getUserId());
 		values.put(C_MODE_TYPE, setting.getModeType());
-		values.put(C_CONNECTION_ID, setting.getConnectionID());
-		values.put(C_PROJECT_ID, setting.getProjectID());
+		values.put(C_CONNECTION_ID, setting.getConnectionId());
+		values.put(C_PROJECT_ID, setting.getProjectId());
 
 		// updating row
 		int rowUpdated = db.update(TABLE_SETTINGS, values, C_USER_ID + " = ?",
-				new String[] { String.valueOf(setting.getUserID()) });
+				new String[] { String.valueOf(setting.getUserId()) });
 
 		if (rowUpdated <= 0) {
 			return createSettings(setting);
@@ -972,7 +970,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			values.put(C_PROJECT_ID, data.getProject_id());
 			values.put(C_QUESTION_ID, data.getQuestion_id());
 			values.put(C_TYPE, data.getType());
-			values.put(C_VALUE, data.getValue());
+			values.put(C_VALUES, data.getValue());
 
 			// Inserting Row
 			long row_id = db.insert(TABLE_DATA, null, values);
@@ -1007,7 +1005,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			data.setProject_id(c.getString(c.getColumnIndex(C_PROJECT_ID)));
 			data.setQuestion_id(c.getString(c.getColumnIndex(C_QUESTION_ID)));
 			data.setType(c.getString(c.getColumnIndex(C_TYPE)));
-			data.setValue(c.getString(c.getColumnIndex(C_VALUE)));
+			data.setValue(c.getString(c.getColumnIndex(C_VALUES)));
 		}
 		c.close();
 		return data;
@@ -1022,7 +1020,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		values.put(C_PROJECT_ID, data.getProject_id());
 		values.put(C_QUESTION_ID, data.getQuestion_id());
 		values.put(C_TYPE, data.getType());
-		values.put(C_VALUE, data.getValue());
+		values.put(C_VALUES, data.getValue());
 
 		// updating row
 		int rowUpdated = db.update(TABLE_DATA, values, C_USER_ID + " = ?",

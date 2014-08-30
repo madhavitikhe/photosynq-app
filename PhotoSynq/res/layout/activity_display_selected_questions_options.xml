@@ -73,7 +73,8 @@
             android:id="@+id/measure_btn"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:text="@string/measure_btn" >
+            android:text="@string/measure_btn"
+            android:onClick="measure" >
         </Button>
     </RelativeLayout>
 

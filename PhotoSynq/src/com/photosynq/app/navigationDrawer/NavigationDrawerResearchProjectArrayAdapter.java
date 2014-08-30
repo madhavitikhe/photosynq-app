@@ -66,7 +66,7 @@ public class NavigationDrawerResearchProjectArrayAdapter extends BaseAdapter imp
 		TextView tvProjectTitle = (TextView) convertView.findViewById(R.id.nav_project_name);
 		ResearchProject researchProject = getItem(position);
 		//change background color of item card.
-		if(researchProject.getId().equals(appSettings.getProjectID()))
+		if(researchProject.getId().equals(appSettings.getProjectId()))
 		{
 			ll.setBackgroundColor(convertView.getContext().getResources().getColor(R.color.green_google_play));
 			tvProjectTitle.setTextColor(convertView.getContext().getResources().getColor(R.color.black));

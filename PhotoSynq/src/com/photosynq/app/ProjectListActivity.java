@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -11,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,10 +25,11 @@ import android.widget.Toast;
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ResearchProject;
+import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.PrefUtils;
 
-public class ProjectListActivity extends ActionBarActivity  {
+public class ProjectListActivity extends NavigationDrawer  {
 
 	ListView projectList;
 	DatabaseHelper db;
@@ -38,8 +41,6 @@ public class ProjectListActivity extends ActionBarActivity  {
     String authToken;
     List<ResearchProject> researchProjectList;
     ResearchProjectArrayAdapter arrayadapter;
-    private View mProListStatusView;
-	private TextView mProListStatusMessageView;
 	private ProgressDialog pDialog;
     String image_url;
     
@@ -47,12 +48,14 @@ public class ProjectListActivity extends ActionBarActivity  {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_project_list);
+		//setContentView(R.layout.activity_project_list);
+		LayoutInflater inflater = (LayoutInflater) this
+	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	    View contentView = inflater.inflate(R.layout.activity_project_list, null, false);
+	    layoutDrawer.addView(contentView, 0); 
 		
 		// Initialize ListView
 		projectList = (ListView) findViewById(R.id.list_view);
-		mProListStatusView = findViewById(R.id.prolist_status);
-		mProListStatusMessageView = (TextView) findViewById(R.id.prolist_status_message);
 		PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, null);
 		authToken = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		email = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);

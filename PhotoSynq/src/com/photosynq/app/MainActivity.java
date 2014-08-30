@@ -11,7 +11,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,13 +19,17 @@ import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.AppSettings;
+import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.utils.PrefUtils;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends NavigationDrawer {
 
 	protected String latitude,longitude; 
 	protected boolean gps_enabled,network_enabled;
 	// Database Helper
+	private DatabaseHelper db;
+	private String userId;
     public static final String QUICK_MEASURE ="quick";
    
     
@@ -44,8 +48,12 @@ public class MainActivity extends ActionBarActivity {
             finish();
             return;
         }
-
-		setContentView(R.layout.activity_main);
+        
+		//setContentView(R.layout.activity_main);
+		LayoutInflater inflater = (LayoutInflater) this
+	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	    View contentView = inflater.inflate(R.layout.activity_main, null, false);
+	    layoutDrawer.addView(contentView, 0); 
 		
 		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 		    WebView.setWebContentsDebuggingEnabled(true);
@@ -106,9 +114,26 @@ public class MainActivity extends ActionBarActivity {
 	
 	public void listResearchProjects(View view)
 	{
-		Intent intent = new Intent(getApplicationContext(),ProjectListActivity.class);
-		intent.putExtra(QUICK_MEASURE, false);
-		startActivity(intent);
+		db = DatabaseHelper.getHelper(getApplicationContext());
+		userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+		AppSettings appSettings = db.getSettings(userId);
+		if(appSettings.getModeType().equals("Normal Mode"))
+		{
+			Intent intent = new Intent(getApplicationContext(),ProjectListActivity.class);
+			intent.putExtra(QUICK_MEASURE, false);
+			startActivity(intent);
+			Toast.makeText(getApplicationContext(), "Normal Mode", Toast.LENGTH_LONG).show();
+		}
+		else if(appSettings.getModeType().equals("Streamline Mode"))
+		{
+			Intent intent = new Intent(getApplicationContext(),StreamlinedModeActivity.class);
+			startActivity(intent);
+			Toast.makeText(getApplicationContext(), "Streamline Mode", Toast.LENGTH_LONG).show();
+		}
+		else
+		{
+			Toast.makeText(getApplicationContext(), "Select mode type first", Toast.LENGTH_LONG).show();
+		}
 	}
 	public void recentResearchCollab(View view)
 	{

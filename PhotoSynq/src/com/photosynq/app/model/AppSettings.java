@@ -3,51 +3,53 @@ package com.photosynq.app.model;
 public class AppSettings {
 	//private variables
 		public static final String defaultValue = "NOT SET";
-		public String userID;
+		public String userId;
 		public String modeType;
-		public String connectionID;
-		public String projectID;
+		public String connectionId;
+		public String projectId;
 		
 		// Empty constructor
 		public AppSettings( ){
 			
 		}
 		public AppSettings(String userID){
-			this.userID = userID;
-			this.connectionID = this.modeType = this.projectID = defaultValue;
+			this.userId = userID;
+			this.connectionId = this.modeType = this.projectId = defaultValue;
 		}
 		// constructor
-		public AppSettings(String userID, String modeType, String connectionID, String projectID){
-			this.userID = userID;
+		public AppSettings(String userId, String modeType, String connectionId, String projectId){
+			this.userId = userId;
 			this.modeType = modeType;
-			this.connectionID = connectionID;
-			this.projectID = projectID;
+			this.connectionId = connectionId;
+			this.projectId = projectId;
 			
 		}
-
-		
+		public String getUserId() {
+			return userId;
+		}
+		public void setUserId(String userId) {
+			this.userId = userId;
+		}
 		public String getModeType() {
 			return modeType;
 		}
 		public void setModeType(String modeType) {
 			this.modeType = modeType;
 		}
-		public String getConnectionID() {
-			return connectionID;
+		public String getConnectionId() {
+			return connectionId;
 		}
-		public void setConnectionID(String connectionID) {
-			this.connectionID = connectionID;
+		public void setConnectionId(String connectionId) {
+			this.connectionId = connectionId;
 		}
-		public String getProjectID() {
-			return projectID;
+		public String getProjectId() {
+			return projectId;
 		}
-		public void setProjectID(String projectID) {
-			this.projectID = projectID;
+		public void setProjectId(String projectId) {
+			this.projectId = projectId;
 		}
-		public String getUserID() {
-			return userID;
+		public static String getDefaultvalue() {
+			return defaultValue;
 		}
-		public void setUserID(String userID) {
-			this.userID = userID;
-		}
+		
 }

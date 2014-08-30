@@ -68,6 +68,7 @@
     <string name="drawer_title">PhotosynQ</string>
     <string name="clear"></string>
     <string name="streamlined_mode">Streamlined Mode</string>
+    
     <string name="normal_mode">Normal Mode</string>
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
@@ -80,14 +81,7 @@
     <string name="tab_five">Data</string>
     <string name="tab_six">Review</string>
     <string name="tab_seven">Sync</string>
-    <string name="fragment_my_apps">Fragment my Apps</string>
-    <string name="fragment_shop_apps">Fragment Shops App</string>
-    <string name="fragment_tab_one">Fragment Tab One</string>
-    <string name="fragment_tab_two">Kelvin M.</string>
-    <string name="fragment_tab_three">List of paired bluetooth devices</string>
     <string name="title_activity_navigation_main">Navigation Drawer</string>
-    <string name="title_activity_fragment_data">Data</string>
-    <string name="sign_out_btn">Sign Out</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
     <string name="searchNew">Search New</string>
     <string name="change_user">Change User</string>
@@ -98,5 +92,16 @@
     <string name="save_interval_btn">Save interval</string>
     <string name="sync_btn">Sync Data</string>
     <string name="sync_interval_lbl">Sync interval (in mins)</string>
+
+    <string name="field">Field</string>
+    <string name="userSelected">User Selected</string>
+    <string name="selectFromWeb">Select from answers in Research Project\n [red,green,blue,yellow]</string>
+    <string name="fixedValue">Fixed value</string>
+    <string name="autoIncrement">Auto Increment</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="repeat">Repeat</string>
+    <string name="scanCode">Scan Bar/QR code</string>
+    <string name="save">Save</string>
   
 </resources>

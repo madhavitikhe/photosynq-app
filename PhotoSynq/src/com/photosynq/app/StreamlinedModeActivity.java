@@ -8,8 +8,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
@@ -22,6 +20,7 @@ import android.widget.ViewFlipper;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.navigationDrawer.NavigationDrawer;
+import com.photosynq.app.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
 
 public class StreamlinedModeActivity extends NavigationDrawer {
@@ -44,11 +43,12 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 	    allSelectedOptions= new ArrayList<String>();
 		allSelectedQuestions = new ArrayList<String>();
 		ctx = getApplicationContext();
-		// it returns questions and options of projectId-7 only, and show
-		// question and option on viewflipper.
+		
+		//Show question and option on viewflipper.
 		//db = new DatabaseHelper(ctx);
+		String userId = PrefUtils.getFromPrefs(ctx , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		db = DatabaseHelper.getHelper(ctx);
-		projectId = "7";
+		projectId = db.getSettings(userId).getProjectId();
 		final List<Question> questions = db.getAllQuestionForProject(projectId);
 		//db.closeDB();
 		viewFlipper = (ViewFlipper) findViewById(R.id.ViewFlipper01);

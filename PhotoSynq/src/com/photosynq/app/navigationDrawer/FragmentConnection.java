@@ -87,7 +87,7 @@ public class FragmentConnection extends Fragment{
 				
 				String bluetoothID = btDevice.getName();
 				
-				appSettings.setConnectionID(bluetoothID);
+				appSettings.setConnectionId(bluetoothID);
 				db.updateSettings(appSettings);
 				
 				//String bluetoothAddress = adapter.getItemAtPosition(position).toString();

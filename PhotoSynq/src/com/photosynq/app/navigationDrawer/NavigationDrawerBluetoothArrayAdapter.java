@@ -106,7 +106,7 @@ public class NavigationDrawerBluetoothArrayAdapter extends BaseAdapter implement
 		userId = PrefUtils.getFromPrefs(convertView.getContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		AppSettings appSettings = db.getSettings(userId);
 		
-		if (null != appSettings.getConnectionID() && appSettings.getConnectionID().equals(bluetoothDevice.getName()))
+		if (null != appSettings.getConnectionId() && appSettings.getConnectionId().equals(bluetoothDevice.getName()))
 			{
 				RadioButton rb = (RadioButton)convertView.findViewById(R.id.bluetooth_conn_radiobtn);
 				rb.setChecked(true);

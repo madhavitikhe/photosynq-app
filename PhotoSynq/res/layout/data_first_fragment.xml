@@ -6,38 +6,35 @@
     android:focusable="true"
     android:focusableInTouchMode="true" >
 
-    <TextView
-        android:id="@+id/question_txt"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/subrelativelayout"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:background="@color/gray"
-        android:gravity="center"
-        android:text="Field"
-        android:textColor="@color/green_google_play"
-        android:textSize="30sp"
-        android:textStyle="bold" />
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/question_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:background="@color/gray"
+            android:gravity="center"
+            android:text="@string/field"
+            android:textColor="@color/green_google_play"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
 
     <TextView
-        android:id="@+id/user_select_radiobtn"
+        android:id="@+id/select_from_web_lbl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/select_from_web_radiobtn"
-        android:layout_marginTop="30dp"
-        android:text="User Selected"
-        android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/select_from_web_radiobtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/txt"
-        android:text="Select from answers in Research Project\n [red,green,blue,yellow]"
+        android:layout_below="@+id/subrelativelayout"
+        android:layout_marginTop="15dp"
+        android:text="@string/selectFromWeb"
         android:textSize="20sp" />
 
     <RadioGroup
@@ -47,21 +44,25 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/user_select_radiobtn"
+        android:layout_below="@+id/subrelativelayout"
         android:paddingTop="20dp" >
 
-        <RelativeLayout
-            android:layout_width="fill_parent"
+        <RadioButton
+            android:id="@+id/user_select_radiobtn"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:layout_marginTop="80dp"
+            android:text="@string/userSelected"
+            android:textSize="20sp" />
+
+      
 
             <RadioButton
                 android:id="@+id/fixedvalueradio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:checked="true"
-                android:text="Fixed value"
+                android:text="@string/fixedValue"
                 android:textSize="20sp" />
 
             <EditText
@@ -69,14 +70,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@+id/fixedvalueradio"
                 android:hint="Enter value" />
-        </RelativeLayout>
 
         <RadioButton
             android:id="@+id/autoincrementradio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Auto Increment"
+            android:text="@string/autoIncrement"
             android:textSize="20sp" />
 
         <RelativeLayout
@@ -89,15 +91,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:text="From"
-                android:textSize="18dp" />
+                android:text="@string/from"
+                android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/from_editText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:ems="10" />
+                android:ems="10"
+                android:inputType="number" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -110,15 +113,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:text="To"
-                android:textSize="18dp" />
+                android:text="@string/to"
+                android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/to_editText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:ems="10" />
+                android:ems="10"
+                android:inputType="number" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -131,22 +135,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:text="Repeat"
-                android:textSize="18dp" />
+                android:text="@string/repeat"
+                android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/repeat_editText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:ems="10" />
+                android:ems="10"
+                android:inputType="number" />
         </RelativeLayout>
 
         <RadioButton
-            android:id="@+id/radio2"
+            android:id="@+id/scanCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Scan Bar/QR code"
+            android:text="@string/scanCode"
             android:textSize="20sp" />
     </RadioGroup>
 
@@ -157,7 +162,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:text="Save"
+        android:text="@string/save"
         android:textSize="25sp" />
 
 </RelativeLayout>
