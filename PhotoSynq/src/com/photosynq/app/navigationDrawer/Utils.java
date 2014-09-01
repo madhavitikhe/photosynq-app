@@ -19,6 +19,25 @@ public class Utils {
 		}
 	 
 	}
+	
+	
+	public enum QuestionType {
+		SCAN_CODE("SCAN_CODE"), 
+		USER_SELECTED("USER_SELECTED"), 
+		PROJECT_SELECTED("PROJECT_SELECTED"), 
+		FIXED_VALUE("FIXED_VALUE"), 
+		AUTO_INCREMENT("AUTO_INCREMENT");
+	 
+		private String statusCode;
+		private QuestionType(String s) {
+			statusCode = s;
+		}
+		public String getStatusCode() {
+			return statusCode;
+		}
+	}
+	
+	
 	//Set all the navigation icons and always to set "zero 0" for the item is a category
 	public static int[] iconNavigation = new int[] { 
 		0, 0, 0, 0, 0, 0, 0};	

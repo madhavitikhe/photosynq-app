@@ -11,14 +11,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Question;
+import com.photosynq.app.navigationDrawer.Utils.QuestionType;
 import com.photosynq.app.utils.PrefUtils;
 
 public class DataFirstFragment extends Fragment {
@@ -29,7 +28,10 @@ public class DataFirstFragment extends Fragment {
 	private String questionId;
 	private String projectId;
 	private RadioGroup radiogroup;
-	private RadioButton seletedRadioBtn;
+	private RadioButton userSelectedRadio;
+	private RadioButton fixedValueRadio;
+	private RadioButton autoIncRadio;
+	private RadioButton scanCodeRadio;
 	private String selectedValue;
 	public EditText fixed_value_edit_text;
 	public EditText from_edit_text;
@@ -58,54 +60,55 @@ public class DataFirstFragment extends Fragment {
 			questionId = extras.getString(DatabaseHelper.C_QUESTION_ID);
 		}
 		radiogroup = (RadioGroup) rootView.findViewById(R.id.radioGroup1);
-		int selectedId = radiogroup.getCheckedRadioButtonId();
-		seletedRadioBtn = (RadioButton) rootView.findViewById(selectedId);
+		userSelectedRadio = (RadioButton) rootView.findViewById(R.id.user_select_radiobtn);
+		fixedValueRadio = (RadioButton) rootView.findViewById(R.id.fixedvalueradio);
+		autoIncRadio = (RadioButton) rootView.findViewById(R.id.autoincrementradio);
+		scanCodeRadio = (RadioButton) rootView.findViewById(R.id.scanCode);
 		
 		fixed_value_edit_text = (EditText) rootView.findViewById(R.id.fixed_value_editText);
 		from_edit_text = (EditText) rootView.findViewById(R.id.from_editText);
 		to_edit_text = (EditText) rootView.findViewById(R.id.to_editText);
 		repeat_edit_text = (EditText) rootView.findViewById(R.id.repeat_editText);
 		
-		 radiogroup.setOnCheckedChangeListener(new OnCheckedChangeListener() 
-	        {
-	            public void onCheckedChanged(RadioGroup group, int checkedId) {
-	                switch(checkedId){
-	                    case R.id.user_select_radiobtn:
-	                    	Toast.makeText(getActivity(), "User Selected", Toast.LENGTH_SHORT).show();
-	                    break;
-
-	                    case R.id.fixedvalueradio:
-	                    	Toast.makeText(getActivity(), "Fixed Value", Toast.LENGTH_SHORT).show();
-	                    	selectedValue = fixed_value_edit_text.getText().toString();
-	                    break;
-
-	                    case R.id.autoincrementradio:
-	                    	Toast.makeText(getActivity(), "Auto Increment", Toast.LENGTH_SHORT).show();
-	                    	selectedValue = from_edit_text.getText().toString();
-	                    	selectedValue = to_edit_text.getText().toString();
-	                    	selectedValue = repeat_edit_text.getText().toString();
-	                    break;
-	                    
-	                    case R.id.scanCode:
-	                    	Toast.makeText(getActivity(), "Scan Code", Toast.LENGTH_SHORT).show();
-	                    break;
-
-	                }
-
-
-	            }
-	        });
-
-		 
-		 
+		Data retrieveData = db.getData(userId, projectId, questionId);
+		if(null != retrieveData.getType())
+		{
+				switch (QuestionType.valueOf(retrieveData.getType())) {
+				case AUTO_INCREMENT:
+					autoIncRadio.setChecked(true);
+					String[] values = retrieveData.getValue().split(",");
+					from_edit_text.setText(values[0]);
+					to_edit_text.setText(values[1]);
+					repeat_edit_text.setText(values[2]);
+					break;
+				case FIXED_VALUE:
+					fixedValueRadio.setChecked(true);
+					fixed_value_edit_text.setText(retrieveData.getValue());
+					break;
+				case PROJECT_SELECTED:
+					//disable radio group
+					for (int i = 0; i < radiogroup.getChildCount(); i++) {
+						radiogroup.getChildAt(i).setEnabled(false);
+						}
+					break;
+				case SCAN_CODE:
+					scanCodeRadio.setChecked(true);
+					break;
+				case USER_SELECTED:
+					userSelectedRadio.setChecked(true);
+					break;
+				
+				default:
+					break;
+				}
+		}
 		
-		
-		TextView questionText = (TextView) rootView.findViewById(R.id.question_txt);
+		TextView questionTextView = (TextView) rootView.findViewById(R.id.question_txt);
 		Question question = db.getQuestionForProject(projectId,questionId);
-		questionText.setText(question.getQuestionText());
+		questionTextView.setText(question.getQuestionText());
 		System.out.println("--------------question Text-----"+question.getQuestionText());
+		
 		save_btn = (Button) rootView.findViewById(R.id.data_fragment_save_btn);
-
 		save_btn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
@@ -113,10 +116,42 @@ public class DataFirstFragment extends Fragment {
 				data.setUser_id(userId);
 				data.setProject_id(projectId);
 				data.setQuestion_id(questionId);
-				data.setType(Data.USER_SELECTED);
-				data.setValue(selectedValue);
-	    		db.updateData(data);
-	    		Toast.makeText(getActivity(), "---Data Saved---"+selectedValue,Toast.LENGTH_SHORT).show();	
+				data.setValue(Data.NO_VALUE);
+				
+				int selectedRadioButtonId = radiogroup.getCheckedRadioButtonId();
+				
+				if(selectedRadioButtonId == userSelectedRadio.getId())
+                {
+					data.setType(QuestionType.USER_SELECTED.getStatusCode());
+                }
+				else if(selectedRadioButtonId == fixedValueRadio.getId())
+				{
+					data.setType(QuestionType.FIXED_VALUE.getStatusCode());
+					data.setValue(fixed_value_edit_text.getText().toString());
+				}
+				else if(selectedRadioButtonId == autoIncRadio.getId())
+				{
+					data.setType(QuestionType.AUTO_INCREMENT.getStatusCode());
+					if(from_edit_text.getText().toString().isEmpty())
+					{
+						from_edit_text.setError("please Insert field");
+					}
+//					else if(to_edit_text.getText().toString().isEmpty())
+//					{
+//						to_edit_text.setError("please Insert field");
+//					}
+//					else if(repeat_edit_text.getText().toString().isEmpty())
+//					{
+//						repeat_edit_text.setError("please Insert field");
+//					}
+					data.setValue(from_edit_text.getText().toString()+","+to_edit_text.getText().toString()+","+repeat_edit_text.getText().toString());
+				}
+				else if(selectedRadioButtonId == scanCodeRadio.getId())
+				{
+					data.setType(QuestionType.SCAN_CODE.getStatusCode());
+				}
+				
+				db.updateData(data);
 			}
 		});
 		

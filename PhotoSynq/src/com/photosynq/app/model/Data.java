@@ -2,8 +2,7 @@ package com.photosynq.app.model;
 
 public class Data {
 	
-	public static final String USER_SELECTED = "user_selected";
-	public static final String PROJECT_SELECTED = "project_selected";
+	public static final String NO_VALUE = "NO_VALUE";
 	public String user_id;
 	public String project_id;
 	public String question_id;

@@ -988,11 +988,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	// Getting single parameters of settings
-	public Data getData(String userID) {
+	public Data getData(String userID, String projectID, String questionID) {
 		SQLiteDatabase db = this.getReadableDatabase();
 
 		String selectQuery = "SELECT  * FROM " + TABLE_DATA + " WHERE "
-				+ C_USER_ID + " = '" + userID + "'";
+				+ C_USER_ID + " = '" + userID + "' and " + C_PROJECT_ID + " = '" + projectID + "' and " + C_QUESTION_ID + " = '" + questionID + "'";
 
 		System.out.println(selectQuery);
 		Log.e("DATABASE_HELPER_getSettings", selectQuery);
@@ -1023,8 +1023,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		values.put(C_VALUES, data.getValue());
 
 		// updating row
-		int rowUpdated = db.update(TABLE_DATA, values, C_USER_ID + " = ?",
-				new String[] { String.valueOf(data.getUser_id()) });
+		int rowUpdated = db.update(TABLE_DATA, values, C_USER_ID + " = ? and " + C_QUESTION_ID + " = ? and " + C_PROJECT_ID + " = ?" ,
+				new String[] { String.valueOf(data.getUser_id()),String.valueOf(data.getQuestion_id()),String.valueOf(data.getProject_id()) });
 
 		if (rowUpdated <= 0) {
 			return createData(data);

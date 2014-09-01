@@ -36,17 +36,14 @@ public class FragmentData extends Fragment {
 		final View rootView = inflater.inflate(R.layout.fragment_data,container, false);
 		viewPager = (ViewPager) rootView.findViewById(R.id.viewPager);
 		db = DatabaseHelper.getHelper(getActivity());
-		userID = PrefUtils.getFromPrefs(getActivity(),
-						PrefUtils.PREFS_LOGIN_USERNAME_KEY,
+		userID = PrefUtils.getFromPrefs(getActivity(),PrefUtils.PREFS_LOGIN_USERNAME_KEY,
 						PrefUtils.PREFS_DEFAULT_VAL);
 		List<Fragment> fragments = getFragments();
-		pageAdapter = new MyPageAdapter(getActivity()
-				.getSupportFragmentManager(), fragments);
+		pageAdapter = new MyPageAdapter(getActivity().getSupportFragmentManager(), fragments);
 		
 		viewPager.setAdapter(pageAdapter);
 		
-		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT));
+		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
 		return rootView;
 	}
 

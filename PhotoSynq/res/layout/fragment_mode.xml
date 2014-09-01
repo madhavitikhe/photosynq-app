@@ -41,12 +41,12 @@
             android:layout_width="fill_parent"
             android:layout_height="92dp"
             android:layout_weight="0.90"
-            android:background="@color/gray"
+            android:background="@color/green_google_play"
             android:button="@null"
             android:drawablePadding="30dp"
             android:drawableRight="@android:drawable/btn_radio"
             android:text="@string/normal_mode"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="30sp" />
 
         <RadioButton
@@ -54,12 +54,12 @@
             android:layout_width="fill_parent"
             android:layout_height="92dp"
             android:layout_marginTop="20dp"
-            android:background="@color/gray"
+            android:background="@color/green_google_play"
             android:button="@null"
             android:drawablePadding="30dp"
             android:drawableRight="@android:drawable/btn_radio"
             android:text="@string/streamlined_mode"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="30sp" />
     </RadioGroup>
 

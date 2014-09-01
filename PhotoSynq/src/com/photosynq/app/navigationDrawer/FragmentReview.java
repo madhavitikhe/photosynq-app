@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
+import com.photosynq.app.model.Data;
 import com.photosynq.app.utils.PrefUtils;
 
 public class FragmentReview extends Fragment {
@@ -36,11 +37,12 @@ public class FragmentReview extends Fragment {
 		
 		TextView tvMode = (TextView) rootView.findViewById(R.id.tvMode);
 		TextView tvUser = (TextView) rootView.findViewById(R.id.tvUserName);
-		TextView tvbluetoothId = (TextView) rootView.findViewById(R.id.tvConnection);
-		TextView tvprojectId = (TextView) rootView.findViewById(R.id.tvProjectName);
+		TextView tvBluetoothId = (TextView) rootView.findViewById(R.id.tvConnection);
+		TextView tvProjectId = (TextView) rootView.findViewById(R.id.tvProjectName);
+		TextView tvQuestions = (TextView) rootView.findViewById(R.id.tvQuestions);
 		userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		AppSettings appSettings = db.getSettings(userId);
-		
+			
 		//Set cuurent settings 
 		if(null != appSettings.getModeType())
 		{
@@ -57,10 +59,10 @@ public class FragmentReview extends Fragment {
 		tvUser.setText(loggedInUserName);
 		
 		String bluetoothMacId = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_CONNECTION_ID,null);
-		tvbluetoothId.setText(bluetoothMacId);
+		tvBluetoothId.setText(bluetoothMacId);
 		
 		String projectId = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_PROJECT_ID,null);
-		tvprojectId.setText(projectId);
+		tvProjectId.setText(projectId);
 		
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));	
 		return rootView;

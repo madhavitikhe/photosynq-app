@@ -4,13 +4,16 @@ import java.util.Calendar;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -95,17 +98,51 @@ public class MainActivity extends NavigationDrawer {
 	}
 
 	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    //Handle the back button
+	    if(keyCode == KeyEvent.KEYCODE_BACK) {
+	        //Ask the user if they want to quit
+	        new AlertDialog.Builder(this)
+	        .setIcon(android.R.drawable.ic_dialog_alert)
+	        .setTitle("Quit")
+	        .setMessage("Do You Want to Close the Application")
+	        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+	            @Override
+	            public void onClick(DialogInterface dialog, int which) {
+
+	                //Stop the activity
+	                MainActivity.this.finish();    
+	            }
+
+	        })
+	        .setNegativeButton("No", null)
+	        .show();
+
+	        return true;
+	    }
+	    else {
+	        return super.onKeyDown(keyCode, event);
+	    }
+
+	}
+	
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		switch (item.getItemId()) {
 		  case R.id.sign_out:
-			  Toast.makeText(getApplicationContext(), "Sign Out Successfully", Toast.LENGTH_LONG).show();
-			  SharedPreferences settings =  PreferenceManager.getDefaultSharedPreferences(getBaseContext());                          
-		        SharedPreferences.Editor editor = settings.edit();
-		        editor.clear();
-		        editor.commit();
-		        finish();
-	           return true;
+			Toast.makeText(getApplicationContext(), "Sign Out Successfully", Toast.LENGTH_LONG).show();
+			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+			SharedPreferences.Editor editor = settings.edit();
+			editor.clear();
+			editor.commit();
+			finish();
+			return true;
+		  case R.id.close:
+			startActivity(this.getIntent());
+			finish();
+	        return true;
 		  default:
 			  return super.onOptionsItemSelected(item);
 		}		

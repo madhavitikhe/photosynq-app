@@ -37,14 +37,14 @@
 
     <Button
         android:id="@+id/changeUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/userNameText"
-        android:layout_marginBottom="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_centerHorizontal="true"
+        android:background="@color/green_google_play"
         android:text="@string/change_user"
-        android:textSize="40sp" 
-        android:background="@drawable/rounded_corner"/>
+        android:textSize="30sp" />
 
 </RelativeLayout>

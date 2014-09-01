@@ -18,5 +18,10 @@
     <item android:id="@+id/sign_out"
           android:icon="@drawable/ic_launcher"
           android:title="@string/sign_out"
-          android:showAsAction="ifRoom|withText" />
+          android:showAsAction="always" />
+    
+    <item android:id="@+id/close"
+          android:icon="@drawable/ic_launcher"
+          android:title="@string/close"
+          android:showAsAction="always" />
 </menu>

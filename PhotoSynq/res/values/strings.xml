@@ -73,6 +73,7 @@
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
     <string name="sign_out">Sign Out</string>
+    <string name="close">Close</string>
     <string name="user_email">test@gmail.com</string>
     <string name="tab_one">Mode</string>
     <string name="tab_two">User</string>
