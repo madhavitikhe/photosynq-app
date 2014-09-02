@@ -3,9 +3,17 @@ package com.photosynq.app.navigationDrawer;
 import java.util.ArrayList;
 import java.util.Set;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -20,6 +28,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.photosynq.app.R;
@@ -35,6 +44,8 @@ public class FragmentConnection extends Fragment{
 	private Button searchNewBtn;
 	private String userId;
 	private DatabaseHelper db;
+	private TextView bluetoothStatusMsg;
+	private View bluetoothStatus;
 	
     public static FragmentConnection newInstance() {
         Bundle bundle = new Bundle();
@@ -54,6 +65,8 @@ public class FragmentConnection extends Fragment{
 		db = DatabaseHelper.getHelper(getActivity());
 		//String loggedInUserName = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_USER,null);
 		pairedDeviceList = (ListView) rootView.findViewById(R.id.pairedDevices);
+		bluetoothStatus = rootView.findViewById(R.id.btooth_status);
+		bluetoothStatusMsg = (TextView) rootView.findViewById(R.id.bluetooth_status_msg);
 		searchNewBtn = (Button) rootView.findViewById(R.id.searchNewButton);
 		searchNewBtn.setOnClickListener(new View.OnClickListener() {
 		    @Override
@@ -63,6 +76,11 @@ public class FragmentConnection extends Fragment{
 		        searchNewBTDevice();
 		    }
 		});
+		
+		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+	    filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+	    filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+	    getActivity().registerReceiver(ActionFoundReceiver, filter); 
 		
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		Set<BluetoothDevice> btDevices =  bluetoothAdapter.getBondedDevices();
@@ -130,6 +148,71 @@ public class FragmentConnection extends Fragment{
 			}
 		}
 	}
+	
+	private final BroadcastReceiver ActionFoundReceiver = new BroadcastReceiver(){
+	    
+	    @Override
+	    public void onReceive(Context context, Intent intent) {
+	     String action = intent.getAction();
+	     if(BluetoothDevice.ACTION_FOUND.equals(action)) {
+	       BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+	       btDeviceList.add(device);
+	     } else {
+	         if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
+	        	 bluetoothStatusMsg.setText(R.string.searching_devices);
+	        	 showProgress(true);
+	         }
+	         else {
+	           if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+	        	   showProgress(false);
+					Set<BluetoothDevice> btDevices =  bluetoothAdapter.getBondedDevices();
+					for (BluetoothDevice device : btDevices) {
+						btDeviceList.add(device);
+					}
+	         }
+	       }
+	      }
+	    }
+	  };
+	  
+	  @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+		private void showProgress(final boolean show) {
+			// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+			// for very easy animations. If available, use these APIs to fade-in
+			// the progress spinner.
+			
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+				int shortAnimTime = getResources().getInteger(
+						android.R.integer.config_shortAnimTime);
+
+				bluetoothStatus.setVisibility(View.VISIBLE);
+				bluetoothStatus.animate().setDuration(shortAnimTime)
+						.alpha(show ? 1 : 0)
+						.setListener(new AnimatorListenerAdapter() {
+							@Override
+							public void onAnimationEnd(Animator animation) {
+								bluetoothStatus.setVisibility(show ? View.VISIBLE
+										: View.GONE);
+							}
+						});
+
+				pairedDeviceList.setVisibility(View.VISIBLE);
+				pairedDeviceList.animate().setDuration(shortAnimTime)
+						.alpha(show ? 0 : 1)
+						.setListener(new AnimatorListenerAdapter() {
+							@Override
+							public void onAnimationEnd(Animator animation) {
+								pairedDeviceList.setVisibility(show ? View.GONE
+										: View.VISIBLE);
+							}
+						});
+			} else {
+				// The ViewPropertyAnimator APIs are not available, so simply show
+				// and hide the relevant UI components.
+				bluetoothStatus.setVisibility(show ? View.VISIBLE : View.GONE);
+				pairedDeviceList.setVisibility(show ? View.GONE : View.VISIBLE);
+			}
+		}
 				
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
