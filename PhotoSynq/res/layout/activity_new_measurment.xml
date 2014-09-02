@@ -38,7 +38,7 @@
             android:id="@+id/statusMessage"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/no_data_found"
+            android:text="@string/start_measure"
             android:textAlignment="center"
             android:textSize="12sp" />
         <Button

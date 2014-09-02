@@ -37,7 +37,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/syncintervallbl"
                 android:ems="10"
-                android:text="120"
                 android:inputType="number" >
             </EditText>
 
