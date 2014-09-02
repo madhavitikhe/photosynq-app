@@ -33,7 +33,6 @@ public class FragmentConnection extends Fragment{
 	private ArrayList<BluetoothDevice> btDeviceList = new ArrayList<BluetoothDevice>();
 	private BluetoothAdapter bluetoothAdapter;
 	private Button searchNewBtn;
-	String loggedInUserName;
 	private String userId;
 	private DatabaseHelper db;
 	
@@ -103,6 +102,12 @@ public class FragmentConnection extends Fragment{
 		return rootView;
 	}
 	
+	public void searchNewConnection(View view)
+	{
+		btDeviceList.clear();
+		searchNewBTDevice();
+	}
+	
 	private void searchNewBTDevice() {
 		// Check for Bluetooth support and then check to make sure it is turned
 		// on
@@ -114,14 +119,13 @@ public class FragmentConnection extends Fragment{
 			return;
 		} else {
 			if (bluetoothAdapter.isEnabled()) {
-				
+
 				System.out.println("\nBluetooth is enabled...");
 
 				// Starting the device discovery
 				bluetoothAdapter.startDiscovery();
 			} else {
-				Intent enableBtIntent = new Intent(
-						BluetoothAdapter.ACTION_REQUEST_ENABLE);
+				Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 				startActivityForResult(enableBtIntent, 1);
 			}
 		}

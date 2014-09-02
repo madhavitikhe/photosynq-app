@@ -21,7 +21,8 @@
             android:textSize="25sp"
             android:background="@color/green_google_play"
             android:focusable="false"
-  			android:focusableInTouchMode="false" />
+  			android:focusableInTouchMode="false"
+  			android:onClick="searchNewConnection" />
 
         <ListView
             android:id="@+id/pairedDevices"

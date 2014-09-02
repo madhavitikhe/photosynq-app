@@ -138,6 +138,11 @@ public class BluetoothActivity extends NavigationDrawer {
 	    }
 	  }
 	
+	public void searchNewBluetooth(View view)
+	{
+		 btDeviceList.clear();
+    	 CheckBTState();
+	}
 	  
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -149,15 +154,7 @@ public class BluetoothActivity extends NavigationDrawer {
 //			return true;
 //		}
 		//Button for searching unpaired devices.
-		 switch(item.getItemId())
-	     {
-	     case R.id.Search :
-	    	 btDeviceList.clear();
-	    	 CheckBTState();
-	    	 return true;
-	    	 default :
-	    		 return super.onOptionsItemSelected(item);
-	     }
+	    return super.onOptionsItemSelected(item);
 	}
 	
 	/**
