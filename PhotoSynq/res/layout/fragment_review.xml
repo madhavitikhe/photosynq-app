@@ -1,126 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="fill_parent"
+    android:background="#D6D6D6"
+    android:descendantFocusability="beforeDescendants"
     android:orientation="vertical"
-    android:background="@color/white"
-    android:clickable="true"
-	android:focusable="true"
-	android:focusableInTouchMode="true"  >
+    android:paddingBottom="5dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingTop="5dp" >
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1.0"
+        android:fillViewport="true" >
 
-        <TextView
-            android:id="@+id/reviewTitle"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:text="Review"
-            android:background="@color/green_google_play"
-            android:textSize="30sp" />
+            android:background="@drawable/selector_card_background"
+            android:descendantFocusability="afterDescendants"
+            android:orientation="vertical"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp" >
 
-        <TextView
-            android:id="@+id/mode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/reviewTitle"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="22dp"
-            android:text="Mode"
-            android:textSize="20sp" />
+            <TextView
+                android:id="@+id/reviewTitle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/review"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/user"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/mode"
-            android:layout_below="@+id/tvMode"
-            android:layout_marginTop="31dp"
-            android:text="User"
-            android:textSize="20sp" />
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal" >
 
-        <TextView
-            android:id="@+id/tvUserName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/tvMode"
-            android:layout_alignTop="@+id/user"
-            android:text="Tushar Patil"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+                <TextView
+                    android:id="@+id/mode_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/mode"
+                    android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tvProjectName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/reviewTitle"
-            android:layout_below="@+id/tvConnection"
-            android:layout_marginTop="30dp"
-            android:text="Make faire Tour !"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+                <TextView
+                    android:id="@+id/mode_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/no_data_found" />
+            </RelativeLayout>
 
-        <TextView
-            android:id="@+id/TextView07"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/project"
-            android:layout_below="@+id/project"
-            android:layout_marginTop="36dp"
-            android:text="Data"
-            android:textSize="20sp" />
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal" >
 
-        <TextView
-            android:id="@+id/tvQuestions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/TextView07"
-            android:layout_alignLeft="@+id/tvProjectName"
-            android:text="Questions"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+                <TextView
+                    android:id="@+id/user_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/userSelected"
+                    android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tvMode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/reviewTitle"
-            android:layout_alignTop="@+id/mode"
-            android:text="Streamlined Mode"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+                <TextView
+                    android:id="@+id/user_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/no_data_found" />
+            </RelativeLayout>
 
-        <TextView
-            android:id="@+id/connection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/tvConnection"
-            android:layout_alignBottom="@+id/tvConnection"
-            android:layout_alignParentLeft="true"
-            android:text="Connection"
-            android:textSize="20sp" />
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal" >
 
-        <TextView
-            android:id="@+id/tvConnection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/tvProjectName"
-            android:layout_below="@+id/tvUserName"
-            android:layout_marginTop="34dp"
-            android:text="PhotosynQ18"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+                <TextView
+                    android:id="@+id/connection_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/connection_lbl"
+                    android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/project"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/tvProjectName"
-            android:layout_alignBottom="@+id/tvProjectName"
-            android:layout_alignLeft="@+id/user"
-            android:text="Project"
-            android:textSize="20sp" />
+                <TextView
+                    android:id="@+id/connection_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/no_data_found" />
+            </RelativeLayout>
 
-    </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/project_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/project_lbl"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/project_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/no_data_found" />
+            </RelativeLayout>
+
+            <TableLayout
+                android:id="@+id/TableLayout01"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="1" >
+
+                
+            </TableLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

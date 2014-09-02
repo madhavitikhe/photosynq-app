@@ -57,10 +57,6 @@ public class FragmentProjectList extends Fragment{
 			    FragmentSelectProject f = new FragmentSelectProject(); 
 			    f.setArguments(bundle);
 				fragmentManager.beginTransaction().replace(R.id.content_frame,f).commit();
-				String projectName = rp.getName();
-				//String projectId = arg0.getItemAtPosition(position).toString();
-				PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_PROJECT_ID,projectName);
-				Toast.makeText(getActivity(), "Clicked "+projectName, Toast.LENGTH_SHORT).show();
 
 			}
 		});
