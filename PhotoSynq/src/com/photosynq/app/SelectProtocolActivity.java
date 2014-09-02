@@ -73,7 +73,7 @@ public class SelectProtocolActivity extends NavigationDrawer {
 		    	Protocol protocol = (Protocol) protocolList.getItemAtPosition(position);
 				Log.d("GEtting protocol id : ", protocol.getId());
 				Intent intent = new Intent(getApplicationContext(),NewMeasurmentActivity.class);
-				intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_NORMAL);
+				intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_QUICK_MEASURE);
 				intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocol.getProtocol_json());
 				intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress );
 				try {
