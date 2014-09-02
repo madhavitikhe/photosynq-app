@@ -151,8 +151,7 @@ public class NavigationDrawer extends ActionBarActivity{
 			    mActivity,
 			    mDrawerLayout, 
   			    R.drawable.ic_action_navigation_drawer, 
-				R.string.drawer_open,
-				R.string.drawer_close);
+  			    0,0);
 		}
 		
 		@Override

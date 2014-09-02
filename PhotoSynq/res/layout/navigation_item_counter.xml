@@ -15,7 +15,7 @@
             android:id="@+id/icon"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:contentDescription="@string/clear"
+            android:contentDescription=""
             android:layout_centerVertical="true"
             android:layout_marginLeft="15dp"/>        
         

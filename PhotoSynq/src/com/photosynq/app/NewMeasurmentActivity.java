@@ -138,8 +138,6 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		    layoutDrawer.addView(contentView, 0); 
 		    LinearLayout liLayout = (LinearLayout) findViewById(R.id.linearlayoutoptions);
 		    for (int i = 0; i < getAllSelectedQuestions.size(); i++) {
-				System.out.println("--getQuestion-------"+ getAllSelectedQuestions.get(i));
-				System.out.println("--getOption-------"+ getAllSelectedOptions.get(i));
 			    final TextView que = new TextView(this);
 			    que.setText("Question -  " + getAllSelectedQuestions.get(i));
 			    liLayout.addView(que);
@@ -206,8 +204,6 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				send = data.getBytes();
 				 mBluetoothService.write(send);
             //byte[] bytes = ByteBuffer.allocate(4).putInt(9).array();
-            
-           
         }
     }
 	@Override

@@ -9,12 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
-import com.photosynq.app.model.Data;
 import com.photosynq.app.utils.PrefUtils;
 
 public class FragmentReview extends Fragment {
@@ -32,27 +30,26 @@ public class FragmentReview extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_review, container, false);
-		
+		userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		db = DatabaseHelper.getHelper(getActivity());
+		AppSettings appSettings = db.getSettings(userId);
 		
 		TextView tvMode = (TextView) rootView.findViewById(R.id.tvMode);
 		TextView tvUser = (TextView) rootView.findViewById(R.id.tvUserName);
 		TextView tvBluetoothId = (TextView) rootView.findViewById(R.id.tvConnection);
 		TextView tvProjectId = (TextView) rootView.findViewById(R.id.tvProjectName);
 		TextView tvQuestions = (TextView) rootView.findViewById(R.id.tvQuestions);
-		userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-		AppSettings appSettings = db.getSettings(userId);
 			
 		//Set cuurent settings 
 		if(null != appSettings.getModeType())
 		{
-			if (appSettings.getModeType().equals("Normal Mode"))
+			if (appSettings.getModeType().equals(Utils.APP_MODE_NORMAL))
 			{
-				tvMode.setText("Normal Mode");
+				tvMode.setText(getResources().getString(R.string.normal_mode));
 			}
-			else if(appSettings.getModeType().equals("Streamlined Mode"))
+			else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
 			{
-				tvMode.setText("Streamlined Mode");
+				tvMode.setText(getResources().getString(R.string.streamlined_mode));
 			}
 		}
 		String loggedInUserName = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_USER,null);

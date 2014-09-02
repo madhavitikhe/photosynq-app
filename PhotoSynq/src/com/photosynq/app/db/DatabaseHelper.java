@@ -924,7 +924,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		String selectQuery = "SELECT  * FROM " + TABLE_SETTINGS + " WHERE "
 				+ C_USER_ID + " = '" + userID + "'";
 
-		System.out.println(selectQuery);
+		//System.out.println(selectQuery);
 		//Log.e("DATABASE_HELPER_getSettings", selectQuery);
 		AppSettings setting = new AppSettings();
 		setting.setUserId(userID);
