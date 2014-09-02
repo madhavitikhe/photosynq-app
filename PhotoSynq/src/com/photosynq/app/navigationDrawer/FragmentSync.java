@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.photosynq.app.AlarmReceiver;
 import com.photosynq.app.R;
@@ -46,18 +47,27 @@ public class FragmentSync extends Fragment{
 			
 			@Override
 			public void onClick(View v) {
-				String interval_time = getTimeInterval.getText().toString();
-				PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_SAVE_SYNC_INTERVAL,interval_time);
 				
-				String get_interval_time = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_SAVE_SYNC_INTERVAL,null);
-				long set_interval_time = Long.parseLong(get_interval_time);
-		        Calendar calendar = Calendar.getInstance();
-		        calendar.add(Calendar.SECOND, 10);
-			    Intent intent = new Intent(getActivity(), AlarmReceiver.class);
-			    alarmIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, 0);
-			    alarmMgr = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
-			    alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),set_interval_time * 60000, alarmIntent);//3600000*2 means 2 Hours and 60000 = 1 min
-			    System.out.println("-----------Sync alarm is set-------");
+				String interval_time = getTimeInterval.getText().toString();
+				if(interval_time.isEmpty())
+				{
+					Toast.makeText(getActivity(), "Please set interval time in minutes", Toast.LENGTH_SHORT).show();
+				}
+				else{
+					PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_SAVE_SYNC_INTERVAL,interval_time);
+					String get_interval_time = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_SAVE_SYNC_INTERVAL,null);
+					long set_interval_time = Long.parseLong(get_interval_time);
+			        Calendar calendar = Calendar.getInstance();
+			        calendar.add(Calendar.SECOND, 10);
+				    Intent intent = new Intent(getActivity(), AlarmReceiver.class);
+				    alarmIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, 0);
+				    alarmMgr = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+				    alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),set_interval_time * 60000, alarmIntent);//3600000*2 means 2 Hours and 60000 = 1 min
+				    System.out.println("-----------Sync alarm is set-------");	
+					Toast.makeText(getActivity(), "Sync interval saved successfully!", Toast.LENGTH_SHORT).show();
+
+				}
+				
 			}
 		});
 		
