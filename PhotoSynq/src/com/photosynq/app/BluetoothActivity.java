@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -38,6 +39,7 @@ public class BluetoothActivity extends NavigationDrawer {
 	private ArrayList<BluetoothDevice> btDeviceList = new ArrayList<BluetoothDevice>();
 	private String projectId;
 	private String appmode = "";
+	private Button searchBTdevice;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -77,6 +79,7 @@ public class BluetoothActivity extends NavigationDrawer {
 		lst = (ListView) findViewById(R.id.bluetooth_list_view);
 		bluetoothStatus = findViewById(R.id.bluetooth_status);
 		bluetoothStatusMsg = (TextView) findViewById(R.id.bluetooth_status_message);
+		searchBTdevice = (Button) findViewById(R.id.searchNewBluetooth);
 		
 		BluetoothArrayAdapter btArrayAdapter = new BluetoothArrayAdapter(this, btDeviceList);
 		
@@ -140,6 +143,7 @@ public class BluetoothActivity extends NavigationDrawer {
 	
 	public void searchNewBluetooth(View view)
 	{
+		searchBTdevice.setVisibility(View.GONE);
 		 btDeviceList.clear();
     	 CheckBTState();
 	}
@@ -271,6 +275,7 @@ public class BluetoothActivity extends NavigationDrawer {
 	         else {
 	           if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
 	        	   showProgress(false);
+	        	   searchBTdevice.setVisibility(View.VISIBLE);
 					Set<BluetoothDevice> btDevices =  bluetoothAdapter.getBondedDevices();
 					for (BluetoothDevice device : btDevices) {
 						btDeviceList.add(device);
