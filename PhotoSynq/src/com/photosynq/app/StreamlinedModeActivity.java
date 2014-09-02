@@ -133,8 +133,6 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 					imageView.setOnClickListener(new View.OnClickListener() {
 				        @Override
 				        public void onClick(View v) {
-				        	//Toast.makeText(ctx, "You clicked on option", 5).show();
-				        	//System.out.println(question.getOptions().get(v.getId()));
 				        	int displayedChild = viewFlipper.getDisplayedChild();
 				            int childCount = viewFlipper.getChildCount();
 				        	allSelectedQuestions.add(question.getQuestionText());
@@ -190,9 +188,6 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 						imageVieweven.setOnClickListener(new View.OnClickListener() {
 					        @Override
 					        public void onClick(View v) {
-					        	
-					        	//Toast.makeText(ctx, "You clicked on option", 5).show();
-					        	//System.out.println(""+ question.getOptions().get(v.getId()));
 					        	int displayedChild = viewFlipper.getDisplayedChild();
 					            int childCount = viewFlipper.getChildCount();
 					            allSelectedQuestions.add(question.getQuestionText());

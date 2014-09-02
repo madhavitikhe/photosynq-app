@@ -3,7 +3,6 @@ package com.photosynq.app.navigationDrawer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,7 +12,6 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.photosynq.app.LoginActivity;
 import com.photosynq.app.R;
@@ -70,7 +68,6 @@ public class FragmentUser extends Fragment{
 		{
 			mEmail = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 			userText.setText(mEmail);
-			Toast.makeText(getActivity(), "onactivity result "+resultCode +" "+requestCode, Toast.LENGTH_LONG).show();
 		}
 	}
 	@Override

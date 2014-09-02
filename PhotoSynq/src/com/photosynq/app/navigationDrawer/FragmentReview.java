@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
-import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.PrefUtils;
 
 public class FragmentReview extends Fragment {
