@@ -4,8 +4,10 @@ import java.util.Calendar;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -20,7 +22,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.photosynq.app.AlarmReceiver;
+import com.photosynq.app.MainActivity;
+import com.photosynq.app.ProjectListActivity;
 import com.photosynq.app.R;
+import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.PrefUtils;
 
@@ -30,6 +35,7 @@ public class FragmentSync extends Fragment{
 	public EditText getTimeInterval;
 	private AlarmManager alarmMgr;
 	private PendingIntent alarmIntent;
+	private ProgressDialog pDialog;
 	
     public static FragmentSync newInstance() {
         FragmentSync fragment = new FragmentSync();
@@ -76,12 +82,51 @@ public class FragmentSync extends Fragment{
 			
 			@Override
 			public void onClick(View v) {
-				DataUtils.downloadData(getActivity());
+				//DataUtils.downloadData(getActivity());
+				if(CommonUtils.isConnected(getActivity()))
+				{
+					new downloadDataAsyncTask().execute();
+				}
+				else
+				{
+					Toast.makeText(getActivity(), R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
+				}
+				
 			}
 		});
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));		
 		return rootView;
 	}
+	
+	private class downloadDataAsyncTask extends AsyncTask<Void, Void, Void> {
+		 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Showing progress dialog
+            //downloadData();
+            DataUtils.downloadData(getActivity());
+            pDialog = new ProgressDialog(getActivity());
+            pDialog.setMessage("Please wait...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+ 
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            // Creating service handler class instance
+             return null;
+        }
+ 
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            // Dismiss the progress dialog
+            if (pDialog.isShowing())
+                pDialog.dismiss();
+         Toast.makeText(getActivity(), R.string.sync_successful, Toast.LENGTH_SHORT).show();
+        }
+    }
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {

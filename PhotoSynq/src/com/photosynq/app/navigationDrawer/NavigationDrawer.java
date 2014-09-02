@@ -95,7 +95,6 @@ public class NavigationDrawer extends ActionBarActivity{
 	        public void onItemClick(AdapterView<?> parent, View view, int posicao, long id) {          	        	
 		    	setLastPosition(posicao);        	
 		    	setFragmentList(lastPosition);	  
-		    	//Toast.makeText(getApplicationContext(), "You clicked on "+ posicao, Toast.LENGTH_LONG).show();
 		    	layoutDrawer.closeDrawer(linearDrawer);	    	
 	        }
 	    }	
@@ -189,7 +188,6 @@ public class NavigationDrawer extends ActionBarActivity{
 		
 		switch (position) {
 		case 0:			
-			//Toast.makeText(getApplicationContext(), "You clicked on Mode Option", Toast.LENGTH_LONG).show();
 			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentMode()).commit();
 			break;					
 		case 1:			
@@ -211,8 +209,9 @@ public class NavigationDrawer extends ActionBarActivity{
 			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentSync()).commit();						
 			break;
 		}			
-	
-		if (position < 5){
+		//show selection of navigation drawer item.(set selected item color is dark).
+		//our navigation contain 7 elements i.e we check here with 7
+		if (position < 7){
 			navigationAdapter.resetarCheck();			
 			navigationAdapter.setChecked(position, true);
 		}
