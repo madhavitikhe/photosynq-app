@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.navigationDrawer.NavigationDrawer;
+import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.PrefUtils;
 
 public class MainActivity extends NavigationDrawer {
@@ -33,7 +34,7 @@ public class MainActivity extends NavigationDrawer {
 	// Database Helper
 	private DatabaseHelper db;
 	private String userId;
-    public static final String QUICK_MEASURE ="quick";
+    //public static final String QUICK_MEASURE ="quick";
    
     
     //private PendingIntent pendingIntent;
@@ -154,14 +155,14 @@ public class MainActivity extends NavigationDrawer {
 		db = DatabaseHelper.getHelper(getApplicationContext());
 		userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		AppSettings appSettings = db.getSettings(userId);
-		if(appSettings.getModeType().equals("Normal Mode"))
+		if(appSettings.getModeType().equals(Utils.APP_MODE_NORMAL))
 		{
 			Intent intent = new Intent(getApplicationContext(),ProjectListActivity.class);
-			intent.putExtra(QUICK_MEASURE, false);
+			intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_NORMAL);
 			startActivity(intent);
 			Toast.makeText(getApplicationContext(), "Normal Mode", Toast.LENGTH_LONG).show();
 		}
-		else if(appSettings.getModeType().equals("Streamline Mode"))
+		else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
 		{
 			Intent intent = new Intent(getApplicationContext(),StreamlinedModeActivity.class);
 			startActivity(intent);
@@ -189,7 +190,7 @@ public class MainActivity extends NavigationDrawer {
 	public void quickMeasurement(View view)
 	{
 		Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);
-		intent.putExtra(QUICK_MEASURE, true);
+		intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_QUICK_MEASURE);
 		startActivity(intent);
 	}
 	

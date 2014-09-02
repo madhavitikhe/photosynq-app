@@ -1,8 +1,10 @@
 package com.photosynq.app;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -21,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +39,7 @@ import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.navigationDrawer.NavigationDrawer;
+import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.LocationUtils;
@@ -47,7 +51,7 @@ GooglePlayServicesClient.ConnectionCallbacks,
 GooglePlayServicesClient.OnConnectionFailedListener{
 
 	private DatabaseHelper db;
-	private boolean quick_measure;
+	private String appMode;
 	public String option1="";
 	public String option3="";
 	public String option2="";
@@ -87,15 +91,26 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	private static final int REQUEST_ENABLE_BT = 2;
 	private BluetoothService mBluetoothService = null;
 	private BluetoothAdapter mBluetoothAdapter = null;
+	ArrayList<CharSequence> getAllSelectedOptions = new ArrayList<CharSequence>();
+	ArrayList<CharSequence> getAllSelectedQuestions = new ArrayList<CharSequence>();
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.activity_new_measurment);
-		LayoutInflater inflater = (LayoutInflater) this
-	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	    View contentView = inflater.inflate(R.layout.activity_new_measurment, null, false);
-	    layoutDrawer.addView(contentView, 0); 
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
+			deviceAddress = extras.getString(BluetoothService.DEVICE_ADDRESS);
+			appMode = extras.getString(Utils.APP_MODE);
+			protocolJson = extras.getString(DatabaseHelper.C_PROTOCOL_JSON);
+			getAllSelectedOptions = extras.getCharSequenceArrayList("All_Options");
+			getAllSelectedQuestions = extras.getCharSequenceArrayList("All_Questions");
+
+			
+			if (null == protocolJson) protocolJson="";
+			System.out.println(this.getClass().getName()+"############app mode="+appMode);
+		}
 		
 		//Location related 
 		
@@ -113,17 +128,43 @@ GooglePlayServicesClient.OnConnectionFailedListener{
          */
         mLocationClient = new LocationClient(this, this, this);
         
-		mStatusLine = (TextView) findViewById(R.id.statusMessage);
-		Bundle extras = getIntent().getExtras();
-		if (extras != null) {
-			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
-			deviceAddress = extras.getString(BluetoothService.DEVICE_ADDRESS);
-			quick_measure = extras.getBoolean(MainActivity.QUICK_MEASURE);
-			protocolJson = extras.getString(DatabaseHelper.C_PROTOCOL_JSON);
-			if (null == protocolJson) protocolJson="";
-			System.out.println(this.getClass().getName()+"############quickmeasure="+quick_measure);
-		}
-			//db = new DatabaseHelper(getApplicationContext());
+		
+		
+		if(appMode.equals(Utils.APP_MODE_STREAMLINE))
+		{
+			LayoutInflater inflater = (LayoutInflater) this
+		            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		    View contentView = inflater.inflate(R.layout.activity_display_selected_questions_options, null, false);
+		    layoutDrawer.addView(contentView, 0); 
+		    LinearLayout liLayout = (LinearLayout) findViewById(R.id.linearlayoutoptions);
+		    for (int i = 0; i < getAllSelectedQuestions.size(); i++) {
+				System.out.println("--getQuestion-------"+ getAllSelectedQuestions.get(i));
+				System.out.println("--getOption-------"+ getAllSelectedOptions.get(i));
+			    final TextView que = new TextView(this);
+			    que.setText("Question -  " + getAllSelectedQuestions.get(i));
+			    liLayout.addView(que);
+			    final TextView opt = new TextView(this);
+			    opt.setText("Option -  " + getAllSelectedOptions.get(i));
+			    liLayout.addView(opt);
+			     
+			}
+		    try{
+		    	
+		    	option1 = (String) getAllSelectedOptions.get(0);
+		    	option2 = (String) getAllSelectedOptions.get(1);
+		    	option3 = (String) getAllSelectedOptions.get(2);
+		    }catch ( IndexOutOfBoundsException ex)
+		    {
+		    	//eat the exceptions !!!!
+		    }
+
+		}else
+		{
+			//setContentView(R.layout.activity_new_measurment);
+			LayoutInflater inflater = (LayoutInflater) this
+		            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		    View contentView = inflater.inflate(R.layout.activity_new_measurment, null, false);
+		    layoutDrawer.addView(contentView, 0); 
 			db = DatabaseHelper.getHelper(getApplicationContext());
 			List<Question> questions = db.getAllQuestionForProject(projectId);
 			ListView lst = (ListView) findViewById(R.id.measurement_list_view);
@@ -132,8 +173,11 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 					this, questions);
 
 			lst.setAdapter(questionAdapter);
-			//db.closeDB();
 			
+		}
+		mStatusLine = (TextView) findViewById(R.id.statusMessage);
+		
+	
 			
 			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 			if (!mBluetoothAdapter.isEnabled()) {
@@ -514,32 +558,89 @@ GooglePlayServicesClient.OnConnectionFailedListener{
                 		ResearchProject rp =  db.getResearchProject(projectId);
                 		String[] protocol_ids = rp.getProtocols_ids().trim().split(",");
                 		System.out.println("***************Sequence of protocol id is***********"+rp.getProtocols_ids());
-                		if(rp.getProtocols_ids().length() >=1)
-                		{
-	                		for (String protocol_id : protocol_ids) {
-	                			Protocol protocol = db.getProtocol(protocol_id);
-	                			System.out.println("######## protocol :"+protocol.getProtocol_json());
-	                			if(protocol.getProtocol_json().trim().length() > 1)
-	                			{
-	                				protocolJson +=  "{"+protocol.getProtocol_json().trim().substring(1, protocol.getProtocol_json().trim().length()-1)+"},";
-	                			}
-							}
-	                		protocolJson = "["+protocolJson.substring(0, protocolJson.length()-1) +"]"; // remove last comma and add suqare brackets and start and end.
-	                		
-	                		System.out.println("$$$$$$$$$$$$$$ protocol json sending to device :"+protocolJson+"length:"+protocolJson.length());
-	                		//db.closeDB();
-	                		//String obj = "[{\"environmental\":[[\"light_intensity\",0]],\"tcs_to_act\":100,\"protocol_name\":\"baseline_sample\",\"protocols_delay\":5,\"act_background_light\":20,\"actintensity1\":5,\"actintensity2\":5,\"averages\":1,\"wait\":0,\"cal_true\":2,\"analog_averages\":1,\"pulsesize\":10,\"pulsedistance\":3000,\"calintensity\":255,\"pulses\":[400],\"detectors\":[[34]],\"measlights\":[[14]]},{\"tcs_to_act\":100,\"environmental\":[[\"relative_humidity\",0],[\"temperature\",0],[\"light_intensity\",0]],\"protocols_delay\":5,\"act_background_light\":20,\"protocol_name\":\"fluorescence\",\"baselines\":[1,1,1,1],\"averages\":1,\"wait\":0,\"cal_true\":0,\"analog_averages\":1,\"act_light\":20,\"pulsesize\":10,\"pulsedistance\":10000,\"actintensity1\":5,\"actintensity2\":50,\"measintensity\":7,\"calintensity\":255,\"pulses\":[50,50,50,50],\"detectors\":[[34],[34],[34],[34]],\"measlights\":[[15],[15],[15],[15]],\"act\":[0,1,0,0]},{\"protocol_name\":\"chlorophyll_spad_ndvi\",\"baselines\":[0,0,0,0],\"environmental\":[[\"relative_humidity\",1],[\"temperature\",1],[\"light_intensity\",1]],\"measurements\":1,\"measurements_delay\":1,\"averages\":1,\"wait\":0,\"cal_true\":0,\"analog_averages\":1,\"pulsesize\":20,\"pulsedistance\":3000,\"actintensity1\":8,\"actintensity2\":8,\"measintensity\":80,\"calintensity\":255,\"pulses\":[100],\"detectors\":[[34,35,35,34]],\"measlights\":[[12,20,12,20]]}]";
-	                		//	String protocol= "[{\"protocol_name\":\"fluorescence\",\"baselines\":[1,1,1,1],\"averages\":1,\"wait\":0,\"cal_true\":0,\"analog_averages\":12,\"act_light\":20,\"pulsesize\":50,\"pulsedistance\":3000,\"actintensity1\":100,\"actintensity2\":100,\"measintensity\":3,\"calintensity\":255,\"pulses\":[50,50,50,50],\"detectors\":[[34],[34],[34],[34]],\"measlights\":[[15],[15],[15],[15]],\"act\":[2,1,2,2]}]";
-//	                		for (String chunk : protocolJson.split("(?<=,)")) {
-//								sendData(chunk);
-//							}
-	                		sendData(protocolJson);
-                		}
-                		else{
-                				mStatusLine.setText("No protocol defined for this project.");
+                		
+                		try {
+            				StringBuffer dataString = new StringBuffer();
+            				String[] projectProtocols = rp.getProtocols_ids().split(",");
+            				if(rp.getProtocols_ids().length() >=1)
+            				{
+            					//JSONArray protocolJsonArray = new JSONArray();
+            					for (String protocolId : projectProtocols) {
+            						Protocol protocol = db.getProtocol(protocolId);
+            						JSONObject detailProtocolObject = new JSONObject();
+            						detailProtocolObject.put("protocolid", protocol.getId());
+            						detailProtocolObject.put("protocol_name", protocol.getId());
+            						detailProtocolObject.put("macro_id", protocol.getMacroId());
+            						//protocolJsonArray.put(detailProtocolObject);
+            						dataString.append("\""+protocol.getId()+"\""+":"+detailProtocolObject.toString()+",");
+            						
+            						if(protocol.getProtocol_json().trim().length() > 1)
+    	                			{
+    	                				protocolJson +=  "{"+protocol.getProtocol_json().trim().substring(1, protocol.getProtocol_json().trim().length()-1)+"},";
+    	                			}
+            						
+            					}
+            					
+            					
+            					String data = "var protocols={"+dataString.substring(0, dataString.length()-1) +"}";
+            					
+            					// Writing macros_variable.js file with protocol and macro relations
+            					System.out.println("######Writing macros_variable.js file:"+data);
+            					CommonUtils.writeStringToFile(getApplicationContext(), "macros_variable.js",data);
+            					
+            					protocolJson = "["+protocolJson.substring(0, protocolJson.length()-1) +"]"; // remove last comma and add suqare brackets and start and end.
+    	                		
+    	                		System.out.println("$$$$$$$$$$$$$$ protocol json sending to device :"+protocolJson+"length:"+protocolJson.length());
+    	                		//db.closeDB();
+    	                		//String obj = "[{\"environmental\":[[\"light_intensity\",0]],\"tcs_to_act\":100,\"protocol_name\":\"baseline_sample\",\"protocols_delay\":5,\"act_background_light\":20,\"actintensity1\":5,\"actintensity2\":5,\"averages\":1,\"wait\":0,\"cal_true\":2,\"analog_averages\":1,\"pulsesize\":10,\"pulsedistance\":3000,\"calintensity\":255,\"pulses\":[400],\"detectors\":[[34]],\"measlights\":[[14]]},{\"tcs_to_act\":100,\"environmental\":[[\"relative_humidity\",0],[\"temperature\",0],[\"light_intensity\",0]],\"protocols_delay\":5,\"act_background_light\":20,\"protocol_name\":\"fluorescence\",\"baselines\":[1,1,1,1],\"averages\":1,\"wait\":0,\"cal_true\":0,\"analog_averages\":1,\"act_light\":20,\"pulsesize\":10,\"pulsedistance\":10000,\"actintensity1\":5,\"actintensity2\":50,\"measintensity\":7,\"calintensity\":255,\"pulses\":[50,50,50,50],\"detectors\":[[34],[34],[34],[34]],\"measlights\":[[15],[15],[15],[15]],\"act\":[0,1,0,0]},{\"protocol_name\":\"chlorophyll_spad_ndvi\",\"baselines\":[0,0,0,0],\"environmental\":[[\"relative_humidity\",1],[\"temperature\",1],[\"light_intensity\",1]],\"measurements\":1,\"measurements_delay\":1,\"averages\":1,\"wait\":0,\"cal_true\":0,\"analog_averages\":1,\"pulsesize\":20,\"pulsedistance\":3000,\"actintensity1\":8,\"actintensity2\":8,\"measintensity\":80,\"calintensity\":255,\"pulses\":[100],\"detectors\":[[34,35,35,34]],\"measlights\":[[12,20,12,20]]}]";
+    	                		//	String protocol= "[{\"protocol_name\":\"fluorescence\",\"baselines\":[1,1,1,1],\"averages\":1,\"wait\":0,\"cal_true\":0,\"analog_averages\":12,\"act_light\":20,\"pulsesize\":50,\"pulsedistance\":3000,\"actintensity1\":100,\"actintensity2\":100,\"measintensity\":3,\"calintensity\":255,\"pulses\":[50,50,50,50],\"detectors\":[[34],[34],[34],[34]],\"measlights\":[[15],[15],[15],[15]],\"act\":[2,1,2,2]}]";
+//    	                		for (String chunk : protocolJson.split("(?<=,)")) {
+//    								sendData(chunk);
+//    							}
+    	                		sendData(protocolJson);
+            				}
+            				else
+            				{
+            					mStatusLine.setText("No protocol defined for this project.");
                 				Toast.makeText(getApplicationContext(), "No protocol defined for this project.", Toast.LENGTH_LONG).show();
                 				break;
-                			}
+            				}
+
+            			} catch (JSONException e) {
+            				// TODO Auto-generated catch block
+            				e.printStackTrace();
+            			}
+                		
+                		
+                		
+                		
+                		
+//                		if(rp.getProtocols_ids().length() >=1)
+//                		{
+//	                		for (String protocol_id : protocol_ids) {
+//	                			Protocol protocol = db.getProtocol(protocol_id);
+//	                			System.out.println("######## protocol :"+protocol.getProtocol_json());
+//	                			if(protocol.getProtocol_json().trim().length() > 1)
+//	                			{
+//	                				protocolJson +=  "{"+protocol.getProtocol_json().trim().substring(1, protocol.getProtocol_json().trim().length()-1)+"},";
+//	                			}
+//							}
+//	                		protocolJson = "["+protocolJson.substring(0, protocolJson.length()-1) +"]"; // remove last comma and add suqare brackets and start and end.
+//	                		
+//	                		System.out.println("$$$$$$$$$$$$$$ protocol json sending to device :"+protocolJson+"length:"+protocolJson.length());
+//	                		//db.closeDB();
+//	                		//String obj = "[{\"environmental\":[[\"light_intensity\",0]],\"tcs_to_act\":100,\"protocol_name\":\"baseline_sample\",\"protocols_delay\":5,\"act_background_light\":20,\"actintensity1\":5,\"actintensity2\":5,\"averages\":1,\"wait\":0,\"cal_true\":2,\"analog_averages\":1,\"pulsesize\":10,\"pulsedistance\":3000,\"calintensity\":255,\"pulses\":[400],\"detectors\":[[34]],\"measlights\":[[14]]},{\"tcs_to_act\":100,\"environmental\":[[\"relative_humidity\",0],[\"temperature\",0],[\"light_intensity\",0]],\"protocols_delay\":5,\"act_background_light\":20,\"protocol_name\":\"fluorescence\",\"baselines\":[1,1,1,1],\"averages\":1,\"wait\":0,\"cal_true\":0,\"analog_averages\":1,\"act_light\":20,\"pulsesize\":10,\"pulsedistance\":10000,\"actintensity1\":5,\"actintensity2\":50,\"measintensity\":7,\"calintensity\":255,\"pulses\":[50,50,50,50],\"detectors\":[[34],[34],[34],[34]],\"measlights\":[[15],[15],[15],[15]],\"act\":[0,1,0,0]},{\"protocol_name\":\"chlorophyll_spad_ndvi\",\"baselines\":[0,0,0,0],\"environmental\":[[\"relative_humidity\",1],[\"temperature\",1],[\"light_intensity\",1]],\"measurements\":1,\"measurements_delay\":1,\"averages\":1,\"wait\":0,\"cal_true\":0,\"analog_averages\":1,\"pulsesize\":20,\"pulsedistance\":3000,\"actintensity1\":8,\"actintensity2\":8,\"measintensity\":80,\"calintensity\":255,\"pulses\":[100],\"detectors\":[[34,35,35,34]],\"measlights\":[[12,20,12,20]]}]";
+//	                		//	String protocol= "[{\"protocol_name\":\"fluorescence\",\"baselines\":[1,1,1,1],\"averages\":1,\"wait\":0,\"cal_true\":0,\"analog_averages\":12,\"act_light\":20,\"pulsesize\":50,\"pulsedistance\":3000,\"actintensity1\":100,\"actintensity2\":100,\"measintensity\":3,\"calintensity\":255,\"pulses\":[50,50,50,50],\"detectors\":[[34],[34],[34],[34]],\"measlights\":[[15],[15],[15],[15]],\"act\":[2,1,2,2]}]";
+////	                		for (String chunk : protocolJson.split("(?<=,)")) {
+////								sendData(chunk);
+////							}
+//	                		sendData(protocolJson);
+//                		}
+//                		else{
+//                				mStatusLine.setText("No protocol defined for this project.");
+//                				Toast.makeText(getApplicationContext(), "No protocol defined for this project.", Toast.LENGTH_LONG).show();
+//                				break;
+//                			}
                 	}else
                 	{
                 		//change this once you get actual protocol
@@ -602,7 +703,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
                 Intent intent = new Intent(getApplicationContext(),DisplayResultsActivity.class);
         		intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
         		intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocolJson);
-        		intent.putExtra(MainActivity.QUICK_MEASURE, quick_measure);
+        		intent.putExtra(Utils.APP_MODE, appMode);
         		String reading = measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",");
         		//reading = reading.replaceFirst("\\{", "{"+options);
         		intent.putExtra(DatabaseHelper.C_READING, reading);

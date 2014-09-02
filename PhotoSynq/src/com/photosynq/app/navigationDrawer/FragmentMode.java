@@ -1,6 +1,5 @@
 package com.photosynq.app.navigationDrawer;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -25,8 +24,6 @@ public class FragmentMode extends Fragment{
 	int position;
 	int pos1;
 	RadioButton rb;
-	public static final String NORMAL_MODE= "Normal Mode"; 
-	public static final String STREAMLINE_MODE= "Streamline Mode"; 
 	private DatabaseHelper db;
 	private String userId;
 	
@@ -47,12 +44,12 @@ public class FragmentMode extends Fragment{
 		//Set cuurent settings 
 		if(null != appSettings.getModeType())
 		{
-			if (appSettings.getModeType().equals(NORMAL_MODE))
+			if (appSettings.getModeType().equals(Utils.APP_MODE_NORMAL))
 			{
 				RadioButton rb = (RadioButton)rootView.findViewById(R.id.normal_mode_radio);
 				rb.setChecked(true);
 			}
-			else if(appSettings.getModeType().equals(STREAMLINE_MODE))
+			else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
 			{
 				RadioButton rb = (RadioButton)rootView.findViewById(R.id.streamline_mode_radio);
 				rb.setChecked(true);
@@ -71,14 +68,14 @@ public class FragmentMode extends Fragment{
 		    	switch (position)
 		    	{
 		    	case 0 :
-		    		appSettings.setModeType(NORMAL_MODE);
+		    		appSettings.setModeType(Utils.APP_MODE_NORMAL);
 		    		db.updateSettings(appSettings);
-		    		Toast.makeText(getActivity(), NORMAL_MODE,Toast.LENGTH_SHORT).show();	
+		    		Toast.makeText(getActivity(), Utils.APP_MODE_NORMAL,Toast.LENGTH_SHORT).show();	
 		    		break;
 		    	case 1 :
-		    		appSettings.setModeType(STREAMLINE_MODE);
+		    		appSettings.setModeType(Utils.APP_MODE_STREAMLINE);
 		    		db.updateSettings(appSettings);
-			    	Toast.makeText(getActivity(), STREAMLINE_MODE,Toast.LENGTH_SHORT).show(); 
+			    	Toast.makeText(getActivity(), Utils.APP_MODE_STREAMLINE,Toast.LENGTH_SHORT).show(); 
 			    	break;
 		    	}
 		}

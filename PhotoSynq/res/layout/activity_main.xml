@@ -61,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="test"
-            android:text="@string/test" />
+            android:text="Test" />
         </LinearLayout>
 
 </LinearLayout>

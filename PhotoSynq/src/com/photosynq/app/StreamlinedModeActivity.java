@@ -20,6 +20,8 @@ import android.widget.ViewFlipper;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.navigationDrawer.NavigationDrawer;
+import com.photosynq.app.navigationDrawer.Utils;
+import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
 
@@ -28,6 +30,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 	ViewFlipper viewFlipper;
 	private DatabaseHelper db;
 	private String projectId;
+	private String deviceAddress;
 	private Context ctx;
 	ArrayList<String> allSelectedOptions;
 	ArrayList<String> allSelectedQuestions ;
@@ -49,6 +52,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 		String userId = PrefUtils.getFromPrefs(ctx , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		db = DatabaseHelper.getHelper(ctx);
 		projectId = db.getSettings(userId).getProjectId();
+		deviceAddress = db.getSettings(userId).getConnectionId();
 		final List<Question> questions = db.getAllQuestionForProject(projectId);
 		//db.closeDB();
 		viewFlipper = (ViewFlipper) findViewById(R.id.ViewFlipper01);
@@ -141,14 +145,17 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 				        	}
 				            if (displayedChild == childCount - 1) {
 				                viewFlipper.stopFlipping();
-				                Intent intent = new Intent(ctx,DisplaySelectedQuestionsOptionsActivity.class);
+				                Intent intent = new Intent(ctx,NewMeasurmentActivity.class);
 				                intent.putExtra("All_Questions", allSelectedQuestions);
 				                intent.putExtra("All_Options", allSelectedOptions);
+				                intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
+				                intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress);
+				                intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
 				                startActivity(intent);
 				            }
-				            
-				            
-					        	viewFlipper.showNext();
+				            else{
+					        		viewFlipper.showNext();
+				            }
 				        }
 				    });
 					
@@ -196,16 +203,20 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 					        	}
 					        	if (displayedChild == childCount - 1) {
 					                viewFlipper.stopFlipping();
-					                Intent intent = new Intent(ctx,DisplaySelectedQuestionsOptionsActivity.class);
+					                Intent intent = new Intent(ctx,NewMeasurmentActivity.class);
 					                intent.putExtra("All_Questions", allSelectedQuestions);
 					                intent.putExtra("All_Options", allSelectedOptions);
+					                intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
+					                intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress);
+					                intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+
 					               // intent.putExtra("Question_Size", questions.size());
 					              //  intent.putExtra("Question_Text", question.getQuestionText());
 					                startActivity(intent);
 					            }
-					        	
-					        		
-						        	viewFlipper.showNext();
+					        	else{
+					        		viewFlipper.showNext();
+					        	}
 					        }
 					    });
 						

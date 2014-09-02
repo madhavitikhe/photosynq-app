@@ -59,11 +59,6 @@
     <string name="no_doodle">no_doodle</string>
     <string name="hello_world">Hello world!</string>
     <string name="sync_successful">Sync successful!</string>
-    <string name="title_activity_streamlined_mode">Streamlined Mode</string>
-    <string name="test">Test</string>
-    <string name="title_activity_display_selected_questions_options">DisplaySelectedQuestionsOptionsActivity</string>
-    <string name="option_text">Option  :-</string>
-    <string name="questionText">Question</string>
     <string name="measure_btn"> MEASURE </string>
     <string name="drawer_title">PhotosynQ</string>
     <string name="clear"></string>
@@ -80,7 +75,7 @@
     <string name="tab_three">Connection</string>
     <string name="tab_four">Project</string>
     <string name="tab_five">Data</string>
-    <string name="tab_six">Review</string>
+    <string name="review">Review</string>
     <string name="tab_seven">Sync</string>
     <string name="title_activity_navigation_main">Navigation Drawer</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>

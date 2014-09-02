@@ -17,12 +17,13 @@ import android.widget.TextView;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.navigationDrawer.NavigationDrawer;
+import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.CommonUtils;
 
 public class DirectionsActivity extends NavigationDrawer {
 
 	private String projectId = ""; 
-	private boolean quick_measure;
+	private String appMode;
 	DatabaseHelper db;
 	
 	@Override
@@ -39,8 +40,8 @@ public class DirectionsActivity extends NavigationDrawer {
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
-			quick_measure = extras.getBoolean(MainActivity.QUICK_MEASURE);
-			System.out.println(this.getClass().getName()+"############quickmeasure="+quick_measure);
+			appMode = extras.getString(Utils.APP_MODE);
+			System.out.println(this.getClass().getName()+"############app mode="+appMode);
 			ResearchProject rp = db.getResearchProject(projectId);
 			SimpleDateFormat outputDate = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
 			
@@ -104,7 +105,7 @@ public class DirectionsActivity extends NavigationDrawer {
 	public void onDirNextClicked(View view)
 	{
 		Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);
-		intent.putExtra(MainActivity.QUICK_MEASURE, quick_measure);
+		intent.putExtra(Utils.APP_MODE, appMode);
 		intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
 		startActivity(intent);
 	}

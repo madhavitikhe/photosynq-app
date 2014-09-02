@@ -925,7 +925,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ C_USER_ID + " = '" + userID + "'";
 
 		System.out.println(selectQuery);
-		Log.e("DATABASE_HELPER_getSettings", selectQuery);
+		//Log.e("DATABASE_HELPER_getSettings", selectQuery);
 		AppSettings setting = new AppSettings();
 		setting.setUserId(userID);
 		Cursor c = db.rawQuery(selectQuery, null);

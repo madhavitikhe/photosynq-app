@@ -10,7 +10,6 @@ import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
@@ -106,7 +105,7 @@ public class NavigationDrawerBluetoothArrayAdapter extends BaseAdapter implement
 		userId = PrefUtils.getFromPrefs(convertView.getContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		AppSettings appSettings = db.getSettings(userId);
 		
-		if (null != appSettings.getConnectionId() && appSettings.getConnectionId().equals(bluetoothDevice.getName()))
+		if (null != appSettings.getConnectionId() && appSettings.getConnectionId().equals(bluetoothDevice.getAddress()))
 			{
 				RadioButton rb = (RadioButton)convertView.findViewById(R.id.bluetooth_conn_radiobtn);
 				rb.setChecked(true);

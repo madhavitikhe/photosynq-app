@@ -84,11 +84,7 @@
 
         <activity
             android:name="com.photosynq.app.StreamlinedModeActivity"
-            android:label="@string/title_activity_streamlined_mode" >
-        </activity>
-        <activity
-            android:name="com.photosynq.app.DisplaySelectedQuestionsOptionsActivity"
-            android:label="@string/title_activity_display_selected_questions_options" >
+            android:label="@string/streamlined_mode" >
         </activity>
         <activity
             android:name="com.photosynq.app.navigationDrawer.NavigationDrawer"
