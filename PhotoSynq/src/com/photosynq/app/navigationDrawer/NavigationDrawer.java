@@ -209,7 +209,8 @@ public class NavigationDrawer extends ActionBarActivity{
 			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentSync()).commit();						
 			break;
 		}			
-	
+		//show selection of navigation drawer item.(set selected item color is dark).
+		//our navigation contain 7 elements i.e we check here with 7
 		if (position < 7){
 			navigationAdapter.resetarCheck();			
 			navigationAdapter.setChecked(position, true);
