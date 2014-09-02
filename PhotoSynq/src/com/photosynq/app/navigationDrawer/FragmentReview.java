@@ -1,5 +1,7 @@
 package com.photosynq.app.navigationDrawer;
 
+import java.util.List;
+
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
@@ -10,23 +12,27 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
-import com.photosynq.app.utils.BluetoothService;
+import com.photosynq.app.model.Question;
 import com.photosynq.app.utils.PrefUtils;
 
 public class FragmentReview extends Fragment {
 	
 	private DatabaseHelper db;
 	private String userId;
-	public static String newInstance() {
-		Bundle bundle = new Bundle();
-		String mail = bundle.getString("USER_EMAIL");
-		System.out.println("------------------- Mail------"+mail);
-		return mail;
+	private TableLayout questionsTableLayout;
+	public static FragmentReview newInstance() {
+        Bundle bundle = new Bundle();
+		FragmentReview fragment = new FragmentReview();
+        fragment.setArguments(bundle);
+        return fragment;
     }	
     
 	@Override
@@ -37,6 +43,7 @@ public class FragmentReview extends Fragment {
 		db = DatabaseHelper.getHelper(getActivity());
 		AppSettings appSettings = db.getSettings(userId);
 		
+		questionsTableLayout = (TableLayout) rootView.findViewById(R.id.questionsTable);
 		TextView tvMode = (TextView) rootView.findViewById(R.id.mode_text);
 		TextView tvUser = (TextView) rootView.findViewById(R.id.user_text);
 		TextView tvBluetoothId = (TextView) rootView.findViewById(R.id.connection_text);
@@ -67,7 +74,18 @@ public class FragmentReview extends Fragment {
 		String projectId = appSettings.getProjectId();
 		tvProjectId.setText(db.getResearchProject(projectId).getName());
 		
-		
+		List<Question> questions = db.getAllQuestionForProject(appSettings.getProjectId());
+		TableRow row = new TableRow(getActivity());
+				
+		for (Question question : questions) {
+			TextView tv = new TextView(getActivity());
+			tv.setText(question.getQuestionText());
+			//tv.setBackgroundColor(getResources().getColor(R.color.blue_dark));
+			tv.setPadding(10, 10, 10, 10);
+		    tv.setBackgroundResource(R.drawable.border);
+			row.addView(tv);
+		}
+		questionsTableLayout.addView(row);
 		
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));	
 		return rootView;
