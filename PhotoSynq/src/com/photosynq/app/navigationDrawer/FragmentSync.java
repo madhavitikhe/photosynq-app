@@ -17,10 +17,10 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.photosynq.app.AlarmReceiver;
 import com.photosynq.app.R;
+import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.PrefUtils;
 
 public class FragmentSync extends Fragment{
@@ -66,9 +66,7 @@ public class FragmentSync extends Fragment{
 			
 			@Override
 			public void onClick(View v) {
-				//DataUtils.downloadData(getActivity());
-				String time = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_SAVE_SYNC_INTERVAL,null);
-				Toast.makeText(getActivity(),"----Time ------"+time,Toast.LENGTH_LONG).show();
+				DataUtils.downloadData(getActivity());
 			}
 		});
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));		
