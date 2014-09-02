@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.navigationDrawer.NavigationDrawer;
+import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.BluetoothService;
 
 public class BluetoothActivity extends NavigationDrawer {
@@ -36,7 +37,7 @@ public class BluetoothActivity extends NavigationDrawer {
 	private TextView bluetoothStatusMsg;
 	private ArrayList<BluetoothDevice> btDeviceList = new ArrayList<BluetoothDevice>();
 	private String projectId;
-	private boolean quick_measure = false;
+	private String appmode = "";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -49,8 +50,8 @@ public class BluetoothActivity extends NavigationDrawer {
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
-			quick_measure = extras.getBoolean(MainActivity.QUICK_MEASURE);
-			System.out.println(this.getClass().getName()+"############quickmeasure="+quick_measure);
+			appmode = extras.getString(Utils.APP_MODE);
+			System.out.println(this.getClass().getName()+"############app mode="+appmode);
 		}
 	    IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 	    filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
@@ -88,18 +89,18 @@ public class BluetoothActivity extends NavigationDrawer {
 				Log.d("Pairing device : ", btDevice.getName());
 				try {
 					createBond(btDevice);
-					if(!quick_measure)
+					if(appmode.equals(Utils.APP_MODE_NORMAL))
 					{
 						Intent intent = new Intent(getApplicationContext(),NewMeasurmentActivity.class);
 						intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
-						intent.putExtra(MainActivity.QUICK_MEASURE, false);
+						intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_NORMAL);
 						intent.putExtra(BluetoothService.DEVICE_ADDRESS, btDevice.getAddress());
 						startActivity(intent);
-					}else
+					}else if (appmode.equals(Utils.APP_MODE_QUICK_MEASURE) )
 					{
 						Intent intent = new Intent(getApplicationContext(),SelectProtocolActivity.class);
 						intent.putExtra(BluetoothService.DEVICE_ADDRESS, btDevice.getAddress());
-						intent.putExtra(MainActivity.QUICK_MEASURE, true);
+						intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_QUICK_MEASURE);
 						startActivity(intent);
 					}
 

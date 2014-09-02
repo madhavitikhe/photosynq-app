@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ProjectResult;
+import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.PrefUtils;
 
@@ -34,7 +35,7 @@ public class DisplayResultsActivity extends ActionBarActivity {
 	private DatabaseHelper db;
 	private HTTPConnection mDataTask = null;
 	private String protocolJson="";
-	private boolean quick_measure;
+	private String appMode;
 	Button keep;
 	Button discard;
 	//AlertDialog.Builder alertDialogBuilder;
@@ -53,13 +54,13 @@ public class DisplayResultsActivity extends ActionBarActivity {
 			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
 			reading = extras.getString(DatabaseHelper.C_READING);
 			protocolJson = extras.getString(DatabaseHelper.C_PROTOCOL_JSON);
-			quick_measure = extras.getBoolean(MainActivity.QUICK_MEASURE);
-			System.out.println(this.getClass().getName()+"############quickmeasure="+quick_measure);
+			appMode = extras.getString(Utils.APP_MODE);
+			System.out.println(this.getClass().getName()+"############app mode="+appMode);
 		}	
 		 keep = (Button)findViewById(R.id.keep_btn);
 		 discard = (Button)findViewById(R.id.discard_btn);
 		
-		if(quick_measure)
+		if(appMode.equals(Utils.APP_MODE_QUICK_MEASURE))
 		{
 			keep.setText("Return to Quick Measurement");
 			keep.setVisibility(View.VISIBLE);
@@ -96,7 +97,7 @@ public class DisplayResultsActivity extends ActionBarActivity {
 	}
 	public void keep_click(View view) throws UnsupportedEncodingException, JSONException {
 		
-		if(quick_measure)
+		if(appMode.equals(Utils.APP_MODE_QUICK_MEASURE))
 		{
 			finish();
 		}

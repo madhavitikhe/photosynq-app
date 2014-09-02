@@ -26,6 +26,7 @@ import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.navigationDrawer.NavigationDrawer;
+import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.PrefUtils;
 
@@ -68,7 +69,7 @@ public class ProjectListActivity extends NavigationDrawer  {
 		    	ResearchProject rp = (ResearchProject) projectList.getItemAtPosition(position);
 				Log.d("Getting record id : ", rp.getId());
 				Intent intent = new Intent(getApplicationContext(),ProjectDescriptionActivity.class);
-				intent.putExtra(MainActivity.QUICK_MEASURE, false);
+				intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_NORMAL);
 				intent.putExtra(DatabaseHelper.C_ID, rp.getId());
 				startActivity(intent);
 		    }

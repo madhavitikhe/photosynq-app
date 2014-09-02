@@ -85,7 +85,7 @@ public class FragmentConnection extends Fragment{
 				userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 	    		AppSettings appSettings = db.getSettings(userId);
 				
-				String bluetoothID = btDevice.getName();
+				String bluetoothID = btDevice.getAddress();
 				
 				appSettings.setConnectionId(bluetoothID);
 				db.updateSettings(appSettings);

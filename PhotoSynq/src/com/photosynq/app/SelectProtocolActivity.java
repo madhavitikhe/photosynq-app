@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.navigationDrawer.NavigationDrawer;
+import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.DataUtils;
@@ -72,7 +73,7 @@ public class SelectProtocolActivity extends NavigationDrawer {
 		    	Protocol protocol = (Protocol) protocolList.getItemAtPosition(position);
 				Log.d("GEtting protocol id : ", protocol.getId());
 				Intent intent = new Intent(getApplicationContext(),NewMeasurmentActivity.class);
-				intent.putExtra(MainActivity.QUICK_MEASURE, true);
+				intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_NORMAL);
 				intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocol.getProtocol_json());
 				intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress );
 				try {

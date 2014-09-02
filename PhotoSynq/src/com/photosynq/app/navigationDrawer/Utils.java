@@ -5,6 +5,13 @@ import android.content.Context;
 import com.photosynq.app.R;
 
 public class Utils {
+	
+	public static final String APP_MODE = "APP_MODE";
+	public static final String APP_MODE_QUICK_MEASURE = "APP_MODE_QUICK_MEASURE";
+	public static final String APP_MODE_STREAMLINE = "APP_MODE_STREAMLINE";
+	public static final String APP_MODE_NORMAL = "APP_MODE_NORMAL";
+	
+	
 	public enum SettingKey {
 		MODE("MODE"), USER("USER"), CONNECTION("CONNECTION"), PROJECT("PROJECT");
 	 

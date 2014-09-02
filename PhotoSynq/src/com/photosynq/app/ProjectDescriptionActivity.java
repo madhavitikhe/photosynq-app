@@ -29,6 +29,7 @@ import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.navigationDrawer.NavigationDrawer;
+import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.CommonUtils;
 import com.squareup.picasso.Picasso;
 
@@ -36,7 +37,7 @@ import com.squareup.picasso.Picasso;
 public class ProjectDescriptionActivity extends NavigationDrawer {
 
 	private String recordid = ""; 
-	private boolean quick_measure;
+	private String appMode;
 	DatabaseHelper db;
 	@SuppressLint("NewApi")
 	@Override
@@ -55,8 +56,8 @@ public class ProjectDescriptionActivity extends NavigationDrawer {
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			recordid = extras.getString(DatabaseHelper.C_ID);
-			quick_measure = extras.getBoolean(MainActivity.QUICK_MEASURE);
-			System.out.println(this.getClass().getName()+"############quickmeasure="+quick_measure);
+			appMode = extras.getString(Utils.APP_MODE);
+			System.out.println(this.getClass().getName()+"############app mode="+appMode);
 			ResearchProject rp = db.getResearchProject(recordid);
 			
 			
@@ -79,7 +80,7 @@ public class ProjectDescriptionActivity extends NavigationDrawer {
 				public void onClick(View arg0) {
 					// TODO Auto-generated method stub
 					Intent intent = new Intent(getApplicationContext(),DirectionsActivity.class);
-					intent.putExtra(MainActivity.QUICK_MEASURE, quick_measure);
+					intent.putExtra(Utils.APP_MODE, appMode);
 					intent.putExtra(DatabaseHelper.C_PROJECT_ID, recordid);
 					startActivity(intent);
 				}
@@ -108,38 +109,41 @@ public class ProjectDescriptionActivity extends NavigationDrawer {
 			}else{tvBeta.setText(getResources().getString(R.string.no_data_found));}
 			ImageView imageview = (ImageView) findViewById(R.id.projectImage); 
 			Picasso.with(getApplicationContext()).load(rp.getImageUrl()).into(imageview);
-			try {
-				StringBuffer dataString = new StringBuffer();
-				String[] projectProtocols = rp.getProtocols_ids().split(",");
-				if(rp.getProtocols_ids().length() >=1)
-				{
-					//JSONArray protocolJsonArray = new JSONArray();
-					for (String protocolId : projectProtocols) {
-						Protocol protocol = db.getProtocol(protocolId);
-						JSONObject detailProtocolObject = new JSONObject();
-						detailProtocolObject.put("protocolid", protocol.getId());
-						detailProtocolObject.put("protocol_name", protocol.getId());
-						detailProtocolObject.put("macro_id", protocol.getMacroId());
-						//protocolJsonArray.put(detailProtocolObject);
-						dataString.append("\""+protocol.getId()+"\""+":"+detailProtocolObject.toString()+",");
-						
-					}
-					String data = "var protocols={"+dataString.substring(0, dataString.length()-1) +"}";
-					
-					// Writing macros_variable.js file with protocol and macro relations
-					System.out.println("######Writing macros_variable.js file:"+data);
-					CommonUtils.writeStringToFile(getApplicationContext(), "macros_variable.js",data);
-				}
-				else
-				{
-					Toast.makeText(getApplicationContext(), "No protocols assigned to this project, cannot continue.", Toast.LENGTH_SHORT).show();
-					finish();
-				}
-
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
+			//TODO:Shekhar Add check for protocol assignment
+//			try {
+			
+//				StringBuffer dataString = new StringBuffer();
+//				String[] projectProtocols = rp.getProtocols_ids().split(",");
+//				if(rp.getProtocols_ids().length() >=1)
+//				{
+//					//JSONArray protocolJsonArray = new JSONArray();
+//					for (String protocolId : projectProtocols) {
+//						Protocol protocol = db.getProtocol(protocolId);
+//						JSONObject detailProtocolObject = new JSONObject();
+//						detailProtocolObject.put("protocolid", protocol.getId());
+//						detailProtocolObject.put("protocol_name", protocol.getId());
+//						detailProtocolObject.put("macro_id", protocol.getMacroId());
+//						//protocolJsonArray.put(detailProtocolObject);
+//						dataString.append("\""+protocol.getId()+"\""+":"+detailProtocolObject.toString()+",");
+//						
+//					}
+//					String data = "var protocols={"+dataString.substring(0, dataString.length()-1) +"}";
+//					
+//					// Writing macros_variable.js file with protocol and macro relations
+//					System.out.println("######Writing macros_variable.js file:"+data);
+//					CommonUtils.writeStringToFile(getApplicationContext(), "macros_variable.js",data);
+//				}
+//				else
+//				{
+//					Toast.makeText(getApplicationContext(), "No protocols assigned to this project, cannot continue.", Toast.LENGTH_SHORT).show();
+//					finish();
+//				}
+//
+//			} catch (JSONException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 		
 		

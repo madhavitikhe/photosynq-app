@@ -33,24 +33,9 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/questionText"
+                android:text="@string/review"
                 android:textSize="24sp"
                 android:textStyle="bold" />
-
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:id="@+id/optionText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:text="@string/option_text"
-                    android:textStyle="bold" />
-            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/linearlayoutoptions"
@@ -64,18 +49,29 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="60dip"
+        android:layout_height="80dip"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingTop="10dp" >
-
+        android:paddingTop="5dp" >
+      <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+        android:orientation="vertical">
+ 		<TextView
+            android:id="@+id/statusMessage"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_data_found"
+            android:textAlignment="center"
+            android:textSize="12sp" />
         <Button
             android:id="@+id/measure_btn"
             android:layout_width="match_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:text="@string/measure_btn"
-            android:onClick="measure" >
+            android:onClick="takeMeasurement" >
         </Button>
+        </LinearLayout>
     </RelativeLayout>
 
 </LinearLayout>
