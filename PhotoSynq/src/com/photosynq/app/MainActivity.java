@@ -79,7 +79,7 @@ public class MainActivity extends NavigationDrawer {
 	    alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 	    alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
 	    alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),3600000*2, alarmIntent);//3600000*2 means 2 Hours
-	    System.out.println("-----------alarm is set-------");
+	    System.out.println("-----------Alarm is set-------");
 		}
 	
 	public void cancelAlarm(Context context) {
@@ -111,7 +111,6 @@ public class MainActivity extends NavigationDrawer {
 
 	            @Override
 	            public void onClick(DialogInterface dialog, int which) {
-
 	                //Stop the activity
 	                MainActivity.this.finish();    
 	            }
@@ -160,13 +159,11 @@ public class MainActivity extends NavigationDrawer {
 			Intent intent = new Intent(getApplicationContext(),ProjectListActivity.class);
 			intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_NORMAL);
 			startActivity(intent);
-			Toast.makeText(getApplicationContext(), "Normal Mode", Toast.LENGTH_LONG).show();
 		}
 		else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
 		{
 			Intent intent = new Intent(getApplicationContext(),StreamlinedModeActivity.class);
 			startActivity(intent);
-			Toast.makeText(getApplicationContext(), "Streamline Mode", Toast.LENGTH_LONG).show();
 		}
 		else
 		{

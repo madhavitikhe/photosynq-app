@@ -19,7 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.photosynq.app.MainActivity;
 import com.photosynq.app.R;
@@ -108,6 +107,9 @@ public class NavigationDrawer extends ActionBarActivity{
 	
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {  
+		if (drawerToggle.onOptionsItemSelected(item)) {
+	          return true;
+	        }
 			return super.onOptionsItemSelected(item);			
     }
 		
@@ -233,7 +235,6 @@ public class NavigationDrawer extends ActionBarActivity{
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) 
 	{
 		super.onActivityResult(requestCode, resultCode, intent);
-		Toast.makeText(getApplicationContext(), "111 onactivity result "+requestCode, Toast.LENGTH_LONG).show();
 		mEmail = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		user_email.setText(mEmail);
 
