@@ -9,6 +9,19 @@
       android:clickable="true"
 	  android:focusable="true"
 	  android:focusableInTouchMode="true" >
+	  
+     <TextView
+         android:id="@+id/selectedProText"
+         android:layout_width="fill_parent"
+         android:layout_height="50dp"
+         android:layout_alignParentLeft="true"
+         android:layout_marginTop="5dp"
+         android:layout_marginLeft="10dp"
+         android:layout_marginRight="10dp"
+         android:background="@color/green_google_play"
+         android:gravity="center"
+         android:text=""
+         android:textSize="20sp" />
 
         <ListView
             android:id="@+id/project_list"
@@ -16,7 +29,10 @@
             android:layout_height="fill_parent"
             android:layout_alignParentLeft="true"
             android:cacheColorHint="@android:color/transparent"
+            android:descendantFocusability="afterDescendants"
+            android:layout_below="@+id/selectedProText"
             android:divider="@null"
+            android:layout_marginTop="10dp"
             android:dividerHeight="10dp"
             android:footerDividersEnabled="true"
             android:headerDividersEnabled="true"

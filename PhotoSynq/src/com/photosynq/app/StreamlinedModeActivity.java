@@ -3,6 +3,7 @@ package com.photosynq.app;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -17,8 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.photosynq.app.barcodeReader.IntentIntegrator;
+import com.photosynq.app.barcodeReader.IntentResult;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Question;
@@ -120,7 +124,49 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 				showNext.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						viewFlipper.showNext();
+						int displayedChild = viewFlipper.getDisplayedChild();
+			            int childCount = viewFlipper.getChildCount();
+			            if (displayedChild == childCount - 1) {
+			                viewFlipper.stopFlipping();
+			            }
+			            else
+			            {
+			            	viewFlipper.showNext();
+			            }
+					}
+				});
+
+				optionsRelativeLayout.addView(view);
+
+				subLinearLayout.addView(optionsRelativeLayout);
+				scrollView.addView(subLinearLayout);
+				mainLinearLayout.addView(scrollView);
+				viewFlipper.addView(mainLinearLayout);
+			}
+			else if(data.getType().equals("SCAN_CODE"))
+			{
+				RelativeLayout optionsRelativeLayout = new RelativeLayout(ctx);
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+				optionsRelativeLayout.setLayoutParams(params);
+				
+				LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				View view = infltr.inflate(R.layout.activity_barcode_reader, null);
+
+				Button scan = (Button) view.findViewById(R.id.scan_button);
+				scan.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						IntentIntegrator scanIntegrator = new IntentIntegrator(StreamlinedModeActivity.this);
+						scanIntegrator.initiateScan();
+						int displayedChild = viewFlipper.getDisplayedChild();
+			            int childCount = viewFlipper.getChildCount();
+			            if (displayedChild == childCount - 1) {
+			                viewFlipper.stopFlipping();
+			            }
+			            else
+			            {
+			            	viewFlipper.showNext();
+			            }
 					}
 				});
 
@@ -269,6 +315,23 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 	  }
 	}
 
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+		if (scanningResult != null) {
+			String scanContent = scanningResult.getContents();
+			String scanFormat = scanningResult.getFormatName();
+			TextView formatTxt = (TextView)findViewById(R.id.scan_format);
+			TextView contentTxt = (TextView)findViewById(R.id.scan_content);
+			formatTxt.setText("FORMAT: " + scanFormat);
+			contentTxt.setText("CONTENT: " + scanContent);
+			}
+		else{
+		    Toast toast = Toast.makeText(getApplicationContext(), 
+		        "No scan data received!", Toast.LENGTH_SHORT);
+		    toast.show();
+		}
+		}
+	
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub

@@ -124,7 +124,6 @@ public class MainActivity extends NavigationDrawer {
 	    else {
 	        return super.onKeyDown(keyCode, event);
 	    }
-
 	}
 	
 	@Override

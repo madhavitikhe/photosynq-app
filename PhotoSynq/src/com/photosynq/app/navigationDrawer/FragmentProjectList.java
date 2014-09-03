@@ -11,14 +11,18 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.ResearchProject;
+import com.photosynq.app.utils.PrefUtils;
 
 public class FragmentProjectList extends Fragment{
 	
 	ListView projectList;
+	TextView selectedProjectText;
 	List<ResearchProject> researchProjectList;
 	DatabaseHelper db;
 	NavigationDrawerResearchProjectArrayAdapter arrayadapter;
@@ -38,10 +42,22 @@ public class FragmentProjectList extends Fragment{
 		View rootView = inflater.inflate(R.layout.fragment_project_list, container, false);
 		
 		projectList = (ListView) rootView.findViewById(R.id.project_list);
+		selectedProjectText = (TextView) rootView.findViewById(R.id.selectedProText);
 		db = DatabaseHelper.getHelper(getActivity());
 		researchProjectList = db.getAllResearchProjects();
 		arrayadapter = new NavigationDrawerResearchProjectArrayAdapter(getActivity(), researchProjectList); 
 		projectList.setAdapter(arrayadapter);
+		String userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+		AppSettings appSettings = db.getSettings(userId);
+		String projectName = db.getResearchProject(appSettings.getProjectId()).getName();
+		if(projectName.length()<50)
+		{
+			selectedProjectText.setText(projectName.substring(0,(projectName.length()<50?projectName.length():50)));
+		}
+		else
+		{
+			selectedProjectText.setText(projectName.substring(0,(projectName.length()<50?projectName.length():50))+"...");
+		}
 		
 		//Radio button is checked after clicked on Listview item.
 		projectList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

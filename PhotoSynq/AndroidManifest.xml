@@ -83,6 +83,7 @@
 
         <activity
             android:name="com.photosynq.app.StreamlinedModeActivity"
+            android:configChanges="orientation|screenSize"
             android:label="@string/streamlined_mode" >
         </activity>
         <activity
@@ -92,6 +93,10 @@
         <activity
             android:name="com.photosynq.app.navigationDrawer.UserSelectedActivity"
             android:label="@string/title_activity_user_selected" >
+        </activity>
+        <activity
+            android:name="com.photosynq.app.barcodeReader.BarcodeReaderActivity"
+            android:label="@string/title_activity_barcode_reader" >
         </activity>
     </application>
 

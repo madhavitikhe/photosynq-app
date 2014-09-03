@@ -85,5 +85,6 @@
     <string name="project_lbl">Project</string>
     <string name="title_activity_user_selected">UserSelectedActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_barcode_reader">BarcodeReaderActivity</string>
 
 </resources>
