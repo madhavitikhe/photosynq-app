@@ -9,7 +9,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -22,7 +24,6 @@ import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.navigationDrawer.Utils;
-import com.photosynq.app.navigationDrawer.Utils.QuestionType;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
@@ -58,16 +59,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 		final List<Question> questions = db.getAllQuestionForProject(projectId);
 		//db.closeDB();
 		viewFlipper = (ViewFlipper) findViewById(R.id.ViewFlipper01);
-		
-//		Data data = db.getData(userId, projectId, question.getQuestionId());
-//		if(data.getType() != QuestionType.USER_SELECTED)			{
-//			LayoutInflater infltr = (LayoutInflater) getApplicationContext()
-//					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//
-//			View view = infltr.inflate(R.layout.activity_user_selected, null);
-//			addView(view);
-//		}
-		
+	
 		for (final Question question : questions) {
 			System.out.println("question size"+ question.getOptions());
 			System.out.println("questions"+question.getQuestionText());
@@ -92,6 +84,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 			 * 		</SV>
 			 * <//LL>					
 			 */
+			
 			LinearLayout mainLinearLayout = new LinearLayout(ctx);
 			mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
 		    mainLinearLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
@@ -113,10 +106,35 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 			
 			subLinearLayout.addView(questionTextView);
 			
-			
-		    
-			for (int i=1; i<= question.getOptions().size(); i++) 
+			Data data = db.getData(userId, projectId, question.getQuestionId());
+			if(data.getType().equals("USER_SELECTED"))
 			{
+				RelativeLayout optionsRelativeLayout = new RelativeLayout(ctx);
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+				optionsRelativeLayout.setLayoutParams(params);
+				
+				LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				View view = infltr.inflate(R.layout.user_selected, null);
+
+				Button showNext = (Button) view.findViewById(R.id.next);
+				showNext.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						viewFlipper.showNext();
+					}
+				});
+
+				optionsRelativeLayout.addView(view);
+
+				subLinearLayout.addView(optionsRelativeLayout);
+				scrollView.addView(subLinearLayout);
+				mainLinearLayout.addView(scrollView);
+				viewFlipper.addView(mainLinearLayout);
+			}
+			else
+			{
+			 for (int i=1; i<= question.getOptions().size(); i++) 
+			 {
 				if(i%2==0)
 				{
 					
@@ -248,6 +266,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 			mainLinearLayout.addView(scrollView);
 			viewFlipper.addView(mainLinearLayout);
 		}
+	  }
 	}
 
 	@Override

@@ -62,7 +62,7 @@ public class DisplayResultsActivity extends ActionBarActivity {
 		
 		if(appMode.equals(Utils.APP_MODE_QUICK_MEASURE))
 		{
-			keep.setText("Return to Quick Measurement");
+			keep.setText("Return");
 			keep.setVisibility(View.VISIBLE);
 			discard.setVisibility(View.INVISIBLE);
 		}
@@ -101,51 +101,52 @@ public class DisplayResultsActivity extends ActionBarActivity {
 		{
 			finish();
 		}
-		if (CommonUtils.isConnected(getApplicationContext()))
+		else
 		{
-			String authToken = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-			String email = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-			StringEntity input = null;
-			//System.out.println(reading);
+			if (CommonUtils.isConnected(getApplicationContext()))
+			{
+				String authToken = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+				String email = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+				StringEntity input = null;
+				//System.out.println(reading);
+				
+				JSONObject request_data = new JSONObject();
+				JSONObject jo = new JSONObject(reading);
+				try {
+						request_data.put("user_email", email);
+						request_data.put("user_token", authToken);
+						request_data.put("data", jo);
+						 input = new StringEntity(request_data.toString());
+						input.setContentType("application/json");
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+				UpdateData updateData = new UpdateData(getApplicationContext(),this, "NONE");
+				mDataTask = new HTTPConnection(input);
+				mDataTask.delegate = updateData;
+				mDataTask.execute(context,HTTPConnection.PHOTOSYNQ_DATA_URL+projectId+"/data.json", "POST");
+				view.setVisibility(View.INVISIBLE);
+				discard.setVisibility(View.INVISIBLE);
+			}else
+			{
 			
-			JSONObject request_data = new JSONObject();
-			JSONObject jo = new JSONObject(reading);
-			try {
-					request_data.put("user_email", email);
-					request_data.put("user_token", authToken);
-					request_data.put("data", jo);
-					 input = new StringEntity(request_data.toString());
-					input.setContentType("application/json");
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			
-			
-			UpdateData updateData = new UpdateData(getApplicationContext(),this, "NONE");
-			mDataTask = new HTTPConnection(input);
-			mDataTask.delegate = updateData;
-			mDataTask.execute(context,HTTPConnection.PHOTOSYNQ_DATA_URL+projectId+"/data.json", "POST");
-			view.setVisibility(View.INVISIBLE);
+			//db = new DatabaseHelper(getApplicationContext());
+			db = DatabaseHelper.getHelper(getApplicationContext());
+			ProjectResult result = new ProjectResult(projectId, reading, "N");
+			db.createResult(result);
+			Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+			Toast.makeText(context, R.string.error_sending_data, Toast.LENGTH_LONG).show();
 			discard.setVisibility(View.INVISIBLE);
-		}else
-		{
-		
-		
-		//db = new DatabaseHelper(getApplicationContext());
-		db = DatabaseHelper.getHelper(getApplicationContext());
-		ProjectResult result = new ProjectResult(projectId, reading, "N");
-		db.createResult(result);
-		//db.closeDB();
-
-		Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
-		Toast.makeText(context, R.string.error_sending_data, Toast.LENGTH_LONG).show();
-		discard.setVisibility(View.INVISIBLE);
-		view.setVisibility(View.INVISIBLE); 
-		finish();
+			view.setVisibility(View.INVISIBLE); 
+			finish();
+			}
 		}
 	}
 	
