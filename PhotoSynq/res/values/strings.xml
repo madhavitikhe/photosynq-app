@@ -71,7 +71,6 @@
     <string name="save_interval_btn">Save interval</string>
     <string name="sync_btn">Sync Data</string>
     <string name="sync_interval_lbl">Sync interval (in mins)</string>
-
     <string name="userSelected">User Selected</string>
     <string name="selectFromWeb">Select from answers in Research Project\n [red,green,blue,yellow]</string>
     <string name="fixedValue">Fixed value</string>
@@ -84,5 +83,7 @@
     <string name="mode">Mode</string>
     <string name="connection_lbl">Connection</string>
     <string name="project_lbl">Project</string>
-  
+    <string name="title_activity_user_selected">UserSelectedActivity</string>
+    <string name="hello_world">Hello world!</string>
+
 </resources>

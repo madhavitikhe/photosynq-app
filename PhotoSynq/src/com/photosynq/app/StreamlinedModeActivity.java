@@ -18,9 +18,11 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.navigationDrawer.Utils;
+import com.photosynq.app.navigationDrawer.Utils.QuestionType;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
@@ -56,6 +58,16 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 		final List<Question> questions = db.getAllQuestionForProject(projectId);
 		//db.closeDB();
 		viewFlipper = (ViewFlipper) findViewById(R.id.ViewFlipper01);
+		
+//		Data data = db.getData(userId, projectId, question.getQuestionId());
+//		if(data.getType() != QuestionType.USER_SELECTED)			{
+//			LayoutInflater infltr = (LayoutInflater) getApplicationContext()
+//					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//
+//			View view = infltr.inflate(R.layout.activity_user_selected, null);
+//			addView(view);
+//		}
+		
 		for (final Question question : questions) {
 			System.out.println("question size"+ question.getOptions());
 			System.out.println("questions"+question.getQuestionText());

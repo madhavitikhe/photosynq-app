@@ -48,6 +48,8 @@ public class FragmentSync extends Fragment{
 		View rootView = inflater.inflate(R.layout.fragment_sync, container, false);
 		
 		getTimeInterval = (EditText) rootView.findViewById(R.id.interval_time_editText);
+		String get_interval_time = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_SAVE_SYNC_INTERVAL,null);
+		getTimeInterval.setText(get_interval_time);
 		savebtn = (Button) rootView.findViewById(R.id.save_btn);
 		savebtn.setOnClickListener(new OnClickListener() {
 			

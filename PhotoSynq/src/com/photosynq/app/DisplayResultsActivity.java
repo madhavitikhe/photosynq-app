@@ -140,17 +140,7 @@ public class DisplayResultsActivity extends ActionBarActivity {
 		ProjectResult result = new ProjectResult(projectId, reading, "N");
 		db.createResult(result);
 		//db.closeDB();
-		
-//		alertDialogBuilder = new AlertDialog.Builder(context);
-//		alertDialogBuilder.setTitle(R.string.no_internet_connection);
-//		alertDialogBuilder.setMessage(R.string.error_sending_data);
-//		alertDialogBuilder.setPositiveButton(R.string.ok,  new DialogInterface.OnClickListener() {
-//		 public void onClick(DialogInterface dialog, int which) {
-//			        	finish();
-//			 }
-//	      });
-//		alert = alertDialogBuilder.create();
-//        alert.show();
+
 		Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
 		Toast.makeText(context, R.string.error_sending_data, Toast.LENGTH_LONG).show();
 		discard.setVisibility(View.INVISIBLE);
@@ -160,16 +150,6 @@ public class DisplayResultsActivity extends ActionBarActivity {
 	}
 	
 	public void discard_click(View view) {
-//		alertDialogBuilder = new AlertDialog.Builder(context);
-//		alertDialogBuilder.setTitle(R.string.discard);
-//		alertDialogBuilder.setMessage(R.string.result_discarded);
-//		alertDialogBuilder.setPositiveButton(R.string.ok,  new DialogInterface.OnClickListener() {
-//	        public void onClick(DialogInterface dialog, int which) {
-//	        	finish();
-//	          }
-//	      });
-//		alert = alertDialogBuilder.create();
-//		alert.show();
 		Toast.makeText(context, R.string.result_discarded, Toast.LENGTH_LONG).show();
 		view.setVisibility(View.INVISIBLE); 
 		keep.setVisibility(View.INVISIBLE);

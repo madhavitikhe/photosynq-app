@@ -107,9 +107,7 @@ public class FragmentConnection extends Fragment{
 				appSettings.setConnectionId(bluetoothID);
 				db.updateSettings(appSettings);
 				
-				//String bluetoothAddress = adapter.getItemAtPosition(position).toString();
 				PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_CONNECTION_ID,bluetoothID);
-				Toast.makeText(getActivity(), "Clicked "+bluetoothID, Toast.LENGTH_SHORT).show();
 				pairedDeviceList.setItemsCanFocus(true);
 				RadioButton radiolistitem=(RadioButton) view.findViewById(R.id.bluetooth_conn_radiobtn);
 				radiolistitem.performClick();
