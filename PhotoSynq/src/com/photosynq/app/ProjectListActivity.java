@@ -82,13 +82,9 @@ public class ProjectListActivity extends NavigationDrawer  {
 	{
 		if(arrayadapter.isEmpty())
 		{
-			System.out.println("-------------------arrayadapter.isEmpty()--------------");
 			new GetDataAsync().execute();
 		}
-		else
-		{
-			System.out.println("-------------------arrayadapter.isNotEmpty()--------------");
-		}
+	
 	}
 
 	private void refreshProjectList() {

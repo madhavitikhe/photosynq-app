@@ -45,6 +45,7 @@ public class FragmentConnection extends Fragment{
 	private String userId;
 	private DatabaseHelper db;
 	private TextView bluetoothStatusMsg;
+	private TextView selectedConnectionText;
 	private View bluetoothStatus;
 	
     public static FragmentConnection newInstance() {
@@ -63,11 +64,14 @@ public class FragmentConnection extends Fragment{
 		View rootView = inflater.inflate(R.layout.fragment_connection, container, false);
 		
 		db = DatabaseHelper.getHelper(getActivity());
+		userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		//String loggedInUserName = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_USER,null);
 		pairedDeviceList = (ListView) rootView.findViewById(R.id.pairedDevices);
+		selectedConnectionText = (TextView) rootView.findViewById(R.id.selectedConnectionText);
 		bluetoothStatus = rootView.findViewById(R.id.btooth_status);
 		bluetoothStatusMsg = (TextView) rootView.findViewById(R.id.bluetooth_status_msg);
 		searchNewBtn = (Button) rootView.findViewById(R.id.searchNewButton);
+		
 		searchNewBtn.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View v) {
@@ -99,13 +103,24 @@ public class FragmentConnection extends Fragment{
 		    	BluetoothDevice btDevice = (BluetoothDevice) pairedDeviceList.getItemAtPosition(position);
 				Log.d("Pairing device : ", btDevice.getName());
 				
-				userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 	    		AppSettings appSettings = db.getSettings(userId);
 				
 				String bluetoothID = btDevice.getAddress();
+				String bluetoothName = btDevice.getName();
 				
 				appSettings.setConnectionId(bluetoothID);
 				db.updateSettings(appSettings);
+				
+				if(null != appSettings.getConnectionId())
+				{
+					String connectionName = appSettings.getConnectionId();
+				//	selectedConnectionText.setText(connectionName);
+					selectedConnectionText.setText(bluetoothName);
+				}
+				else
+				{
+					Toast.makeText(getActivity(), "Connection is not selected", Toast.LENGTH_LONG).show();
+				}
 				
 				PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_CONNECTION_ID,bluetoothID);
 				pairedDeviceList.setItemsCanFocus(true);

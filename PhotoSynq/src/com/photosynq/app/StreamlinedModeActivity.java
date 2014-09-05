@@ -3,7 +3,6 @@ package com.photosynq.app;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -233,7 +232,6 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 				        }
 				    });
 					
-	
 					Picasso.with(getApplicationContext())
 					.load("http://static.dezeen.com/uploads/2013/09/dezeen_Google-logo_1sq-300x300.jpg")
 					.error(R.drawable.ic_launcher)
@@ -290,7 +288,6 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 					        	}
 					        }
 					    });
-						
 		
 						Picasso.with(getApplicationContext())
 						.load("http://static.dezeen.com/uploads/2013/09/dezeen_Google-logo_1sq-300x300.jpg")
@@ -300,14 +297,10 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 						optionsRelativeLayouteven.addView(imageVieweven, imageVParamseven);
 						//LinearLayout.LayoutParams relativelayoutweight = new LinearLayout.LayoutParams(	LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1);
 						detailsLinearLayout.addView(optionsRelativeLayouteven,relativelayoutweight);
-						
 					}
-					
 					subLinearLayout.addView(detailsLinearLayout);
 				}
-					
 			}
-			
 			scrollView.addView(subLinearLayout);
 			mainLinearLayout.addView(scrollView);
 			viewFlipper.addView(mainLinearLayout);

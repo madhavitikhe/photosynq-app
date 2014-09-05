@@ -31,13 +31,8 @@ public class MainActivity extends NavigationDrawer {
 
 	protected String latitude,longitude; 
 	protected boolean gps_enabled,network_enabled;
-	// Database Helper
 	private DatabaseHelper db;
 	private String userId;
-    //public static final String QUICK_MEASURE ="quick";
-   
-    
-    //private PendingIntent pendingIntent;
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
     
@@ -58,20 +53,28 @@ public class MainActivity extends NavigationDrawer {
 	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	    View contentView = inflater.inflate(R.layout.activity_main, null, false);
 	    layoutDrawer.addView(contentView, 0); 
+	    
+		db = DatabaseHelper.getHelper(getApplicationContext());
 		
 		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 		    WebView.setWebContentsDebuggingEnabled(true);
 		}
-		//setAlarm method sets interval time to executing sync in background and show notification to user.
+		
+		//When user install app first time following thing are set default.
 		String first_run = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_FIRST_RUN,"YES");
 		if (first_run.equals("YES"))
 		{
 			System.out.println("First time running? = YES");
 			setAlarm(this);
+			userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+    		AppSettings appSettings = db.getSettings(userId);
+			appSettings.setModeType(Utils.APP_MODE_NORMAL);
+			db.updateSettings(appSettings);
 			PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_FIRST_RUN,"NO");
 		}
 	}
 	
+	//setAlarm method sets interval time to executing sync in background and show notification to user.
 	public void setAlarm(Context context) {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.SECOND, 10);
@@ -145,7 +148,6 @@ public class MainActivity extends NavigationDrawer {
 		  default:
 			  return super.onOptionsItemSelected(item);
 		}		
-	//	return super.onOptionsItemSelected(item);
 	}
 	
 	public void listResearchProjects(View view)
@@ -169,6 +171,7 @@ public class MainActivity extends NavigationDrawer {
 			Toast.makeText(getApplicationContext(), "Select mode type first", Toast.LENGTH_LONG).show();
 		}
 	}
+	
 	public void recentResearchCollab(View view)
 	{
 //		Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);

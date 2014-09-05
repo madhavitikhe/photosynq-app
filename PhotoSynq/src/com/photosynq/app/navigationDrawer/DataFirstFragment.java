@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
@@ -27,12 +28,11 @@ public class DataFirstFragment extends Fragment {
 	private String userId;
 	private String questionId;
 	private String projectId;
-	private RadioGroup radiogroup;
+	private RadioGroup radioGroup;
 	private RadioButton userSelectedRadio;
 	private RadioButton fixedValueRadio;
 	private RadioButton autoIncRadio;
 	private RadioButton scanCodeRadio;
-	private String selectedValue;
 	public EditText fixed_value_edit_text;
 	public EditText from_edit_text;
 	public EditText to_edit_text;
@@ -59,7 +59,7 @@ public class DataFirstFragment extends Fragment {
 		{
 			questionId = extras.getString(DatabaseHelper.C_QUESTION_ID);
 		}
-		radiogroup = (RadioGroup) rootView.findViewById(R.id.radioGroup1);
+		radioGroup = (RadioGroup) rootView.findViewById(R.id.radioGroup1);
 		userSelectedRadio = (RadioButton) rootView.findViewById(R.id.user_select_radiobtn);
 		fixedValueRadio = (RadioButton) rootView.findViewById(R.id.fixedvalueradio);
 		autoIncRadio = (RadioButton) rootView.findViewById(R.id.autoincrementradio);
@@ -87,8 +87,8 @@ public class DataFirstFragment extends Fragment {
 					break;
 				case PROJECT_SELECTED:
 					//disable radio group
-					for (int i = 0; i < radiogroup.getChildCount(); i++) {
-						radiogroup.getChildAt(i).setEnabled(false);
+					for (int i = 0; i < radioGroup.getChildCount(); i++) {
+						radioGroup.getChildAt(i).setEnabled(false);
 						}
 					break;
 				case SCAN_CODE:
@@ -118,37 +118,48 @@ public class DataFirstFragment extends Fragment {
 				data.setQuestion_id(questionId);
 				data.setValue(Data.NO_VALUE);
 				
-				int selectedRadioButtonId = radiogroup.getCheckedRadioButtonId();
+				int selectedRadioButtonId = radioGroup.getCheckedRadioButtonId();
 				
 				if(selectedRadioButtonId == userSelectedRadio.getId())
                 {
 					data.setType(QuestionType.USER_SELECTED.getStatusCode());
+					Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
                 }
 				else if(selectedRadioButtonId == fixedValueRadio.getId())
 				{
 					data.setType(QuestionType.FIXED_VALUE.getStatusCode());
 					data.setValue(fixed_value_edit_text.getText().toString());
+					Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
 				}
 				else if(selectedRadioButtonId == autoIncRadio.getId())
 				{
 					data.setType(QuestionType.AUTO_INCREMENT.getStatusCode());
-					if(from_edit_text.getText().toString().isEmpty())
+					if(from_edit_text.getText().toString().isEmpty() || to_edit_text.getText().toString().isEmpty() || repeat_edit_text.getText().toString().isEmpty())
 					{
-						from_edit_text.setError("please Insert field");
+						if(from_edit_text.getText().toString().isEmpty())
+						{
+							from_edit_text.setError("Please insert field");
+						}
+						else if(to_edit_text.getText().toString().isEmpty())
+						{
+							to_edit_text.setError("Please insert field");
+						}
+						else if(repeat_edit_text.getText().toString().isEmpty())
+						{
+							repeat_edit_text.setError("Please insert field");
+						}
+						Toast.makeText(getActivity(), "Please insert all fields", Toast.LENGTH_LONG).show();
 					}
-//					else if(to_edit_text.getText().toString().isEmpty())
-//					{
-//						to_edit_text.setError("please Insert field");
-//					}
-//					else if(repeat_edit_text.getText().toString().isEmpty())
-//					{
-//						repeat_edit_text.setError("please Insert field");
-//					}
-					data.setValue(from_edit_text.getText().toString()+","+to_edit_text.getText().toString()+","+repeat_edit_text.getText().toString());
-				}
+					else
+					{
+						data.setValue(from_edit_text.getText().toString()+","+to_edit_text.getText().toString()+","+repeat_edit_text.getText().toString());
+						Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+					}
+				}		
 				else if(selectedRadioButtonId == scanCodeRadio.getId())
 				{
 					data.setType(QuestionType.SCAN_CODE.getStatusCode());
+					Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
 				}
 				
 				db.updateData(data);
