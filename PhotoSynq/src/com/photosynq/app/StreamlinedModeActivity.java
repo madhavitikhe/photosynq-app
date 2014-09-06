@@ -3,25 +3,26 @@ package com.photosynq.app;
 import java.util.ArrayList;
 import java.util.List;
 
+import jim.h.common.android.zxinglib.integrator.IntentIntegrator;
+import jim.h.common.android.zxinglib.integrator.IntentResult;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import com.photosynq.app.barcodeReader.IntentIntegrator;
-import com.photosynq.app.barcodeReader.IntentResult;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Question;
@@ -40,6 +41,8 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 	private Context ctx;
 	ArrayList<String> allSelectedOptions;
 	ArrayList<String> allSelectedQuestions ;
+	private Handler  handler = new Handler();
+	private TextView txtScanResult;
 	//String[n] array;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +51,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 		LayoutInflater inflater = (LayoutInflater) this
 	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	    View contentView = inflater.inflate(R.layout.activity_streamlined_mode, null, false);
-	    layoutDrawer.addView(contentView, 0); 
+	    layoutDrawer.addView(contentView, 0);
 	    allSelectedOptions= new ArrayList<String>();
 		allSelectedQuestions = new ArrayList<String>();
 		ctx = getApplicationContext();
@@ -119,6 +122,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 				LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				View view = infltr.inflate(R.layout.user_selected, null);
 
+				EditText userEnteredAnswer = (EditText) findViewById(R.id.userAnswer);
 				Button showNext = (Button) view.findViewById(R.id.next);
 				showNext.setOnClickListener(new OnClickListener() {
 					@Override
@@ -151,24 +155,17 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 				LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				View view = infltr.inflate(R.layout.activity_barcode_reader, null);
 
-				Button scan = (Button) view.findViewById(R.id.scan_button);
-				scan.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View arg0) {
-						IntentIntegrator scanIntegrator = new IntentIntegrator(StreamlinedModeActivity.this);
-						scanIntegrator.initiateScan();
-						int displayedChild = viewFlipper.getDisplayedChild();
-			            int childCount = viewFlipper.getChildCount();
-			            if (displayedChild == childCount - 1) {
-			                viewFlipper.stopFlipping();
-			            }
-			            else
-			            {
-			            	viewFlipper.showNext();
-			            }
-					}
-				});
+				 txtScanResult = (TextView) findViewById(R.id.scan_result);
+			     View btnScan = findViewById(R.id.scan_button);
 
+			        btnScan.setOnClickListener(new OnClickListener() {
+			            @Override
+			            public void onClick(View v) {
+			                // set the last parameter to true to open front light if available
+			                IntentIntegrator.initiateScan(StreamlinedModeActivity.this, R.layout.barcode_capture,
+			                        R.id.viewfinder_view, R.id.preview_view, true);
+			            }
+			        });
 				optionsRelativeLayout.addView(view);
 
 				subLinearLayout.addView(optionsRelativeLayout);
@@ -308,22 +305,29 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 	  }
 	}
 
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-		if (scanningResult != null) {
-			String scanContent = scanningResult.getContents();
-			String scanFormat = scanningResult.getFormatName();
-			TextView formatTxt = (TextView)findViewById(R.id.scan_format);
-			TextView contentTxt = (TextView)findViewById(R.id.scan_content);
-			formatTxt.setText("FORMAT: " + scanFormat);
-			contentTxt.setText("CONTENT: " + scanContent);
-			}
-		else{
-		    Toast toast = Toast.makeText(getApplicationContext(), 
-		        "No scan data received!", Toast.LENGTH_SHORT);
-		    toast.show();
-		}
-		}
+	 @Override
+	    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	        super.onActivityResult(requestCode, resultCode, data);
+	        switch (requestCode) {
+	            case IntentIntegrator.REQUEST_CODE:
+	                IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode,
+	                        resultCode, data);
+	                if (scanResult == null) {
+	                    return;
+	                }
+	                final String result = scanResult.getContents();
+	                if (result != null) {
+	                    handler.post(new Runnable() {
+	                        @Override
+	                        public void run() {
+	                            txtScanResult.setText(result);
+	                        }
+	                    });
+	                }
+	                break;
+	            default:
+	        }
+	    }
 	
 	@Override
 	protected void onResume() {

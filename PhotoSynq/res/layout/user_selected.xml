@@ -3,11 +3,9 @@
     android:layout_height="match_parent" >
     
     <EditText
-        android:id="@+id/EditText02"
-        android:layout_width="wrap_content"
+        android:id="@+id/userAnswer"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
         android:background="@drawable/edit_text_shapes"
         android:descendantFocusability="beforeDescendants"
         android:focusableInTouchMode="true"
