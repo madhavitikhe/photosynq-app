@@ -3,8 +3,6 @@ package com.photosynq.app;
 import java.util.ArrayList;
 import java.util.List;
 
-import jim.h.common.android.zxinglib.integrator.IntentIntegrator;
-import jim.h.common.android.zxinglib.integrator.IntentResult;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -24,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.google.zxing.client.android.CaptureActivity;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Question;
@@ -192,8 +191,13 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 				            @Override
 				            public void onClick(View v) {
 				                // set the last parameter to true to open front light if available
-				                IntentIntegrator.initiateScan(StreamlinedModeActivity.this, R.layout.barcode_capture,
-				                        R.id.viewfinder_view, R.id.preview_view, true);
+//				                IntentIntegrator.initiateScan(StreamlinedModeActivity.this, R.layout.barcode_capture,
+//				                        R.id.viewfinder_view, R.id.preview_view, true);
+				            	Intent intent = new Intent(StreamlinedModeActivity.this,CaptureActivity.class);
+				            	intent.setAction("com.google.zxing.client.android.SCAN");
+				            	// this stops saving ur barcode in barcode scanner app's history
+				            	intent.putExtra("SAVE_HISTORY", false);
+				            	startActivityForResult(intent, 0);
 				            }
 				        });
 					optionsRelativeLayout.addView(view);
@@ -340,25 +344,35 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 	 @Override
 	    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	        super.onActivityResult(requestCode, resultCode, data);
-	        switch (requestCode) {
-	            case IntentIntegrator.REQUEST_CODE:
-	                IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode,
-	                        resultCode, data);
-	                if (scanResult == null) {
-	                    return;
-	                }
-	                final String result = scanResult.getContents();
-	                if (result != null) {
-	                    handler.post(new Runnable() {
-	                        @Override
-	                        public void run() {
-	                            txtScanResult.setText(result);
-	                        }
-	                    });
-	                }
-	                break;
-	            default:
-	        }
+	        
+			if (requestCode == 0) {
+				if (resultCode == RESULT_OK) {
+					String contents = data.getStringExtra("SCAN_RESULT");
+					Toast.makeText(getApplicationContext(), contents, Toast.LENGTH_SHORT).show();
+				} else if (resultCode == RESULT_CANCELED) {
+					// Handle cancel
+					Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_SHORT).show();
+				}
+			}
+//	        switch (requestCode) {
+//	            case IntentIntegrator.REQUEST_CODE:
+//	                IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode,
+//	                        resultCode, data);
+//	                if (scanResult == null) {
+//	                    return;
+//	                }
+//	                final String result = scanResult.getContents();
+//	                if (result != null) {
+//	                    handler.post(new Runnable() {
+//	                        @Override
+//	                        public void run() {
+//	                            txtScanResult.setText(result);
+//	                        }
+//	                    });
+//	                }
+//	                break;
+//	            default:
+//	        }
 	    }
 	
 	@Override

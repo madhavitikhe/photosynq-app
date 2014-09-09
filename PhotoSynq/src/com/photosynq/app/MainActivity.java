@@ -56,10 +56,10 @@ public class MainActivity extends NavigationDrawer {
 	    
 		db = DatabaseHelper.getHelper(getApplicationContext());
 		
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-		    WebView.setWebContentsDebuggingEnabled(true);
-		}
-		
+//		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//		    WebView.setWebContentsDebuggingEnabled(true);
+//		}
+//		
 		//When user install app first time following thing are set default.
 		String first_run = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_FIRST_RUN,"YES");
 		if (first_run.equals("YES"))

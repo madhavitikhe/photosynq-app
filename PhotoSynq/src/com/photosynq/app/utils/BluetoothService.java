@@ -1,5 +1,13 @@
 package com.photosynq.app.utils;
 
+import static com.photosynq.app.NewMeasurmentActivity.DEVICE_NAME;
+import static com.photosynq.app.NewMeasurmentActivity.MESSAGE_DEVICE_NAME;
+import static com.photosynq.app.NewMeasurmentActivity.MESSAGE_READ;
+import static com.photosynq.app.NewMeasurmentActivity.MESSAGE_STATE_CHANGE;
+import static com.photosynq.app.NewMeasurmentActivity.MESSAGE_TOAST;
+import static com.photosynq.app.NewMeasurmentActivity.MESSAGE_WRITE;
+import static com.photosynq.app.NewMeasurmentActivity.TOAST;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,7 +21,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import static com.photosynq.app.NewMeasurmentActivity.*;
 
 
 public class BluetoothService {

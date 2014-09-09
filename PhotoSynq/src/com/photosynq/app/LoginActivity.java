@@ -66,9 +66,9 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-		    WebView.setWebContentsDebuggingEnabled(true);
-		}
+//		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//		    WebView.setWebContentsDebuggingEnabled(true);
+//		}
 		setContentView(R.layout.activity_login);
 		
 		copyAssets();

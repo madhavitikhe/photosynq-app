@@ -22,8 +22,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.photosynq.app.AlarmReceiver;
-import com.photosynq.app.MainActivity;
-import com.photosynq.app.ProjectListActivity;
 import com.photosynq.app.R;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.DataUtils;

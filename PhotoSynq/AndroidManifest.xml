@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -98,6 +99,13 @@
             android:name="com.photosynq.app.barcodeReader.BarcodeReaderActivity"
             android:label="@string/title_activity_barcode_reader" >
         </activity>
+        <activity
+			android:name="com.google.zxing.client.android.CaptureActivity"
+			android:label="@string/title_activity_barcode_reader"
+			android:screenOrientation="landscape" >
+		</activity>
+
+        
     </application>
 
 </manifest>
