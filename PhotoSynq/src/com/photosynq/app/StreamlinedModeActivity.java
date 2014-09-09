@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.photosynq.app.db.DatabaseHelper;
@@ -113,65 +114,96 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 			subLinearLayout.addView(questionTextView);
 			
 			Data data = db.getData(userId, projectId, question.getQuestionId());
-			if(data.getType().equals("USER_SELECTED"))
+			if(null != data.getProject_id() || null != data.getQuestion_id() || null != data.getType() || null != data.getValue())
 			{
-				RelativeLayout optionsRelativeLayout = new RelativeLayout(ctx);
-				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-				optionsRelativeLayout.setLayoutParams(params);
-				
-				LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				View view = infltr.inflate(R.layout.user_selected, null);
-
-				EditText userEnteredAnswer = (EditText) findViewById(R.id.userAnswer);
-				Button showNext = (Button) view.findViewById(R.id.next);
-				showNext.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View arg0) {
-						int displayedChild = viewFlipper.getDisplayedChild();
-			            int childCount = viewFlipper.getChildCount();
-			            if (displayedChild == childCount - 1) {
-			                viewFlipper.stopFlipping();
-			            }
-			            else
-			            {
-			            	viewFlipper.showNext();
-			            }
-					}
-				});
-
-				optionsRelativeLayout.addView(view);
-
-				subLinearLayout.addView(optionsRelativeLayout);
-				scrollView.addView(subLinearLayout);
-				mainLinearLayout.addView(scrollView);
-				viewFlipper.addView(mainLinearLayout);
-			}
-			else if(data.getType().equals("SCAN_CODE"))
-			{
-				RelativeLayout optionsRelativeLayout = new RelativeLayout(ctx);
-				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-				optionsRelativeLayout.setLayoutParams(params);
-				
-				LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				View view = infltr.inflate(R.layout.activity_barcode_reader, null);
-
-				 txtScanResult = (TextView) findViewById(R.id.scan_result);
-			     View btnScan = findViewById(R.id.scan_button);
-
-			        btnScan.setOnClickListener(new OnClickListener() {
-			            @Override
-			            public void onClick(View v) {
-			                // set the last parameter to true to open front light if available
-			                IntentIntegrator.initiateScan(StreamlinedModeActivity.this, R.layout.barcode_capture,
-			                        R.id.viewfinder_view, R.id.preview_view, true);
-			            }
-			        });
-				optionsRelativeLayout.addView(view);
-
-				subLinearLayout.addView(optionsRelativeLayout);
-				scrollView.addView(subLinearLayout);
-				mainLinearLayout.addView(scrollView);
-				viewFlipper.addView(mainLinearLayout);
+				if(data.getType().equals(Utils.USER_SELECTED))
+				{
+					RelativeLayout optionsRelativeLayout = new RelativeLayout(ctx);
+					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+					optionsRelativeLayout.setLayoutParams(params);
+					
+					LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+					View view = infltr.inflate(R.layout.user_selected, null);
+	
+					final EditText userEnteredAnswer = (EditText) view.findViewById(R.id.userAnswer);
+					Button showNext = (Button) view.findViewById(R.id.next);
+					showNext.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							int displayedChild = viewFlipper.getDisplayedChild();
+				            int childCount = viewFlipper.getChildCount();
+				            String getUserAns = userEnteredAnswer.getText().toString();
+				            allSelectedQuestions.add(question.getQuestionText());
+				            allSelectedOptions.add(getUserAns);
+				            if (displayedChild == childCount - 1) {
+				                viewFlipper.stopFlipping();
+				                Intent intent = new Intent(ctx,NewMeasurmentActivity.class);
+				                intent.putExtra("All_Questions", allSelectedQuestions);
+				                intent.putExtra("All_Options", allSelectedOptions);
+				                intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
+				                intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress);
+				                intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+				                startActivity(intent);
+				            }
+				            else
+				            {
+				            	viewFlipper.showNext();
+				            }
+						}
+					});
+	
+					optionsRelativeLayout.addView(view);
+	
+					subLinearLayout.addView(optionsRelativeLayout);
+					scrollView.addView(subLinearLayout);
+					mainLinearLayout.addView(scrollView);
+					viewFlipper.addView(mainLinearLayout);
+					Toast.makeText(ctx, "User Selected", Toast.LENGTH_LONG).show();
+				}
+				else if(data.getType().equals(Utils.FIXED_VALUE))
+				{
+					String val = data.getValue();
+					Toast.makeText(ctx, "Fixed Value  "+val, Toast.LENGTH_LONG).show();
+				}
+				else if(data.getType().equals(Utils.AUTO_INCREMENT))
+				{
+					String val = data.getValue();
+					 String[] items = val.split(",");
+					 int from = Integer.parseInt(items[0]);
+					 int to = Integer.parseInt(items[1]);
+					 int repeat = Integer.parseInt(items[2]);
+					 
+					Toast.makeText(ctx, "Auto Increment "+val, Toast.LENGTH_LONG).show();
+					
+				}
+				else if(data.getType().equals(Utils.SCAN_CODE))
+				{
+					RelativeLayout optionsRelativeLayout = new RelativeLayout(ctx);
+					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+					optionsRelativeLayout.setLayoutParams(params);
+					
+					LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+					View view = infltr.inflate(R.layout.activity_barcode_reader, null);
+	
+					 txtScanResult = (TextView) view.findViewById(R.id.scan_result);
+				     View btnScan = view.findViewById(R.id.scan_button);
+	
+				        btnScan.setOnClickListener(new OnClickListener() {
+				            @Override
+				            public void onClick(View v) {
+				                // set the last parameter to true to open front light if available
+				                IntentIntegrator.initiateScan(StreamlinedModeActivity.this, R.layout.barcode_capture,
+				                        R.id.viewfinder_view, R.id.preview_view, true);
+				            }
+				        });
+					optionsRelativeLayout.addView(view);
+	
+					subLinearLayout.addView(optionsRelativeLayout);
+					scrollView.addView(subLinearLayout);
+					mainLinearLayout.addView(scrollView);
+					viewFlipper.addView(mainLinearLayout);
+					Toast.makeText(ctx, "Scan Code", Toast.LENGTH_LONG).show();
+				}
 			}
 			else
 			{

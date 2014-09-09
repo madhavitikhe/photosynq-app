@@ -10,7 +10,10 @@ public class Utils {
 	public static final String APP_MODE_QUICK_MEASURE = "APP_MODE_QUICK_MEASURE";
 	public static final String APP_MODE_STREAMLINE = "APP_MODE_STREAMLINE";
 	public static final String APP_MODE_NORMAL = "APP_MODE_NORMAL";
-	
+	public static final String USER_SELECTED = "USER_SELECTED";
+	public static final String SCAN_CODE = "SCAN_CODE";
+	public static final String FIXED_VALUE = "FIXED_VALUE";
+	public static final String AUTO_INCREMENT = "AUTO_INCREMENT";
 	
 	public enum SettingKey {
 		MODE("MODE"), USER("USER"), CONNECTION("CONNECTION"), PROJECT("PROJECT");
