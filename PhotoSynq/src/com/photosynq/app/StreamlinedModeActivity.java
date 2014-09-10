@@ -3,8 +3,6 @@ package com.photosynq.app;
 import java.util.ArrayList;
 import java.util.List;
 
-import jim.h.common.android.zxinglib.integrator.IntentIntegrator;
-import jim.h.common.android.zxinglib.integrator.IntentResult;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -24,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.google.gson.Gson;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Question;
@@ -132,9 +131,8 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 						public void onClick(View v) {
 							int displayedChild = viewFlipper.getDisplayedChild();
 				            int childCount = viewFlipper.getChildCount();
-				            String getUserAns = userEnteredAnswer.getText().toString();
-				            allSelectedQuestions.add(question.getQuestionText());
-				            allSelectedOptions.add(getUserAns);
+				            allSelectedQuestions.add(new Gson().toJson(question));
+				            allSelectedOptions.add(userEnteredAnswer.getText().toString());
 				            if (displayedChild == childCount - 1) {
 				                viewFlipper.stopFlipping();
 				                Intent intent = new Intent(ctx,NewMeasurmentActivity.class);
@@ -167,14 +165,8 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 				}
 				else if(data.getType().equals(Utils.AUTO_INCREMENT))
 				{
-					String val = data.getValue();
-					 String[] items = val.split(",");
-					 int from = Integer.parseInt(items[0]);
-					 int to = Integer.parseInt(items[1]);
-					 int repeat = Integer.parseInt(items[2]);
-					 
-					Toast.makeText(ctx, "Auto Increment "+val, Toast.LENGTH_LONG).show();
-					
+					PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_QUESTION_INDEX+question.getQuestionId(), "0");
+					Toast.makeText(ctx, "Auto Increment ", Toast.LENGTH_LONG).show();
 				}
 				else if(data.getType().equals(Utils.SCAN_CODE))
 				{
@@ -183,7 +175,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 					optionsRelativeLayout.setLayoutParams(params);
 					
 					LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-					View view = infltr.inflate(R.layout.activity_barcode_reader, null);
+					View view = infltr.inflate(R.layout.barcode_reader, null);
 	
 					 txtScanResult = (TextView) view.findViewById(R.id.scan_result);
 				     View btnScan = view.findViewById(R.id.scan_button);
@@ -191,9 +183,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 				        btnScan.setOnClickListener(new OnClickListener() {
 				            @Override
 				            public void onClick(View v) {
-				                // set the last parameter to true to open front light if available
-				                IntentIntegrator.initiateScan(StreamlinedModeActivity.this, R.layout.barcode_capture,
-				                        R.id.viewfinder_view, R.id.preview_view, true);
+				            	
 				            }
 				        });
 					optionsRelativeLayout.addView(view);
@@ -239,7 +229,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 				        public void onClick(View v) {
 				        	int displayedChild = viewFlipper.getDisplayedChild();
 				            int childCount = viewFlipper.getChildCount();
-				        	allSelectedQuestions.add(question.getQuestionText());
+				        	allSelectedQuestions.add(new Gson().toJson(question));
 				        	allSelectedOptions.add(question.getOptions().get(v.getId()));
 				        	for(int i=0;i<allSelectedOptions.size();i++)
 				        	{
@@ -293,7 +283,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 					        public void onClick(View v) {
 					        	int displayedChild = viewFlipper.getDisplayedChild();
 					            int childCount = viewFlipper.getChildCount();
-					            allSelectedQuestions.add(question.getQuestionText());
+					            allSelectedQuestions.add(new Gson().toJson(question));
 					        	allSelectedOptions.add(question.getOptions().get(v.getId()));
 					        	for(int i=0;i<allSelectedOptions.size();i++)
 					        	{
@@ -337,29 +327,21 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 	  }
 	}
 
-	 @Override
-	    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	        super.onActivityResult(requestCode, resultCode, data);
-	        switch (requestCode) {
-	            case IntentIntegrator.REQUEST_CODE:
-	                IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode,
-	                        resultCode, data);
-	                if (scanResult == null) {
-	                    return;
-	                }
-	                final String result = scanResult.getContents();
-	                if (result != null) {
-	                    handler.post(new Runnable() {
-	                        @Override
-	                        public void run() {
-	                            txtScanResult.setText(result);
-	                        }
-	                    });
-	                }
-	                break;
-	            default:
-	        }
-	    }
+
+	
+
+	  
+//    public static String[] getMultipleValues(Activity activity){
+//        String getValues = PrefUtils.getFromPrefs(activity, PrefUtils.PREFS_QUESTION_INDEX_VALUES, null);
+//        System.out.println("--AllValues - "+getValues);
+//        return convertStringToArray(getValues);
+//    }
+//    
+//    private static String[] convertStringToArray(String str){
+//        String[] arr = str.split(",");
+//     //   System.out.println(","+arr);
+//        return arr;
+//    }
 	
 	@Override
 	protected void onResume() {

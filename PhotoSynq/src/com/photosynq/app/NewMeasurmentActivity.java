@@ -34,7 +34,9 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.gson.Gson;
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
@@ -42,6 +44,7 @@ import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
+import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.LocationUtils;
 import com.photosynq.app.utils.PrefUtils;
 
@@ -51,6 +54,7 @@ GooglePlayServicesClient.ConnectionCallbacks,
 GooglePlayServicesClient.OnConnectionFailedListener{
 
 	private DatabaseHelper db;
+	private String userId;
 	private String appMode;
 	public String option1="";
 	public String option3="";
@@ -91,26 +95,39 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	private static final int REQUEST_ENABLE_BT = 2;
 	private BluetoothService mBluetoothService = null;
 	private BluetoothAdapter mBluetoothAdapter = null;
-	ArrayList<CharSequence> getAllSelectedOptions = new ArrayList<CharSequence>();
-	ArrayList<CharSequence> getAllSelectedQuestions = new ArrayList<CharSequence>();
-
+	ArrayList<String> getAllSelectedOptions = new ArrayList<String>();
+	ArrayList<String> getAllSelectedQuestions = new ArrayList<String>();
+	ArrayList<Question> selectedQuestions = new ArrayList<Question>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		db = DatabaseHelper.getHelper(getApplicationContext());
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
 			deviceAddress = extras.getString(BluetoothService.DEVICE_ADDRESS);
 			appMode = extras.getString(Utils.APP_MODE);
 			protocolJson = extras.getString(DatabaseHelper.C_PROTOCOL_JSON);
-			getAllSelectedOptions = extras.getCharSequenceArrayList("All_Options");
-			getAllSelectedQuestions = extras.getCharSequenceArrayList("All_Questions");
-
+			getAllSelectedOptions = extras.getStringArrayList("All_Options");
+			getAllSelectedQuestions = extras.getStringArrayList("All_Questions");
+			userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+			//projectId = db.getSettings(userId).getProjectId();
+			
+			
+			
+			//int index = Integer.parseInt(PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_QUESTION_INDEX, null));
+			//PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_QUESTION_INDEX, ""+ (index + 1));
 			
 			if (null == protocolJson) protocolJson="";
 			System.out.println(this.getClass().getName()+"############app mode="+appMode);
 		}
+		
+		for (String questionObject : getAllSelectedQuestions) {
+			Question question = new Gson().fromJson(questionObject, Question.class);
+			selectedQuestions.add(question);
+		}
+		
 		
 		//Location related 
 		
@@ -137,12 +154,31 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		    View contentView = inflater.inflate(R.layout.activity_display_selected_questions_options, null, false);
 		    layoutDrawer.addView(contentView, 0); 
 		    LinearLayout liLayout = (LinearLayout) findViewById(R.id.linearlayoutoptions);
-		    for (int i = 0; i < getAllSelectedQuestions.size(); i++) {
+		    int optionLoop = 0;
+		    List<Question> allQuestions = db.getAllQuestionForProject(projectId);
+		    for (int i = 0; i < allQuestions.size(); i++) {
+			   
 			    final TextView que = new TextView(this);
-			    que.setText("Question -  " + getAllSelectedQuestions.get(i));
-			    liLayout.addView(que);
 			    final TextView opt = new TextView(this);
-			    opt.setText("Option -  " + getAllSelectedOptions.get(i));
+			    Data data = db.getData(userId, projectId, allQuestions.get(i).getQuestionId());
+			    
+			    if(data.getType().equals(Utils.AUTO_INCREMENT))
+			    {
+			    	String index = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_QUESTION_INDEX+allQuestions.get(i).getQuestionId(), "-1");
+			    	String optionvalue = DataUtils.getAutoIncrementedValue(getApplicationContext(), allQuestions.get(i).getQuestionId(), index);
+			    	que.setText("Question -  " + allQuestions.get(i).getQuestionText());
+			    	liLayout.addView(que);
+			    	opt.setText("Option -  " + optionvalue);
+			    }
+			    else
+			    {
+			    	 
+					 que.setText("Question -  " + selectedQuestions.get(optionLoop).getQuestionText());
+					 liLayout.addView(que);
+					    
+					 opt.setText("Option -  " + getAllSelectedOptions.get(optionLoop));
+					 optionLoop++;
+			    }
 			    liLayout.addView(opt);
 			     
 			}

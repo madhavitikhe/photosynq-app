@@ -1,6 +1,7 @@
 package com.photosynq.app.utils;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.entity.StringEntity;
@@ -12,7 +13,9 @@ import android.content.Context;
 import com.photosynq.app.UpdateData;
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.Data;
 import com.photosynq.app.model.ProjectResult;
+import com.photosynq.app.model.Question;
 
 public class DataUtils {
 /**
@@ -89,5 +92,30 @@ public class DataUtils {
 						+ projectResult.getProjectId() + "/data.json", "POST");
 			}
 		}
+	}
+	
+	public static String getAutoIncrementedValue(Context ctx,String question_id, String index) {
+		
+		String userId = PrefUtils.getFromPrefs(ctx , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+		DatabaseHelper db = DatabaseHelper.getHelper(ctx);
+		String projectId = db.getSettings(userId).getProjectId();
+		Question question = db.getQuestionForProject(projectId, question_id);
+		Data data = db.getData(userId, projectId, question.getQuestionId());
+		String[] items = data.getValue().split(",");
+		 int from = Integer.parseInt(items[0]);
+		 int to = Integer.parseInt(items[1]);
+		 int repeat = Integer.parseInt(items[2]);
+		 ArrayList<Integer> populatedValues = new ArrayList<Integer>();
+ 		 for(int i=from;i<=to;i++){
+			 for(int j=0;j<repeat;j++){
+				 populatedValues.add(i);
+				//System.out.println(i);
+				//PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_QUESTION_INDEX_VALUES, ""+i);
+				//getMultipleValues(this);
+			 }
+		 }
+ 		 if(Integer.parseInt(index) == -1)
+ 		 return "";
+ 		 return populatedValues.get(Integer.parseInt(index)).toString();
 	}
 }
