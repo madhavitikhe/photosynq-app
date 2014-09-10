@@ -11,8 +11,6 @@ import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.photosynq.app.R;
-
 class JsonArrayAdapter extends BaseAdapter implements ListAdapter {
 
 	private final Activity activity;
