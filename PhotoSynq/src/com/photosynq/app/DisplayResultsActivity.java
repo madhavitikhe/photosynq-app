@@ -133,6 +133,8 @@ public class DisplayResultsActivity extends ActionBarActivity {
 				mDataTask.execute(context,HTTPConnection.PHOTOSYNQ_DATA_URL+projectId+"/data.json", "POST");
 				view.setVisibility(View.INVISIBLE);
 				discard.setVisibility(View.INVISIBLE);
+				
+				finish();
 			}else
 			{
 			

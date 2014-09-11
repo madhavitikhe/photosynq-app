@@ -109,9 +109,6 @@ public class DataUtils {
  		 for(int i=from;i<=to;i++){
 			 for(int j=0;j<repeat;j++){
 				 populatedValues.add(i);
-				//System.out.println(i);
-				//PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_QUESTION_INDEX_VALUES, ""+i);
-				//getMultipleValues(this);
 			 }
 		 }
  		 if(Integer.parseInt(index) == -1)

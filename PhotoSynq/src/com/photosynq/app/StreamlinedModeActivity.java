@@ -166,6 +166,12 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 				}
 				else if(data.getType().equals(Utils.AUTO_INCREMENT))
 				{
+					if(questions.size()<=1)
+					{
+						viewFlipper.addView(mainLinearLayout);
+						Toast.makeText(ctx, "Auto Increment is selected and Question size is <= 1", Toast.LENGTH_LONG).show();
+					}
+					
 					PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_QUESTION_INDEX+question.getQuestionId(), "0");
 					Toast.makeText(ctx, "Auto Increment ", Toast.LENGTH_LONG).show();
 				}
@@ -184,12 +190,39 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 				        btnScan.setOnClickListener(new OnClickListener() {
 				            public void onClick(View v) {
 				            	Intent intent = new Intent(StreamlinedModeActivity.this,CaptureActivity.class);
-				            					            	intent.setAction("com.google.zxing.client.android.SCAN");
-				            					            	// this stops saving ur barcode in barcode scanner app's history
-				            					            	intent.putExtra("SAVE_HISTORY", false);
-				            					            	startActivityForResult(intent, 0);
+				            	intent.setAction("com.google.zxing.client.android.SCAN");
+				            	// this stops saving ur barcode in barcode scanner app's history
+				            	intent.putExtra("SAVE_HISTORY", false);
+				            	startActivityForResult(intent, 0);
 				            }
 				        });
+				        
+				      View btnScanDone = view.findViewById(R.id.done_scan_btn);
+				      btnScanDone.setOnClickListener(new OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+							int displayedChild = viewFlipper.getDisplayedChild();
+				            int childCount = viewFlipper.getChildCount();
+				            allSelectedQuestions.add(new Gson().toJson(question));
+				            allSelectedOptions.add(txtScanResult.getText().toString());
+				            if (displayedChild == childCount - 1) {
+				                viewFlipper.stopFlipping();
+				                Intent intent = new Intent(ctx,NewMeasurmentActivity.class);
+				                intent.putExtra("All_Questions", allSelectedQuestions);
+				                intent.putExtra("All_Options", allSelectedOptions);
+				                intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
+				                intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress);
+				                intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+				                startActivity(intent);
+				            }
+				            else
+				            {
+				            	viewFlipper.showNext();
+				            }
+						}
+					});
+				        
 					optionsRelativeLayout.addView(view);
 	
 					subLinearLayout.addView(optionsRelativeLayout);
@@ -338,6 +371,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 	        if (requestCode == 0) {
 	        					if (resultCode == RESULT_OK) {
 	        						String contents = data.getStringExtra("SCAN_RESULT");
+	        						txtScanResult.setText(contents);
 	        						Toast.makeText(getApplicationContext(), contents, Toast.LENGTH_SHORT).show();
 	        					} else if (resultCode == RESULT_CANCELED) {
 	        						// Handle cancel
@@ -345,26 +379,15 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 	        					}
 	        				}
 	 }
-
-	        
-	  
-//    public static String[] getMultipleValues(Activity activity){
-//        String getValues = PrefUtils.getFromPrefs(activity, PrefUtils.PREFS_QUESTION_INDEX_VALUES, null);
-//        System.out.println("--AllValues - "+getValues);
-//        return convertStringToArray(getValues);
-//    }
-//    
-//    private static String[] convertStringToArray(String str){
-//        String[] arr = str.split(",");
-//     //   System.out.println(","+arr);
-//        return arr;
-//    }
 	
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
+		
+		viewFlipper.setDisplayedChild(0);
+		viewFlipper.refreshDrawableState();
 		super.onResume();
-		allSelectedOptions= new ArrayList<String>();
-		 allSelectedQuestions = new ArrayList<String>();
+//		allSelectedOptions= new ArrayList<String>();
+//		 allSelectedQuestions = new ArrayList<String>();
 	}
 }

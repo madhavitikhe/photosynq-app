@@ -14,6 +14,7 @@
         android:inputType="textMultiLine"
         android:lines="10"
         android:scrollHorizontally="false"
+        android:textColor="@color/black"
         android:textSize="20sp" />
 
     <Button

@@ -98,6 +98,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	ArrayList<String> getAllSelectedOptions = new ArrayList<String>();
 	ArrayList<String> getAllSelectedQuestions = new ArrayList<String>();
 	ArrayList<Question> selectedQuestions = new ArrayList<Question>();
+	private Data data;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -123,11 +124,13 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			System.out.println(this.getClass().getName()+"############app mode="+appMode);
 		}
 		
-		for (String questionObject : getAllSelectedQuestions) {
-			Question question = new Gson().fromJson(questionObject, Question.class);
-			selectedQuestions.add(question);
+		if(null != getAllSelectedQuestions)
+		{
+			for (String questionObject : getAllSelectedQuestions) {
+				Question question = new Gson().fromJson(questionObject, Question.class);
+				selectedQuestions.add(question);
+			}	
 		}
-		
 		
 		//Location related 
 		
@@ -160,26 +163,34 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			   
 			    final TextView que = new TextView(this);
 			    final TextView opt = new TextView(this);
-			    Data data = db.getData(userId, projectId, allQuestions.get(i).getQuestionId());
-			    
-			    if(data.getType().equals(Utils.AUTO_INCREMENT))
+			    data = db.getData(userId, projectId, allQuestions.get(i).getQuestionId());
+			    if(null != data.getUser_id() && null != data.getProject_id() &&  null != data.getQuestion_id())
 			    {
-			    	String index = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_QUESTION_INDEX+allQuestions.get(i).getQuestionId(), "-1");
-			    	String optionvalue = DataUtils.getAutoIncrementedValue(getApplicationContext(), allQuestions.get(i).getQuestionId(), index);
-			    	que.setText("Question -  " + allQuestions.get(i).getQuestionText());
-			    	liLayout.addView(que);
-			    	opt.setText("Option -  " + optionvalue);
+				    if(data.getType().equals(Utils.AUTO_INCREMENT))
+				    {
+				    	String index = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_QUESTION_INDEX+allQuestions.get(i).getQuestionId(), "-1");
+				    	String optionvalue = DataUtils.getAutoIncrementedValue(getApplicationContext(), allQuestions.get(i).getQuestionId(), index);
+				    	que.setText("Question -  " + allQuestions.get(i).getQuestionText());
+				    	liLayout.addView(que);
+				    	opt.setText("Option -  " + optionvalue);
+				    }
+				    else
+				    {
+							 que.setText("Question -  " + selectedQuestions.get(optionLoop).getQuestionText());
+							 liLayout.addView(que);
+							    
+							 opt.setText("Option -  " + getAllSelectedOptions.get(optionLoop));
+							 optionLoop++;
+				    }
+				    liLayout.addView(opt);
 			    }
 			    else
 			    {
-			    	 
-					 que.setText("Question -  " + selectedQuestions.get(optionLoop).getQuestionText());
-					 liLayout.addView(que);
-					    
-					 opt.setText("Option -  " + getAllSelectedOptions.get(optionLoop));
-					 optionLoop++;
+				    que.setText("Question -  " + allQuestions.get(i).getQuestionText());
+				    liLayout.addView(que);
+				    opt.setText("Option -  " + getAllSelectedOptions.get(i));
+				    liLayout.addView(opt);
 			    }
-			    liLayout.addView(opt);
 			     
 			}
 		    try{
