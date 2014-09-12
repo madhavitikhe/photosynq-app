@@ -112,8 +112,10 @@ public class FragmentConnection extends Fragment{
 				
 				if(null != appSettings.getConnectionId())
 				{
+//					BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//					BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(appSettings.connectionId);
+//					selectedConnectionText.setText(device.getName());
 					String connectionName = appSettings.getConnectionId();
-				//	selectedConnectionText.setText(connectionName);
 					selectedConnectionText.setText(bluetoothName);
 				}
 				else

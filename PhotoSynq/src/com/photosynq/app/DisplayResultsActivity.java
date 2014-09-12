@@ -134,12 +134,11 @@ public class DisplayResultsActivity extends ActionBarActivity {
 				view.setVisibility(View.INVISIBLE);
 				discard.setVisibility(View.INVISIBLE);
 				
+				int index = Integer.parseInt(PrefUtils.getFromPrefs(context, PrefUtils.PREFS_QUESTION_INDEX, "1"));
+				PrefUtils.saveToPrefs(context, PrefUtils.PREFS_QUESTION_INDEX, ""+ (index+1));
 				finish();
 			}else
 			{
-			
-			
-			//db = new DatabaseHelper(getApplicationContext());
 			db = DatabaseHelper.getHelper(getApplicationContext());
 			ProjectResult result = new ProjectResult(projectId, reading, "N");
 			db.createResult(result);
@@ -147,6 +146,8 @@ public class DisplayResultsActivity extends ActionBarActivity {
 			Toast.makeText(context, R.string.error_sending_data, Toast.LENGTH_LONG).show();
 			discard.setVisibility(View.INVISIBLE);
 			view.setVisibility(View.INVISIBLE); 
+			int index = Integer.parseInt(PrefUtils.getFromPrefs(context, PrefUtils.PREFS_QUESTION_INDEX, "1"));
+			PrefUtils.saveToPrefs(context, PrefUtils.PREFS_QUESTION_INDEX, ""+ (index+1));
 			finish();
 			}
 		}

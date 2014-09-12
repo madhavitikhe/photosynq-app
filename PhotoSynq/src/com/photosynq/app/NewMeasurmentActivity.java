@@ -168,8 +168,8 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			    {
 				    if(data.getType().equals(Utils.AUTO_INCREMENT))
 				    {
-				    	String index = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_QUESTION_INDEX+allQuestions.get(i).getQuestionId(), "-1");
-				    	String optionvalue = DataUtils.getAutoIncrementedValue(getApplicationContext(), allQuestions.get(i).getQuestionId(), index);
+				    	int index = Integer.parseInt(PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_QUESTION_INDEX, "-1"));
+				    	int optionvalue = Integer.parseInt(DataUtils.getAutoIncrementedValue(getApplicationContext(), allQuestions.get(i).getQuestionId(), ""+index));
 				    	que.setText("Question -  " + allQuestions.get(i).getQuestionText());
 				    	liLayout.addView(que);
 				    	opt.setText("Option -  " + optionvalue);

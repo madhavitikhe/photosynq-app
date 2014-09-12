@@ -44,6 +44,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 	ArrayList<String> allSelectedQuestions ;
 	private Handler  handler = new Handler();
 	private TextView txtScanResult;
+	private boolean scanMode =false;
 	//String[n] array;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 		for (final Question question : questions) {
 			System.out.println("question size"+ question.getOptions());
 			System.out.println("questions"+question.getQuestionText());
+			scanMode = false;
 			/*
 			 * Creating following layout programmatically to display each 
 			 * question as a single view in ViewFlipper
@@ -166,13 +168,13 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 				}
 				else if(data.getType().equals(Utils.AUTO_INCREMENT))
 				{
-					if(questions.size()<=1)
-					{
-						viewFlipper.addView(mainLinearLayout);
-						Toast.makeText(ctx, "Auto Increment is selected and Question size is <= 1", Toast.LENGTH_LONG).show();
-					}
+//					if(questions.size()<=1)
+//					{
+//						viewFlipper.addView(mainLinearLayout);
+//						Toast.makeText(ctx, "Auto Increment is selected and Question size is <= 1", Toast.LENGTH_LONG).show();
+//					}
 					
-					PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_QUESTION_INDEX+question.getQuestionId(), "0");
+					PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_QUESTION_INDEX, "0");
 					Toast.makeText(ctx, "Auto Increment ", Toast.LENGTH_LONG).show();
 				}
 				else if(data.getType().equals(Utils.SCAN_CODE))
@@ -189,6 +191,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 	
 				        btnScan.setOnClickListener(new OnClickListener() {
 				            public void onClick(View v) {
+				            	scanMode = true;
 				            	Intent intent = new Intent(StreamlinedModeActivity.this,CaptureActivity.class);
 				            	intent.setAction("com.google.zxing.client.android.SCAN");
 				            	// this stops saving ur barcode in barcode scanner app's history
@@ -383,11 +386,10 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
-		
-		viewFlipper.setDisplayedChild(0);
-		viewFlipper.refreshDrawableState();
 		super.onResume();
-//		allSelectedOptions= new ArrayList<String>();
-//		 allSelectedQuestions = new ArrayList<String>();
+		if (!scanMode)
+			viewFlipper.setDisplayedChild(0);
+		int index = Integer.parseInt(PrefUtils.getFromPrefs(ctx,PrefUtils.PREFS_QUESTION_INDEX, "1"));
+		scanMode = false;
 	}
 }

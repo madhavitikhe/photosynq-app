@@ -16,7 +16,7 @@ public class PrefUtils {
     public static final String PREFS_PROJECT_ID = "PROJECT_ID";
     public static final String PREFS_FIRST_RUN = "FIRST_RUN";
     public static final String PREFS_SAVE_SYNC_INTERVAL = "SAVE_SYNC_INTERVAL";
-    public static String PREFS_QUESTION_INDEX = "FREQ_OF_QUESTION_";
+    public static String PREFS_QUESTION_INDEX = "FREQ_OF_QUESTION";
    // public static String PREFS_QUESTION_INDEX_VALUES = "QUESTION_INDEX_VALUES";
 
     /**
