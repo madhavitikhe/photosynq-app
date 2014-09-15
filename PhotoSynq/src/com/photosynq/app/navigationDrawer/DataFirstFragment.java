@@ -106,7 +106,6 @@ public class DataFirstFragment extends Fragment {
 		TextView questionTextView = (TextView) rootView.findViewById(R.id.question_txt);
 		Question question = db.getQuestionForProject(projectId,questionId);
 		questionTextView.setText(question.getQuestionText());
-		System.out.println("--------------question Text-----"+question.getQuestionText());
 		
 		save_btn = (Button) rootView.findViewById(R.id.data_fragment_save_btn);
 		save_btn.setOnClickListener(new OnClickListener() {

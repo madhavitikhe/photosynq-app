@@ -94,6 +94,21 @@ public class DataUtils {
 		}
 	}
 	
+	/**
+	 * This function is call when user selects 'Auto Increment' option, this
+	 * function get input text(from,to and repeat) from user and calculates 
+	 * auto increment values and stored it into populatesValues variable,
+	 * cycle performs (to*repeat=total) times.
+	 * Ex. 
+	 * From    1
+	 * To      2
+	 * Repeat  3
+	 * 
+	 * PopulatesValues are --
+	 * 		1	2
+	 * 		1	2
+	 * 		1	2
+	 */
 	public static String getAutoIncrementedValue(Context ctx,String question_id, String index) {
 		
 		String userId = PrefUtils.getFromPrefs(ctx , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);

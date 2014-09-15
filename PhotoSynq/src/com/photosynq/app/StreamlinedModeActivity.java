@@ -45,6 +45,8 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 	private Handler  handler = new Handler();
 	private TextView txtScanResult;
 	private boolean scanMode =false;
+	private EditText userEnteredAnswer;
+	private int autoIncProjecSize = 0;
 	//String[n] array;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -127,7 +129,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 					LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 					View view = infltr.inflate(R.layout.user_selected, null);
 	
-					final EditText userEnteredAnswer = (EditText) view.findViewById(R.id.userAnswer);
+					userEnteredAnswer = (EditText) view.findViewById(R.id.userAnswer);
 					Button showNext = (Button) view.findViewById(R.id.next);
 					showNext.setOnClickListener(new OnClickListener() {
 						@Override
@@ -159,23 +161,31 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 					scrollView.addView(subLinearLayout);
 					mainLinearLayout.addView(scrollView);
 					viewFlipper.addView(mainLinearLayout);
-					Toast.makeText(ctx, "User Selected", Toast.LENGTH_LONG).show();
 				}
 				else if(data.getType().equals(Utils.FIXED_VALUE))
 				{
 					String val = data.getValue();
-					Toast.makeText(ctx, "Fixed Value  "+val, Toast.LENGTH_LONG).show();
 				}
 				else if(data.getType().equals(Utils.AUTO_INCREMENT))
 				{
-//					if(questions.size()<=1)
-//					{
-//						viewFlipper.addView(mainLinearLayout);
-//						Toast.makeText(ctx, "Auto Increment is selected and Question size is <= 1", Toast.LENGTH_LONG).show();
-//					}
+					autoIncProjecSize = autoIncProjecSize + 1;
+					if(questions.size() == autoIncProjecSize)
+					{
+						 allSelectedQuestions.add(new Gson().toJson(question));
+						//viewFlipper.addView(mainLinearLayout);
+						Intent intent = new Intent(ctx,NewMeasurmentActivity.class);
+		                intent.putExtra("All_Questions", allSelectedQuestions);
+		                intent.putExtra("All_Options", allSelectedOptions);
+		                intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
+		                intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress);
+		                intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+		                startActivity(intent);
+					}
+					
+					String autoIncProname = question.getQuestionText();
+			    	System.out.println("Number Of Auto INCREMENT PROJECTS and Name********"+autoIncProjecSize+"---"+autoIncProname);
 					
 					PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_QUESTION_INDEX, "0");
-					Toast.makeText(ctx, "Auto Increment ", Toast.LENGTH_LONG).show();
 				}
 				else if(data.getType().equals(Utils.SCAN_CODE))
 				{
@@ -232,7 +242,6 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 					scrollView.addView(subLinearLayout);
 					mainLinearLayout.addView(scrollView);
 					viewFlipper.addView(mainLinearLayout);
-					Toast.makeText(ctx, "Scan Code", Toast.LENGTH_LONG).show();
 				}
 			}
 			else
@@ -388,8 +397,12 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 		// TODO Auto-generated method stub
 		super.onResume();
 		if (!scanMode)
+		{
 			viewFlipper.setDisplayedChild(0);
+//			txtScanResult.setText("No Data");
+		}
 		int index = Integer.parseInt(PrefUtils.getFromPrefs(ctx,PrefUtils.PREFS_QUESTION_INDEX, "1"));
+//		userEnteredAnswer.setText("");
 		scanMode = false;
 	}
 }

@@ -124,14 +124,19 @@
                     android:text="@string/no_data_found" />
             </RelativeLayout>
 
-            <TableLayout
-                android:id="@+id/questionsTable"
+            <HorizontalScrollView
+                android:id="@+id/hScroll"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:stretchColumns="*" >
-	
-                
-            </TableLayout>
+                android:layout_height="fill_parent" >
+
+                <TableLayout
+                    android:id="@+id/questionsTable"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="*" >
+                </TableLayout>
+            </HorizontalScrollView>
+
         </LinearLayout>
     </ScrollView>
 

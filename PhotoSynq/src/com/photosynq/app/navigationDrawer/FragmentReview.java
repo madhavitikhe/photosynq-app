@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
+import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.utils.PrefUtils;
 
@@ -27,6 +28,9 @@ public class FragmentReview extends Fragment {
 	private DatabaseHelper db;
 	private String userId;
 	private TableLayout questionsTableLayout;
+	private String projectId;
+	private Data data;
+	
 	public static FragmentReview newInstance() {
         Bundle bundle = new Bundle();
 		FragmentReview fragment = new FragmentReview();
@@ -40,6 +44,7 @@ public class FragmentReview extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_review, container, false);
 		userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		db = DatabaseHelper.getHelper(getActivity());
+		projectId = db.getSettings(userId).getProjectId();
 		AppSettings appSettings = db.getSettings(userId);
 		
 		questionsTableLayout = (TableLayout) rootView.findViewById(R.id.questionsTable);
@@ -65,6 +70,14 @@ public class FragmentReview extends Fragment {
 		tvUser.setText(loggedInUserName);
 		
 //		String bluetoothMacId = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_CONNECTION_ID,null);
+		 List<Question> allQuestions = db.getAllQuestionForProject(projectId);
+		    for (int i = 0; i < allQuestions.size(); i++) {
+		    	data = db.getData(userId, projectId, allQuestions.get(i).getQuestionId());
+		}
+		String[] items = data.getValue().split(",");
+		int from = Integer.parseInt(items[0]);
+		int to = Integer.parseInt(items[1]);
+		int repeat = Integer.parseInt(items[2]);
 		
 		BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(appSettings.connectionId);
@@ -75,16 +88,31 @@ public class FragmentReview extends Fragment {
 		
 		List<Question> questions = db.getAllQuestionForProject(appSettings.getProjectId());
 		TableRow row = new TableRow(getActivity());
-				
+		
+		
+
 		for (Question question : questions) {
 			TextView tv = new TextView(getActivity());
 			tv.setText(question.getQuestionText());
-			//tv.setBackgroundColor(getResources().getColor(R.color.blue_dark));
+			// tv.setBackgroundColor(getResources().getColor(R.color.blue_dark));
 			tv.setPadding(10, 10, 10, 10);
-		    tv.setBackgroundResource(R.drawable.border);
+			tv.setBackgroundResource(R.drawable.border);
 			row.addView(tv);
 		}
 		questionsTableLayout.addView(row);
+
+		for (int i = 0; i < to * repeat; i++) {
+			row = new TableRow(getActivity());
+			for (int j = 0; j < questions.size(); j++) {
+				TextView tv = new TextView(getActivity());
+				tv.setText("1");
+				tv.setPadding(10, 10, 10, 10);
+				tv.setBackgroundResource(R.drawable.border);
+				row.addView(tv);
+			}
+			questionsTableLayout.addView(row);
+		}
+		
 		
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));	
 		return rootView;

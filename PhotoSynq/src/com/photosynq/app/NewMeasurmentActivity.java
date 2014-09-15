@@ -99,6 +99,8 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	ArrayList<String> getAllSelectedQuestions = new ArrayList<String>();
 	ArrayList<Question> selectedQuestions = new ArrayList<Question>();
 	private Data data;
+	private TextView que;
+	private TextView opt;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -113,12 +115,6 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			getAllSelectedOptions = extras.getStringArrayList("All_Options");
 			getAllSelectedQuestions = extras.getStringArrayList("All_Questions");
 			userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-			//projectId = db.getSettings(userId).getProjectId();
-			
-			
-			
-			//int index = Integer.parseInt(PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_QUESTION_INDEX, null));
-			//PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_QUESTION_INDEX, ""+ (index + 1));
 			
 			if (null == protocolJson) protocolJson="";
 			System.out.println(this.getClass().getName()+"############app mode="+appMode);
@@ -161,11 +157,13 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		    List<Question> allQuestions = db.getAllQuestionForProject(projectId);
 		    for (int i = 0; i < allQuestions.size(); i++) {
 			   
-			    final TextView que = new TextView(this);
-			    final TextView opt = new TextView(this);
+			    que = new TextView(this);
+			    opt = new TextView(this);
 			    data = db.getData(userId, projectId, allQuestions.get(i).getQuestionId());
+			    //if selected option type is User_Selected, Fixed_Value, Auto_Increment, Scan_Code
 			    if(null != data.getUser_id() && null != data.getProject_id() &&  null != data.getQuestion_id())
 			    {
+			    	//Question and Option shown only if selected option type is 'Auto_Increment'
 				    if(data.getType().equals(Utils.AUTO_INCREMENT))
 				    {
 				    	int index = Integer.parseInt(PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_QUESTION_INDEX, "-1"));
@@ -174,7 +172,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				    	liLayout.addView(que);
 				    	opt.setText("Option -  " + optionvalue);
 				    }
-				    else
+				    else  //Question and Option shown except 'Auto_Increment' option type.(for User_Selected, Fixed_Value, Scan_Code)
 				    {
 							 que.setText("Question -  " + selectedQuestions.get(optionLoop).getQuestionText());
 							 liLayout.addView(que);
@@ -184,7 +182,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				    }
 				    liLayout.addView(opt);
 			    }
-			    else
+			    else  //Streamline mode Question and Option is display.
 			    {
 				    que.setText("Question -  " + allQuestions.get(i).getQuestionText());
 				    liLayout.addView(que);
@@ -206,28 +204,22 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		}else
 		{
 			//setContentView(R.layout.activity_new_measurment);
-			LayoutInflater inflater = (LayoutInflater) this
-		            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		    View contentView = inflater.inflate(R.layout.activity_new_measurment, null, false);
 		    layoutDrawer.addView(contentView, 0); 
 			db = DatabaseHelper.getHelper(getApplicationContext());
 			List<Question> questions = db.getAllQuestionForProject(projectId);
 			ListView lst = (ListView) findViewById(R.id.measurement_list_view);
 
-			QuestionArrayAdapter questionAdapter = new QuestionArrayAdapter(
-					this, questions);
-
+			QuestionArrayAdapter questionAdapter = new QuestionArrayAdapter(this, questions);
 			lst.setAdapter(questionAdapter);
 			
 		}
 		mStatusLine = (TextView) findViewById(R.id.statusMessage);
-		
-	
-			
+				
 			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 			if (!mBluetoothAdapter.isEnabled()) {
-				Intent enableIntent = new Intent(
-						BluetoothAdapter.ACTION_REQUEST_ENABLE);
+				Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 				startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
 			}
 			if (mBluetoothService == null) {
