@@ -1,0 +1,50 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/white"
+    android:clickable="true"
+	android:focusable="true"
+	android:focusableInTouchMode="true" >
+
+   <!--  <ImageView
+        android:id="@+id/imgLiveo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="121dp"
+        android:contentDescription="@string/clear"
+        android:src="@drawable/ic_liveo" /> -->
+
+    <TextView
+        android:id="@+id/userNameText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+       	android:layout_marginTop="220dp"
+        android:gravity="center"
+        android:textSize="35sp"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="100dp"
+        android:layout_height="150dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="90dp"
+        android:src="@drawable/abc_ab_share_pack_holo_light" />
+
+    <Button
+        android:id="@+id/changeUser"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerHorizontal="true"
+        android:background="@color/green_google_play"
+        android:text="@string/change_user"
+        android:textSize="30sp" />
+
+</RelativeLayout>

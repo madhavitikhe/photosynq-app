@@ -1,0 +1,62 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".DisplayResultsActivity" >
+
+    <TextView
+        android:id="@+id/results"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="104dp"
+        android:layout_marginTop="10dp"
+        android:text="Result"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <WebView
+        android:id="@+id/webView1"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_above="@+id/discard_btn"
+        android:layout_below="@id/results" />
+
+    <RelativeLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/webView1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp" >
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/keep_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/discard_btn"
+        android:layout_alignBottom="@+id/discard_btn"
+        android:layout_alignRight="@+id/linearLayout1"
+        android:onClick="keep_click"
+        android:text="Keep"
+        android:textColor="#000000"
+        android:width="150dp" />
+
+    <Button
+        android:id="@+id/discard_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp"
+        android:layout_toRightOf="@+id/linearLayout1"
+        android:onClick="discard_click"
+        android:text="Discard"
+        android:textColor="#000000"
+        android:width="150dp" />
+
+</RelativeLayout>
