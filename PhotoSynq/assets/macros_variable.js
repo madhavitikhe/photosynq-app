@@ -1,1 +1,0 @@
-var protocols={"38":{"protocol_id":"38","protocol_name":"Name","macro_id":"8"},"37":{"protocol_id":"37","protocol_name":"Name","macro_id":"7"},"39":{"protocol_id":"39","protocol_name":"Name","macro_id":"9"}}
