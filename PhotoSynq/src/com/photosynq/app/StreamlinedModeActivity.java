@@ -165,6 +165,7 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 				else if(data.getType().equals(Utils.FIXED_VALUE))
 				{
 					String val = data.getValue();
+					PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_FIXED_VALUE, val);
 				}
 				else if(data.getType().equals(Utils.AUTO_INCREMENT))
 				{

@@ -21,6 +21,7 @@ import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Question;
+import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.PrefUtils;
 
 public class FragmentReview extends Fragment {
@@ -71,13 +72,6 @@ public class FragmentReview extends Fragment {
 		
 //		String bluetoothMacId = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_CONNECTION_ID,null);
 		 List<Question> allQuestions = db.getAllQuestionForProject(projectId);
-		    for (int i = 0; i < allQuestions.size(); i++) {
-		    	data = db.getData(userId, projectId, allQuestions.get(i).getQuestionId());
-		}
-		String[] items = data.getValue().split(",");
-		int from = Integer.parseInt(items[0]);
-		int to = Integer.parseInt(items[1]);
-		int repeat = Integer.parseInt(items[2]);
 		
 		BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(appSettings.connectionId);
@@ -90,27 +84,65 @@ public class FragmentReview extends Fragment {
 		TableRow row = new TableRow(getActivity());
 		
 		
-
+		int maxLoop = 0;
 		for (Question question : questions) {
 			TextView tv = new TextView(getActivity());
+			tv.setLayoutParams(new TableRow.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f));
 			tv.setText(question.getQuestionText());
-			// tv.setBackgroundColor(getResources().getColor(R.color.blue_dark));
+			tv.setLines(3);
 			tv.setPadding(10, 10, 10, 10);
 			tv.setBackgroundResource(R.drawable.border);
 			row.addView(tv);
+			data = db.getData(userId, projectId, question.getQuestionId());
+	    	String[] items = data.getValue().split(",");
+	    	if(data.getType().equals(Utils.AUTO_INCREMENT))
+	    	{
+				int from = Integer.parseInt(items[0]);
+				int to = Integer.parseInt(items[1]);
+				int repeat = Integer.parseInt(items[2]);
+				if(maxLoop < ((to - (from-1))*repeat))
+				{
+					maxLoop = ((to - (from-1))*repeat);
+				}
+	    	}
 		}
 		questionsTableLayout.addView(row);
-
-		for (int i = 0; i < to * repeat; i++) {
-			row = new TableRow(getActivity());
-			for (int j = 0; j < questions.size(); j++) {
+		
+		try{
+		for (int i = 0; i < maxLoop; i++) {
+			TableRow rowOptions = new TableRow(getActivity());
+			for (Question question : questions) {
 				TextView tv = new TextView(getActivity());
-				tv.setText("1");
+				
+				// tv.setBackgroundColor(getResources().getColor(R.color.blue_dark));
+				
+				data = db.getData(userId, projectId, question.getQuestionId());
+				if (data.getType().equals(Utils.USER_SELECTED)) 
+				{
+					tv.setText("User");
+				} 
+				else if (data.getType().equals(Utils.FIXED_VALUE)) 
+				{
+					tv.setText(data.getValue());
+
+				} 
+				else if (data.getType().equals(Utils.AUTO_INCREMENT)) 
+				{
+					tv.setText(DataUtils.getAutoIncrementedValue(getActivity(), question.getQuestionId(), ""+i));
+				} 
+				else if (data.getType().equals(Utils.SCAN_CODE)) 
+				{
+					tv.setText("Scan");
+				}
 				tv.setPadding(10, 10, 10, 10);
 				tv.setBackgroundResource(R.drawable.border);
-				row.addView(tv);
+				rowOptions.addView(tv);
 			}
-			questionsTableLayout.addView(row);
+			questionsTableLayout.addView(rowOptions);
+		}
+		}
+		catch(Exception e){
+			
 		}
 		
 		
