@@ -1,8 +1,5 @@
 package com.photosynq.app.db;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -20,6 +17,9 @@ import com.photosynq.app.model.ProjectResult;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	// Database Version
@@ -57,6 +57,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	// Question and Option Table - column names
 	private static final String C_QUESTION_TEXT = "question_text";// Question
 	public static final String C_OPTION_TEXT = "option";// Option
+    public static final String C_QUESTION_TYPE = "question_type";
 
 	// Protocol column names
 
@@ -95,7 +96,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	// Question table create statement
 	private static final String CREATE_TABLE_QUESTION = "CREATE TABLE "
 			+ TABLE_QUESTION + "(" + C_RECORD_HASH + " TEXT ," + C_PROJECT_ID
-			+ " TEXT," + C_QUESTION_ID + " TEXT," + C_QUESTION_TEXT + " TEXT )";
+			+ " TEXT," + C_QUESTION_ID + " TEXT," + C_QUESTION_TEXT + " TEXT, "+C_QUESTION_TYPE+" integer )";
 
 	// Answer table create statement
 	private static final String CREATE_TABLE_OPTION = "CREATE TABLE "
@@ -445,6 +446,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					null != que.getQuestionText() ? que.getQuestionText() : "");
 			values.put(C_QUESTION_ID, que.getQuestionId());
 			values.put(C_PROJECT_ID, que.getProjectId());
+            values.put(C_QUESTION_TYPE, que.getQuestionType());
 			// insert row
 			long row_id = db.insert(TABLE_QUESTION, null, values);
 			if (row_id >= 0) {
@@ -475,6 +477,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				null != question.getQuestionText() ? question.getQuestionText()
 						: "");
 		values.put(C_PROJECT_ID, question.getProjectId());
+        values.put(C_QUESTION_TYPE, question.getQuestionType());
 
 		int rowsaffected = db.update(
 				TABLE_QUESTION,
@@ -561,6 +564,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 						.getColumnIndex(C_QUESTION_TEXT)));
 				que.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
 				que.setQuestionId(questionId);
+                que.setQuestionType(c.getInt(c.getColumnIndex(C_QUESTION_TYPE)));
 				que.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
 
 				// adding to todo list
@@ -612,6 +616,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 						.getColumnIndex(C_QUESTION_TEXT)));
 				que.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
 				que.setQuestionId(questionId);
+                que.setQuestionType(c.getInt(c.getColumnIndex(C_QUESTION_TYPE)));
 				que.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
 
 				// adding to todo list

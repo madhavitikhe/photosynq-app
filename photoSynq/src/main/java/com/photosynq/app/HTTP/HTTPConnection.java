@@ -1,9 +1,16 @@
 package com.photosynq.app.HTTP;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
+
+import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.Macro;
+import com.photosynq.app.model.Option;
+import com.photosynq.app.model.Protocol;
+import com.photosynq.app.model.Question;
+import com.photosynq.app.model.ResearchProject;
+import com.photosynq.app.utils.CommonUtils;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -18,17 +25,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
-
-import com.photosynq.app.db.DatabaseHelper;
-import com.photosynq.app.model.Macro;
-import com.photosynq.app.model.Option;
-import com.photosynq.app.model.Protocol;
-import com.photosynq.app.model.Question;
-import com.photosynq.app.model.ResearchProject;
-import com.photosynq.app.utils.CommonUtils;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 public class HTTPConnection extends AsyncTask<Object, String, String>{
 //	public static final String PHOTOSYNQ_LOGIN_URL = "http://photosynq.venturit.net/api/v1/sign_in.json";
@@ -301,7 +301,7 @@ public class HTTPConnection extends AsyncTask<Object, String, String>{
 						JSONObject jsonQuestion = customFields.getJSONObject(j);
 						Question question = new Question(jsonQuestion.getString("id"),
 								jsonProject.getString("id"), 
-								jsonQuestion.getString("label"));
+								jsonQuestion.getString("label"),Integer.parseInt(jsonQuestion.getString("value_type")));
 						db.updateQuestion(question);
 						
 						//String options = jsonQuestion.getString("value");

@@ -1,21 +1,21 @@
 package com.photosynq.app.utils;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
+import android.content.Context;
+
+import com.photosynq.app.HTTP.HTTPConnection;
+import com.photosynq.app.UpdateData;
+import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.Data;
+import com.photosynq.app.model.ProjectResult;
+import com.photosynq.app.model.Question;
 
 import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
-
-import com.photosynq.app.UpdateData;
-import com.photosynq.app.HTTP.HTTPConnection;
-import com.photosynq.app.db.DatabaseHelper;
-import com.photosynq.app.model.Data;
-import com.photosynq.app.model.ProjectResult;
-import com.photosynq.app.model.Question;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataUtils {
 /**
@@ -110,6 +110,8 @@ public class DataUtils {
 	 * 		1	2
 	 */
 	public static String getAutoIncrementedValue(Context ctx,String question_id, String index) {
+        if(Integer.parseInt(index) == -1)
+            return "-2";
 		
 		String userId = PrefUtils.getFromPrefs(ctx , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		DatabaseHelper db = DatabaseHelper.getHelper(ctx);
@@ -127,8 +129,10 @@ public class DataUtils {
 				
 			 }
 		 }
- 		 if(Integer.parseInt(index) == -1)
- 		 return "";
- 		 return populatedValues.get(Integer.parseInt(index)).toString();
+
+        if(Integer.parseInt(index) > populatedValues.size()-1)
+        return "-1";
+
+        return populatedValues.get(Integer.parseInt(index)).toString();
 	}
 }

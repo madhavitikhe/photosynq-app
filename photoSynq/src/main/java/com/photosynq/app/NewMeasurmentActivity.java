@@ -1,11 +1,5 @@
 package com.photosynq.app;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
@@ -47,6 +41,12 @@ import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.LocationUtils;
 import com.photosynq.app.utils.PrefUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewMeasurmentActivity extends NavigationDrawer implements
 LocationListener,
@@ -170,6 +170,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				    	int optionvalue = Integer.parseInt(DataUtils.getAutoIncrementedValue(getApplicationContext(), allQuestions.get(i).getQuestionId(), ""+index));
 				    	que.setText("Question -  " + allQuestions.get(i).getQuestionText());
 				    	liLayout.addView(que);
+                        if(optionvalue != -1)
 				    	opt.setText("Option -  " + optionvalue);
 				    }
 				    else if(data.getType().equals(Utils.FIXED_VALUE))
@@ -195,6 +196,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				    liLayout.addView(que);
 				    opt.setText("Option -  " + getAllSelectedOptions.get(i));
 				    liLayout.addView(opt);
+                    optionLoop++;
 			    }
 			     
 			}
@@ -750,7 +752,6 @@ GooglePlayServicesClient.OnConnectionFailedListener{
         		//reading = reading.replaceFirst("\\{", "{"+options);
         		intent.putExtra(DatabaseHelper.C_READING, reading);
         		startActivity(intent);
-        		
                 break;
             case MESSAGE_DEVICE_NAME:
                 // save the connected device's name

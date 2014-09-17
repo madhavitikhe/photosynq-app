@@ -1,8 +1,5 @@
 package com.photosynq.app.navigationDrawer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,6 +14,9 @@ import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.utils.PrefUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FragmentData extends Fragment {
 	MyPageAdapter pageAdapter;
@@ -56,6 +56,7 @@ public class FragmentData extends Fragment {
 			Bundle bundle = new Bundle();
 			bundle.putString(DatabaseHelper.C_QUESTION_ID,
 					question.getQuestionId());
+            bundle.putInt(DatabaseHelper.C_QUESTION_TYPE, question.getQuestionType());
 			DataFirstFragment f = new DataFirstFragment();
 			f.setArguments(bundle);
 			fList.add(f);

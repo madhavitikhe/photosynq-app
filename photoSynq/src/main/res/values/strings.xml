@@ -72,7 +72,7 @@
     <string name="sync_btn">Sync Data</string>
     <string name="sync_interval_lbl">Sync interval (in mins)</string>
     <string name="userSelected">User Selected</string>
-    <string name="selectFromWeb">Select from answers in Research Project\n [red,green,blue,yellow]</string>
+    <string name="selectFromWeb">Select from answers in Research Project</string>
     <string name="fixedValue">Fixed value</string>
     <string name="autoIncrement">Auto Increment</string>
     <string name="from">From</string>

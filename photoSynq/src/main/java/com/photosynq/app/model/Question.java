@@ -1,8 +1,8 @@
 package com.photosynq.app.model;
 
-import java.util.List;
-
 import com.photosynq.app.utils.CommonUtils;
+
+import java.util.List;
 
 public class Question {
 	
@@ -10,15 +10,26 @@ public class Question {
 	private String questionId;
     private String recordHash;
     private String questionText;
+
+    public int getQuestionType() {
+        return questionType;
+    }
+
+    public void setQuestionType(int questionType) {
+        this.questionType = questionType;
+    }
+
+    private int questionType;
     
     private List<String> options;
    
     
-    public Question(String questionId,String project_id,String question_text)
+    public Question(String questionId,String project_id,String question_text,int questionType)
     {
     	this.questionId = questionId;
     	this.questionText=question_text;
     	this.projectId=project_id;
+        this.questionType = questionType;
     	this.recordHash = getQuestionRecordHash();
     }
    
