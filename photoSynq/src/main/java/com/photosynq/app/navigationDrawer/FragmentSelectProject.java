@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.photosynq.app.R;
@@ -79,6 +80,13 @@ public class FragmentSelectProject extends Fragment{
 					fm.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();	
 				}
 			});
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+            params.weight = 1.0f;
+            Button returnButton = new Button(getActivity());
+            returnButton.setText("Return Back");
+            returnButton.setLayoutParams(params);
 			
 			tvProjetTitle.setText(rp.getName());
 			tvProjetTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX,(int)(screenWidth*0.06));
