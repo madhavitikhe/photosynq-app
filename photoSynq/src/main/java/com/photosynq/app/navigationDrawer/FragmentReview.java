@@ -15,6 +15,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
@@ -37,118 +38,131 @@ public class FragmentReview extends Fragment {
 		FragmentReview fragment = new FragmentReview();
         fragment.setArguments(bundle);
         return fragment;
-    }	
-    
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_review, container, false);
-		userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-		db = DatabaseHelper.getHelper(getActivity());
-		projectId = db.getSettings(userId).getProjectId();
-		AppSettings appSettings = db.getSettings(userId);
-		
-		questionsTableLayout = (TableLayout) rootView.findViewById(R.id.questionsTable);
-		TextView tvMode = (TextView) rootView.findViewById(R.id.mode_text);
-		TextView tvUser = (TextView) rootView.findViewById(R.id.user_text);
-		TextView tvBluetoothId = (TextView) rootView.findViewById(R.id.connection_text);
-		TextView tvProjectId = (TextView) rootView.findViewById(R.id.project_text);
-		//TextView tvQuestions = (TextView) rootView.findViewById(R.id.tvQuestions);
-			
-		//Set cuurent settings 
-		if(null != appSettings.getModeType())
-		{
-			if (appSettings.getModeType().equals(Utils.APP_MODE_NORMAL))
-			{
-				tvMode.setText(getResources().getString(R.string.normal_mode));
-			}
-			else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
-			{
-				tvMode.setText(getResources().getString(R.string.streamlined_mode));
-			}
-		}
-		String loggedInUserName = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_USER,null);
-		tvUser.setText(loggedInUserName);
-		
-//		String bluetoothMacId = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_CONNECTION_ID,null);
-		 List<Question> allQuestions = db.getAllQuestionForProject(projectId);
-		
-		BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-		BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(appSettings.connectionId);
-		tvBluetoothId.setText(device.getName());
-		
-		String projectId = appSettings.getProjectId();
-		tvProjectId.setText(db.getResearchProject(projectId).getName());
-		
-		List<Question> questions = db.getAllQuestionForProject(appSettings.getProjectId());
-		TableRow row = new TableRow(getActivity());
-		
-		
-		int maxLoop = 0;
-		for (Question question : questions) {
-			TextView tv = new TextView(getActivity());
-			tv.setLayoutParams(new TableRow.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f));
-			tv.setText(question.getQuestionText());
-			tv.setLines(3);
-			tv.setPadding(10, 10, 10, 10);
-			tv.setBackgroundResource(R.drawable.border);
-			row.addView(tv);
-			data = db.getData(userId, projectId, question.getQuestionId());
-	    	String[] items = data.getValue().split(",");
-	    	if(data.getType().equals(Utils.AUTO_INCREMENT))
-	    	{
-				int from = Integer.parseInt(items[0]);
-				int to = Integer.parseInt(items[1]);
-				int repeat = Integer.parseInt(items[2]);
-				if(maxLoop < ((to - (from-1))*repeat))
-				{
-					maxLoop = ((to - (from-1))*repeat);
-				}
-	    	}
-		}
-		questionsTableLayout.addView(row);
-		
-		try{
-		for (int i = 0; i < maxLoop; i++) {
-			TableRow rowOptions = new TableRow(getActivity());
-			for (Question question : questions) {
-				TextView tv = new TextView(getActivity());
-				
-				// tv.setBackgroundColor(getResources().getColor(R.color.blue_dark));
-				
-				data = db.getData(userId, projectId, question.getQuestionId());
-				if (data.getType().equals(Utils.USER_SELECTED)) 
-				{
-					tv.setText("User");
-				} 
-				else if (data.getType().equals(Utils.FIXED_VALUE)) 
-				{
-					tv.setText(data.getValue());
+    }
 
-				} 
-				else if (data.getType().equals(Utils.AUTO_INCREMENT)) 
-				{
-					tv.setText(DataUtils.getAutoIncrementedValue(getActivity(), question.getQuestionId(), ""+i));
-				} 
-				else if (data.getType().equals(Utils.SCAN_CODE)) 
-				{
-					tv.setText("Scan");
-				}
-				tv.setPadding(10, 10, 10, 10);
-				tv.setBackgroundResource(R.drawable.border);
-				rowOptions.addView(tv);
-			}
-			questionsTableLayout.addView(rowOptions);
-		}
-		}
-		catch(Exception e){
-			
-		}
-		
-		
-		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));	
-		return rootView;
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_review, container, false);
+        userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        db = DatabaseHelper.getHelper(getActivity());
+        projectId = db.getSettings(userId).getProjectId();
+        AppSettings appSettings = db.getSettings(userId);
+
+        questionsTableLayout = (TableLayout) rootView.findViewById(R.id.questionsTable);
+        TextView tvMode = (TextView) rootView.findViewById(R.id.mode_text);
+        TextView tvUser = (TextView) rootView.findViewById(R.id.user_text);
+        TextView tvBluetoothId = (TextView) rootView.findViewById(R.id.connection_text);
+        TextView tvProjectId = (TextView) rootView.findViewById(R.id.project_text);
+        //TextView tvQuestions = (TextView) rootView.findViewById(R.id.tvQuestions);
+
+        //Set cuurent settings
+        if(null != appSettings.getModeType())
+        {
+            if (appSettings.getModeType().equals(Utils.APP_MODE_NORMAL))
+            {
+                tvMode.setText(getResources().getString(R.string.normal_mode));
+            }
+            else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
+            {
+                tvMode.setText(getResources().getString(R.string.streamlined_mode));
+            }
+        }
+
+        if(null != appSettings.getProjectId())
+        {
+            String loggedInUserName = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_USER,null);
+            tvUser.setText(loggedInUserName);
+
+            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(appSettings.connectionId);
+            tvBluetoothId.setText(device.getName());
+
+
+            String projectId = appSettings.getProjectId();
+            tvProjectId.setText(db.getResearchProject(projectId).getName());
+
+
+            List<Question> questions = db.getAllQuestionForProject(appSettings.getProjectId());
+            TableRow row = new TableRow(getActivity());
+
+
+            int maxLoop = 0;
+            for (Question question : questions) {
+                TextView tv = new TextView(getActivity());
+                tv.setLayoutParams(new TableRow.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f));
+                tv.setText(question.getQuestionText());
+                tv.setLines(3);
+                tv.setPadding(10, 10, 10, 10);
+                tv.setBackgroundResource(R.drawable.border);
+                row.addView(tv);
+                data = db.getData(userId, projectId, question.getQuestionId());
+                if(null != data.getType()){
+                    String[] items = data.getValue().split(",");
+                    if(data.getType().equals(Utils.AUTO_INCREMENT))
+                    {
+                        int from = Integer.parseInt(items[0]);
+                        int to = Integer.parseInt(items[1]);
+                        int repeat = Integer.parseInt(items[2]);
+                        if(maxLoop < ((to - (from-1))*repeat))
+                        {
+                            maxLoop = ((to - (from-1))*repeat);
+                        }
+                    }
+                }
+                else
+                {
+                    Toast.makeText(getActivity(), "Please fill the Questions data", Toast.LENGTH_LONG).show();
+                }
+            }
+            questionsTableLayout.addView(row);
+
+            try{
+                for (int i = 0; i < maxLoop; i++) {
+                    TableRow rowOptions = new TableRow(getActivity());
+                    for (Question question : questions) {
+                        TextView tv = new TextView(getActivity());
+
+                        // tv.setBackgroundColor(getResources().getColor(R.color.blue_dark));
+
+                        data = db.getData(userId, projectId, question.getQuestionId());
+                        if (data.getType().equals(Utils.USER_SELECTED))
+                        {
+                            tv.setText("User");
+                        }
+                        else if (data.getType().equals(Utils.FIXED_VALUE))
+                        {
+                            tv.setText(data.getValue());
+
+                        }
+                        else if (data.getType().equals(Utils.AUTO_INCREMENT))
+                        {
+                            tv.setText(DataUtils.getAutoIncrementedValue(getActivity(), question.getQuestionId(), ""+i));
+                        }
+                        else if (data.getType().equals(Utils.SCAN_CODE))
+                        {
+                            tv.setText("Scan");
+                        }
+                        tv.setPadding(10, 10, 10, 10);
+                        tv.setBackgroundResource(R.drawable.border);
+                        rowOptions.addView(tv);
+                    }
+                    questionsTableLayout.addView(rowOptions);
+                }
+            }
+            catch(Exception e){
+
+            }
+        }
+        else
+        {
+            Toast.makeText(getActivity(), "Please Select Project from list", Toast.LENGTH_LONG).show();
+        }
+
+
+        rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));
+        return rootView;
+    }
 				
 	
 	
