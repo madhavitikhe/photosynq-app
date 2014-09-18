@@ -164,7 +164,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			    if(null != data.getUser_id() && null != data.getProject_id() &&  null != data.getQuestion_id())
 			    {
 			    	//Question and Option shown only if selected option type is 'Auto_Increment'
-				    if(data.getType().equals(Utils.AUTO_INCREMENT))
+				    if(data.getType().equals(Data.AUTO_INCREMENT))
 				    {
 				    	int index = Integer.parseInt(PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_QUESTION_INDEX, "-1"));
 				    	int optionvalue = Integer.parseInt(DataUtils.getAutoIncrementedValue(getApplicationContext(), allQuestions.get(i).getQuestionId(), ""+index));
@@ -173,7 +173,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
                         if(optionvalue != -1)
 				    	opt.setText("Option -  " + optionvalue);
 				    }
-				    else if(data.getType().equals(Utils.FIXED_VALUE))
+				    else if(data.getType().equals(Data.FIXED_VALUE))
 				    {
 				    	String fixedVal = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_FIXED_VALUE, "1");
 				    	que.setText("Question -  " + allQuestions.get(i).getQuestionText());

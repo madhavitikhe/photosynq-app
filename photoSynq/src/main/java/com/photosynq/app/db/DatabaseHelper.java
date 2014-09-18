@@ -17,6 +17,7 @@ import com.photosynq.app.model.ProjectResult;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
+import com.photosynq.app.utils.PrefUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +84,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String C_TYPE = "type";
 	private static final String C_VALUES = "value";
 
+    private Context context;
+
 	// Reaserch Project table create statement
 	//
 	private static final String CREATE_TABLE_RESEARCH_PROJECT = "CREATE TABLE "
@@ -131,8 +134,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ C_QUESTION_ID + " TEXT," + C_TYPE + " TEXT," + C_VALUES + " TEXT )";
 
 	private DatabaseHelper(Context context) {
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
-	}
+		super(context, DATABASE_NAME, null, DATABASE_VERSION); this.context =context;}
 
 	private static DatabaseHelper instance;
 
@@ -489,6 +491,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		if (rowsaffected <= 0) {
 			return createQuestion(question);
 		}
+        else
+        {
+            String user_id = PrefUtils.getFromPrefs(context,PrefUtils.PREFS_LOGIN_USERNAME_KEY,"");
+            if(question.getQuestionType() == Question.PROJECT_DEFINED) {
+                Data data = new Data(user_id, question.getProjectId(), question.getQuestionId(), "", "");
+                updateData(data);
+            }
+        }
 		// updating row
 		return false;
 	}

@@ -122,9 +122,9 @@ public class StreamlinedModeActivity extends NavigationDrawer {
             subLinearLayout.addView(questionTextView);
 
             Data data = db.getData(userId, projectId, question.getQuestionId());
-            if(null != data.getProject_id() || null != data.getQuestion_id() || null != data.getType() || null != data.getValue())
+            if( !data.getType().isEmpty() && !data.getValue().isEmpty())
             {
-                if(data.getType().equals(Utils.USER_SELECTED))
+                if(data.getType().equals(Data.USER_SELECTED))
                 {
                     RelativeLayout optionsRelativeLayout = new RelativeLayout(ctx);
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
@@ -168,12 +168,12 @@ EditText userEnteredAnswer = (EditText) ((ViewGroup)view).getChildAt(0);
                     mainLinearLayout.addView(scrollView);
                     viewFlipper.addView(mainLinearLayout);
                 }
-                else if(data.getType().equals(Utils.FIXED_VALUE))
+                else if(data.getType().equals(Data.FIXED_VALUE))
                 {
                     String val = data.getValue();
                     PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_FIXED_VALUE, val);
                 }
-                else if(data.getType().equals(Utils.AUTO_INCREMENT))
+                else if(data.getType().equals(Data.AUTO_INCREMENT))
                 {
                     autoIncProjecSize = autoIncProjecSize + 1;
                     if(questions.size() == autoIncProjecSize)
@@ -194,7 +194,7 @@ EditText userEnteredAnswer = (EditText) ((ViewGroup)view).getChildAt(0);
 
                     PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_QUESTION_INDEX, "0");
                 }
-                else if(data.getType().equals(Utils.SCAN_CODE))
+                else if(data.getType().equals(Data.SCAN_CODE))
                 {
                     RelativeLayout optionsRelativeLayout = new RelativeLayout(ctx);
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
@@ -405,8 +405,9 @@ EditText userEnteredAnswer = (EditText) ((ViewGroup)view).getChildAt(0);
 		super.onResume();
 		if (!scanMode)
 		{
-            viewFlipper.removeAllViews();
-            initialize();
+            viewFlipper.setDisplayedChild(0);
+            //viewFlipper.removeAllViews();
+            //initialize();
  		}
 		scanMode = false;
 	}
