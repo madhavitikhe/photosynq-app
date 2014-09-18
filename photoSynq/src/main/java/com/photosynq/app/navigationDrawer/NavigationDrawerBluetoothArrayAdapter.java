@@ -1,7 +1,5 @@
 package com.photosynq.app.navigationDrawer;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.view.View;
@@ -15,6 +13,8 @@ import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.utils.PrefUtils;
+
+import java.util.List;
 
 public class NavigationDrawerBluetoothArrayAdapter extends BaseAdapter implements ListAdapter {
 	
@@ -62,13 +62,14 @@ public class NavigationDrawerBluetoothArrayAdapter extends BaseAdapter implement
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null)
-			convertView = activity.getLayoutInflater().inflate(R.layout.nav_drawer_bluetooth_item_card, null);
+			convertView = activity.getLayoutInflater().inflate(R.layout.bluetooth_item_card, null);
 		db = DatabaseHelper.getHelper(convertView.getContext());
-		TextView tvDeviceName = (TextView) convertView.findViewById(R.id.deviceName);
-		TextView tvDeviceAddress = (TextView) convertView.findViewById(R.id.deviceAddress);
-		TextView tvDevicePaired = (TextView) convertView.findViewById(R.id.devicePaired);
-		TextView pairDeviceBtn = (TextView) convertView.findViewById(R.id.pairBluetoothDevice);
-		RadioButton radiobtn = (RadioButton)convertView.findViewById(R.id.bluetooth_conn_radiobtn);
+		TextView tvDeviceName = (TextView) convertView.findViewById(R.id.device_name);
+		TextView tvDeviceAddress = (TextView) convertView.findViewById(R.id.device_address);
+		TextView tvDevicePaired = (TextView) convertView.findViewById(R.id.device_paired);
+		TextView pairDeviceBtn = (TextView) convertView.findViewById(R.id.pair_bluetooth_device);
+		RadioButton radiobtn = (RadioButton)convertView.findViewById(R.id.blue_conn_radio);
+        radiobtn.setVisibility(View.VISIBLE);
 
 		BluetoothDevice bluetoothDevice = getItem(position);
 		if (null != bluetoothDevice) {
@@ -107,7 +108,7 @@ public class NavigationDrawerBluetoothArrayAdapter extends BaseAdapter implement
 		
 		if (null != appSettings.getConnectionId() && appSettings.getConnectionId().equals(bluetoothDevice.getAddress()))
 			{
-				RadioButton rb = (RadioButton)convertView.findViewById(R.id.bluetooth_conn_radiobtn);
+				RadioButton rb = (RadioButton)convertView.findViewById(R.id.blue_conn_radio);
 				rb.setChecked(true);
 			}
 		return convertView;

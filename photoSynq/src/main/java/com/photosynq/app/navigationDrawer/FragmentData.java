@@ -51,16 +51,27 @@ public class FragmentData extends Fragment {
 		List<Fragment> fList = new ArrayList<Fragment>();
 		List<Question> questions = db.getAllQuestionForProject(db.getSettings(
 				userID).getProjectId());
-
-		for (Question question : questions) {
-			Bundle bundle = new Bundle();
-			bundle.putString(DatabaseHelper.C_QUESTION_ID,
-					question.getQuestionId());
-            bundle.putInt(DatabaseHelper.C_QUESTION_TYPE, question.getQuestionType());
-			DataFirstFragment f = new DataFirstFragment();
-			f.setArguments(bundle);
-			fList.add(f);
-		}
+        if(questions.size() <=0 )
+        {
+            Bundle bundle = new Bundle();
+            bundle.putString(DatabaseHelper.C_QUESTION_ID,
+                    "-1");
+            bundle.putInt(DatabaseHelper.C_QUESTION_TYPE, -1);
+            DataFirstFragment f = new DataFirstFragment();
+            f.setArguments(bundle);
+            fList.add(f);
+        }
+        else {
+            for (Question question : questions) {
+                Bundle bundle = new Bundle();
+                bundle.putString(DatabaseHelper.C_QUESTION_ID,
+                        question.getQuestionId());
+                bundle.putInt(DatabaseHelper.C_QUESTION_TYPE, question.getQuestionType());
+                DataFirstFragment f = new DataFirstFragment();
+                f.setArguments(bundle);
+                fList.add(f);
+            }
+        }
 		return fList;
 	}
 

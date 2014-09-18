@@ -1,12 +1,9 @@
 package com.photosynq.app;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Set;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -16,7 +13,6 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,11 +23,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.photosynq.app.db.DatabaseHelper;
-import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.BluetoothService;
 
-public class BluetoothActivity extends NavigationDrawer {
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Set;
+
+public class BluetoothActivity extends Activity {
 	private BluetoothAdapter bluetoothAdapter;
 	private ListView lst;
 	private View bluetoothStatus;
@@ -43,11 +42,11 @@ public class BluetoothActivity extends NavigationDrawer {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.activity_bluetooth);
-		LayoutInflater inflater = (LayoutInflater) this
-	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	    View contentView = inflater.inflate(R.layout.activity_bluetooth, null, false);
-	    layoutDrawer.addView(contentView, 0); 
+		setContentView(R.layout.activity_bluetooth);
+//		LayoutInflater inflater = (LayoutInflater) this
+//	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//	    View contentView = inflater.inflate(R.layout.activity_bluetooth, null, false);
+//	    layoutDrawer.addView(contentView);
 		
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {

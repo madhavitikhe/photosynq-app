@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
@@ -13,7 +12,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +32,6 @@ import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
-import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
@@ -48,7 +45,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NewMeasurmentActivity extends NavigationDrawer implements
+public class NewMeasurmentActivity extends Activity implements
 LocationListener,
 GooglePlayServicesClient.ConnectionCallbacks,
 GooglePlayServicesClient.OnConnectionFailedListener{
@@ -148,10 +145,12 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		
 		if(appMode.equals(Utils.APP_MODE_STREAMLINE))
 		{
-			LayoutInflater inflater = (LayoutInflater) this
-		            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		    View contentView = inflater.inflate(R.layout.activity_display_selected_questions_options, null, false);
-		    layoutDrawer.addView(contentView, 0); 
+            setContentView(R.layout.activity_display_selected_questions_options);
+
+//			LayoutInflater inflater = (LayoutInflater) this
+//		            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//		    View contentView = inflater.inflate(R.layout.activity_display_selected_questions_options, null, false);
+//		    layoutDrawer.addView(contentView);
 		    LinearLayout liLayout = (LinearLayout) findViewById(R.id.linearlayoutoptions);
 		    int optionLoop = 0;
 		    List<Question> allQuestions = db.getAllQuestionForProject(projectId);
@@ -212,10 +211,10 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 
 		}else
 		{
-			//setContentView(R.layout.activity_new_measurment);
-			LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		    View contentView = inflater.inflate(R.layout.activity_new_measurment, null, false);
-		    layoutDrawer.addView(contentView, 0); 
+			setContentView(R.layout.activity_new_measurment);
+//			LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//		    View contentView = inflater.inflate(R.layout.activity_new_measurment, null, false);
+//		    layoutDrawer.addView(contentView);
 			db = DatabaseHelper.getHelper(getApplicationContext());
 			List<Question> questions = db.getAllQuestionForProject(projectId);
 			ListView lst = (ListView) findViewById(R.id.measurement_list_view);
@@ -401,9 +400,10 @@ GooglePlayServicesClient.OnConnectionFailedListener{
             // Display an error dialog
             Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode, this, 0);
             if (dialog != null) {
-                ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-                errorFragment.setDialog(dialog);
-                errorFragment.show(getSupportFragmentManager(), "PHOTOSYNQ-RESULTACTIVITY");
+                dialog.show();
+//                ErrorDialogFragment errorFragment = new ErrorDialogFragment();
+//                errorFragment.setDialog(dialog);
+//                errorFragment.show(getSupportFragmentManager(), "PHOTOSYNQ-RESULTACTIVITY");
             }
             return false;
         }
@@ -527,14 +527,15 @@ GooglePlayServicesClient.OnConnectionFailedListener{
         // If Google Play services can provide an error dialog
         if (errorDialog != null) {
 
-            // Create a new DialogFragment in which to show the error dialog
-            ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-
-            // Set the dialog in the DialogFragment
-            errorFragment.setDialog(errorDialog);
-
-            // Show the error dialog in the DialogFragment
-            errorFragment.show(getSupportFragmentManager(), "PHOTOSYNQ-RESULTACTIVITY");
+            errorDialog.show();
+//            // Create a new DialogFragment in which to show the error dialog
+//            ErrorDialogFragment errorFragment = new ErrorDialogFragment();
+//
+//            // Set the dialog in the DialogFragment
+//            errorFragment.setDialog(errorDialog);
+//
+//            // Show the error dialog in the DialogFragment
+//            errorFragment.show(getSupportFragmentManager(), "PHOTOSYNQ-RESULTACTIVITY");
         }
     }
 

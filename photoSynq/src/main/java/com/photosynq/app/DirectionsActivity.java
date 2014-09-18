@@ -1,14 +1,10 @@
 package com.photosynq.app;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,11 +12,13 @@ import android.widget.TextView;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ResearchProject;
-import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.CommonUtils;
 
-public class DirectionsActivity extends NavigationDrawer {
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
+public class DirectionsActivity extends Activity {
 
 	private String projectId = ""; 
 	private String appMode;
@@ -29,11 +27,11 @@ public class DirectionsActivity extends NavigationDrawer {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.activity_directions);
-		LayoutInflater inflater = (LayoutInflater) this
-	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	    View contentView = inflater.inflate(R.layout.activity_directions, null, false);
-	    layoutDrawer.addView(contentView, 0); 
+		setContentView(R.layout.activity_directions);
+//		LayoutInflater inflater = (LayoutInflater) this
+//	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//	    View contentView = inflater.inflate(R.layout.activity_directions, null, false);
+//	    layoutDrawer.addView(contentView);
 		
 		//db = new DatabaseHelper(getApplicationContext());
 		db = DatabaseHelper.getHelper(getApplicationContext());

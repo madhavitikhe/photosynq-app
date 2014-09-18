@@ -1,8 +1,5 @@
 package com.photosynq.app.navigationDrawer;
 
-import java.util.ArrayList;
-import java.util.Set;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -34,6 +31,9 @@ import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.utils.PrefUtils;
+
+import java.util.ArrayList;
+import java.util.Set;
 
 public class FragmentConnection extends Fragment{
 	
@@ -92,10 +92,10 @@ public class FragmentConnection extends Fragment{
 		
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		Set<BluetoothDevice> btDevices =  bluetoothAdapter.getBondedDevices();
-        String deviceName = getResources().getString(R.string.no_data_found);
+        selectedConnectionText.setText(R.string.no_hardware_selection);
 		for (BluetoothDevice device : btDevices) {
 			btDeviceList.add(device);
-            if(appSettings.getConnectionId().equals(device.getAddress()))
+            if(null != appSettings.getConnectionId() && appSettings.getConnectionId().equals(device.getAddress()))
             {
                 selectedConnectionText.setText(device.getName());
             }
@@ -122,7 +122,7 @@ public class FragmentConnection extends Fragment{
 
 				PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_CONNECTION_ID,bluetoothName);
 				pairedDeviceList.setItemsCanFocus(true);
-				RadioButton radiolistitem=(RadioButton) view.findViewById(R.id.bluetooth_conn_radiobtn);
+				RadioButton radiolistitem=(RadioButton) view.findViewById(R.id.blue_conn_radio);
 				radiolistitem.performClick();
 		    }
 		});
@@ -224,8 +224,18 @@ public class FragmentConnection extends Fragment{
 				pairedDeviceList.setVisibility(show ? View.GONE : View.VISIBLE);
 			}
 		}
-				
-	@Override
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (bluetoothAdapter != null) {
+            bluetoothAdapter.cancelDiscovery();
+        }
+        getActivity().unregisterReceiver(ActionFoundReceiver);
+    }
+
+
+    @Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);

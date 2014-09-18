@@ -487,20 +487,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				C_QUESTION_ID + " = ? and " + C_PROJECT_ID + " =?",
 				new String[] { String.valueOf(question.getQuestionId()),
 						String.valueOf(question.getProjectId()) });
+        String user_id = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        if(question.getQuestionType() == Question.PROJECT_DEFINED) {
+            Data data = new Data(user_id, question.getProjectId(), question.getQuestionId(), "", "");
+            updateData(data);
+        }
 		// if update fails that indicates there is no then create new row
 		if (rowsaffected <= 0) {
 			return createQuestion(question);
 		}
-        else
-        {
-            String user_id = PrefUtils.getFromPrefs(context,PrefUtils.PREFS_LOGIN_USERNAME_KEY,"");
-            if(question.getQuestionType() == Question.PROJECT_DEFINED) {
-                Data data = new Data(user_id, question.getProjectId(), question.getQuestionId(), "", "");
-                updateData(data);
-            }
-        }
 		// updating row
-		return false;
+		return true;
 	}
 
 	// Insert Option in database

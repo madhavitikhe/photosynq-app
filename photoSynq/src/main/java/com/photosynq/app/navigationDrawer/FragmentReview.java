@@ -1,7 +1,5 @@
 package com.photosynq.app.navigationDrawer;
 
-import java.util.List;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
@@ -15,7 +13,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
@@ -24,6 +21,8 @@ import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.PrefUtils;
+
+import java.util.List;
 
 public class FragmentReview extends Fragment {
 	
@@ -69,11 +68,16 @@ public class FragmentReview extends Fragment {
             }
         }
 
-        if(null != appSettings.getProjectId())
-        {
-            String loggedInUserName = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_USER,null);
-            tvUser.setText(loggedInUserName);
+        String loggedInUserName = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_LOGIN_USERNAME_KEY,PrefUtils.PREFS_DEFAULT_VAL);
+        tvUser.setText(loggedInUserName);
+        if(null != appSettings.connectionId ) {
+            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(appSettings.connectionId);
+            tvBluetoothId.setText(device.getName());
+        }
 
+        if(null != appSettings.getProjectId() )
+        {
             BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(appSettings.connectionId);
             tvBluetoothId.setText(device.getName());
@@ -110,14 +114,9 @@ public class FragmentReview extends Fragment {
                         }
                     }
                 }
-                else
-                {
-                    Toast.makeText(getActivity(), "Please fill the Questions data", Toast.LENGTH_LONG).show();
-                }
             }
             questionsTableLayout.addView(row);
 
-            try{
                 for (int i = 0; i < maxLoop; i++) {
                     TableRow rowOptions = new TableRow(getActivity());
                     for (Question question : questions) {
@@ -137,29 +136,26 @@ public class FragmentReview extends Fragment {
                         }
                         else if (data.getType().equals(Data.AUTO_INCREMENT))
                         {
-                            tv.setText(DataUtils.getAutoIncrementedValue(getActivity(), question.getQuestionId(), ""+i));
+                            String val = DataUtils.getAutoIncrementedValue(getActivity(), question.getQuestionId(), ""+i);
+                            if (!val.equals("-1") && !val.equals("-2"))
+                                tv.setText(val);
                         }
                         else if (data.getType().equals(Data.SCAN_CODE))
                         {
                             tv.setText("Scan");
                         }
+                        else if(data.getType().equals(""))
+                        {
+                            tv.setText("Proj");
+                        }
+                        tv.setLayoutParams(new TableRow.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f));
                         tv.setPadding(10, 10, 10, 10);
                         tv.setBackgroundResource(R.drawable.border);
                         rowOptions.addView(tv);
                     }
                     questionsTableLayout.addView(rowOptions);
                 }
-            }
-            catch(Exception e){
-
-            }
         }
-        else
-        {
-            Toast.makeText(getActivity(), "Please Select Project from list", Toast.LENGTH_LONG).show();
-        }
-
-
         rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));
         return rootView;
     }

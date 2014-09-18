@@ -1,18 +1,14 @@
 package com.photosynq.app;
 
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
 import android.annotation.SuppressLint;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,13 +19,15 @@ import android.widget.TextView;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ResearchProject;
-import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.CommonUtils;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 @SuppressLint("NewApi")
-public class ProjectDescriptionActivity extends NavigationDrawer {
+public class ProjectDescriptionActivity extends Activity {
 
 	private String recordid = ""; 
 	private String appMode;
@@ -38,11 +36,11 @@ public class ProjectDescriptionActivity extends NavigationDrawer {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.activity_project_description);
-		LayoutInflater inflater = (LayoutInflater) this
-	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	    View contentView = inflater.inflate(R.layout.activity_project_description, null, false);
-	    layoutDrawer.addView(contentView, 0); 
+		setContentView(R.layout.activity_project_description);
+//		LayoutInflater inflater = (LayoutInflater) this
+//	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//	    View contentView = inflater.inflate(R.layout.activity_project_description, null, false);
+//	    layoutDrawer.addView(contentView);
 	    
 	    getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#AA0000")));//it change option bar color.
 	    

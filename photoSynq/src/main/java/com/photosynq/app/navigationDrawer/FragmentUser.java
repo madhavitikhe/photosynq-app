@@ -11,20 +11,21 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.photosynq.app.LoginActivity;
 import com.photosynq.app.R;
-import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.utils.PrefUtils;
+import com.squareup.picasso.Picasso;
 
 public class FragmentUser extends Fragment{
 
-	private TextView userText;
-	private String mEmail;
+	private TextView userTextTV,userText,userBioText;
+    private ImageView userThumb;
+	private String userEmail,userName,userBio,thumbUrl;
+    private View rootView;
 	int id;
-	String modeType, userName, connectionID, projectID;
-	private DatabaseHelper db;
     public static FragmentUser newInstance() {
         Bundle bundle = new Bundle();
         
@@ -38,13 +39,9 @@ public class FragmentUser extends Fragment{
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 			
-		View rootView = inflater.inflate(R.layout.fragment_user, container, false);
-		db = DatabaseHelper.getHelper(getActivity());
-		mEmail = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-		PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_USER,mEmail);
-		
-		userText = (TextView) rootView.findViewById(R.id.userNameText);
-		userText.setText(mEmail);
+	    rootView = inflater.inflate(R.layout.fragment_user, container, false);
+        initValues();
+
 		
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));	
 		Button changeUserButton = (Button) rootView.findViewById(R.id.changeUser);
@@ -60,14 +57,28 @@ public class FragmentUser extends Fragment{
 			   }); 
 		return rootView;
 	}
-				
-	
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) 
+
+    private void initValues() {
+        userEmail = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        userTextTV = (TextView) rootView.findViewById(R.id.userEmailText);
+        userTextTV.setText(userEmail);
+        userName = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_NAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        userText = (TextView) rootView.findViewById(R.id.userNameText);
+        userText.setText(userName);
+        userBio = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_BIO_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        userBioText = (TextView) rootView.findViewById(R.id.userBioText);
+        userBioText.setText(userBio);
+        thumbUrl = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_THUMB_URL_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        userThumb = (ImageView) rootView.findViewById(R.id.userThumb);
+        Picasso.with(getActivity()).load(thumbUrl).into(userThumb);
+    }
+
+
+    public void onActivityResult(int requestCode, int resultCode, Intent intent)
 	{
 		if (requestCode == 999)
 		{
-			mEmail = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-			userText.setText(mEmail);
+			initValues();
 		}
 	}
 	@Override

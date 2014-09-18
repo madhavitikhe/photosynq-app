@@ -2,6 +2,7 @@
 <resources>
 
     <string-array name="nav_menu_items">
+        <item>Home</item>
         <item>Mode</item>
         <item>User</item>        
         <item>Connection</item>

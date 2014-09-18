@@ -1,7 +1,5 @@
 package com.photosynq.app.navigationDrawer;
 
-import java.util.HashSet;
-
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -13,6 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.photosynq.app.R;
+
+import java.util.HashSet;
 
 public class NavigationAdapter extends ArrayAdapter<NavigationItemAdapter> {
 
@@ -139,7 +139,7 @@ public class NavigationAdapter extends ArrayAdapter<NavigationItemAdapter> {
 					holder.icon.setVisibility(View.VISIBLE);
 					holder.icon.setImageResource(item.icon);
 				} else {
-					holder.title.setTextSize(22);					
+					holder.title.setTextSize(22);
 					holder.icon.setVisibility(View.GONE);
 				}
 			}

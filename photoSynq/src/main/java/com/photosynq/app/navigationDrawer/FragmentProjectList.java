@@ -1,7 +1,5 @@
 package com.photosynq.app.navigationDrawer;
 
-import java.util.List;
-
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,6 +20,8 @@ import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.PrefUtils;
+
+import java.util.List;
 
 public class FragmentProjectList extends Fragment{
 	
@@ -70,7 +70,7 @@ public class FragmentProjectList extends Fragment{
 		}
 		else
 		{
-			Toast.makeText(getActivity(), "Project is not selected", Toast.LENGTH_LONG).show();
+            selectedProjectText.setText(R.string.project_not_selected);
 		}
 		//Radio button is checked after clicked on Listview item.
 		projectList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

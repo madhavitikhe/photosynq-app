@@ -1,17 +1,14 @@
 package com.photosynq.app;
 
-import java.util.List;
-
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,12 +20,13 @@ import android.widget.Toast;
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ResearchProject;
-import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.PrefUtils;
 
-public class ProjectListActivity extends NavigationDrawer  {
+import java.util.List;
+
+public class ProjectListActivity extends Activity {
 
 	ListView projectList;
 	DatabaseHelper db;
@@ -40,6 +38,7 @@ public class ProjectListActivity extends NavigationDrawer  {
     String authToken;
     List<ResearchProject> researchProjectList;
     ResearchProjectArrayAdapter arrayadapter;
+    private View contentView;
 	private ProgressDialog pDialog;
     String image_url;
     
@@ -47,11 +46,15 @@ public class ProjectListActivity extends NavigationDrawer  {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.activity_project_list);
-		LayoutInflater inflater = (LayoutInflater) this
-	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	    View contentView = inflater.inflate(R.layout.activity_project_list, null, false);
-	    layoutDrawer.addView(contentView, 0); 
+		setContentView(R.layout.activity_project_list);
+
+
+//		LayoutInflater inflater = (LayoutInflater) this
+//	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//
+//	    contentView = inflater.inflate(R.layout.activity_project_list, null, false);
+//        layoutDrawer.addView(contentView,1);
+
 		
 		// Initialize ListView
 		projectList = (ListView) findViewById(R.id.list_view);
@@ -85,7 +88,7 @@ public class ProjectListActivity extends NavigationDrawer  {
 	
 	}
 
-	private void refreshProjectList() {
+    private void refreshProjectList() {
 		//db = new DatabaseHelper(getApplicationContext());
 		db = DatabaseHelper.getHelper(getApplicationContext());
 		researchProjectList = db.getAllResearchProjects();
@@ -121,7 +124,7 @@ public class ProjectListActivity extends NavigationDrawer  {
 			  return true;
 		  default:
 			  return super.onOptionsItemSelected(item);
-		}		
+		}
 	}
 	
 	
@@ -154,5 +157,7 @@ public class ProjectListActivity extends NavigationDrawer  {
             refreshProjectList();
          Toast.makeText(getApplicationContext(), "List is up to date", Toast.LENGTH_SHORT).show();
         }
+
+
     }
 }

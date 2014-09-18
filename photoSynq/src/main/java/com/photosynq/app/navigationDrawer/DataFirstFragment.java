@@ -52,16 +52,26 @@ public class DataFirstFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.data_first_fragment, container, false);
+        Bundle extras = getArguments();
+
+        if(null != extras)
+        {
+            questionId = extras.getString(DatabaseHelper.C_QUESTION_ID);
+            questionValueType = extras.getInt(DatabaseHelper.C_QUESTION_TYPE);
+        }
+        if(questionValueType == -1)
+        {
+            View rootView = inflater.inflate(R.layout.blank_layout, container, false);
+            TextView tv = (TextView)rootView.findViewById(R.id.messagetv);
+            tv.setText(R.string.project_not_selected);
+            return rootView;
+
+        }
+        View rootView = inflater.inflate(R.layout.data_first_fragment, container, false);
 		userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		db = DatabaseHelper.getHelper(getActivity());
 		projectId = db.getSettings(userId).getProjectId();
-		Bundle extras = getArguments();
-		if(null != extras)
-		{
-			questionId = extras.getString(DatabaseHelper.C_QUESTION_ID);
-            questionValueType = extras.getInt(DatabaseHelper.C_QUESTION_TYPE);
-		}
+
 		radioGroup = (RadioGroup) rootView.findViewById(R.id.radioGroupQuestionType);
 		userSelectedRadio = (RadioButton) rootView.findViewById(R.id.user_select_radiobtn);
 		fixedValueRadio = (RadioButton) rootView.findViewById(R.id.fixedvalueradio);

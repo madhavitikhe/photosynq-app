@@ -1,8 +1,5 @@
 package com.photosynq.app;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
@@ -14,6 +11,10 @@ import android.widget.Toast;
 
 import com.photosynq.app.HTTP.PhotosynqResponse;
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.navigationDrawer.NavigationDrawer;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class UpdateData implements PhotosynqResponse{
 
@@ -57,7 +58,7 @@ public class UpdateData implements PhotosynqResponse{
 				
 				//Generate sync notification.
 				mManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-			       Intent intent1 = new Intent(context,MainActivity.class);
+			       Intent intent1 = new Intent(context,NavigationDrawer.class);
 			     
 			       Notification notification = new Notification(R.drawable.ic_launcher, context.getString(R.string.sync_successful), System.currentTimeMillis());
 			       intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP| Intent.FLAG_ACTIVITY_CLEAR_TOP);

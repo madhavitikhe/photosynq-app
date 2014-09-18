@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.HTTP.PhotosynqResponse;
+import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.PrefUtils;
 
@@ -93,7 +94,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 			}
 			else
 			{
-				Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+				Intent intent = new Intent(getApplicationContext(),NavigationDrawer.class);
 				startActivity(intent);
 			}
 		}
@@ -255,13 +256,15 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 			JSONObject jsonResult = null;
 			try {
 				jsonResult = new JSONObject(result);
-				//CheckBox isSaveCredentials = (CheckBox) findViewById(R.id.save_credentials);
-				//if (isSaveCredentials.isChecked()) {
-					// Save authentication values to preferences
-					PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_LOGIN_USERNAME_KEY,jsonResult.get("email").toString());
-					PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_LOGIN_PASSWORD_KEY, mPassword);
-				//}
+                JSONObject userJsonObject = new JSONObject(jsonResult.get("user").toString());
+
+				PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_LOGIN_USERNAME_KEY,jsonResult.get("email").toString());
+				PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_LOGIN_PASSWORD_KEY, mPassword);
 				PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_AUTH_TOKEN_KEY,jsonResult.get("auth_token").toString());
+                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_BIO_KEY,userJsonObject.get("bio").toString());
+                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_NAME_KEY,userJsonObject.get("name").toString());
+                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_INSTITUTE_KEY,userJsonObject.get("institute").toString());
+                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_THUMB_URL_KEY,userJsonObject.get("thumb_url").toString());
 			} catch (JSONException e) {
 				// TODO Log error
 				e.printStackTrace();
@@ -273,7 +276,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 			}
 			else
 			{
-			Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+			Intent intent = new Intent(getApplicationContext(),NavigationDrawer.class);
 			startActivity(intent);
 			}
 			// finish();

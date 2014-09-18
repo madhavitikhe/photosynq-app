@@ -1,0 +1,29 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.photosynq.app.navigationDrawer.FragmentHome"
+    >
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/research_projects_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="listResearchProjects"
+            android:text="@string/research_project_str" />
+
+        <Button
+            android:id="@+id/quick_measurement_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="quickMeasurement"
+            android:text="@string/quick_measurement_str" />
+    </LinearLayout>
+
+</FrameLayout>

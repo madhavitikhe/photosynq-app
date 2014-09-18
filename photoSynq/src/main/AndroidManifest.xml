@@ -24,10 +24,6 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.photosynq.app.MainActivity"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
             android:name="com.photosynq.app.LoginActivity"
             android:label="@string/app_name"
             android:noHistory="true" >
@@ -56,17 +52,12 @@
         <activity
             android:name="com.photosynq.app.NewMeasurmentActivity"
             android:configChanges="orientation|screenSize"
-            android:noHistory="true"
             android:label="@string/title_activity_new_measurment" >
         </activity>
         <activity
             android:name="com.photosynq.app.DisplayResultsActivity"
             android:label="@string/title_activity_display_results"
             android:noHistory="true" >
-        </activity>
-        <activity
-            android:name="com.photosynq.app.ResultActivity"
-            android:label="@string/title_activity_result" >
         </activity>
         <activity
             android:name="com.photosynq.app.SelectProtocolActivity"
@@ -89,12 +80,7 @@
             android:label="@string/streamlined_mode" >
         </activity>
         <activity
-            android:name="com.photosynq.app.navigationDrawer.NavigationDrawer"
-            android:label="@string/title_activity_navigation_main" >
-        </activity>
-        <activity
-            android:name="com.photosynq.app.navigationDrawer.UserSelectedActivity"
-            android:label="@string/title_activity_user_selected" >
+            android:name="com.photosynq.app.navigationDrawer.NavigationDrawer">
         </activity>
         <activity
 			android:name="com.google.zxing.client.android.CaptureActivity"

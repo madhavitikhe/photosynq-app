@@ -1,16 +1,17 @@
 
 package com.photosynq.app.navigationDrawer;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,12 +20,18 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.photosynq.app.MainActivity;
+import com.photosynq.app.BluetoothActivity;
+import com.photosynq.app.LoginActivity;
+import com.photosynq.app.ProjectListActivity;
 import com.photosynq.app.R;
+import com.photosynq.app.StreamlinedModeActivity;
+import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.utils.PrefUtils;
 
-public class NavigationDrawer extends ActionBarActivity{
+public class NavigationDrawer extends ActionBarActivity implements FragmentHome.OnFragmentInteractionListener{
 	
 	public static final String LAST_POSITION = "LAST_POSITION";
     private int lastPosition = 0;
@@ -37,10 +44,21 @@ public class NavigationDrawer extends ActionBarActivity{
 	private ActionBarDrawerToggleCompat drawerToggle;
 	private String mEmail;
 	private TextView user_email;
+    private boolean desktopflag = false;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);		
-		getSupportActionBar().setIcon(R.drawable.ic_action_play);
+        super.onCreate(savedInstanceState);
+        boolean finish = getIntent().getBooleanExtra("finish", false);
+        if (finish) {
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+            finish();
+            return;
+        }
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHome()).commit();
+
+        getSupportActionBar().setIcon(R.drawable.ic_action_play);
 		setContentView(R.layout.navigation_drawer);		
 		
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -60,7 +78,7 @@ public class NavigationDrawer extends ActionBarActivity{
 		if (listDrawer != null) {
 			navigationAdapter = NavigationAdapter.getNavigationAdapter(this);
 		}
-		
+
 		listDrawer.setAdapter(navigationAdapter);
 		listDrawer.setOnItemClickListener(new DrawerItemClickListener());
 
@@ -78,7 +96,7 @@ public class NavigationDrawer extends ActionBarActivity{
     		        SharedPreferences.Editor editor = settings.edit();
     		        editor.clear();
     		        editor.commit();
-    		        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+    		        Intent intent = new Intent(getApplicationContext(),NavigationDrawer.class);
     		        intent.putExtra("finish", true);
 	            	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	                startActivity(intent);
@@ -88,8 +106,13 @@ public class NavigationDrawer extends ActionBarActivity{
 	
         
 	}
-	
-	 private class DrawerItemClickListener implements ListView.OnItemClickListener {
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
 	        @Override
 	        public void onItemClick(AdapterView<?> parent, View view, int posicao, long id) {          	        	
 		    	setLastPosition(posicao);        	
@@ -104,25 +127,8 @@ public class NavigationDrawer extends ActionBarActivity{
 		super.onSaveInstanceState(outState);		
 		outState.putInt(LAST_POSITION, lastPosition);					
 	}
-	
-	@Override
-    public boolean onOptionsItemSelected(MenuItem item) {  
-		if (drawerToggle.onOptionsItemSelected(item)) {
-	          return true;
-	        }
-			return super.onOptionsItemSelected(item);			
-    }
-		
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        return super.onPrepareOptionsMenu(menu);  
-    }
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		return super.onCreateOptionsMenu(menu);        		
-	}
-	
+
+
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);	     
@@ -186,34 +192,38 @@ public class NavigationDrawer extends ActionBarActivity{
 	
 	private void setFragmentList(int position){
 		
-		FragmentManager fragmentManager = getSupportFragmentManager();							
-		
+		FragmentManager fragmentManager = getSupportFragmentManager();
 		switch (position) {
-		case 0:			
-			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentMode()).commit();
-			break;					
-		case 1:			
-			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentUser()).commit();
-			break;			
-		case 2:			
-			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentConnection()).commit();						
-			break;
-		case 3:			
-			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();						
-			break;
-		case 4:
-			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentData()).commit();
-			break;
-		case 5:			
-			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentReview()).commit();						
-			break;
-		case 6:			
-			fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentSync()).commit();						
-			break;
+
+            case 0:
+
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHome()).commit();
+                break;
+            case 1:
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentMode()).commit();
+                break;
+            case 2:
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentUser()).commit();
+                break;
+            case 3:
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentConnection()).commit();
+                break;
+            case 4:
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();
+                break;
+            case 5:
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentData()).commit();
+                break;
+            case 6:
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentReview()).commit();
+                break;
+            case 7:
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentSync()).commit();
+                break;
 		}			
 		//show selection of navigation drawer item.(set selected item color is dark).
 		//our navigation contain 7 elements i.e we check here with 7
-		if (position < 7){
+		if (position < 8){
 			navigationAdapter.resetarCheck();			
 			navigationAdapter.setChecked(position, true);
 		}
@@ -239,4 +249,38 @@ public class NavigationDrawer extends ActionBarActivity{
 		user_email.setText(mEmail);
 
 	}
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return drawerToggle.onOptionsItemSelected(item);
+        }
+
+    public void listResearchProjects(View view)
+    {
+        DatabaseHelper db = DatabaseHelper.getHelper(getApplicationContext());
+        String userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        AppSettings appSettings = db.getSettings(userId);
+        if(appSettings.getModeType().equals(Utils.APP_MODE_NORMAL))
+        {
+            Intent intent = new Intent(getApplicationContext(),ProjectListActivity.class);
+            intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_NORMAL);
+            startActivity(intent);
+        }
+        else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
+        {
+            Intent intent = new Intent(getApplicationContext(),StreamlinedModeActivity.class);
+            startActivity(intent);
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "Select mode type first", Toast.LENGTH_LONG).show();
+        }
+    }
+    public void quickMeasurement(View view)
+    {
+        Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);
+        intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_QUICK_MEASURE);
+        startActivity(intent);
+    }
+
 }
