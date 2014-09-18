@@ -1,5 +1,6 @@
 package com.photosynq.app;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -37,7 +38,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StreamlinedModeActivity extends NavigationDrawer {
+public class StreamlinedModeActivity extends Activity {
 
 	ViewFlipper viewFlipper;
 	private DatabaseHelper db;
@@ -54,14 +55,14 @@ public class StreamlinedModeActivity extends NavigationDrawer {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.activity_streamlined_mode);
+		setContentView(R.layout.activity_streamlined_mode);
         initialize();
 	}
 
     private void initialize() {
-        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View contentView = inflater.inflate(R.layout.activity_streamlined_mode, null, false);
-        layoutDrawer.addView(contentView);
+//        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View contentView = inflater.inflate(R.layout.activity_streamlined_mode, null, false);
+//        layoutDrawer.addView(contentView,1);
         allSelectedOptions= new ArrayList<String>();
         allSelectedQuestions = new ArrayList<String>();
         ctx = getApplicationContext();

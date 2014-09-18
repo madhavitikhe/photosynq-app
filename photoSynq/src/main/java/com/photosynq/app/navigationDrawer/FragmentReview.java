@@ -91,7 +91,7 @@ public class FragmentReview extends Fragment {
             TableRow row = new TableRow(getActivity());
 
 
-            int maxLoop = 0;
+            int maxLoop = 1;
             for (Question question : questions) {
                 TextView tv = new TextView(getActivity());
                 tv.setLayoutParams(new TableRow.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f));
