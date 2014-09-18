@@ -1,12 +1,10 @@
 package com.photosynq.app;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,11 +38,11 @@ public class SelectProtocolActivity extends NavigationDrawer {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.activity_select_protocol);
-		LayoutInflater inflater = (LayoutInflater) this
-	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	    View contentView = inflater.inflate(R.layout.activity_select_protocol, null, false);
-	    layoutDrawer.addView(contentView);
+		setContentView(R.layout.activity_select_protocol);
+//		LayoutInflater inflater = (LayoutInflater) this
+//	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//	    View contentView = inflater.inflate(R.layout.activity_select_protocol, null, false);
+//	    layoutDrawer.addView(contentView);
 		
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
