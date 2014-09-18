@@ -99,7 +99,7 @@ public class FragmentReview extends Fragment {
                 data = db.getData(userId, projectId, question.getQuestionId());
                 if(null != data.getType()){
                     String[] items = data.getValue().split(",");
-                    if(data.getType().equals(Utils.AUTO_INCREMENT))
+                    if(data.getType().equals(Data.AUTO_INCREMENT))
                     {
                         int from = Integer.parseInt(items[0]);
                         int to = Integer.parseInt(items[1]);
@@ -126,20 +126,20 @@ public class FragmentReview extends Fragment {
                         // tv.setBackgroundColor(getResources().getColor(R.color.blue_dark));
 
                         data = db.getData(userId, projectId, question.getQuestionId());
-                        if (data.getType().equals(Utils.USER_SELECTED))
+                        if (data.getType().equals(Data.USER_SELECTED))
                         {
                             tv.setText("User");
                         }
-                        else if (data.getType().equals(Utils.FIXED_VALUE))
+                        else if (data.getType().equals(Data.FIXED_VALUE))
                         {
                             tv.setText(data.getValue());
 
                         }
-                        else if (data.getType().equals(Utils.AUTO_INCREMENT))
+                        else if (data.getType().equals(Data.AUTO_INCREMENT))
                         {
                             tv.setText(DataUtils.getAutoIncrementedValue(getActivity(), question.getQuestionId(), ""+i));
                         }
-                        else if (data.getType().equals(Utils.SCAN_CODE))
+                        else if (data.getType().equals(Data.SCAN_CODE))
                         {
                             tv.setText("Scan");
                         }
