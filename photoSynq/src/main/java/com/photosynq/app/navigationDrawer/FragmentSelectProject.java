@@ -82,7 +82,7 @@ public class FragmentSelectProject extends Fragment{
 			});
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+                    LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
             params.weight = 1.0f;
             Button returnButton = new Button(getActivity());
             returnButton.setText("Return Back");

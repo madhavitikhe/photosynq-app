@@ -46,7 +46,10 @@ public class FragmentConnection extends Fragment{
 	private TextView bluetoothStatusMsg;
 	private TextView selectedConnectionText;
 	private View bluetoothStatus;
-	
+    private String bluetoothID;
+	private String bluetoothName;
+    private AppSettings appSettings;
+
     public static FragmentConnection newInstance() {
         Bundle bundle = new Bundle();
 
@@ -79,7 +82,9 @@ public class FragmentConnection extends Fragment{
 		        searchNewBTDevice();
 		    }
 		});
-		
+
+        appSettings = db.getSettings(userId);
+
 		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 	    filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
 	    filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
@@ -87,8 +92,13 @@ public class FragmentConnection extends Fragment{
 		
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		Set<BluetoothDevice> btDevices =  bluetoothAdapter.getBondedDevices();
+        String deviceName = getResources().getString(R.string.no_data_found);
 		for (BluetoothDevice device : btDevices) {
 			btDeviceList.add(device);
+            if(appSettings.getConnectionId().equals(device.getAddress()))
+            {
+                selectedConnectionText.setText(device.getName());
+            }
 		}
 		
 		NavigationDrawerBluetoothArrayAdapter btArrayAdapter = new NavigationDrawerBluetoothArrayAdapter(getActivity(), btDeviceList);
@@ -101,29 +111,16 @@ public class FragmentConnection extends Fragment{
 		    public void onItemClick(AdapterView<?> adapter, View view, int position, long id){
 		    	BluetoothDevice btDevice = (BluetoothDevice) pairedDeviceList.getItemAtPosition(position);
 				Log.d("Pairing device : ", btDevice.getName());
-				
-	    		AppSettings appSettings = db.getSettings(userId);
-				
-				String bluetoothID = btDevice.getAddress();
-				String bluetoothName = btDevice.getName();
-				
+				bluetoothID = btDevice.getAddress();
 				appSettings.setConnectionId(bluetoothID);
 				db.updateSettings(appSettings);
-				
+
 				if(null != appSettings.getConnectionId())
 				{
-//					BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-//					BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(appSettings.connectionId);
-//					selectedConnectionText.setText(device.getName());
-					String connectionName = appSettings.getConnectionId();
-					selectedConnectionText.setText(bluetoothName);
+					selectedConnectionText.setText(btDevice.getName());
 				}
-				else
-				{
-					Toast.makeText(getActivity(), "Connection is not selected", Toast.LENGTH_LONG).show();
-				}
-				
-				PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_CONNECTION_ID,bluetoothID);
+
+				PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_CONNECTION_ID,bluetoothName);
 				pairedDeviceList.setItemsCanFocus(true);
 				RadioButton radiolistitem=(RadioButton) view.findViewById(R.id.bluetooth_conn_radiobtn);
 				radiolistitem.performClick();

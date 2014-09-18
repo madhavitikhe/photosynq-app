@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.1.0"
+    buildToolsVersion '19.1.0'
 
     defaultConfig {
         applicationId "com.photosynq.app"
@@ -21,15 +21,14 @@ android {
 }
 repositories {
     mavenCentral()
-
     maven {
-        url "https://raw.github.com/embarkmobile/zxing-android-minimal/mvn-repo/maven-repository/"
+        url 'https://raw.github.com/embarkmobile/zxing-android-minimal/mvn-repo/maven-repository/'
     }
 }
 
 dependencies {
     compile 'com.google.code.gson:gson:2.3'
-    compile "org.apache.httpcomponents:httpmime:4.2.3"
+    compile 'org.apache.httpcomponents:httpmime:4.2.3'
     compile 'com.squareup.picasso:picasso:2.3.4'
     compile 'com.google.zxing:core:2.2'
     compile 'com.embarkmobile:zxing-android-minimal:1.2.1@aar'

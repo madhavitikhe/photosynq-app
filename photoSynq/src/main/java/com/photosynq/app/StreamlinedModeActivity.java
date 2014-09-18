@@ -75,8 +75,6 @@ public class StreamlinedModeActivity extends NavigationDrawer {
         viewFlipper = (ViewFlipper) findViewById(R.id.ViewFlipper01);
 
         for (final Question question : questions) {
-            System.out.println("question size"+ question.getOptions());
-            System.out.println("questions"+question.getQuestionText());
             scanMode = false;
             /*
              * Creating following layout programmatically to display each
@@ -138,8 +136,8 @@ public class StreamlinedModeActivity extends NavigationDrawer {
                     showNext.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
-//EditText userEnteredAnswer = (EditText) findViewById(R.id.userAnswer);
-EditText userEnteredAnswer = (EditText) ((ViewGroup)view).getChildAt(0);
+                        //EditText userEnteredAnswer = (EditText) findViewById(R.id.userAnswer);
+                        EditText userEnteredAnswer = (EditText) ((ViewGroup)view).getChildAt(0);
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
                             allSelectedQuestions.add(new Gson().toJson(question));
