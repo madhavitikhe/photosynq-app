@@ -3,6 +3,7 @@ package com.photosynq.app;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.LabeledIntent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -48,7 +49,6 @@ public class StreamlinedModeActivity extends Activity {
 	ArrayList<String> allSelectedOptions;
 	ArrayList<String> allSelectedQuestions ;
 	private Handler  handler = new Handler();
-	private TextView txtScanResult;
 	private boolean scanMode =false;
 	private int autoIncProjecSize = 0;
 	//String[n] array;
@@ -198,13 +198,14 @@ public class StreamlinedModeActivity extends Activity {
                 else if(data.getType().equals(Data.SCAN_CODE))
                 {
                     RelativeLayout optionsRelativeLayout = new RelativeLayout(ctx);
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
                     optionsRelativeLayout.setLayoutParams(params);
 
                     LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    View view = infltr.inflate(R.layout.barcode_reader, null);
+                    View view = infltr.inflate(R.layout.barcode_reader, null,true);
+                    view.setId(Integer.parseInt(question.getQuestionId()));
 
-                     txtScanResult = (TextView) view.findViewById(R.id.scan_result);
+                     final TextView txtScanResult = (TextView) view.findViewById(R.id.scan_result);
                      View btnScan = view.findViewById(R.id.scan_button);
 
                         btnScan.setOnClickListener(new OnClickListener() {
@@ -214,7 +215,8 @@ public class StreamlinedModeActivity extends Activity {
                                 intent.setAction("com.google.zxing.client.android.SCAN");
                                 // this stops saving ur barcode in barcode scanner app's history
                                 intent.putExtra("SAVE_HISTORY", false);
-                                startActivityForResult(intent, 0);
+                                int viewId = ((View)v.getParent()).getId();
+                                startActivityForResult(intent, viewId);
                             }
                         });
 
@@ -227,6 +229,7 @@ public class StreamlinedModeActivity extends Activity {
                             int childCount = viewFlipper.getChildCount();
                             allSelectedQuestions.add(new Gson().toJson(question));
                             allSelectedOptions.add(txtScanResult.getText().toString());
+                            txtScanResult.setText(R.string.no_data_found);
                             if (displayedChild == childCount - 1) {
                                 viewFlipper.stopFlipping();
                                 Intent intent = new Intent(ctx,NewMeasurmentActivity.class);
@@ -244,9 +247,9 @@ public class StreamlinedModeActivity extends Activity {
                         }
                     });
 
-                    optionsRelativeLayout.addView(view);
+                   // optionsRelativeLayout.addView(view);
 
-                    subLinearLayout.addView(optionsRelativeLayout);
+                    subLinearLayout.addView(view);
                     scrollView.addView(subLinearLayout);
                     mainLinearLayout.addView(scrollView);
                     viewFlipper.addView(mainLinearLayout);
@@ -354,9 +357,6 @@ public class StreamlinedModeActivity extends Activity {
                                     intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
                                     intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress);
                                     intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
-
-                                   // intent.putExtra("Question_Size", questions.size());
-                                  //  intent.putExtra("Question_Text", question.getQuestionText());
                                     startActivity(intent);
                                 }
                                 else{
@@ -386,29 +386,31 @@ public class StreamlinedModeActivity extends Activity {
 
 
     @Override
-	    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	        super.onActivityResult(requestCode, resultCode, data);
-	        if (requestCode == 0) {
-	        					if (resultCode == RESULT_OK) {
-	        						String contents = data.getStringExtra("SCAN_RESULT");
-	        						txtScanResult.setText(contents);
-	        						Toast.makeText(getApplicationContext(), contents, Toast.LENGTH_SHORT).show();
-	        					} else if (resultCode == RESULT_CANCELED) {
-	        						// Handle cancel
-	        						Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_SHORT).show();
-	        					}
-	        				}
-	 }
-	
-	@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        View view = findViewById(requestCode);
+
+        if (resultCode == RESULT_OK) {
+            String contents = data.getStringExtra("SCAN_RESULT");
+            TextView txtScanResult = (TextView) view.findViewById(R.id.scan_result);
+
+            txtScanResult.setText(contents);
+            Toast.makeText(getApplicationContext(), contents, Toast.LENGTH_SHORT).show();
+        } else if (resultCode == RESULT_CANCELED) {
+            // Handle cancel
+            Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_SHORT).show();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
 		if (!scanMode)
 		{
             viewFlipper.setDisplayedChild(0);
-            //viewFlipper.removeAllViews();
-            //initialize();
+            allSelectedOptions= new ArrayList<String>();
+            allSelectedQuestions = new ArrayList<String>();
  		}
 		scanMode = false;
 	}

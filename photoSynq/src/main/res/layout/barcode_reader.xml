@@ -2,32 +2,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:gravity="center" >
+    android:orientation="vertical" >
 
     <Button
         android:id="@+id/scan_button"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
+        android:layout_marginTop="50dp"
         android:text="@string/scan" />
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/scan_result"
+        android:textSize="20dp"
         android:textColor="#000000" />
 
     <TextView
         android:id="@+id/scan_result"
         android:layout_width="fill_parent"
+        android:layout_marginTop="10dp"
         android:layout_height="wrap_content"
-        android:text="No Data"
+        android:text="@string/no_data_found"
+        android:textSize="15dp"
         android:textColor="@color/black" />
 
     <Button
         android:id="@+id/done_scan_btn"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
+        android:layout_marginTop="20dp"
         android:text="Done" />
 
 </LinearLayout>
