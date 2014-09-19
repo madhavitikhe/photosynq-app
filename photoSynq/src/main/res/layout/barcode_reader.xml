@@ -2,8 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
-
+    android:orientation="vertical"
+    android:id="@+id/barcode_main_layout">
+    <include
+        layout="@layout/question"/>
     <Button
         android:id="@+id/scan_button"
         android:layout_width="fill_parent"
@@ -33,5 +35,6 @@
         android:layout_height="80dp"
         android:layout_marginTop="20dp"
         android:text="Done" />
+
 
 </LinearLayout>

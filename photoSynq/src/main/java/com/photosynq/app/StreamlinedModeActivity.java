@@ -127,24 +127,22 @@ public class StreamlinedModeActivity extends Activity {
             {
                 if(data.getType().equals(Data.USER_SELECTED))
                 {
-                    RelativeLayout optionsRelativeLayout = new RelativeLayout(ctx);
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-                    optionsRelativeLayout.setLayoutParams(params);
-
                     LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    final View view = infltr.inflate(R.layout.user_selected, null, true);
+                    final View view = infltr.inflate(R.layout.user_selected, null, false);
+                    TextView questionText = (TextView)view.findViewById(R.id.question_layout);
+                    questionText.setText(question.getQuestionText());
 
 
                     Button showNext = (Button) view.findViewById(R.id.next);
                     showNext.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                        //EditText userEnteredAnswer = (EditText) findViewById(R.id.userAnswer);
-                        EditText userEnteredAnswer = (EditText) ((ViewGroup)view).getChildAt(0);
+                        EditText userEnteredAnswer = (EditText) view.findViewById(R.id.userAnswer);
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
                             allSelectedQuestions.add(new Gson().toJson(question));
                             allSelectedOptions.add(userEnteredAnswer.getText().toString());
+                            userEnteredAnswer.setText("");
                             if (displayedChild == childCount - 1) {
                                 viewFlipper.stopFlipping();
                                 Intent intent = new Intent(ctx,NewMeasurmentActivity.class);
@@ -162,17 +160,15 @@ public class StreamlinedModeActivity extends Activity {
                         }
                     });
 
-                    optionsRelativeLayout.addView(view);
-
-                    subLinearLayout.addView(optionsRelativeLayout);
-                    scrollView.addView(subLinearLayout);
-                    mainLinearLayout.addView(scrollView);
-                    viewFlipper.addView(mainLinearLayout);
+                    viewFlipper.addView(view);
                 }
                 else if(data.getType().equals(Data.FIXED_VALUE))
                 {
-                    String val = data.getValue();
-                    PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_FIXED_VALUE, val);
+                    //do nothing here
+
+
+                    //String val = data.getValue();
+                    //PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_FIXED_VALUE, val);
                 }
                 else if(data.getType().equals(Data.AUTO_INCREMENT))
                 {
@@ -190,22 +186,17 @@ public class StreamlinedModeActivity extends Activity {
                         startActivity(intent);
                     }
 
-                    String autoIncProname = question.getQuestionText();
-                    System.out.println("Number Of Auto INCREMENT PROJECTS and Name********"+autoIncProjecSize+"---"+autoIncProname);
-
                     PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_QUESTION_INDEX, "0");
                 }
                 else if(data.getType().equals(Data.SCAN_CODE))
                 {
-                    RelativeLayout optionsRelativeLayout = new RelativeLayout(ctx);
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-                    optionsRelativeLayout.setLayoutParams(params);
-
                     LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     View view = infltr.inflate(R.layout.barcode_reader, null,true);
                     view.setId(Integer.parseInt(question.getQuestionId()));
 
-                     final TextView txtScanResult = (TextView) view.findViewById(R.id.scan_result);
+                    final TextView txtScanResult = (TextView) view.findViewById(R.id.scan_result);
+                    TextView questionText = (TextView) view.findViewById(R.id.question_layout);
+                    questionText.setText(question.getQuestionText());
                      View btnScan = view.findViewById(R.id.scan_button);
 
                         btnScan.setOnClickListener(new OnClickListener() {
@@ -246,13 +237,7 @@ public class StreamlinedModeActivity extends Activity {
                             }
                         }
                     });
-
-                   // optionsRelativeLayout.addView(view);
-
-                    subLinearLayout.addView(view);
-                    scrollView.addView(subLinearLayout);
-                    mainLinearLayout.addView(scrollView);
-                    viewFlipper.addView(mainLinearLayout);
+                    viewFlipper.addView(view);
                 }
             }
             else

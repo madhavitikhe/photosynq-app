@@ -174,10 +174,10 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				    }
 				    else if(data.getType().equals(Data.FIXED_VALUE))
 				    {
-				    	String fixedVal = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_FIXED_VALUE, "1");
+				    	//String fixedVal = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_FIXED_VALUE, "1");
 				    	que.setText("Question -  " + allQuestions.get(i).getQuestionText());
 				    	liLayout.addView(que);
-				    	opt.setText("Option -  " + fixedVal);
+				    	opt.setText("Option -  " + data.getValue());
 				    }
 				    else  //Question and Option shown except 'Auto_Increment' option type.(for User_Selected, Fixed_Value, Scan_Code)
 				    {
