@@ -147,7 +147,7 @@ public class DataFirstFragment extends Fragment {
 
                     int selectedRadioButtonId = radioGroup.getCheckedRadioButtonId();
 
-                    if (selectedRadioButtonId == userSelectedRadio.getId()) {
+                     if (selectedRadioButtonId == userSelectedRadio.getId()) {
                         data.setType(QuestionType.USER_SELECTED.getStatusCode());
                         Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
                     } else if (selectedRadioButtonId == fixedValueRadio.getId()) {

@@ -3,11 +3,14 @@ package com.photosynq.app.utils;
 import android.content.Context;
 
 import com.photosynq.app.HTTP.HTTPConnection;
-import com.photosynq.app.UpdateData;
+import com.photosynq.app.response.UpdateData;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.ProjectResult;
 import com.photosynq.app.model.Question;
+import com.photosynq.app.response.UpdateMacro;
+import com.photosynq.app.response.UpdateProject;
+import com.photosynq.app.response.UpdateProtocol;
 
 import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
@@ -24,8 +27,8 @@ public class DataUtils {
 	public static void downloadData(Context context) 
 	{
 		System.out.println("Downloading data..............");
-		if (CommonUtils.isConnected(context)) 
-		{
+		//if (CommonUtils.isConnected(context))
+		//{
 			DatabaseHelper db;
 			String authToken;
 			String email;
@@ -42,21 +45,26 @@ public class DataUtils {
 					PrefUtils.PREFS_LOGIN_USERNAME_KEY,
 					PrefUtils.PREFS_DEFAULT_VAL);
 
-			
+            UpdateProject updateProject = new UpdateProject(context);
 			HTTPConnection mProjListTask = new HTTPConnection();
+            mProjListTask.delegate = updateProject;
 			mProjListTask
 					.execute(context,HTTPConnection.PHOTOSYNQ_PROJECTS_LIST_URL
 							+ "user_email=" + email + "&user_token="
 							+ authToken, "GET");
 
-			
+
+            UpdateProtocol updateProtocol = new UpdateProtocol(context);
 			mProtocolListTask = new HTTPConnection();
+            mProtocolListTask.delegate = updateProtocol;
 			mProtocolListTask.execute(context,
 					HTTPConnection.PHOTOSYNQ_PROTOCOLS_LIST_URL + "user_email="
 							+ email + "&user_token=" + authToken, "GET");
 
-			
+
+            UpdateMacro updateMacro = new UpdateMacro(context);
 			mMacroListTask = new HTTPConnection();
+            mMacroListTask.delegate = updateMacro;
 			mMacroListTask
 					.execute(context,HTTPConnection.PHOTOSYNQ_MACROS_LIST_URL
 							+ "user_email=" + email + "&user_token="
@@ -85,13 +93,13 @@ public class DataUtils {
 					e.printStackTrace();
 				}
 
-				UpdateData updateData = new UpdateData(context, null,
-						projectResult.getId());
+				UpdateData updateData = new UpdateData(context,projectResult.getId());
 				mUpdateDataTask = new HTTPConnection(input);
+                mUpdateDataTask.delegate = updateData;
 				mUpdateDataTask.execute(context,HTTPConnection.PHOTOSYNQ_DATA_URL
 						+ projectResult.getProjectId() + "/data.json", "POST");
 			}
-		}
+		//}
 	}
 	
 	/**

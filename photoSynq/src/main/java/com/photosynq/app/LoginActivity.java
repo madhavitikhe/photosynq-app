@@ -22,7 +22,6 @@ import android.widget.Toast;
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.HTTP.PhotosynqResponse;
 import com.photosynq.app.navigationDrawer.NavigationDrawer;
-import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.PrefUtils;
 
 import org.json.JSONException;
@@ -88,15 +87,15 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
         {
 		if(!mEmail.equals(PrefUtils.PREFS_DEFAULT_VAL) && !mPassword.equals(PrefUtils.PREFS_DEFAULT_VAL) )
 		{ 
-			if(CommonUtils.isConnected(getApplicationContext()))
-			{
-				connect();
-			}
-			else
-			{
+			//if(CommonUtils.isConnected(getApplicationContext()))
+			//{
+			//	connect();
+			//}
+			//else
+			//{
 				Intent intent = new Intent(getApplicationContext(),NavigationDrawer.class);
 				startActivity(intent);
-			}
+			//}
 		}
         }
 		// Set up the login form.
@@ -186,14 +185,14 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 		} else {
 			// Show a progress spinner, and kick off a background task to
 			// perform the user login attempt.
-			if(CommonUtils.isConnected(getApplicationContext()))
-			{
+			//if(CommonUtils.isConnected(getApplicationContext()))
+			//{
 				connect();
-			}
-			else
-			{
-				Toast.makeText(getApplicationContext(), "No Internet connection available.", Toast.LENGTH_LONG).show();
-			}
+		//	}
+		//	else
+		//	{
+            //Toast.makeText(getApplicationContext(), R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+		//	}
 		}
 	}
 
@@ -252,7 +251,13 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 		//Destroy Async task and stop showing spinning wheel.
 		mAuthTask = null;
 		showProgress(false);
+
 		if (null != result) {
+            if(result.equals(HTTPConnection.SERVER_NOT_ACCESSIBLE))
+            {
+                Toast.makeText(getApplicationContext(), R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+                return;
+            }
 			JSONObject jsonResult = null;
 			try {
 				jsonResult = new JSONObject(result);

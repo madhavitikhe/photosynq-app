@@ -1,7 +1,5 @@
 package com.photosynq.app.navigationDrawer;
 
-import java.util.Calendar;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -23,9 +21,10 @@ import android.widget.Toast;
 
 import com.photosynq.app.AlarmReceiver;
 import com.photosynq.app.R;
-import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.PrefUtils;
+
+import java.util.Calendar;
 
 public class FragmentSync extends Fragment{
 
@@ -83,14 +82,14 @@ public class FragmentSync extends Fragment{
 			@Override
 			public void onClick(View v) {
 				//DataUtils.downloadData(getActivity());
-				if(CommonUtils.isConnected(getActivity()))
-				{
+				//if(CommonUtils.isConnected(getActivity()))
+				//{
 					new downloadDataAsyncTask().execute();
-				}
-				else
-				{
-					Toast.makeText(getActivity(), R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
-				}
+				//}
+				//else
+				//{
+				//	Toast.makeText(getActivity(), R.string.server_not_reachable, Toast.LENGTH_SHORT).show();
+				//}
 				
 			}
 		});
@@ -124,7 +123,7 @@ public class FragmentSync extends Fragment{
             // Dismiss the progress dialog
             if (pDialog.isShowing())
                 pDialog.dismiss();
-         Toast.makeText(getActivity(), R.string.sync_successful, Toast.LENGTH_SHORT).show();
+         //Toast.makeText(getActivity(), R.string.sync_successful, Toast.LENGTH_SHORT).show();
         }
     }
 

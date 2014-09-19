@@ -174,7 +174,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	}
 
-	public boolean createResult(ProjectResult result) {
+	public long createResult(ProjectResult result) {
 		try {
 			SQLiteDatabase db = this.getWritableDatabase();
 
@@ -189,14 +189,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			long row_id = db.insert(TABLE_RESULTS, null, values);
 
 			if (row_id >= 0) {
-				return true;
+				return row_id;
 			} else {
-				return false;
+				return -1;
 			}
 		} catch (SQLiteConstraintException contraintException) {
-			return false;
+			return -1;
 		} catch (SQLException sqliteException) {
-			return false;
+			return -1;
 		}
 	}
 

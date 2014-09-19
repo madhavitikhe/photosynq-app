@@ -4,11 +4,17 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
+
+import com.photosynq.app.HTTP.HTTPConnection;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -34,15 +40,41 @@ public class CommonUtils {
         }
         return md5;
     }
+
+    // Invoke this method only on Async task. Do not invoke on UI thread. it will throw exceptions anyway ;)
+    public static boolean isConnected(Context context) {
+        if (isNetworkAvailable(context)) {
+            try {
+                HttpURLConnection urlc = (HttpURLConnection) (new URL(HTTPConnection.SERVER_URL).openConnection());
+                urlc.setRequestProperty("User-Agent", "Test");
+                urlc.setRequestProperty("Connection", "close");
+                urlc.setConnectTimeout(1500);
+                urlc.connect();
+                return (urlc.getResponseCode() == 200);
+            } catch (IOException e) {
+                Log.e("Connectivity", "Error checking internet connection", e);
+            }
+        } else {
+            Log.d("Connectivity", "No network available!");
+        }
+        return false;
+    }
+
+
+    private static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null;
+    }
 	
-	
-	public static boolean isConnected(Context context)
-	{
-		ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-		System.out.println("$$$$$$$$$$$ Internet connection ? "+ (activeNetwork != null && activeNetwork.isConnected()));
-		return activeNetwork != null && activeNetwork.isConnected();
-	}
+//	public static boolean isConnected(Context context)
+//	{
+//		ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+//		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+//		System.out.println("$$$$$$$$$$$ Internet connection ? "+ (activeNetwork != null && activeNetwork.isConnected()));
+//		return activeNetwork != null && activeNetwork.isConnected();
+//	}
 	
 	public static Date convertToDate(String rawdate)
 	{

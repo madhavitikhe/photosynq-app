@@ -78,11 +78,6 @@ public class FragmentReview extends Fragment {
 
         if(null != appSettings.getProjectId() )
         {
-            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(appSettings.connectionId);
-            tvBluetoothId.setText(device.getName());
-
-
             String projectId = appSettings.getProjectId();
             tvProjectId.setText(db.getResearchProject(projectId).getName());
 
@@ -121,32 +116,25 @@ public class FragmentReview extends Fragment {
                     TableRow rowOptions = new TableRow(getActivity());
                     for (Question question : questions) {
                         TextView tv = new TextView(getActivity());
-
+                        tv.setText(R.string.no_data_found);
                         // tv.setBackgroundColor(getResources().getColor(R.color.blue_dark));
 
                         data = db.getData(userId, projectId, question.getQuestionId());
-                        if (data.getType().equals(Data.USER_SELECTED))
-                        {
-                            tv.setText("User");
-                        }
-                        else if (data.getType().equals(Data.FIXED_VALUE))
-                        {
-                            tv.setText(data.getValue());
+                        if(null != data && null != data.getType()) {
+                            if (data.getType().equals(Data.USER_SELECTED)) {
+                                tv.setText("User");
+                            } else if (data.getType().equals(Data.FIXED_VALUE)) {
+                                tv.setText(data.getValue());
 
-                        }
-                        else if (data.getType().equals(Data.AUTO_INCREMENT))
-                        {
-                            String val = DataUtils.getAutoIncrementedValue(getActivity(), question.getQuestionId(), ""+i);
-                            if (!val.equals("-1") && !val.equals("-2"))
-                                tv.setText(val);
-                        }
-                        else if (data.getType().equals(Data.SCAN_CODE))
-                        {
-                            tv.setText("Scan");
-                        }
-                        else if(data.getType().equals(""))
-                        {
-                            tv.setText("Proj");
+                            } else if (data.getType().equals(Data.AUTO_INCREMENT)) {
+                                String val = DataUtils.getAutoIncrementedValue(getActivity(), question.getQuestionId(), "" + i);
+                                if (!val.equals("-1") && !val.equals("-2"))
+                                    tv.setText(val);
+                            } else if (data.getType().equals(Data.SCAN_CODE)) {
+                                tv.setText("Scan");
+                            } else if (data.getType().equals("")) {
+                                tv.setText("Proj");
+                            }
                         }
                         tv.setLayoutParams(new TableRow.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f));
                         tv.setPadding(10, 10, 10, 10);

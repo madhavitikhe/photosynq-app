@@ -14,7 +14,6 @@ public class PrefUtils {
     public static final String PREFS_FIRST_RUN = "FIRST_RUN";
     public static final String PREFS_SAVE_SYNC_INTERVAL = "SAVE_SYNC_INTERVAL";
     public static final String PREFS_QUESTION_INDEX = "FREQ_OF_QUESTION";
-    public static final String PREFS_FIXED_VALUE = "FIXED_VALUE";
     public static final String PREFS_BIO_KEY = "USER_BIO" ;
     public static final String PREFS_NAME_KEY = "NAME";
     public static final String PREFS_INSTITUTE_KEY = "INSTITUTE";
