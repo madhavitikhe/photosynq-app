@@ -35,7 +35,7 @@
         </activity>
         <activity
             android:name="com.photosynq.app.ProjectListActivity"
-            android:label="@string/title_activity_project_list" >
+            android:label="@string/research_project_str" >
         </activity>
         <activity
             android:name="com.photosynq.app.ProjectDescriptionActivity"

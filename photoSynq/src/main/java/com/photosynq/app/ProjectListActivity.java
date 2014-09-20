@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -75,7 +73,7 @@ public class ProjectListActivity extends Activity {
 				startActivity(intent);
 		    }
 		});
-		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#AA0000")));//it change option bar color.
+		//getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#AA0000")));//it change option bar color.
 		checkDataOnList();
 	}
 	
@@ -134,7 +132,6 @@ public class ProjectListActivity extends Activity {
         protected void onPreExecute() {
             super.onPreExecute();
             // Showing progress dialog
-            //downloadData();
             DataUtils.downloadData(getApplicationContext());
             pDialog = new ProgressDialog(ProjectListActivity.this);
             pDialog.setMessage("Please wait...");

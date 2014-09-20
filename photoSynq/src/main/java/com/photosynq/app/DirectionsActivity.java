@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -28,12 +26,6 @@ public class DirectionsActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_directions);
-//		LayoutInflater inflater = (LayoutInflater) this
-//	            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//	    View contentView = inflater.inflate(R.layout.activity_directions, null, false);
-//	    layoutDrawer.addView(contentView);
-		
-		//db = new DatabaseHelper(getApplicationContext());
 		db = DatabaseHelper.getHelper(getApplicationContext());
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
@@ -76,30 +68,8 @@ public class DirectionsActivity extends Activity {
 			}else{tvBeta.setText(getResources().getString(R.string.no_data_found));}
 
 		}
-		//System.out.println("DBCLosing");
-		//db.closeDB();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.directions, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-//		int id = item.getItemId();
-//		if (id == R.id.action_settings) {
-//			return true;
-//		}
-		return super.onOptionsItemSelected(item);
-	}
-	
 	public void onDirNextClicked(View view)
 	{
 		Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);

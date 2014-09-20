@@ -14,8 +14,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -46,18 +44,8 @@ public class FragmentConnection extends Fragment{
 	private TextView selectedConnectionText;
 	private View bluetoothStatus;
     private String bluetoothID;
-	private String bluetoothName;
     private AppSettings appSettings;
 
-    public static FragmentConnection newInstance() {
-        Bundle bundle = new Bundle();
-
-        FragmentConnection fragment = new FragmentConnection();
-        fragment.setArguments(bundle);
-
-        return fragment;
-    }	
-    
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -66,13 +54,12 @@ public class FragmentConnection extends Fragment{
 		
 		db = DatabaseHelper.getHelper(getActivity());
 		userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-		//String loggedInUserName = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_USER,null);
 		pairedDeviceList = (ListView) rootView.findViewById(R.id.pairedDevices);
 		selectedConnectionText = (TextView) rootView.findViewById(R.id.selectedConnectionText);
 		bluetoothStatus = rootView.findViewById(R.id.btooth_status);
 		bluetoothStatusMsg = (TextView) rootView.findViewById(R.id.bluetooth_status_msg);
 		searchNewBtn = (Button) rootView.findViewById(R.id.searchNewButton);
-		
+
 		searchNewBtn.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View v) {
@@ -118,7 +105,6 @@ public class FragmentConnection extends Fragment{
 					selectedConnectionText.setText(btDevice.getName());
 				}
 
-				PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_CONNECTION_ID,bluetoothName);
 				pairedDeviceList.setItemsCanFocus(true);
 				RadioButton radiolistitem=(RadioButton) view.findViewById(R.id.blue_conn_radio);
 				radiolistitem.performClick();
@@ -128,12 +114,7 @@ public class FragmentConnection extends Fragment{
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));		
 		return rootView;
 	}
-	
-	public void searchNewConnection(View view)
-	{
-		btDeviceList.clear();
-		searchNewBTDevice();
-	}
+
 	
 	private void searchNewBTDevice() {
 		// Check for Bluetooth support and then check to make sure it is turned
@@ -232,21 +213,6 @@ public class FragmentConnection extends Fragment{
         }
         getActivity().unregisterReceiver(ActionFoundReceiver);
     }
-
-
-    @Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onActivityCreated(savedInstanceState);
-		setHasOptionsMenu(true);
-	}
-	
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		// TODO Auto-generated method stub
-		super.onCreateOptionsMenu(menu, inflater);		
-		inflater.inflate(R.menu.menu, menu);
-	}
 }
 
 

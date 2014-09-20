@@ -37,7 +37,7 @@ public class UpdateData implements PhotosynqResponse{
 
 			JSONObject jo = new JSONObject(result);
 			String status = jo.getString("status");
-			Toast.makeText(context, jo.getString("notice"), Toast.LENGTH_SHORT).show();
+
 
 			if (status.toUpperCase().equals("SUCCESS"))
 			{
@@ -45,7 +45,10 @@ public class UpdateData implements PhotosynqResponse{
 				db = DatabaseHelper.getHelper(context);
                 System.out.println("Deleting row id:"+rowid);
 				db.deleteResult(rowid);
-			}
+			}else {
+                Toast.makeText(context, jo.getString("notice"), Toast.LENGTH_SHORT).show();
+            }
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

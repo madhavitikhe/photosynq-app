@@ -58,7 +58,7 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHome()).commit();
 
-        getSupportActionBar().setIcon(R.drawable.ic_action_play);
+        getSupportActionBar().setIcon(R.drawable.ic_launcher);
 		setContentView(R.layout.navigation_drawer);		
 		
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -157,7 +157,7 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
 			super(
 			    mActivity,
 			    mDrawerLayout, 
-  			    R.drawable.ic_action_navigation_drawer, 
+  			    R.drawable.ic_drawer,
   			    0,0);
 		}
 		
