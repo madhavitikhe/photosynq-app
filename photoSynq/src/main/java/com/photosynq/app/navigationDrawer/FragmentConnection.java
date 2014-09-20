@@ -25,7 +25,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
@@ -77,7 +76,6 @@ public class FragmentConnection extends Fragment{
 		searchNewBtn.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View v) {
-		        Toast.makeText(getActivity(), "Clicked on Search New Devices", Toast.LENGTH_LONG).show();
 		        btDeviceList.clear();
 		        searchNewBTDevice();
 		    }
@@ -178,6 +176,7 @@ public class FragmentConnection extends Fragment{
 	        	   showProgress(false);
 					Set<BluetoothDevice> btDevices =  bluetoothAdapter.getBondedDevices();
 					for (BluetoothDevice device : btDevices) {
+                        if(!btDeviceList.contains(device))
 						btDeviceList.add(device);
 					}
 	         }

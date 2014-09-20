@@ -8,8 +8,8 @@
     <ListView
         android:id="@+id/bluetooth_list_view"
         android:layout_width="match_parent"
-        android:layout_height="364dp"
-        android:layout_weight="1.96"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:cacheColorHint="@android:color/transparent"
         android:divider="@null"
         android:dividerHeight="10dp"
@@ -42,15 +42,21 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/searchNewBluetooth"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:background="@color/green_google_play"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:text="@string/searchNew"
-        android:textSize="25sp"
-        android:onClick="searchNewBluetooth" />
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="60dip"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingTop="10dp" >
+
+        <Button
+            android:id="@+id/searchNewBluetooth"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:text="@string/searchNew"
+            android:onClick="searchNewBluetooth">
+        </Button>
+    </RelativeLayout>
+
 
 </LinearLayout>

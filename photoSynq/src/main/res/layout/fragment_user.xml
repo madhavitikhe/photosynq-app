@@ -1,9 +1,10 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/white"
     android:clickable="true"
     android:focusable="true"
+    android:orientation="vertical"
     android:focusableInTouchMode="true">
 
     <LinearLayout
@@ -57,7 +58,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:layout_below="@+id/profile">
@@ -71,17 +73,20 @@
             android:textSize="18sp" />
 
     </LinearLayout>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="60dip"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingTop="10dp" >
 
-    <Button
-        android:id="@+id/changeUser"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerHorizontal="true"
-        android:background="@color/green_google_play"
-        android:text="@string/change_user"
-        android:textSize="30sp" />
+        <Button
+            android:id="@+id/changeUser"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:text="@string/change_user"
+            android:onClick="searchNewBluetooth">
+        </Button>
+    </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>

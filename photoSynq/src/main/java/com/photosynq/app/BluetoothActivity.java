@@ -13,8 +13,6 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -115,14 +113,7 @@ public class BluetoothActivity extends Activity {
 	}
 
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
 
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.bluetooth, menu);
-		return true;
-	}
-	
 	 /* This routine is called when an activity completes.*/
 	@Override 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -146,20 +137,7 @@ public class BluetoothActivity extends Activity {
 		 btDeviceList.clear();
     	 CheckBTState();
 	}
-	  
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-//		int id = item.getItemId();
-//		if (id == R.id.action_settings) {
-//			return true;
-//		}
-		//Button for searching unpaired devices.
-	    return super.onOptionsItemSelected(item);
-	}
-	
+
 	/**
 	 * Shows the progress UI and hides the login form.
 	 */
@@ -277,6 +255,8 @@ public class BluetoothActivity extends Activity {
 	        	   searchBTdevice.setVisibility(View.VISIBLE);
 					Set<BluetoothDevice> btDevices =  bluetoothAdapter.getBondedDevices();
 					for (BluetoothDevice device : btDevices) {
+                        //This is strage but its adding devices twice
+                        if(!btDeviceList.contains(device))
 						btDeviceList.add(device);
 					}
 

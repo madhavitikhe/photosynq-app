@@ -1,7 +1,5 @@
 package com.photosynq.app.navigationDrawer;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +13,8 @@ import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.PrefUtils;
+
+import java.util.List;
 
 public class NavigationDrawerResearchProjectArrayAdapter extends BaseAdapter implements ListAdapter {
 	
@@ -55,7 +55,7 @@ public class NavigationDrawerResearchProjectArrayAdapter extends BaseAdapter imp
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		if (convertView == null)
-			convertView = activity.getLayoutInflater().inflate(R.layout.nav_drawer_project_list_item_card, null);
+			convertView = activity.getLayoutInflater().inflate(R.layout.project_list_item_card, null);
 
 		LinearLayout ll = (LinearLayout) convertView.findViewById(R.id.linLayout);
 		String userId = PrefUtils.getFromPrefs(convertView.getContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
@@ -63,17 +63,19 @@ public class NavigationDrawerResearchProjectArrayAdapter extends BaseAdapter imp
 		AppSettings appSettings = db.getSettings(userId);
 		
 		
-		TextView tvProjectTitle = (TextView) convertView.findViewById(R.id.nav_project_name);
+		TextView tvProjectTitle = (TextView) convertView.findViewById(R.id.project_name);
 		ResearchProject researchProject = getItem(position);
 		//change background color of item card.
 		if(researchProject.getId().equals(appSettings.getProjectId()))
 		{
-			ll.setBackgroundColor(convertView.getContext().getResources().getColor(R.color.green_google_play));
-			tvProjectTitle.setTextColor(convertView.getContext().getResources().getColor(R.color.black));
+            ll.setBackground(convertView.getResources().getDrawable(R.drawable.selector_card_background_green));
+			//ll.setBackgroundColor(R.drawable.selector_card_background_green);
+			//tvProjectTitle.setTextColor(convertView.getContext().getResources().getColor(R.color.black));
 		}
 		else
 		{
-			ll.setBackgroundColor(convertView.getContext().getResources().getColor(R.color.white));
+            ll.setBackground(convertView.getResources().getDrawable(R.drawable.selector_card_background));
+			//ll.setBackgroundColor(R.drawable.selector_card_background);
 		}
 		if (null != researchProject) {
 			String projectName;
