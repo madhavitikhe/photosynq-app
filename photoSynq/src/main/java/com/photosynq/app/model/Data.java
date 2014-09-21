@@ -7,6 +7,8 @@ public class Data {
     public static final String USER_SELECTED = "USER_SELECTED";
     public static final String AUTO_INCREMENT = "AUTO_INCREMENT";
     public static final String SCAN_CODE = "SCAN_CODE";
+    public static final String PREV = "PREV";
+    public static final String NEXT = "NEXT";
     public String user_id;
 	public String project_id;
 	public String question_id;

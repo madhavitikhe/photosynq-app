@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.db.DatabaseHelper;
@@ -152,7 +151,7 @@ public class ProjectListActivity extends Activity {
             if (pDialog.isShowing())
                 pDialog.dismiss();
             refreshProjectList();
-         Toast.makeText(getApplicationContext(), "List is up to date", Toast.LENGTH_SHORT).show();
+         //Toast.makeText(getApplicationContext(), "List is up to date", Toast.LENGTH_SHORT).show();
         }
 
 

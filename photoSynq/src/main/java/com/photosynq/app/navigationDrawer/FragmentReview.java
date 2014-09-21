@@ -5,8 +5,6 @@ import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -19,9 +17,10 @@ import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Question;
-import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.PrefUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class FragmentReview extends Fragment {
@@ -87,26 +86,39 @@ public class FragmentReview extends Fragment {
 
 
             int maxLoop = 1;
+            HashMap<String,ArrayList<Integer>> populatedValues = new HashMap();
             for (Question question : questions) {
-                TextView tv = new TextView(getActivity());
-                tv.setLayoutParams(new TableRow.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f));
-                tv.setText(question.getQuestionText());
-                tv.setLines(3);
-                tv.setPadding(10, 10, 10, 10);
-                tv.setBackgroundResource(R.drawable.border);
-                row.addView(tv);
-                data = db.getData(userId, projectId, question.getQuestionId());
-                if(null != data.getType()){
-                    String[] items = data.getValue().split(",");
-                    if(data.getType().equals(Data.AUTO_INCREMENT))
-                    {
-                        int from = Integer.parseInt(items[0]);
-                        int to = Integer.parseInt(items[1]);
-                        int repeat = Integer.parseInt(items[2]);
-                        if(maxLoop < ((to - (from-1))*repeat))
-                        {
-                            maxLoop = ((to - (from-1))*repeat);
-                        }
+                    TextView tv = new TextView(getActivity());
+                    tv.setLayoutParams(new TableRow.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f));
+                    tv.setText(question.getQuestionText());
+                    tv.setLines(3);
+                    tv.setPadding(10, 10, 10, 10);
+                    tv.setBackgroundResource(R.drawable.border);
+                    row.addView(tv);
+                    if(question.getQuestionType() != Question.PROJECT_DEFINED) {
+                        data = db.getData(userId, projectId, question.getQuestionId());
+                        if (null != data.getType()) {
+                            String[] items = data.getValue().split(",");
+                            if (data.getType().equals(Data.AUTO_INCREMENT)) {
+                                if (items[0].equals(Data.NO_VALUE)) {
+                                    continue;
+                                }
+                                int from = Integer.parseInt(items[0]);
+                                int to = Integer.parseInt(items[1]);
+                                int repeat = Integer.parseInt(items[2]);
+                                if (maxLoop < ((to - (from - 1)) * repeat)) {
+                                    maxLoop = ((to - (from - 1)) * repeat);
+                                }
+
+                                ArrayList<Integer> questionValues = new ArrayList<Integer>();
+                                for(int i=from;i<=to;i++){
+                                    for(int j=0;j<repeat;j++){
+                                        questionValues.add(i);
+
+                                    }
+                                    populatedValues.put(question.getQuestionId(),questionValues);
+                                }
+                            }
                     }
                 }
             }
@@ -117,28 +129,42 @@ public class FragmentReview extends Fragment {
                     for (Question question : questions) {
                         TextView tv = new TextView(getActivity());
                         tv.setText(R.string.no_data_found);
-                        // tv.setBackgroundColor(getResources().getColor(R.color.blue_dark));
 
-                        data = db.getData(userId, projectId, question.getQuestionId());
-                        if(null != data && null != data.getType()) {
-                            if (data.getType().equals(Data.USER_SELECTED)) {
-                                tv.setText("User");
-                            } else if (data.getType().equals(Data.FIXED_VALUE)) {
-                                tv.setText(data.getValue());
+                        if(question.getQuestionType() == Question.PROJECT_DEFINED)
+                        {
+                            tv.setText("Proj");
+                        }
+                        else
+                        {
+                            // tv.setBackgroundColor(getResources().getColor(R.color.blue_dark));
 
-                            } else if (data.getType().equals(Data.AUTO_INCREMENT)) {
-                                String val = DataUtils.getAutoIncrementedValue(getActivity(), question.getQuestionId(), "" + i);
-                                if (!val.equals("-1") && !val.equals("-2"))
-                                    tv.setText(val);
-                            } else if (data.getType().equals(Data.SCAN_CODE)) {
-                                tv.setText("Scan");
-                            } else if (data.getType().equals("")) {
-                                tv.setText("Proj");
+                            data = db.getData(userId, projectId, question.getQuestionId());
+                            if (null != data && null != data.getType()) {
+                                if (data.getType().equals(Data.USER_SELECTED)) {
+                                    tv.setText("User");
+                                } else if (data.getType().equals(Data.FIXED_VALUE)) {
+                                    tv.setText(data.getValue());
+
+                                } else if (data.getType().equals(Data.AUTO_INCREMENT)) {
+
+                                    if (i < populatedValues.get(question.getQuestionId()).size())
+                                    {
+                                        Integer val = populatedValues.get(question.getQuestionId()).get(i);
+                                        tv.setText(val.toString());
+                                    }
+
+//                                    String val = DataUtils.getAutoIncrementedValue(getActivity(), question.getQuestionId(), "" + i);
+//                                    if (!val.equals("-1") && !val.equals("-2"))
+//                                        tv.setText(val);
+                                } else if (data.getType().equals(Data.SCAN_CODE)) {
+                                    tv.setText("Scan");
+                                }
                             }
                         }
                         tv.setLayoutParams(new TableRow.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f));
                         tv.setPadding(10, 10, 10, 10);
                         tv.setBackgroundResource(R.drawable.border);
+
                         rowOptions.addView(tv);
                     }
                     questionsTableLayout.addView(rowOptions);
@@ -147,22 +173,4 @@ public class FragmentReview extends Fragment {
         rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));
         return rootView;
     }
-				
-	
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onActivityCreated(savedInstanceState);
-		setHasOptionsMenu(true);
-	}
-	
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		// TODO Auto-generated method stub
-		super.onCreateOptionsMenu(menu, inflater);		
-		inflater.inflate(R.menu.menu, menu);
-	}
-
-
 }

@@ -3,12 +3,13 @@ package com.photosynq.app.navigationDrawer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -35,43 +36,44 @@ public class DataFirstFragment extends Fragment {
 	private RadioButton fixedValueRadio;
 	private RadioButton autoIncRadio;
 	private RadioButton scanCodeRadio;
-	public EditText fixed_value_edit_text;
-	public EditText from_edit_text;
-	public EditText to_edit_text;
-	public EditText repeat_edit_text;
-	
-	public static DataFirstFragment newInstance() {
-        Bundle bundle = new Bundle();
+	private EditText fixed_value_edit_text;
+	private EditText from_edit_text;
+	private EditText to_edit_text;
+	private EditText repeat_edit_text;
+    private boolean prev;
+    private boolean next;
 
-        DataFirstFragment fragment = new DataFirstFragment();
-        fragment.setArguments(bundle);
-        
-        return fragment;
-    }	
-    
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+
         Bundle extras = getArguments();
 
         if(null != extras)
         {
             questionId = extras.getString(DatabaseHelper.C_QUESTION_ID);
             questionValueType = extras.getInt(DatabaseHelper.C_QUESTION_TYPE);
-        }
-        if(questionValueType == -1)
-        {
-            View rootView = inflater.inflate(R.layout.blank_layout, container, false);
-            TextView tv = (TextView)rootView.findViewById(R.id.messagetv);
-            tv.setText(R.string.project_not_selected);
-            return rootView;
+            prev = extras.getBoolean(Data.PREV);
+            next = extras.getBoolean(Data.NEXT);
 
         }
+
         View rootView = inflater.inflate(R.layout.data_first_fragment, container, false);
 		userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		db = DatabaseHelper.getHelper(getActivity());
 		projectId = db.getSettings(userId).getProjectId();
 
+        ImageView prev_data = (ImageView)rootView.findViewById(R.id.prev_data);
+        ImageView next_data = (ImageView)rootView.findViewById(R.id.next_data);
+
+        if(!prev)
+        {
+            prev_data.setVisibility(View.GONE);
+        }
+        if(!next)
+        {
+            next_data.setVisibility(View.GONE);
+        }
 		radioGroup = (RadioGroup) rootView.findViewById(R.id.radioGroupQuestionType);
 		userSelectedRadio = (RadioButton) rootView.findViewById(R.id.user_select_radiobtn);
 		fixedValueRadio = (RadioButton) rootView.findViewById(R.id.fixedvalueradio);
@@ -83,7 +85,44 @@ public class DataFirstFragment extends Fragment {
 		to_edit_text = (EditText) rootView.findViewById(R.id.to_editText);
 		repeat_edit_text = (EditText) rootView.findViewById(R.id.repeat_editText);
 
-        TextView questionTextView = (TextView) rootView.findViewById(R.id.question_txt);
+        Button saveButton = (Button)rootView.findViewById(R.id.save_btn);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveData();
+            }
+        });
+        fixed_value_edit_text.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                fixedValueRadio.setChecked(true);
+                return false;
+            }
+        });
+        from_edit_text.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                autoIncRadio.setChecked(true);
+                return false;
+            }
+        });
+        to_edit_text.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                autoIncRadio.setChecked(true);
+                return false;
+            }
+        });
+        repeat_edit_text.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                autoIncRadio.setChecked(true);
+                return false;
+            }
+        });
+
+
+        TextView questionTextView = (TextView) rootView.findViewById(R.id.question_layout);
         Question question = db.getQuestionForProject(projectId,questionId);
         questionTextView.setText(question.getQuestionText());
         if(questionValueType == 1 ) {
@@ -112,15 +151,23 @@ public class DataFirstFragment extends Fragment {
             if (null != retrieveData.getType()) {
                 switch (QuestionType.valueOf(retrieveData.getType())) {
                     case AUTO_INCREMENT:
-                        autoIncRadio.setChecked(true);
                         String[] values = retrieveData.getValue().split(",");
+                        if(values[0].equals(Data.NO_VALUE))
+                        {
+                            break;
+                        }
                         from_edit_text.setText(values[0]);
                         to_edit_text.setText(values[1]);
                         repeat_edit_text.setText(values[2]);
+                        autoIncRadio.setChecked(true);
                         break;
                     case FIXED_VALUE:
-                        fixedValueRadio.setChecked(true);
+                        if(retrieveData.equals(Data.NO_VALUE))
+                        {
+                            break;
+                        }
                         fixed_value_edit_text.setText(retrieveData.getValue());
+                        fixedValueRadio.setChecked(true);
                         break;
                     case SCAN_CODE:
                         scanCodeRadio.setChecked(true);
@@ -134,52 +181,57 @@ public class DataFirstFragment extends Fragment {
                 }
             }
 
-
-            save_btn = (Button) rootView.findViewById(R.id.data_fragment_save_btn);
-            save_btn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View arg0) {
-                    Data data = new Data();
-                    data.setUser_id(userId);
-                    data.setProject_id(projectId);
-                    data.setQuestion_id(questionId);
-                    data.setValue(Data.NO_VALUE);
-
-                    int selectedRadioButtonId = radioGroup.getCheckedRadioButtonId();
-
-                     if (selectedRadioButtonId == userSelectedRadio.getId()) {
-                        data.setType(QuestionType.USER_SELECTED.getStatusCode());
-                        Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
-                    } else if (selectedRadioButtonId == fixedValueRadio.getId()) {
-                        data.setType(QuestionType.FIXED_VALUE.getStatusCode());
-                        data.setValue(fixed_value_edit_text.getText().toString());
-                        Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
-                    } else if (selectedRadioButtonId == autoIncRadio.getId()) {
-                        data.setType(QuestionType.AUTO_INCREMENT.getStatusCode());
-                        if (from_edit_text.getText().toString().isEmpty() || to_edit_text.getText().toString().isEmpty() || repeat_edit_text.getText().toString().isEmpty()) {
-                            if (from_edit_text.getText().toString().isEmpty()) {
-                                from_edit_text.setError("Please insert field");
-                            } else if (to_edit_text.getText().toString().isEmpty()) {
-                                to_edit_text.setError("Please insert field");
-                            } else if (repeat_edit_text.getText().toString().isEmpty()) {
-                                repeat_edit_text.setError("Please insert field");
-                            }
-                            Toast.makeText(getActivity(), "Please insert all fields", Toast.LENGTH_LONG).show();
-                        } else {
-                            data.setValue(from_edit_text.getText().toString() + "," + to_edit_text.getText().toString() + "," + repeat_edit_text.getText().toString());
-                            Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
-                        }
-                    } else if (selectedRadioButtonId == scanCodeRadio.getId()) {
-                        data.setType(QuestionType.SCAN_CODE.getStatusCode());
-                        Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
-                    }
-
-                    db.updateData(data);
-                }
-            });
         }
 
-	rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));	
+	rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));
 	return rootView;
  }
+
+    public void saveData() {
+        Data data = new Data();
+        data.setUser_id(userId);
+        data.setProject_id(projectId);
+        data.setQuestion_id(questionId);
+        data.setValue(Data.NO_VALUE);
+
+        int selectedRadioButtonId = radioGroup.getCheckedRadioButtonId();
+
+        if (selectedRadioButtonId == userSelectedRadio.getId()) {
+
+            data.setType(QuestionType.USER_SELECTED.getStatusCode());
+            Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+
+        } else if (selectedRadioButtonId == fixedValueRadio.getId()) {
+
+            data.setType(QuestionType.FIXED_VALUE.getStatusCode());
+            data.setValue(fixed_value_edit_text.getText().toString());
+            Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+
+        } else if (selectedRadioButtonId == autoIncRadio.getId()) {
+
+            data.setType(QuestionType.AUTO_INCREMENT.getStatusCode());
+
+                if (from_edit_text.getText().toString().isEmpty()) {
+                    from_edit_text.setError("Please enter value");
+                } else if (to_edit_text.getText().toString().isEmpty()) {
+                    to_edit_text.setError("Please enter value");
+                } else if (repeat_edit_text.getText().toString().isEmpty()) {
+                    repeat_edit_text.setError("Please enter value");
+                }else
+                {
+                    data.setValue(from_edit_text.getText().toString() + "," + to_edit_text.getText().toString() + "," + repeat_edit_text.getText().toString());
+                    Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+
+                }
+
+        } else if (selectedRadioButtonId == scanCodeRadio.getId()) {
+
+            data.setType(QuestionType.SCAN_CODE.getStatusCode());
+            Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+
+        }
+
+        db.updateData(data);
+    }
+
 }

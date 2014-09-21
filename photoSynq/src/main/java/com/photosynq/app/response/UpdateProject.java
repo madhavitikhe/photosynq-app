@@ -70,7 +70,6 @@ public class UpdateProject implements PhotosynqResponse {
                     }
                     db.updateResearchProject(rp);
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }

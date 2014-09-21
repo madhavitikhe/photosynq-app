@@ -118,8 +118,9 @@ public class DataUtils {
 	 * 		1	2
 	 */
 	public static String getAutoIncrementedValue(Context ctx,String question_id, String index) {
-        if(Integer.parseInt(index) == -1)
+        if(Integer.parseInt(index) == -1) {
             return "-2";
+        }
 		
 		String userId = PrefUtils.getFromPrefs(ctx , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		DatabaseHelper db = DatabaseHelper.getHelper(ctx);
@@ -134,7 +135,7 @@ public class DataUtils {
  		 for(int i=from;i<=to;i++){
 			 for(int j=0;j<repeat;j++){
 				 populatedValues.add(i);
-				
+
 			 }
 		 }
 

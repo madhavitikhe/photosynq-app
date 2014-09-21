@@ -12,7 +12,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
@@ -138,7 +137,7 @@ public class FragmentProjectList extends Fragment{
             if (pDialog.isShowing())
                 pDialog.dismiss();
             refreshProjectList();
-         Toast.makeText(getActivity(), "List is up to date", Toast.LENGTH_SHORT).show();
+         //Toast.makeText(getActivity(), "List is up to date", Toast.LENGTH_SHORT).show();
         }
     }
 }
