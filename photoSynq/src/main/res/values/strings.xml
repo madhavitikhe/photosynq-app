@@ -80,5 +80,6 @@
     <string name="no_hardware_selection">No hardware selected</string>
     <string name="no_porject_selected">Please select project.</string>
     <string name="busy">busy</string>
+    <string name="connected">Connected, Click to start measurement</string>
 
 </resources>

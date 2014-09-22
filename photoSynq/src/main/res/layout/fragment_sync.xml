@@ -13,31 +13,21 @@
 	android:focusable="true"
 	android:focusableInTouchMode="true" >
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/relativelayout_1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-         >
-
-            <TextView
-                android:id="@+id/syncintervallbl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:maxLines="2"
-                android:singleLine="false"
-                android:text="@string/sync_interval_lbl"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
+        android:orientation="horizontal"
+        android:gravity="center">
             <EditText
                 android:id="@+id/interval_time_editText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/syncintervallbl"
+                android:hint="@string/sync_interval_lbl"
                 android:ems="10"
-                android:inputType="number" >
+                android:inputType="number"
+                android:layout_weight=".4">
             </EditText>
 
    
@@ -45,11 +35,12 @@
                 android:id="@+id/save_btn"
                 android:layout_below="@+id/interval_time_editText"
                 android:layout_width="match_parent"
-                android:layout_height="80sp"
+                android:layout_height="wrap_content"
                 android:text="@string/save_interval_btn"
-                android:textSize="25sp" >
+                android:layout_weight=".6">
             </Button>
-</RelativeLayout>
+</LinearLayout>
+
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -60,9 +51,8 @@
         <Button
             android:id="@+id/sync_btn"
             android:layout_width="match_parent"
-            android:layout_height="80sp"
-            android:text="@string/sync_btn"
-            android:textSize="25sp" >
+            android:layout_height="wrap_content"
+            android:text="@string/sync_btn" >
         </Button>
     </RelativeLayout>
 

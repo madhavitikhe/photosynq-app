@@ -29,11 +29,12 @@
             android:paddingTop="5dp" >
 
             <TextView
-                android:id="@+id/questionText"
+                android:id="@+id/reviewTitle"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/review"
+                android:textColor="@color/black"
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
@@ -61,15 +62,15 @@
             android:id="@+id/statusMessage"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/no_data_found"
+            android:text="@string/start_measure"
+            android:textColor="@color/black"
             android:textAlignment="center"
             android:textSize="12sp" />
         <Button
             android:id="@+id/measure_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/measure_btn"
-            android:onClick="takeMeasurement" >
+            android:text="@string/measure_btn" >
         </Button>
         </LinearLayout>
     </RelativeLayout>
