@@ -108,6 +108,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
     private String option2="";
 
     private boolean clearflag = false;
+    private boolean reviewFlag = false;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -198,18 +199,38 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
                             allSelectedQuestions.add(new Gson().toJson(question));
-                            allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
+                            //allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
 
-                            userEnteredAnswer.setText("");
+
                             if (displayedChild == childCount - 2 ) {
                                 viewFlipper.stopFlipping();
                                 setMeasurementScreen();
-                                viewFlipper.showNext();
+                                if(reviewFlag)
+                                {
+                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
+                                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                                    reviewFlag = false;
+                                }
+                                else {
+                                    allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
+                                    viewFlipper.showNext();
+                                }
                             }
                             else
                             {
-                                viewFlipper.showNext();
+                                if(reviewFlag)
+                                {
+                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
+                                    setMeasurementScreen();
+                                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                                    reviewFlag = false;
+                                }
+                                else {
+                                    allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
+                                    viewFlipper.showNext();
+                                }
                             }
+                            userEnteredAnswer.setText("");
                         }
                     });
 
@@ -231,7 +252,15 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                     {
                          allSelectedQuestions.add(new Gson().toJson(question));
                         setMeasurementScreen();
-                        viewFlipper.showNext();
+                        if(reviewFlag)
+                        {
+                            setMeasurementScreen();
+                            viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                            reviewFlag = false;
+                        }
+                        else {
+                            viewFlipper.showNext();
+                        }
                     }
 
                     PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_QUESTION_INDEX, "0");
@@ -270,17 +299,37 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                             int childCount = viewFlipper.getChildCount();
                             allSelectedQuestions.add(new Gson().toJson(question));
                             //allSelectedOptions.add(txtScanResult.getText().toString());
-                            allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
-                            txtScanResult.setText("");
+                            //allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
+
                             if (displayedChild == childCount - 2) {
                                 viewFlipper.stopFlipping();
                                 setMeasurementScreen();
-                                viewFlipper.showNext();
+                                if(reviewFlag)
+                                {
+                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
+                                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                                    reviewFlag = false;
+                                }
+                                else {
+                                    allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
+                                    viewFlipper.showNext();
+                                }
                             }
                             else
                             {
-                                viewFlipper.showNext();
+                                if(reviewFlag)
+                                {
+                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
+                                    setMeasurementScreen();
+                                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                                    reviewFlag = false;
+                                }
+                                else {
+                                    allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
+                                    viewFlipper.showNext();
+                                }
                             }
+                            txtScanResult.setText("");
                         }
                     });
                     viewFlipper.addView(viewScanCode);
@@ -324,18 +373,37 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                             allSelectedQuestions.add(new Gson().toJson(question));
                             //allSelectedOptions.add(question.getOptions().get(v.getId()));
 
-                            allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+                            //allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
                             for(int i=0;i<allSelectedOptions.size();i++)
                             {
                                 System.out.println(allSelectedOptions.get(i));
                             }
                             if (displayedChild == childCount - 2) {
                                 viewFlipper.stopFlipping();
+                                if(reviewFlag)
+                                {
+                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+                                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                                    reviewFlag = false;
+                                }
+                                else {
+                                    allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+                                    viewFlipper.showNext();
+                                }
                                 setMeasurementScreen();
-                                viewFlipper.showNext();
                             }
                             else{
+                                if(reviewFlag)
+                                {
+                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+                                    setMeasurementScreen();
+                                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                                    reviewFlag = false;
+                                }
+                                else {
+                                    allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
                                     viewFlipper.showNext();
+                                }
                             }
                         }
                     });
@@ -373,18 +441,38 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                                 int displayedChild = viewFlipper.getDisplayedChild();
                                 int childCount = viewFlipper.getChildCount();
                                 allSelectedQuestions.add(new Gson().toJson(question));
-                                allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+
                                 for(int i=0;i<allSelectedOptions.size();i++)
                                 {
                                     System.out.println(allSelectedOptions.get(i));
                                 }
                                 if (displayedChild == childCount - 2) {
                                     viewFlipper.stopFlipping();
+
+                                    if(reviewFlag)
+                                    {
+                                        allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+                                        viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                                        reviewFlag = false;
+                                    }
+                                    else {
+                                        allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+                                        viewFlipper.showNext();
+                                    }
                                     setMeasurementScreen();
-                                    viewFlipper.showNext();
                                 }
                                 else{
-                                    viewFlipper.showNext();
+                                    if(reviewFlag)
+                                    {
+                                        allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+                                        setMeasurementScreen();
+                                        viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                                        reviewFlag = false;
+                                    }
+                                    else {
+                                        allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+                                        viewFlipper.showNext();
+                                    }
                                 }
                             }
                         });
@@ -747,6 +835,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                     reviewItem.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View view, MotionEvent motionEvent) {
+                            reviewFlag = true;
                             View child = viewFlipper.findViewWithTag(view.getTag());
                             viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(child));
                             refreshMeasrementScreen();
@@ -776,6 +865,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                 reviewItem.setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View view, MotionEvent motionEvent) {
+                        reviewFlag = true;
                         View child = viewFlipper.findViewWithTag(view.getTag());
                         viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(child));
                         refreshMeasrementScreen();
