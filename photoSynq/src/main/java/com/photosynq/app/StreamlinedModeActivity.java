@@ -15,6 +15,7 @@ import android.os.Message;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -73,8 +74,8 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
 	private int autoIncProjecSize = 0;
     private String protocolJson="";
     private Data data;
-    private TextView que;
-    private TextView opt;
+    //private TextView que;
+    //private TextView opt;
     // A request to connect to Location Services
     private LocationRequest mLocationRequest;
 
@@ -105,6 +106,9 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
     private String option1="";
     private String option3="";
     private String option2="";
+
+    private boolean clearflag = false;
+    private boolean valueClearFlag = false;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -151,27 +155,6 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
         int questionLoop =0;
         for (final Question question : questions) {
             scanMode = false;
-            /*
-             * Creating following layout programmatically to display each
-             * question as a single view in ViewFlipper
-             *
-             * LinearLayout ->  (mainLinearLayout)
-             * 		ScrollView ->
-             * 			LinearLayout -> (subLinearLayout)
-             * 				TextView(for question)
-             * 				</TV>
-             * 				LinearLayout -> (detailsLinearLayout)
-             * 					RelativeLayout ->
-             * 						TextView , ImageView(for option)
-             * 					</RL>
-             * 					RelativeLayout ->
-             * 						TextView , ImageView(for option)....
-             * 					</RL>
-             * 				</LL>
-             * 			</LL>
-             * 		</SV>
-             * <//LL>
-             */
 
             LinearLayout mainLinearLayout = new LinearLayout(ctx);
             mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -194,36 +177,33 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
 
             subLinearLayout.addView(questionTextView);
 
-            Data data = db.getData(userId, projectId, question.getQuestionId());
+            Data data ;
+            data = db.getData(userId, projectId, question.getQuestionId());
+            //allSelectedOptions.add(questionLoop,getResources().getString(R.string.no_data_found));
             if( !data.getType().isEmpty() && !data.getValue().isEmpty())
             {
                 if(data.getType().equals(Data.USER_SELECTED))
                 {
                     LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    final View view = infltr.inflate(R.layout.user_selected, null, false);
-                    TextView questionText = (TextView)view.findViewById(R.id.question_layout);
+                    View viewUserSelected = infltr.inflate(R.layout.user_selected, null, false);
+                    viewUserSelected.setTag(question.getQuestionId());
+                    TextView questionText = (TextView)viewUserSelected.findViewById(R.id.question_layout);
                     questionText.setText(question.getQuestionText());
 
-
-                    Button showNext = (Button) view.findViewById(R.id.next);
+                    Button showNext = (Button) viewUserSelected.findViewById(R.id.next);
+                    showNext.setTag(questionLoop);
                     showNext.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                        EditText userEnteredAnswer = (EditText) view.findViewById(R.id.userAnswer);
+                        EditText userEnteredAnswer = (EditText) ((View)v.getParent()).findViewById(R.id.userAnswer);
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
                             allSelectedQuestions.add(new Gson().toJson(question));
-                            allSelectedOptions.add(userEnteredAnswer.getText().toString());
-                            userEnteredAnswer.setText("");
+                            //allSelectedOptions.add(userEnteredAnswer.getText().toString());
+                            allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
+
                             if (displayedChild == childCount - 2 ) {
                                 viewFlipper.stopFlipping();
-//                                Intent intent = new Intent(ctx,NewMeasurmentActivity.class);
-//                                intent.putExtra("All_Questions", allSelectedQuestions);
-//                                intent.putExtra("All_Options", allSelectedOptions);
-//                                intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
-//                                intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress);
-//                                intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
-//                                startActivity(intent);
                                 setMeasurementScreen();
                                 viewFlipper.showNext();
                             }
@@ -234,10 +214,11 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                         }
                     });
 
-                    viewFlipper.addView(view);
+                    viewFlipper.addView(viewUserSelected);
                 }
                 else if(data.getType().equals(Data.FIXED_VALUE))
                 {
+                    allSelectedOptions.add(questionLoop,data.getValue());
                     //do nothing here
 
 
@@ -250,14 +231,6 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                     if(questions.size() == autoIncProjecSize)
                     {
                          allSelectedQuestions.add(new Gson().toJson(question));
-                        //viewFlipper.addView(mainLinearLayout);
-//                        Intent intent = new Intent(ctx,NewMeasurmentActivity.class);
-//                        intent.putExtra("All_Questions", allSelectedQuestions);
-//                        intent.putExtra("All_Options", allSelectedOptions);
-//                        intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
-//                        intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress);
-//                        intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
-//                        startActivity(intent);
                         setMeasurementScreen();
                         viewFlipper.showNext();
                     }
@@ -267,13 +240,14 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                 else if(data.getType().equals(Data.SCAN_CODE))
                 {
                     LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    View view = infltr.inflate(R.layout.barcode_reader, null,true);
-                    view.setId(Integer.parseInt(question.getQuestionId()));
+                    View viewScanCode = infltr.inflate(R.layout.barcode_reader, null,true);
+                    viewScanCode.setId(Integer.parseInt(question.getQuestionId()));
+                    viewScanCode.setTag(question.getQuestionId());
 
-                    final TextView txtScanResult = (TextView) view.findViewById(R.id.scan_result);
-                    TextView questionText = (TextView) view.findViewById(R.id.question_layout);
+                    final TextView txtScanResult = (TextView) viewScanCode.findViewById(R.id.scan_result);
+                    TextView questionText = (TextView) viewScanCode.findViewById(R.id.question_layout);
                     questionText.setText(question.getQuestionText());
-                     View btnScan = view.findViewById(R.id.scan_button);
+                     View btnScan = viewScanCode.findViewById(R.id.scan_button);
 
                         btnScan.setOnClickListener(new OnClickListener() {
                             public void onClick(View v) {
@@ -282,12 +256,13 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                                 intent.setAction("com.google.zxing.client.android.SCAN");
                                 // this stops saving ur barcode in barcode scanner app's history
                                 intent.putExtra("SAVE_HISTORY", false);
-                                int viewId = ((View)v.getParent()).getId();
+                                int viewId = ((View)v.getParent().getParent()).getId();
                                 startActivityForResult(intent, viewId);
                             }
                         });
 
-                      View btnScanDone = view.findViewById(R.id.done_scan_btn);
+                      View btnScanDone = viewScanCode.findViewById(R.id.done_scan_btn);
+                      btnScanDone.setTag(questionLoop);
                       btnScanDone.setOnClickListener(new OnClickListener() {
 
                         @Override
@@ -295,17 +270,10 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
                             allSelectedQuestions.add(new Gson().toJson(question));
-                            allSelectedOptions.add(txtScanResult.getText().toString());
-                            txtScanResult.setText(R.string.no_data_found);
+                            allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
+
                             if (displayedChild == childCount - 2) {
                                 viewFlipper.stopFlipping();
-//                                Intent intent = new Intent(ctx,NewMeasurmentActivity.class);
-//                                intent.putExtra("All_Questions", allSelectedQuestions);
-//                                intent.putExtra("All_Options", allSelectedOptions);
-//                                intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
-//                                intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress);
-//                                intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
-//                                startActivity(intent);
                                 setMeasurementScreen();
                                 viewFlipper.showNext();
                             }
@@ -315,7 +283,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                             }
                         }
                     });
-                    viewFlipper.addView(view);
+                    viewFlipper.addView(viewScanCode);
                 }
             }
             else
@@ -347,26 +315,22 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                     imageView.setId(i - 1);
                     RelativeLayout.LayoutParams imageVParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                     imageVParams.addRule(RelativeLayout.BELOW, optionTextView.getId());
+                    imageView.setTag(questionLoop);
                     imageView.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
                             allSelectedQuestions.add(new Gson().toJson(question));
-                            allSelectedOptions.add(question.getOptions().get(v.getId()));
+                            //allSelectedOptions.add(question.getOptions().get(v.getId()));
+
+                            allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
                             for(int i=0;i<allSelectedOptions.size();i++)
                             {
                                 System.out.println(allSelectedOptions.get(i));
                             }
                             if (displayedChild == childCount - 2) {
                                 viewFlipper.stopFlipping();
-//                                Intent intent = new Intent(ctx,NewMeasurmentActivity.class);
-//                                intent.putExtra("All_Questions", allSelectedQuestions);
-//                                intent.putExtra("All_Options", allSelectedOptions);
-//                                intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
-//                                intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress);
-//                                intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
-//                                startActivity(intent);
                                 setMeasurementScreen();
                                 viewFlipper.showNext();
                             }
@@ -402,27 +366,20 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                         imageVieweven.setId(i);
                         RelativeLayout.LayoutParams imageVParamseven = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                         imageVParamseven.addRule(RelativeLayout.BELOW, optionTextVieweven.getId());
-
+                        imageVieweven.setTag(questionLoop);
                         imageVieweven.setOnClickListener(new OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 int displayedChild = viewFlipper.getDisplayedChild();
                                 int childCount = viewFlipper.getChildCount();
                                 allSelectedQuestions.add(new Gson().toJson(question));
-                                allSelectedOptions.add(question.getOptions().get(v.getId()));
+                                allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
                                 for(int i=0;i<allSelectedOptions.size();i++)
                                 {
                                     System.out.println(allSelectedOptions.get(i));
                                 }
                                 if (displayedChild == childCount - 2) {
                                     viewFlipper.stopFlipping();
-//                                    Intent intent = new Intent(ctx,NewMeasurmentActivity.class);
-//                                    intent.putExtra("All_Questions", allSelectedQuestions);
-//                                    intent.putExtra("All_Options", allSelectedOptions);
-//                                    intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
-//                                    intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress);
-//                                    intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
-//                                    startActivity(intent);
                                     setMeasurementScreen();
                                     viewFlipper.showNext();
                                 }
@@ -446,6 +403,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
             }
             scrollView.addView(subLinearLayout);
             mainLinearLayout.addView(scrollView);
+            mainLinearLayout.setTag(question.getQuestionId());
             viewFlipper.addView(mainLinearLayout);
         }
             questionLoop++;
@@ -472,64 +430,55 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
 }
 
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//
-//        View view = findViewById(requestCode);
-//
-//        if (resultCode == RESULT_OK) {
-//            String contents = data.getStringExtra("SCAN_RESULT");
-//            TextView txtScanResult = (TextView) view.findViewById(R.id.scan_result);
-//
-//            txtScanResult.setText(contents);
-//            Toast.makeText(getApplicationContext(), contents, Toast.LENGTH_SHORT).show();
-//        } else if (resultCode == RESULT_CANCELED) {
-//            // Handle cancel
-//            Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_SHORT).show();
-//        }
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
-
     @Override
 	protected void onResume() {
 		super.onResume();
-		if (!scanMode)
+		if (!scanMode )
 		{
-            viewFlipper.setDisplayedChild(0);
-            allSelectedOptions= new ArrayList<String>();
-            allSelectedQuestions = new ArrayList<String>();
-            viewFlipper.removeViewAt(viewFlipper.getChildCount()-1); //0 based index
-            LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View measurementScreen = infltr.inflate(R.layout.activity_display_selected_questions_options, null,false);
-            measurementScreen.setId(9595);
-            viewFlipper.addView(measurementScreen);
-            Button measureButton = (Button)measurementScreen.findViewById(R.id.measure_btn);
-            if (mBluetoothService == null) {
-                mBluetoothService = new BluetoothService(getApplicationContext(), mHandler);
-            }
-            if (mBluetoothService.getState() == BluetoothService.STATE_CONNECTED)
-            {
-                TextView status = (TextView)measurementScreen.findViewById(R.id.statusMessage);
 
-                status.setText(R.string.connected); //getResources().getString(R.string.connected);
+            if(clearflag) {
+                valueClearFlag = true;
+                viewFlipper.setDisplayedChild(0);
+                allSelectedOptions = new ArrayList<String>();
+                allSelectedQuestions = new ArrayList<String>();
+
             }
-            measureButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED)
-                    {
-                        // Get the BLuetoothDevice object
-                        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
-                        mBluetoothService.connect(device);
-                    }else {
-                        mHandler.obtainMessage(MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, -1).sendToTarget();
-                    }
-                }
-            });
+            refreshMeasrementScreen();
+            clearflag = true;
  		}
 		scanMode = false;
 	}
 
+    private void refreshMeasrementScreen() {
+        viewFlipper.removeViewAt(viewFlipper.getChildCount()-1); //0 based index
+        LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View measurementScreen = infltr.inflate(R.layout.activity_display_selected_questions_options, null,false);
+        measurementScreen.setId(9595);
+        viewFlipper.addView(measurementScreen);
+        Button measureButton = (Button)measurementScreen.findViewById(R.id.measure_btn);
+        if (mBluetoothService == null) {
+            mBluetoothService = new BluetoothService(getApplicationContext(), mHandler);
+        }
+        if (mBluetoothService.getState() == BluetoothService.STATE_CONNECTED)
+        {
+            TextView status = (TextView)measurementScreen.findViewById(R.id.statusMessage);
+
+            status.setText(R.string.connected); //getResources().getString(R.string.connected);
+        }
+        measureButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED)
+                {
+                    // Get the BLuetoothDevice object
+                    BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
+                    mBluetoothService.connect(device);
+                }else {
+                    mHandler.obtainMessage(MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, -1).sendToTarget();
+                }
+            }
+        });
+    }
 
 
     /// Ported code from here
@@ -733,10 +682,29 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
         List<Question> allQuestions = db.getAllQuestionForProject(projectId);
         for (int i = 0; i < allQuestions.size(); i++) {
 
+
+            View reviewItem = getLayoutInflater().inflate(R.layout.protocol_list_item, null);
+            liLayout.addView(reviewItem);
+
+            TextView tvQuestion = (TextView) reviewItem.findViewById(R.id.protocol_name);
+            TextView tvOption = (TextView) reviewItem.findViewById(R.id.protocol_desc);
+            LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            llp.setMargins(0, 15, 0, 0);
+            tvOption.setLayoutParams(llp);
+            reviewItem.setTag(allQuestions.get(i).getQuestionId());
+
+
+
             String data_value= new String("");
-            que = new TextView(this);
-            que.setTextColor(R.color.black);
-            opt = new TextView(this);
+            //que = new TextView(this);
+            //que.setTextSize(18);
+            //que.setTag(i);
+
+            //opt = new TextView(this);
+            //LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            //llp.setMargins(0, 10, 0, 10);
+            //opt.setTextSize(16);
+            //opt.setLayoutParams(llp);
             String userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
             data = db.getData(userId, projectId, allQuestions.get(i).getQuestionId());
             //if selected option type is User_Selected, Fixed_Value, Auto_Increment, Scan_Code
@@ -747,38 +715,80 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                 {
                     int index = Integer.parseInt(PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_QUESTION_INDEX, "-1"));
                     int optionvalue = Integer.parseInt(DataUtils.getAutoIncrementedValue(getApplicationContext(), allQuestions.get(i).getQuestionId(), "" + index));
-                    que.setText("Question -  " + allQuestions.get(i).getQuestionText());
-                    liLayout.addView(que);
-                    if(optionvalue != -1)
-                        opt.setText("Option -  " + optionvalue);
-                    data_value = ""+optionvalue;
+                    //que.setText("Question -  " + allQuestions.get(i).getQuestionText());
+                    tvQuestion.setText(allQuestions.get(i).getQuestionText());
+                    //liLayout.addView(que);
+                    if(optionvalue != -1) {
+                      //  opt.setText("Option -  " + optionvalue);
+                        tvOption.setText(optionvalue+"");
+                        data_value = ""+optionvalue;
+                    }
+
                 }
                 else if(data.getType().equals(Data.FIXED_VALUE))
                 {
-                    que.setText("Question -  " + allQuestions.get(i).getQuestionText());
-                    liLayout.addView(que);
-                    opt.setText("Option -  " + data.getValue());
+                    //que.setText("Question -  " + allQuestions.get(i).getQuestionText());
+                    tvQuestion.setText(allQuestions.get(i).getQuestionText());
+                    tvOption.setText(data.getValue());
+                    //liLayout.addView(que);
+                    //opt.setText("Option -  " + data.getValue());
                     data_value = data.getValue();
-                }
-                else  //Question and Option shown except 'Auto_Increment' option type.(for User_Selected, Fixed_Value, Scan_Code)
-                {
-                    que.setText("Question -  " + selectedQuestions.get(optionLoop).getQuestionText());
-                    liLayout.addView(que);
-
-                    opt.setText("Option -  " + allSelectedOptions.get(optionLoop));
-                    data_value = allSelectedOptions.get(optionLoop);
                     optionLoop++;
                 }
-                liLayout.addView(opt);
+                else  //Question and Option shown except 'Auto_Increment' option type.(for User_Selected, Scan_Code)
+                {
+                    //que.setText("Question -  " + selectedQuestions.get(optionLoop).getQuestionText());
+                    //liLayout.addView(que);
+                    tvQuestion.setText(allQuestions.get(i).getQuestionText());
+                    tvOption.setText(allSelectedOptions.get(optionLoop));
+                    //opt.setText("Option -  " + allSelectedOptions.get(optionLoop));
+                    data_value = allSelectedOptions.get(optionLoop);
+                    optionLoop++;
+                    reviewItem.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View view, MotionEvent motionEvent) {
+                            View child = viewFlipper.findViewWithTag(view.getTag());
+                            viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(child));
+                            refreshMeasrementScreen();
+                            return false;
+                        }
+                    });
+//                    que.setOnClickListener(new OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            viewFlipper.setDisplayedChild(Integer.parseInt(view.getTag().toString()));
+//                            refreshMeasrementScreen();
+//                        }
+//                    });
+                }
+                //liLayout.addView(opt);
             }
             else  //Streamline mode Question and Option is display.
             {
-                que.setText("Question -  " + allQuestions.get(i).getQuestionText());
-                liLayout.addView(que);
-                opt.setText("Option -  " + allSelectedOptions.get(i));
+                tvQuestion.setText(allQuestions.get(i).getQuestionText());
+                tvOption.setText(allSelectedOptions.get(i));
+                //que.setText("Question -  " + allQuestions.get(i).getQuestionText());
+                //liLayout.addView(que);
+                //opt.setText("Option -  " + allSelectedOptions.get(i));
                 data_value = allSelectedOptions.get(i);
-                liLayout.addView(opt);
+                //liLayout.addView(opt);
                 optionLoop++;
+                reviewItem.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        View child = viewFlipper.findViewWithTag(view.getTag());
+                        viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(child));
+                        refreshMeasrementScreen();
+                        return false;
+                    }
+                });
+//                que.setOnClickListener(new OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        viewFlipper.setDisplayedChild(Integer.parseInt(view.getTag().toString()));
+//                        refreshMeasrementScreen();
+//                    }
+//                });
             }
             try{
                 if(i==0)
