@@ -62,9 +62,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	private TextView mStatusLine;
 	private String projectId;
 	private String deviceAddress;
-//	private TextView mStatusLine;
 	private String protocolJson="";
-	//private String options="";
 	// Name of the connected device
 	private String mConnectedDeviceName = null;
 	
@@ -145,15 +143,12 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		{
             setContentView(R.layout.activity_display_selected_questions_options);
 
-//			LayoutInflater inflater = (LayoutInflater) this
-//		            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//		    View contentView = inflater.inflate(R.layout.activity_display_selected_questions_options, null, false);
-//		    layoutDrawer.addView(contentView);
 		    LinearLayout liLayout = (LinearLayout) findViewById(R.id.linearlayoutoptions);
 		    int optionLoop = 0;
 		    List<Question> allQuestions = db.getAllQuestionForProject(projectId);
 		    for (int i = 0; i < allQuestions.size(); i++) {
-			   
+
+                String data_value= new String("");
 			    que = new TextView(this);
 			    opt = new TextView(this);
 			    data = db.getData(userId, projectId, allQuestions.get(i).getQuestionId());
@@ -169,13 +164,14 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				    	liLayout.addView(que);
                         if(optionvalue != -1)
 				    	opt.setText("Option -  " + optionvalue);
+                        data_value = ""+optionvalue;
 				    }
 				    else if(data.getType().equals(Data.FIXED_VALUE))
 				    {
-				    	//String fixedVal = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_FIXED_VALUE, "1");
 				    	que.setText("Question -  " + allQuestions.get(i).getQuestionText());
 				    	liLayout.addView(que);
 				    	opt.setText("Option -  " + data.getValue());
+                        data_value = data.getValue();
 				    }
 				    else  //Question and Option shown except 'Auto_Increment' option type.(for User_Selected, Fixed_Value, Scan_Code)
 				    {
@@ -183,6 +179,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 							 liLayout.addView(que);
 							    
 							 opt.setText("Option -  " + getAllSelectedOptions.get(optionLoop));
+                             data_value = getAllSelectedOptions.get(optionLoop);
 							 optionLoop++;
 				    }
 				    liLayout.addView(opt);
@@ -192,27 +189,36 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				    que.setText("Question -  " + allQuestions.get(i).getQuestionText());
 				    liLayout.addView(que);
 				    opt.setText("Option -  " + getAllSelectedOptions.get(i));
+                    data_value = getAllSelectedOptions.get(i);
 				    liLayout.addView(opt);
                     optionLoop++;
 			    }
+                try{
+                    if(i==0)
+                    {
+                        option1= data_value;
+                    }else if(i == 1)
+                    {
+                        option2 = data_value;
+                    }else if(i==2)
+                    {
+                        option3 = data_value;
+                    }
+
+//                    option1 = (String) getAllSelectedOptions.get(0);
+//                    option2 = (String) getAllSelectedOptions.get(1);
+//                    option3 = (String) getAllSelectedOptions.get(2);
+                }catch ( IndexOutOfBoundsException ex)
+                {
+                    //eat the exceptions !!!! Basically ignore questions less or more than 3
+                }
 			     
 			}
-		    try{
-		    	
-		    	option1 = (String) getAllSelectedOptions.get(0);
-		    	option2 = (String) getAllSelectedOptions.get(1);
-		    	option3 = (String) getAllSelectedOptions.get(2);
-		    }catch ( IndexOutOfBoundsException ex)
-		    {
-		    	//eat the exceptions !!!!
-		    }
+
 
 		}else
 		{
 			setContentView(R.layout.activity_new_measurment);
-//			LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//		    View contentView = inflater.inflate(R.layout.activity_new_measurment, null, false);
-//		    layoutDrawer.addView(contentView);
 			db = DatabaseHelper.getHelper(getApplicationContext());
 			List<Question> questions = db.getAllQuestionForProject(projectId);
 			ListView lst = (ListView) findViewById(R.id.measurement_list_view);
@@ -564,7 +570,6 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 //		startActivity(intent);
 //	}
 
-    // The Handler that gets information back from the BluetoothChatService
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -677,7 +682,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
                 		sendData(protocolJson);
                 	}
                     
-                    mStatusLine.setText("Initializing measurement . .");
+                    mStatusLine.setText("Initializing measurement please wait ...");
 
                 	
                     break;
@@ -700,7 +705,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
             	StringBuffer measurement = (StringBuffer)msg.obj;
                 // construct a string from the valid bytes in the buffer
                // String readMessage = new String(readBuf, 0, msg.arg1);
-                mStatusLine.setText("Receiving data from device");
+                mStatusLine.setText(R.string.start_measure);
                 String dataString;
                 String options = new String ("\"user_answers\": [\""+option1+"\","+"\""+option2+"\","+"\""+option3+"\" ],");
                 long time= System.currentTimeMillis();
