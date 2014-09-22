@@ -81,6 +81,7 @@
         </activity>
         <activity
             android:name="com.photosynq.app.navigationDrawer.NavigationDrawer"
+            android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="adjustPan">
         </activity>
         <activity
