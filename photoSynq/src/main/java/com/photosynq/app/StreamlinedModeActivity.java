@@ -108,7 +108,6 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
     private String option2="";
 
     private boolean clearflag = false;
-    private boolean valueClearFlag = false;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -179,7 +178,6 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
 
             Data data ;
             data = db.getData(userId, projectId, question.getQuestionId());
-            //allSelectedOptions.add(questionLoop,getResources().getString(R.string.no_data_found));
             if( !data.getType().isEmpty() && !data.getValue().isEmpty())
             {
                 if(data.getType().equals(Data.USER_SELECTED))
@@ -190,6 +188,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                     TextView questionText = (TextView)viewUserSelected.findViewById(R.id.question_layout);
                     questionText.setText(question.getQuestionText());
 
+
                     Button showNext = (Button) viewUserSelected.findViewById(R.id.next);
                     showNext.setTag(questionLoop);
                     showNext.setOnClickListener(new OnClickListener() {
@@ -199,9 +198,9 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
                             allSelectedQuestions.add(new Gson().toJson(question));
-                            //allSelectedOptions.add(userEnteredAnswer.getText().toString());
                             allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
 
+                            userEnteredAnswer.setText("");
                             if (displayedChild == childCount - 2 ) {
                                 viewFlipper.stopFlipping();
                                 setMeasurementScreen();
@@ -270,8 +269,9 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
                             allSelectedQuestions.add(new Gson().toJson(question));
+                            //allSelectedOptions.add(txtScanResult.getText().toString());
                             allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
-
+                            txtScanResult.setText("");
                             if (displayedChild == childCount - 2) {
                                 viewFlipper.stopFlipping();
                                 setMeasurementScreen();
@@ -437,7 +437,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
 		{
 
             if(clearflag) {
-                valueClearFlag = true;
+
                 viewFlipper.setDisplayedChild(0);
                 allSelectedOptions = new ArrayList<String>();
                 allSelectedQuestions = new ArrayList<String>();
