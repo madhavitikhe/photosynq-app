@@ -1,7 +1,9 @@
 package com.photosynq.app.navigationDrawer;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,9 +44,10 @@ public class DataFirstFragment extends Fragment {
 	private EditText repeat_edit_text;
     private boolean prev;
     private boolean next;
+    private ViewPager viewPager;
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	public View onCreateView(final LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
         Bundle extras = getArguments();
@@ -63,16 +66,21 @@ public class DataFirstFragment extends Fragment {
 		db = DatabaseHelper.getHelper(getActivity());
 		projectId = db.getSettings(userId).getProjectId();
 
-        ImageView prev_data = (ImageView)rootView.findViewById(R.id.prev_data);
-        ImageView next_data = (ImageView)rootView.findViewById(R.id.next_data);
+//        ImageView prev_data = (ImageView)rootView.findViewById(R.id.prev_data);
+//        ImageView next_data = (ImageView)rootView.findViewById(R.id.next_data);
 
+        Button saveButton = (Button)rootView.findViewById(R.id.save_btn);
         if(!prev)
         {
-            prev_data.setVisibility(View.GONE);
+          //  prev_data.setVisibility(View.GONE);
         }
         if(!next)
         {
-            next_data.setVisibility(View.GONE);
+            //next_data.setVisibility(View.GONE);
+        }
+        else
+        {
+            saveButton.setText("Next     >");
         }
 		radioGroup = (RadioGroup) rootView.findViewById(R.id.radioGroupQuestionType);
 		userSelectedRadio = (RadioButton) rootView.findViewById(R.id.user_select_radiobtn);
@@ -85,11 +93,12 @@ public class DataFirstFragment extends Fragment {
 		to_edit_text = (EditText) rootView.findViewById(R.id.to_editText);
 		repeat_edit_text = (EditText) rootView.findViewById(R.id.repeat_editText);
 
-        Button saveButton = (Button)rootView.findViewById(R.id.save_btn);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 saveData();
+                viewPager = (ViewPager) getActivity().findViewById(R.id.viewPager);
+                viewPager.setCurrentItem(getItem(+1), true);
             }
         });
         fixed_value_edit_text.setOnTouchListener(new View.OnTouchListener() {
@@ -186,6 +195,12 @@ public class DataFirstFragment extends Fragment {
 	rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));
 	return rootView;
  }
+
+    private int getItem(int i) {
+        int a = viewPager.getCurrentItem();
+        i = i + a;
+        return i;
+    }
 
     public void saveData() {
         Data data = new Data();
