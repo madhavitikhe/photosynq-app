@@ -204,7 +204,6 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
 
                             if (displayedChild == childCount - 2 ) {
                                 viewFlipper.stopFlipping();
-                                setMeasurementScreen();
                                 if(reviewFlag)
                                 {
                                     allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
@@ -215,6 +214,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                                     allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
                                     viewFlipper.showNext();
                                 }
+                                setMeasurementScreen();
                             }
                             else
                             {
@@ -238,6 +238,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                 }
                 else if(data.getType().equals(Data.FIXED_VALUE))
                 {
+
                     allSelectedOptions.add(questionLoop,data.getValue());
                     //do nothing here
 
@@ -251,16 +252,17 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                     if(questions.size() == autoIncProjecSize)
                     {
                          allSelectedQuestions.add(new Gson().toJson(question));
-                        setMeasurementScreen();
                         if(reviewFlag)
                         {
-                            setMeasurementScreen();
                             viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
                             reviewFlag = false;
                         }
                         else {
                             viewFlipper.showNext();
                         }
+                        setMeasurementScreen();
+
+
                     }
 
                     PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_QUESTION_INDEX, "0");
@@ -303,7 +305,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
 
                             if (displayedChild == childCount - 2) {
                                 viewFlipper.stopFlipping();
-                                setMeasurementScreen();
+
                                 if(reviewFlag)
                                 {
                                     allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
@@ -314,6 +316,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                                     allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
                                     viewFlipper.showNext();
                                 }
+                                setMeasurementScreen();
                             }
                             else
                             {
@@ -337,6 +340,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
             }
             else
             {
+             if(allSelectedOptions.size()==0){allSelectedOptions.add(0,"");}
              for (int i=1; i<= question.getOptions().size(); i++)
              {
                 if(i%2==0)
@@ -368,6 +372,8 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                     imageView.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            if(allSelectedOptions.size()==0){allSelectedOptions.add(0,"");}
+
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
                             allSelectedQuestions.add(new Gson().toJson(question));
@@ -438,6 +444,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                         imageVieweven.setOnClickListener(new OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                if(allSelectedOptions.size()==0){allSelectedOptions.add(0,"");}
                                 int displayedChild = viewFlipper.getDisplayedChild();
                                 int childCount = viewFlipper.getChildCount();
                                 allSelectedQuestions.add(new Gson().toJson(question));
