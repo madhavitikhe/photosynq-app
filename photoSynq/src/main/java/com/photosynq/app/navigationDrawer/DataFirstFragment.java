@@ -214,13 +214,17 @@ public class DataFirstFragment extends Fragment {
         if (selectedRadioButtonId == userSelectedRadio.getId()) {
 
             data.setType(QuestionType.USER_SELECTED.getStatusCode());
-            Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+            if(!next) {
+                Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+            }
 
         } else if (selectedRadioButtonId == fixedValueRadio.getId()) {
 
             data.setType(QuestionType.FIXED_VALUE.getStatusCode());
             data.setValue(fixed_value_edit_text.getText().toString());
-            Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+            if(!next) {
+                Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+            }
 
         } else if (selectedRadioButtonId == autoIncRadio.getId()) {
 
@@ -235,14 +239,18 @@ public class DataFirstFragment extends Fragment {
                 }else
                 {
                     data.setValue(from_edit_text.getText().toString() + "," + to_edit_text.getText().toString() + "," + repeat_edit_text.getText().toString());
-                    Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+                    if(!next) {
+                        Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+                    }
 
                 }
 
         } else if (selectedRadioButtonId == scanCodeRadio.getId()) {
 
             data.setType(QuestionType.SCAN_CODE.getStatusCode());
-            Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+            if(!next) {
+                Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+            }
 
         }
 
