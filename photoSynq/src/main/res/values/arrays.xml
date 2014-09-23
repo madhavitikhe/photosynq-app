@@ -10,5 +10,14 @@
         <item>Data</item>
         <item>Review</item>
         <item>Sync</item>   
-    </string-array>   
+    </string-array>
+    <string-array name="sync_intervals">
+            <item>5 mins</item>
+            <item>30 mins</item>
+            <item>1 hr</item>
+            <item>12 hrs</item>
+            <item>1 day</item>
+            <item>Manual</item>
+    </string-array>
 </resources>
+

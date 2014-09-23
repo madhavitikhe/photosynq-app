@@ -84,7 +84,7 @@ public class FragmentHome extends Fragment {
             appSettings.setModeType(Utils.APP_MODE_NORMAL);
             db.updateSettings(appSettings);
             PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_FIRST_RUN,"NO");
-            PrefUtils.saveToPrefs(getActivity(),PrefUtils.PREFS_SAVE_SYNC_INTERVAL,"120");
+            PrefUtils.saveToPrefs(getActivity(),PrefUtils.PREFS_SAVE_SYNC_INTERVAL,"2");
         }
         return rootView;
     }
