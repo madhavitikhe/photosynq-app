@@ -24,7 +24,7 @@ import com.photosynq.app.navigationDrawer.Utils.QuestionType;
 import com.photosynq.app.utils.PrefUtils;
 
 public class DataFirstFragment extends Fragment {
-	
+
 	public Button save_btn;
 	public DatabaseHelper db;
 	private String userId;
@@ -85,7 +85,7 @@ public class DataFirstFragment extends Fragment {
 		fixedValueRadio = (RadioButton) rootView.findViewById(R.id.fixedvalueradio);
 		autoIncRadio = (RadioButton) rootView.findViewById(R.id.autoincrementradio);
 		scanCodeRadio = (RadioButton) rootView.findViewById(R.id.scanCode);
-		
+
 		fixed_value_edit_text = (EditText) rootView.findViewById(R.id.fixed_value_editText);
 		from_edit_text = (EditText) rootView.findViewById(R.id.from_editText);
 		to_edit_text = (EditText) rootView.findViewById(R.id.to_editText);
@@ -255,7 +255,9 @@ public class DataFirstFragment extends Fragment {
 
         db.updateData(data);
         if(data.getType().equals(QuestionType.PROJECT_SELECTED.name())){
-            Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+            if(!next) {
+                Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+            }
         }
     }
 

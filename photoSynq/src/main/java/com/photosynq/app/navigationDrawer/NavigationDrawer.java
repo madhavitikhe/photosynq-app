@@ -2,6 +2,8 @@
 package com.photosynq.app.navigationDrawer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -12,6 +14,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -251,6 +254,19 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
 	}
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //Handle the back button
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHome()).commit();
+            return true;
+        }
+        else {
+            return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return drawerToggle.onOptionsItemSelected(item);
         }
@@ -281,6 +297,24 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
         Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);
         intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_QUICK_MEASURE);
         startActivity(intent);
+    }
+
+    public void exitApp(View view)
+    {
+        new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Quit")
+                    .setMessage("Do You Want to Close the Application")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //Stop the activity
+                            NavigationDrawer.this.finish();
+                        }
+
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
     }
 
 }

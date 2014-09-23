@@ -6,6 +6,7 @@
     <string name="login_button">Login</string>
     <string name="research_project_str">Research Projects</string>
     <string name="quick_measurement_str">Quick Measurement</string>
+    <string name="exit_btn">Exit</string>
     <string name="title_activity_project_description">Project Details</string>
     <string name="no_data_found">No Data Found</string>
     <string name="start_measure">Click to start measurement</string>
