@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,7 @@ import java.util.List;
 
 public class FragmentData extends Fragment {
 	MyPageAdapter pageAdapter;
-	ViewPager viewPager;
+	NonSwipableViewPager viewPager;
 	DatabaseHelper db;
 	private String userID;
 
@@ -46,7 +45,7 @@ public class FragmentData extends Fragment {
                 return rootView;
         }
 		View rootView = inflater.inflate(R.layout.fragment_data,container, false);
-		viewPager = (ViewPager) rootView.findViewById(R.id.viewPager);
+		viewPager = (NonSwipableViewPager) rootView.findViewById(R.id.viewPager);
 
 		List<Fragment> fragments = getFragments(questions);
 		pageAdapter = new MyPageAdapter(getActivity().getSupportFragmentManager(), fragments);

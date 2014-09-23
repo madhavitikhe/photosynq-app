@@ -68,9 +68,24 @@ public class DataFirstFragment extends Fragment {
 //        ImageView next_data = (ImageView)rootView.findViewById(R.id.next_data);
 
         Button saveButton = (Button)rootView.findViewById(R.id.save_btn);
-        if(!prev)
+        Button prevButton = (Button)rootView.findViewById(R.id.prev_btn);
+        if(prev)
         {
+           prevButton.setVisibility(View.VISIBLE);
+           prevButton.setText("<  Prev");
+           prevButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    saveData();
+                    viewPager = (ViewPager) getActivity().findViewById(R.id.viewPager);
+                    viewPager.setCurrentItem(getItem(-1), true);
+                }
+            });
           //  prev_data.setVisibility(View.GONE);
+        }
+        else
+        {
+            prevButton.setVisibility(View.GONE);
         }
         if(!next)
         {
@@ -78,7 +93,7 @@ public class DataFirstFragment extends Fragment {
         }
         else
         {
-            saveButton.setText("Next     >");
+            saveButton.setText("Next  >");
         }
 		radioGroup = (RadioGroup) rootView.findViewById(R.id.radioGroupQuestionType);
 		userSelectedRadio = (RadioButton) rootView.findViewById(R.id.user_select_radiobtn);
@@ -99,6 +114,7 @@ public class DataFirstFragment extends Fragment {
                 viewPager.setCurrentItem(getItem(+1), true);
             }
         });
+
         fixed_value_edit_text.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {

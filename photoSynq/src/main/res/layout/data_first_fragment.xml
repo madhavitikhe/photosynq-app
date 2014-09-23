@@ -184,9 +184,21 @@
             </RelativeLayout>
         </LinearLayout>
     </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <Button android:id="@+id/prev_btn"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_weight=".5"
+        android:text="Previous"
+        android:layout_alignParentBottom="true"/>
     <Button android:id="@+id/save_btn"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:text="@string/save"
+        android:layout_weight=".5"
         android:layout_alignParentBottom="true"/>
+    </LinearLayout>
 </LinearLayout>

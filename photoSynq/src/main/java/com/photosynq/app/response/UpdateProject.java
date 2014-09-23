@@ -56,11 +56,13 @@ public class UpdateProject implements PhotosynqResponse {
                     JSONArray customFields = jsonProject.getJSONArray("custom_fields");
                     for (int j = 0; j < customFields.length(); j++) {
                         JSONObject jsonQuestion = customFields.getJSONObject(j);
-                        Question question = new Question(jsonQuestion.getString("id"),
+                        int questionType = Integer.parseInt(jsonQuestion.getString("value_type"));
+                        Question question = new Question(
+                                jsonQuestion.getString("id"),
                                 jsonProject.getString("id"),
-                                jsonQuestion.getString("label"),Integer.parseInt(jsonQuestion.getString("value_type")));
+                                jsonQuestion.getString("label"),
+                                questionType);
                         db.updateQuestion(question);
-
                         String[] options = jsonQuestion.getString("value").split(",");
                         for (String opt : options) {
                             Option option = new Option(jsonQuestion.getString("id"), opt, jsonProject.getString("id"));
