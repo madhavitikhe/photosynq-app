@@ -154,7 +154,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
         viewFlipper = (ViewFlipper) findViewById(R.id.ViewFlipper01);
         int questionLoop =0;
         int fixedValueCount = 0;
-        if(questions.size() == 0)
+        if(questions.size() == 0 || null == deviceAddress)
         {
             Toast.makeText(getApplicationContext(),"Please complete data setup first.",Toast.LENGTH_SHORT).show();
             finish();
