@@ -76,7 +76,7 @@ public class DataFirstFragment extends Fragment {
            prevButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    saveData();
+                    saveData(false);
                     viewPager = (ViewPager) getActivity().findViewById(R.id.viewPager);
                     viewPager.setCurrentItem(getItem(-1), true);
                 }
@@ -109,7 +109,7 @@ public class DataFirstFragment extends Fragment {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveData();
+                saveData(true);
                 viewPager = (ViewPager) getActivity().findViewById(R.id.viewPager);
                 viewPager.setCurrentItem(getItem(+1), true);
             }
@@ -216,7 +216,7 @@ public class DataFirstFragment extends Fragment {
         return i;
     }
 
-    public void saveData() {
+    public void saveData(boolean noMessage) {
         Data data = new Data();
         data.setUser_id(userId);
         data.setProject_id(projectId);
@@ -230,7 +230,8 @@ public class DataFirstFragment extends Fragment {
 
             data.setType(QuestionType.USER_SELECTED.getStatusCode());
             if(!next) {
-                Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+                if(noMessage)
+                    Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
             }
 
         } else if (selectedRadioButtonId == fixedValueRadio.getId()) {
@@ -238,7 +239,8 @@ public class DataFirstFragment extends Fragment {
             data.setType(QuestionType.FIXED_VALUE.getStatusCode());
             data.setValue(fixed_value_edit_text.getText().toString());
             if(!next) {
-                Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+                if(noMessage)
+                    Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
             }
 
         } else if (selectedRadioButtonId == autoIncRadio.getId()) {
@@ -255,7 +257,8 @@ public class DataFirstFragment extends Fragment {
                 {
                     data.setValue(from_edit_text.getText().toString() + "," + to_edit_text.getText().toString() + "," + repeat_edit_text.getText().toString());
                     if(!next) {
-                        Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+                        if(noMessage)
+                            Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
                     }
 
                 }
@@ -272,7 +275,8 @@ public class DataFirstFragment extends Fragment {
         db.updateData(data);
         if(data.getType().equals(QuestionType.PROJECT_SELECTED.name())){
             if(!next) {
-                Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+                if(noMessage)
+                    Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
             }
         }
     }

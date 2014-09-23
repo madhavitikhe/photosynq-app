@@ -197,6 +197,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                     finish();
                     return;
                 }
+
                 if(data.getType().equals(Data.USER_SELECTED))
                 {
                     LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -261,21 +262,27 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                 else if(data.getType().equals(Data.AUTO_INCREMENT))
                 {
                     autoIncProjecSize = autoIncProjecSize + 1;
+                    if((data.getValue()).equals(Data.NO_VALUE))
+                    {
+                        Toast.makeText(getApplicationContext(),"Incomplete information, please define answer types in data tab.",Toast.LENGTH_SHORT).show();
+                        finish();
+                        return;
+                    }
                     if(questions.size() == autoIncProjecSize)
                     {
-                         allSelectedQuestions.add(new Gson().toJson(question));
-                        if(reviewFlag)
-                        {
-                            viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
-                            reviewFlag = false;
-                        }
-                        else {
-                            viewFlipper.showNext();
-                        }
+                    allSelectedQuestions.add(new Gson().toJson(question));
+                    if(reviewFlag)
+                    {
+                        viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                        reviewFlag = false;
+                    }
+                    else {
+                        viewFlipper.showNext();
+                    }
 //                        setMeasurementScreen();
 
 
-                    }
+                }
 
                     PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_QUESTION_INDEX, "0");
                 }
@@ -551,7 +558,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                 //allSelectedOptions = new ArrayList<String>();
                 //allSelectedQuestions = new ArrayList<String>();
             }
-            if(fixedValueCount == questions.size() || autoIncProjecSize == questions.size()) {
+            if(fixedValueCount == questions.size() || autoIncProjecSize == questions.size()|| fixedValueCount+autoIncProjecSize == questions.size()) {
                 setMeasurementScreen();
             }
             clearflag = true;
