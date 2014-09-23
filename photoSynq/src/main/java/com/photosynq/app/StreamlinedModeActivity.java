@@ -109,12 +109,14 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
 
     private boolean clearflag = false;
     private boolean reviewFlag = false;
+    private int fixedValueCount = 0;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_streamlined_mode);
         mStatusLine = (TextView) findViewById(R.id.statusMessage);
+        fixedValueCount = 0;
         initialize();
 
 	}
@@ -153,7 +155,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
         //db.closeDB();
         viewFlipper = (ViewFlipper) findViewById(R.id.ViewFlipper01);
         int questionLoop =0;
-        int fixedValueCount = 0;
+
         if(questions.size() == 0)
         {
             Toast.makeText(getApplicationContext(),"Please complete data setup first.",Toast.LENGTH_SHORT).show();
@@ -270,7 +272,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                         else {
                             viewFlipper.showNext();
                         }
-                        setMeasurementScreen();
+//                        setMeasurementScreen();
 
 
                     }
@@ -514,9 +516,9 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
         View measurementScreen = infltr.inflate(R.layout.activity_display_selected_questions_options, null,false);
         measurementScreen.setId(9595);
         viewFlipper.addView(measurementScreen);
-        if(fixedValueCount == questions.size()) {
-            setMeasurementScreen();
-        }
+//        if(fixedValueCount == questions.size()) {
+//            setMeasurementScreen();
+//        }
         // add on click listener
         Button measureButton = (Button)measurementScreen.findViewById(R.id.measure_btn);
         measureButton.setOnClickListener(new OnClickListener() {
@@ -541,15 +543,17 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
 		if (!scanMode )
 		{
             viewFlipper.setDisplayedChild(0);
+            List<Question> questions = db.getAllQuestionForProject(projectId);
 
             if(clearflag) {
                 refreshMeasrementScreen();
 
                 //allSelectedOptions = new ArrayList<String>();
                 //allSelectedQuestions = new ArrayList<String>();
-
             }
-
+            if(fixedValueCount == questions.size() || autoIncProjecSize == questions.size()) {
+                setMeasurementScreen();
+            }
             clearflag = true;
  		}
 		scanMode = false;
