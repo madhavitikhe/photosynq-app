@@ -1,6 +1,5 @@
 package com.photosynq.app.navigationDrawer;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -208,6 +206,7 @@ public class DataFirstFragment extends Fragment {
         data.setProject_id(projectId);
         data.setQuestion_id(questionId);
         data.setValue(Data.NO_VALUE);
+        data.setType(QuestionType.PROJECT_SELECTED.getStatusCode());
 
         int selectedRadioButtonId = radioGroup.getCheckedRadioButtonId();
 
@@ -255,6 +254,9 @@ public class DataFirstFragment extends Fragment {
         }
 
         db.updateData(data);
+        if(data.getType().equals(QuestionType.PROJECT_SELECTED.name())){
+            Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+        }
     }
 
 }
