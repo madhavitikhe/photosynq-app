@@ -153,6 +153,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
         //db.closeDB();
         viewFlipper = (ViewFlipper) findViewById(R.id.ViewFlipper01);
         int questionLoop =0;
+        int fixedValueCount = 0;
         if(questions.size() == 0)
         {
             Toast.makeText(getApplicationContext(),"Please complete data setup first.",Toast.LENGTH_SHORT).show();
@@ -253,6 +254,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                 {
                     //if(questionLoop<= allSelectedOptions.size())
                     allSelectedOptions.set(questionLoop,data.getValue());
+                    fixedValueCount++;
                 }
                 else if(data.getType().equals(Data.AUTO_INCREMENT))
                 {
@@ -512,6 +514,9 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
         View measurementScreen = infltr.inflate(R.layout.activity_display_selected_questions_options, null,false);
         measurementScreen.setId(9595);
         viewFlipper.addView(measurementScreen);
+        if(fixedValueCount == questions.size()) {
+            setMeasurementScreen();
+        }
         // add on click listener
         Button measureButton = (Button)measurementScreen.findViewById(R.id.measure_btn);
         measureButton.setOnClickListener(new OnClickListener() {
@@ -874,14 +879,13 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                 //opt.setText("Option -  " + allSelectedOptions.get(i));
                 data_value = allSelectedOptions.get(i);
                 //liLayout.addView(opt);
-                reviewItem.setOnTouchListener(new View.OnTouchListener() {
+                reviewItem.setOnClickListener(new OnClickListener() {
                     @Override
-                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                    public void onClick(View view) {
                         reviewFlag = true;
                         View child = viewFlipper.findViewWithTag(view.getTag());
                         viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(child));
                         refreshMeasrementScreen();
-                        return false;
                     }
                 });
 //                que.setOnClickListener(new OnClickListener() {
