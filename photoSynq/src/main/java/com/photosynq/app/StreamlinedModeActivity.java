@@ -153,9 +153,15 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
         //db.closeDB();
         viewFlipper = (ViewFlipper) findViewById(R.id.ViewFlipper01);
         int questionLoop =0;
+        if(questions.size() == 0)
+        {
+            Toast.makeText(getApplicationContext(),"Please complete data setup first.",Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
         for (final Question question : questions) {
             scanMode = false;
-
+            allSelectedOptions.add(questionLoop,"");
             LinearLayout mainLinearLayout = new LinearLayout(ctx);
             mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
             mainLinearLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -179,8 +185,15 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
 
             Data data ;
             data = db.getData(userId, projectId, question.getQuestionId());
-            if( !data.getType().isEmpty() && !data.getValue().isEmpty())
+            //if( !data.getType().isEmpty() && !data.getValue().isEmpty())
+            if(question.getQuestionType()!= Question.PROJECT_DEFINED)
             {
+                if( null == data.getType() || null == data.getValue())
+                {
+                    Toast.makeText(getApplicationContext(),"Incomplete information, please define answer types in data tab.",Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
                 if(data.getType().equals(Data.USER_SELECTED))
                 {
                     LayoutInflater infltr = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -211,7 +224,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                                     reviewFlag = false;
                                 }
                                 else {
-                                    allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
+                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
                                     viewFlipper.showNext();
                                 }
                                 setMeasurementScreen();
@@ -226,7 +239,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                                     reviewFlag = false;
                                 }
                                 else {
-                                    allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
+                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
                                     viewFlipper.showNext();
                                 }
                             }
@@ -238,13 +251,8 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                 }
                 else if(data.getType().equals(Data.FIXED_VALUE))
                 {
-
-                    allSelectedOptions.add(questionLoop,data.getValue());
-                    //do nothing here
-
-
-                    //String val = data.getValue();
-                    //PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_FIXED_VALUE, val);
+                    //if(questionLoop<= allSelectedOptions.size())
+                    allSelectedOptions.set(questionLoop,data.getValue());
                 }
                 else if(data.getType().equals(Data.AUTO_INCREMENT))
                 {
@@ -313,7 +321,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                                     reviewFlag = false;
                                 }
                                 else {
-                                    allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
+                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
                                     viewFlipper.showNext();
                                 }
                                 setMeasurementScreen();
@@ -328,7 +336,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                                     reviewFlag = false;
                                 }
                                 else {
-                                    allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
+                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
                                     viewFlipper.showNext();
                                 }
                             }
@@ -340,7 +348,6 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
             }
             else
             {
-             if(allSelectedOptions.size()==0){allSelectedOptions.add(0,"");}
              for (int i=1; i<= question.getOptions().size(); i++)
              {
                 if(i%2==0)
@@ -372,7 +379,6 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                     imageView.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if(allSelectedOptions.size()==0){allSelectedOptions.add(0,"");}
 
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
@@ -393,7 +399,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                                     reviewFlag = false;
                                 }
                                 else {
-                                    allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
                                     viewFlipper.showNext();
                                 }
                                 setMeasurementScreen();
@@ -407,7 +413,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                                     reviewFlag = false;
                                 }
                                 else {
-                                    allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
                                     viewFlipper.showNext();
                                 }
                             }
@@ -444,7 +450,6 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                         imageVieweven.setOnClickListener(new OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if(allSelectedOptions.size()==0){allSelectedOptions.add(0,"");}
                                 int displayedChild = viewFlipper.getDisplayedChild();
                                 int childCount = viewFlipper.getChildCount();
                                 allSelectedQuestions.add(new Gson().toJson(question));
@@ -463,7 +468,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                                         reviewFlag = false;
                                     }
                                     else {
-                                        allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+                                        allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
                                         viewFlipper.showNext();
                                     }
                                     setMeasurementScreen();
@@ -477,7 +482,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                                         reviewFlag = false;
                                     }
                                     else {
-                                        allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+                                        allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
                                         viewFlipper.showNext();
                                     }
                                 }
@@ -530,15 +535,16 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
 		super.onResume();
 		if (!scanMode )
 		{
+            viewFlipper.setDisplayedChild(0);
 
             if(clearflag) {
+                refreshMeasrementScreen();
 
-                viewFlipper.setDisplayedChild(0);
-                allSelectedOptions = new ArrayList<String>();
-                allSelectedQuestions = new ArrayList<String>();
+                //allSelectedOptions = new ArrayList<String>();
+                //allSelectedQuestions = new ArrayList<String>();
 
             }
-            refreshMeasrementScreen();
+
             clearflag = true;
  		}
 		scanMode = false;
@@ -676,6 +682,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                             break;
                         case BluetoothService.STATE_LISTEN:
                         case BluetoothService.STATE_NONE:
+                            if(null!=mStatusLine)
                             mStatusLine.setText(R.string.title_not_connected);
                             break;
                     }
@@ -773,7 +780,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
             }
         }
 
-        int optionLoop = 0;
+        //int optionLoop = 0;
         List<Question> allQuestions = db.getAllQuestionForProject(projectId);
         for (int i = 0; i < allQuestions.size(); i++) {
 
@@ -819,6 +826,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                         data_value = ""+optionvalue;
                     }
 
+
                 }
                 else if(data.getType().equals(Data.FIXED_VALUE))
                 {
@@ -828,17 +836,15 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                     //liLayout.addView(que);
                     //opt.setText("Option -  " + data.getValue());
                     data_value = data.getValue();
-                    optionLoop++;
                 }
                 else  //Question and Option shown except 'Auto_Increment' option type.(for User_Selected, Scan_Code)
                 {
                     //que.setText("Question -  " + selectedQuestions.get(optionLoop).getQuestionText());
                     //liLayout.addView(que);
                     tvQuestion.setText(allQuestions.get(i).getQuestionText());
-                    tvOption.setText(allSelectedOptions.get(optionLoop));
+                    tvOption.setText(allSelectedOptions.get(i));
                     //opt.setText("Option -  " + allSelectedOptions.get(optionLoop));
-                    data_value = allSelectedOptions.get(optionLoop);
-                    optionLoop++;
+                    data_value = allSelectedOptions.get(i);
                     reviewItem.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -868,7 +874,6 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                 //opt.setText("Option -  " + allSelectedOptions.get(i));
                 data_value = allSelectedOptions.get(i);
                 //liLayout.addView(opt);
-                optionLoop++;
                 reviewItem.setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View view, MotionEvent motionEvent) {
