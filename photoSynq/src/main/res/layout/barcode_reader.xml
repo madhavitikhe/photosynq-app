@@ -1,62 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/barcode_main_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+
     android:orientation="vertical">
 
     <include layout="@layout/question" />
 
-    <LinearLayout
+    <Button
+        android:id="@+id/scan_button"
+        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        android:layout_height="100dp"
+        android:text="@string/scan" />
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:gravity="center"-->
+        <!--android:orientation="horizontal">-->
 
-        <Button
-            android:id="@+id/scan_button"
-            android:layout_width="fill_parent"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="@string/scan" />
-
-
-        <Button
-            android:id="@+id/done_scan_btn"
-            android:layout_width="fill_parent"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Done" />
-    </LinearLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:fillViewport="true">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/scan_result"
-                android:textColor="#000000"
-                android:textSize="20dp" />
-
-            <TextView
-                android:id="@+id/scan_result"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/no_data_found"
-                android:textColor="@color/black"
-                android:textSize="15dp" />
-        </LinearLayout>
-    </ScrollView>
+        <!--<Button-->
+            <!--android:id="@+id/scan_button"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--android:layout_height="100dp"-->
+            <!--android:text="@string/scan" />-->
 
 
-</LinearLayout>
+        <!--&lt;!&ndash;<Button&ndash;&gt;-->
+            <!--&lt;!&ndash;android:id="@+id/done_scan_btn"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="fill_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_weight="1"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:text="Done" />&ndash;&gt;-->
+    <!--</LinearLayout>-->
+
+    <!--<ScrollView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dip"-->
+        <!--android:layout_weight="1"-->
+        <!--android:fillViewport="true">-->
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:orientation="vertical">-->
+
+            <!--<TextView-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="@string/scan_result"-->
+                <!--android:textColor="#000000"-->
+                <!--android:textSize="20dp" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/scan_result"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="10dp"-->
+                <!--android:text="@string/no_data_found"-->
+                <!--android:textColor="@color/black"-->
+                <!--android:textSize="15dp" />-->
+        <!--</LinearLayout>-->
+    <!--</ScrollView>-->
+
+
+</RelativeLayout>

@@ -92,6 +92,7 @@ public class FragmentReview extends Fragment {
                     tv.setLayoutParams(new TableRow.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f));
                     tv.setText(question.getQuestionText());
                     tv.setLines(3);
+                    tv.setTextSize(20);
                     tv.setPadding(10, 10, 10, 10);
                     tv.setBackgroundResource(R.drawable.border);
                     row.addView(tv);
@@ -128,7 +129,8 @@ public class FragmentReview extends Fragment {
                     TableRow rowOptions = new TableRow(getActivity());
                     for (Question question : questions) {
                         TextView tv = new TextView(getActivity());
-                        tv.setText(R.string.no_data_found);
+                        tv.setText("");
+                        tv.setTextSize(20);
 
                         if(question.getQuestionType() == Question.PROJECT_DEFINED)
                         {

@@ -36,98 +36,108 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_marginTop="5dp"
                 android:orientation="horizontal" >
 
                 <TextView
                     android:id="@+id/mode_lbl"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.4"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
                     android:text="@string/mode"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textSize="20sp"/>
 
                 <TextView
                     android:id="@+id/mode_text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.6"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:text="@string/no_data_found" />
-            </RelativeLayout>
+                    android:text="@string/no_data_found"
+                    android:textSize="20sp"/>
+            </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="fill_parent"
+                android:layout_marginTop="5dp"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:orientation="horizontal" >
 
                 <TextView
                     android:id="@+id/user_lbl"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.4"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
                     android:text="@string/userSelected"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/user_text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.6"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:textSize="20sp"
                     android:text="@string/no_data_found" />
-            </RelativeLayout>
+            </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_marginTop="5dp"
                 android:orientation="horizontal" >
 
                 <TextView
                     android:id="@+id/connection_lbl"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.4"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:textSize="20sp"
                     android:text="@string/connection_lbl"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/connection_text"
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.6"
+                    android:textSize="20sp"
                     android:text="@string/no_data_found" />
-            </RelativeLayout>
+            </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="fill_parent"
+                android:layout_marginTop="5dp"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:orientation="horizontal" >
 
                 <TextView
                     android:id="@+id/project_lbl"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
                     android:text="@string/project_lbl"
+                    android:layout_weight=".4"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/project_text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="@string/no_data_found" />
-            </RelativeLayout>
+                    android:layout_weight=".6"
+                    android:textSize="20sp"
+                    android:text="raea asdf ;la  ads;ad's;fka adlfad;slf asdfl asd fasdf lasdkf ads" />
+            </LinearLayout>
 
                 <TableLayout
                     android:id="@+id/questionsTable"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:textSize="20sp"
                     android:stretchColumns="*" >
                 </TableLayout>
 

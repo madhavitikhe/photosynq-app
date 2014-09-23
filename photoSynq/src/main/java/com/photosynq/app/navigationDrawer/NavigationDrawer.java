@@ -58,8 +58,11 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
             return;
         }
 
+
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHome()).commit();
+        setTitleActionBar(getResources().getString(R.string.app_name));
 
         getSupportActionBar().setIcon(R.drawable.ic_launcher);
 		setContentView(R.layout.navigation_drawer);		
@@ -106,8 +109,29 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
 	                finish();	
                 }
             });
-	
-        
+
+        Thread t = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                boolean isFirstStart = sp.getBoolean("LearnedDrawer", true);
+
+                // we will not get a value  at first start, so true will be returned
+
+                // if it was the first app start
+                if(isFirstStart) {
+                    layoutDrawer.openDrawer(linearDrawer);
+                    SharedPreferences.Editor e = sp.edit();
+                    // we save the value "false", indicating that it is no longer the first appstart
+                    e.putBoolean("LearnedDrawer", false);
+                    e.commit();
+                }
+            }
+        });
+
+        t.start();
 	}
 
     @Override
@@ -138,20 +162,20 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
 	    drawerToggle.syncState();	
 	 }	
 	
-	public void setTitleActionBar(CharSequence informacao) {    	
-    	getSupportActionBar().setTitle(informacao);
+	public void setTitleActionBar(CharSequence title) {
+    	getSupportActionBar().setTitle(title);
     }	
 	
-	public void setSubtitleActionBar(CharSequence informacao) {    	
-    	getSupportActionBar().setSubtitle(informacao);
+	public void setSubtitleActionBar(CharSequence subTitle) {
+    	getSupportActionBar().setSubtitle(subTitle);
     }	
 
 	public void setIconActionBar(int icon) {    	
     	getSupportActionBar().setIcon(icon);
     }	
 	
-	public void setLastPosition(int posicao){		
-		this.lastPosition = posicao;
+	public void setLastPosition(int position){
+		this.lastPosition = position;
 	}	
 		
 	private class ActionBarDrawerToggleCompat extends ActionBarDrawerToggle {
@@ -201,27 +225,35 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
             case 0:
 
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHome()).commit();
+                setTitleActionBar(getResources().getString(R.string.app_name));
                 break;
             case 1:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentMode()).commit();
+                setTitleActionBar("Select Measurement Mode");
                 break;
             case 2:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentUser()).commit();
+                setTitleActionBar("Select User");
                 break;
             case 3:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentConnection()).commit();
+                setTitleActionBar("Select Bluetooth Device");
                 break;
             case 4:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();
+                setTitleActionBar("Select Project");
                 break;
             case 5:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentData()).commit();
+                setTitleActionBar("Select User-defined Data");
                 break;
             case 6:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentReview()).commit();
+                setTitleActionBar("Review All Settings");
                 break;
             case 7:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentSync()).commit();
+                setTitleActionBar("Data Sync Options");
                 break;
 		}			
 		//show selection of navigation drawer item.(set selected item color is dark).
@@ -259,6 +291,7 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
         if(keyCode == KeyEvent.KEYCODE_BACK) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHome()).commit();
+            setTitleActionBar(getResources().getString(R.string.app_name));
             return true;
         }
         else {

@@ -149,6 +149,8 @@ public class DataFirstFragment extends Fragment {
         Question question = db.getQuestionForProject(projectId,questionId);
         questionTextView.setText(question.getQuestionText());
         if(questionValueType == 1 ) {
+            TextView lbl = (TextView)rootView.findViewById(R.id.select_from_web_lbl);
+            lbl.setVisibility(View.VISIBLE);
             RadioGroup radioGroupQuestionType = (RadioGroup)rootView.findViewById(R.id.radioGroupQuestionType);
             for (int i = 0; i < radioGroupQuestionType.getChildCount(); i++) {
                 View child = radioGroupQuestionType.getChildAt(i);

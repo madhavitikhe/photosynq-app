@@ -293,67 +293,68 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                     viewScanCode.setId(Integer.parseInt(question.getQuestionId()));
                     viewScanCode.setTag(question.getQuestionId());
 
-                    final TextView txtScanResult = (TextView) viewScanCode.findViewById(R.id.scan_result);
+                    //final TextView txtScanResult = (TextView) viewScanCode.findViewById(R.id.scan_result);
                     TextView questionText = (TextView) viewScanCode.findViewById(R.id.question_layout);
                     questionText.setText(question.getQuestionText());
                      View btnScan = viewScanCode.findViewById(R.id.scan_button);
-
+                        btnScan.setTag(questionLoop);
                         btnScan.setOnClickListener(new OnClickListener() {
                             public void onClick(View v) {
                                 scanMode = true;
+                                allSelectedQuestions.add(new Gson().toJson(question));
                                 Intent intent = new Intent(StreamlinedModeActivity.this,CaptureActivity.class);
                                 intent.setAction("com.google.zxing.client.android.SCAN");
                                 // this stops saving ur barcode in barcode scanner app's history
                                 intent.putExtra("SAVE_HISTORY", false);
-                                int viewId = ((View)v.getParent().getParent()).getId();
-                                startActivityForResult(intent, viewId);
+                                //int viewId = ((View)v.getParent().getParent()).getId();
+                                startActivityForResult(intent, Integer.parseInt(v.getTag().toString()));
                             }
                         });
 
-                      View btnScanDone = viewScanCode.findViewById(R.id.done_scan_btn);
-                      btnScanDone.setTag(questionLoop);
-                      btnScanDone.setOnClickListener(new OnClickListener() {
-
-                        @Override
-                        public void onClick(View v) {
-                            int displayedChild = viewFlipper.getDisplayedChild();
-                            int childCount = viewFlipper.getChildCount();
-                            allSelectedQuestions.add(new Gson().toJson(question));
-                            //allSelectedOptions.add(txtScanResult.getText().toString());
-                            //allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
-
-                            if (displayedChild == childCount - 2) {
-                                viewFlipper.stopFlipping();
-
-                                if(reviewFlag)
-                                {
-                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
-                                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
-                                    reviewFlag = false;
-                                }
-                                else {
-                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
-                                    viewFlipper.showNext();
-                                }
-                                setMeasurementScreen();
-                            }
-                            else
-                            {
-                                if(reviewFlag)
-                                {
-                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
-                                    setMeasurementScreen();
-                                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
-                                    reviewFlag = false;
-                                }
-                                else {
-                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
-                                    viewFlipper.showNext();
-                                }
-                            }
-                            txtScanResult.setText("");
-                        }
-                    });
+                      //View btnScanDone = viewScanCode.findViewById(R.id.done_scan_btn);
+//                      btnScanDone.setTag(questionLoop);
+//                      btnScanDone.setOnClickListener(new OnClickListener() {
+//
+//                        @Override
+//                        public void onClick(View v) {
+//                            int displayedChild = viewFlipper.getDisplayedChild();
+//                            int childCount = viewFlipper.getChildCount();
+//                            allSelectedQuestions.add(new Gson().toJson(question));
+//                            //allSelectedOptions.add(txtScanResult.getText().toString());
+//                            //allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
+//
+//                            if (displayedChild == childCount - 2) {
+//                                viewFlipper.stopFlipping();
+//
+//                                if(reviewFlag)
+//                                {
+//                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
+//                                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+//                                    reviewFlag = false;
+//                                }
+//                                else {
+//                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
+//                                    viewFlipper.showNext();
+//                                }
+//                                setMeasurementScreen();
+//                            }
+//                            else
+//                            {
+//                                if(reviewFlag)
+//                                {
+//                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
+//                                    setMeasurementScreen();
+//                                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+//                                    reviewFlag = false;
+//                                }
+//                                else {
+//                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
+//                                    viewFlipper.showNext();
+//                                }
+//                            }
+//                            txtScanResult.setText("");
+//                        }
+//                    });
                     viewFlipper.addView(viewScanCode);
                 }
             }
@@ -806,6 +807,8 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
 
             TextView tvQuestion = (TextView) reviewItem.findViewById(R.id.protocol_name);
             TextView tvOption = (TextView) reviewItem.findViewById(R.id.protocol_desc);
+            tvQuestion.setTextSize(20);
+            tvOption.setTextSize(20);
             LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             llp.setMargins(0, 15, 0, 0);
             tvOption.setLayoutParams(llp);
@@ -1019,18 +1022,63 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
 
                 // If any other request code was received
             default:
-                View view = findViewById(requestCode);
 
                 if (resultCode == RESULT_OK) {
-                    String contents = intent.getStringExtra("SCAN_RESULT");
-                    TextView txtScanResult = (TextView) view.findViewById(R.id.scan_result);
+                String contents = intent.getStringExtra("SCAN_RESULT");
+                int displayedChild = viewFlipper.getDisplayedChild();
+                int childCount = viewFlipper.getChildCount();
+                //allSelectedQuestions.add(new Gson().toJson(question));
+                //allSelectedOptions.add(txtScanResult.getText().toString());
+                //allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
 
-                    txtScanResult.setText(contents);
+                if (displayedChild == childCount - 2) {
+                    viewFlipper.stopFlipping();
+
+                    if(reviewFlag)
+                    {
+                        allSelectedOptions.set(requestCode,contents);
+                        viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                        reviewFlag = false;
+                    }
+                    else {
+                        allSelectedOptions.set(requestCode,contents);
+                        viewFlipper.showNext();
+                    }
+                    setMeasurementScreen();
+                }
+                else
+                {
+                    if(reviewFlag)
+                    {
+                        allSelectedOptions.set(requestCode,contents);
+                        setMeasurementScreen();
+                        viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                        reviewFlag = false;
+                    }
+                    else {
+                        allSelectedOptions.set(requestCode,contents);
+                        viewFlipper.showNext();
+                    }
+                }
+
+
                     Toast.makeText(getApplicationContext(), contents, Toast.LENGTH_SHORT).show();
                 } else if (resultCode == RESULT_CANCELED) {
                     // Handle cancel
                     Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_SHORT).show();
                 }
+//                View view = findViewById(requestCode);
+
+//                if (resultCode == RESULT_OK) {
+//                    String contents = intent.getStringExtra("SCAN_RESULT");
+//                    TextView txtScanResult = (TextView) view.findViewById(R.id.scan_result);
+//
+//                    txtScanResult.setText(contents);
+//                    Toast.makeText(getApplicationContext(), contents, Toast.LENGTH_SHORT).show();
+//                } else if (resultCode == RESULT_CANCELED) {
+//                    // Handle cancel
+//                    Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_SHORT).show();
+//                }
 
 
                 break;
