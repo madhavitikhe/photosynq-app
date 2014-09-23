@@ -24,6 +24,13 @@
             android:layout_height="wrap_content"
             android:onClick="quickMeasurement"
             android:text="@string/quick_measurement_str" />
+
+        <Button
+            android:id="@+id/exit_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="exitApp"
+            android:text="@string/exit_btn" />
     </LinearLayout>
 
 </FrameLayout>

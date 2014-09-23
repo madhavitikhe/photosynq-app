@@ -53,6 +53,7 @@ public class FragmentHome extends Fragment {
         return fragment;
     }
     public FragmentHome() {
+
         // Required empty public constructor
     }
 

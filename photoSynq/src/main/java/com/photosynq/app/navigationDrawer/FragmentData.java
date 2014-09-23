@@ -49,7 +49,7 @@ public class FragmentData extends Fragment {
 
 		List<Fragment> fragments = getFragments(questions);
 		pageAdapter = new MyPageAdapter(getActivity().getSupportFragmentManager(), fragments);
-		
+
 		viewPager.setAdapter(pageAdapter);
 		
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
