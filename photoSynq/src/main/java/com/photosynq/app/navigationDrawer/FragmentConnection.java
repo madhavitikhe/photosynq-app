@@ -197,11 +197,23 @@ public class FragmentConnection extends Fragment{
 										: View.VISIBLE);
 							}
 						});
+
+                selectedConnectionText.setVisibility(View.VISIBLE);
+                selectedConnectionText.animate().setDuration(shortAnimTime)
+                        .alpha(show ? 0 : 1)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                selectedConnectionText.setVisibility(show ? View.GONE
+                                        : View.VISIBLE);
+                            }
+                        });
 			} else {
 				// The ViewPropertyAnimator APIs are not available, so simply show
 				// and hide the relevant UI components.
 				bluetoothStatus.setVisibility(show ? View.VISIBLE : View.GONE);
 				pairedDeviceList.setVisibility(show ? View.GONE : View.VISIBLE);
+                selectedConnectionText.setVisibility(show ? View.GONE : View.VISIBLE);
 			}
 		}
 
