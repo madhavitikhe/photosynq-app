@@ -433,7 +433,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                     });
 
                     Picasso.with(getApplicationContext())
-                    .load("http://static.dezeen.com/uploads/2013/09/dezeen_Google-logo_1sq-300x300.jpg")
+                    .load("http://www.hydroponics.com.au/wordpress/wp-content/uploads/2012/11/NP_01.jpg")
                     .error(R.drawable.ic_launcher)
                     .into(imageView);
                     optionsRelativeLayout.addView(optionTextView, optionTVParams);
@@ -502,7 +502,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                         });
 
                         Picasso.with(getApplicationContext())
-                        .load("http://static.dezeen.com/uploads/2013/09/dezeen_Google-logo_1sq-300x300.jpg")
+                        .load("http://www.hydroponics.com.au/wordpress/wp-content/uploads/2012/11/NP_01.jpg")
                         .error(R.drawable.ic_launcher)
                         .into(imageVieweven);
                         optionsRelativeLayouteven.addView(optionTextVieweven, optionTVParamseven);

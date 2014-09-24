@@ -30,9 +30,9 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Sign In"
-            android:textSize="35dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
+            android:textSize="30dp"
+            android:layout_marginLeft="55dp"
+            android:layout_marginRight="55dp"
             android:background="@drawable/btn_layout"
             android:layout_marginTop="47dp" />
 
@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textSize="25dp"
+            android:textSize="20dp"
             android:textAlignment="center"
             android:text="Create new account"/>
     </LinearLayout>
@@ -49,9 +49,10 @@
 
     <TextView
         android:id="@+id/tutorial_txt"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:gravity="center"
-        android:textSize="20dp"/>
+        android:textSize="18dp"
+        android:text="Need help?  Here's a Step by step tutorial"/>
 </RelativeLayout>
