@@ -9,11 +9,14 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,6 +62,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 	private View mLoginStatusView;
 	private TextView mLoginStatusMessageView;
 	boolean getChangeUserIntent;
+    boolean checkLogin = true;
 
 	@SuppressLint("NewApi")
 	@Override
@@ -66,64 +70,103 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 		super.onCreate(savedInstanceState);
 //		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 //		    WebView.setWebContentsDebuggingEnabled(true);
+
+
 //		}
-		setContentView(R.layout.activity_login);
-		
-		copyAssets();
-		mLoginFormView = findViewById(R.id.login_form);
-		mLoginStatusView = findViewById(R.id.login_status);
-		mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);
-
-		mEmail = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-		mPassword = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_PASSWORD_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-		
-		getChangeUserIntent = getIntent().getBooleanExtra("change_user", false);
-        if (getChangeUserIntent) {
-            System.out.println("---------User Changed-----");
-           // return;
-        }
-        else
+        copyAssets();
+        mEmail = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        mPassword = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_PASSWORD_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        if(!mEmail.equals(PrefUtils.PREFS_DEFAULT_VAL) && !mPassword.equals(PrefUtils.PREFS_DEFAULT_VAL) )
         {
-		if(!mEmail.equals(PrefUtils.PREFS_DEFAULT_VAL) && !mPassword.equals(PrefUtils.PREFS_DEFAULT_VAL) )
-		{ 
-			//if(CommonUtils.isConnected(getApplicationContext()))
-			//{
-			//	connect();
-			//}
-			//else
-			//{
-				Intent intent = new Intent(getApplicationContext(),NavigationDrawer.class);
-				startActivity(intent);
-			//}
-		}
+            //if(CommonUtils.isConnected(getApplicationContext()))
+            //{
+            //	connect();
+            //}
+            //else
+            //{
+            Intent intent = new Intent(getApplicationContext(),NavigationDrawer.class);
+            startActivity(intent);
+            //}
         }
-		// Set up the login form.
-		mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
-		mEmailView = (EditText) findViewById(R.id.email);
-		mEmailView.setText(mEmail);
+       else
+        {
+            setContentView(R.layout.welcome_screen);
 
-		mPasswordView = (EditText) findViewById(R.id.password);
-		mPasswordView
-				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-					@Override
-					public boolean onEditorAction(TextView textView, int id,
-							KeyEvent keyEvent) {
-						if (id == R.id.login || id == EditorInfo.IME_NULL) {
-							attemptLogin();
-							return true;
-						}
-						return false;
-					}
-				});
+            TextView new_account_tv = (TextView) findViewById(R.id.createNewAccount);
+            String account_text = "or <a href=\"http://photosynq.venturit.org/users/sign_in\">Create new account</a> ";
+            new_account_tv.setMovementMethod(LinkMovementMethod.getInstance());
+            new_account_tv.setText(Html.fromHtml(account_text));
+
+            TextView tutorial_tv = (TextView) findViewById(R.id.tutorial_txt);
+            String tutor_text = "Need help?  Here's a <a href=\"http://photosynq.venturit.org/users/sign_in\">Step_by_step tutorial</a> ";
+            tutorial_tv.setMovementMethod(LinkMovementMethod.getInstance());
+            tutorial_tv.setText(Html.fromHtml(tutor_text));
+
+            Button signIn = (Button) findViewById(R.id.sign_in_button);
+            signIn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    setContentView(R.layout.activity_login);
 
 
-		findViewById(R.id.sign_in_button).setOnClickListener(
-				new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						attemptLogin();
-					}
-				});
+                    mLoginFormView = findViewById(R.id.login_form);
+                    mLoginStatusView = findViewById(R.id.login_status);
+                    mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);
+
+
+
+                    getChangeUserIntent = getIntent().getBooleanExtra("change_user", false);
+                    if (getChangeUserIntent) {
+                        System.out.println("---------User Changed-----");
+                        // return;
+                    }
+                    else
+                    {
+                        if(!mEmail.equals(PrefUtils.PREFS_DEFAULT_VAL) && !mPassword.equals(PrefUtils.PREFS_DEFAULT_VAL) )
+                        {
+                            //if(CommonUtils.isConnected(getApplicationContext()))
+                            //{
+                            //	connect();
+                            //}
+                            //else
+                            //{
+                            Intent intent = new Intent(getApplicationContext(),NavigationDrawer.class);
+                            startActivity(intent);
+                            //}
+                        }
+                    }
+                    // Set up the login form.
+                    mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
+                    mEmailView = (EditText) findViewById(R.id.email);
+                    mEmailView.setText(mEmail);
+
+                    mPasswordView = (EditText) findViewById(R.id.password);
+                    mPasswordView
+                            .setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                                @Override
+                                public boolean onEditorAction(TextView textView, int id,
+                                                              KeyEvent keyEvent) {
+                                    if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                                        attemptLogin();
+                                        return true;
+                                    }
+                                    return false;
+                                }
+                            });
+
+
+                    findViewById(R.id.sign_in_button).setOnClickListener(
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    attemptLogin();
+                                }
+                            });
+                }
+            });
+        }
+
+
 	}
 
 	/**

@@ -332,8 +332,7 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
         startActivity(intent);
     }
 
-    public void exitApp(View view)
-    {
+    public void exitApp(View view) {
         new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("Quit")
@@ -348,6 +347,5 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
                     })
                     .setNegativeButton("No", null)
                     .show();
-    }
-
+   }
 }
