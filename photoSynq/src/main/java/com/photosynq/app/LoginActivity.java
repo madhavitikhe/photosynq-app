@@ -93,7 +93,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
             setContentView(R.layout.welcome_screen);
             getActionBar().hide();
             TextView new_account_tv = (TextView) findViewById(R.id.createNewAccount);
-            String account_text = "or <a href=\"http://photosynq.venturit.org/users/sign_up\">Create new account</a> ";
+            String account_text = "or <a href=\"http://photosynq.venturit.net/users/sign_up\">Create new account</a> ";
             new_account_tv.setMovementMethod(LinkMovementMethod.getInstance());
             new_account_tv.setText(Html.fromHtml(account_text));
 
