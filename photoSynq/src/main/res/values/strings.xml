@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">PhotoSynq</string>
+    <string name="app_name">PHOTOSYNQ</string>
     <string name="action_settings">Settings</string>
     <string name="login_button">Login</string>
     <string name="research_project_str">Research Projects</string>
