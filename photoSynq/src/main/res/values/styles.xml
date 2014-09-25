@@ -15,8 +15,18 @@
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:windowTitleStyle">@style/CustomWindowTitle</item>
     </style>
+
+    <style name="CustomWindowTitle" parent="AppTheme">
+        <item name="android:textAppearance">@style/CustomWindowTitleText</item>
+    </style>
+
+    <style name="CustomWindowTitleText" parent="android:TextAppearance">
+        <item name="android:textColor">@color/green_dark</item>
+        <item name="android:label">@string/app_name</item>
+    </style>
+
 
     <style name="LoginFormContainer">
         <item name="android:layout_width">match_parent</item>
