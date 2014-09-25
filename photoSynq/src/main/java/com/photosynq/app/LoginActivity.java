@@ -91,7 +91,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
        else
         {
             setContentView(R.layout.welcome_screen);
-
+            getActionBar().hide();
             TextView new_account_tv = (TextView) findViewById(R.id.createNewAccount);
             String account_text = "or <a href=\"http://photosynq.venturit.org/users/sign_up\">Create new account</a> ";
             new_account_tv.setMovementMethod(LinkMovementMethod.getInstance());
@@ -107,6 +107,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
                 @Override
                 public void onClick(View view) {
                     setContentView(R.layout.activity_login);
+                    getActionBar().show();
 
 
                     mLoginFormView = findViewById(R.id.login_form);
