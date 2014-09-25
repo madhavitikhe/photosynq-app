@@ -29,6 +29,7 @@ import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.utils.PrefUtils;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -93,30 +94,43 @@ public class FragmentConnection extends Fragment{
 		
 		pairedDeviceList.setOnItemClickListener(new OnItemClickListener() {
 		    @Override
-		    public void onItemClick(AdapterView<?> adapter, View view, int position, long id){
-		    	BluetoothDevice btDevice = (BluetoothDevice) pairedDeviceList.getItemAtPosition(position);
-				Log.d("Pairing device : ", btDevice.getName());
-				bluetoothID = btDevice.getAddress();
-				appSettings.setConnectionId(bluetoothID);
-				db.updateSettings(appSettings);
+		    public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+                BluetoothDevice btDevice = (BluetoothDevice) pairedDeviceList.getItemAtPosition(position);
+                Log.d("Pairing device : ", btDevice.getName());
+                try {
+                    createBond(btDevice);
+                    bluetoothID = btDevice.getAddress();
+                    appSettings.setConnectionId(bluetoothID);
+                    db.updateSettings(appSettings);
 
-				if(null != appSettings.getConnectionId())
-				{
-					selectedConnectionText.setText(btDevice.getName());
-				}
+                    if (null != appSettings.getConnectionId()) {
+                        selectedConnectionText.setText(btDevice.getName());
+                    }
 
-				pairedDeviceList.setItemsCanFocus(true);
-				RadioButton radiolistitem=(RadioButton) view.findViewById(R.id.blue_conn_radio);
-				radiolistitem.performClick();
-		    }
+                    pairedDeviceList.setItemsCanFocus(true);
+                    RadioButton radiolistitem = (RadioButton) view.findViewById(R.id.blue_conn_radio);
+                    radiolistitem.performClick();
+                } catch (Exception e) {
+
+                }
+            }
 		});
 		
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));		
 		return rootView;
 	}
 
-	
-	private void searchNewBTDevice() {
+    public boolean createBond(BluetoothDevice btDevice)
+            throws Exception
+    {
+        @SuppressWarnings("rawtypes")
+        Class class1 = Class.forName("android.bluetooth.BluetoothDevice");
+        Method createBondMethod = class1.getMethod("createBond");
+        Boolean returnValue = (Boolean) createBondMethod.invoke(btDevice);
+        return returnValue.booleanValue();
+    }
+
+    private void searchNewBTDevice() {
 		// Check for Bluetooth support and then check to make sure it is turned
 		// on
 		// If it isn't request to turn it on
