@@ -385,7 +385,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                     optionTextView.setText(question.getOptions().get(i-1));
                     ImageView imageView = new ImageView(ctx);
                     imageView.setId(i - 1);
-                    RelativeLayout.LayoutParams imageVParams = new RelativeLayout.LayoutParams(300, 500);
+                    RelativeLayout.LayoutParams imageVParams = new RelativeLayout.LayoutParams(300, 300);
                     imageVParams.addRule(RelativeLayout.BELOW, optionTextView.getId());
                     imageView.setTag(questionLoop);
                     imageView.setOnClickListener(new OnClickListener() {
@@ -433,7 +433,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                     });
 
                     Picasso.with(getApplicationContext())
-                    .load(R.drawable.photosynqlogo)
+                    .load(R.drawable.ic_launcher)
                     .error(R.drawable.ic_launcher)
                     .into(imageView);
                     optionsRelativeLayout.addView(optionTextView, optionTVParams);
@@ -456,7 +456,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                         optionTextVieweven.setText(question.getOptions().get(i));
                         ImageView imageVieweven = new ImageView(ctx);
                         imageVieweven.setId(i);
-                        RelativeLayout.LayoutParams imageVParamseven = new RelativeLayout.LayoutParams(300, 500);
+                        RelativeLayout.LayoutParams imageVParamseven = new RelativeLayout.LayoutParams(300, 300);
                         imageVParamseven.addRule(RelativeLayout.BELOW, optionTextVieweven.getId());
                         imageVieweven.setTag(questionLoop);
                         imageVieweven.setOnClickListener(new OnClickListener() {
@@ -502,7 +502,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                         });
 
                         Picasso.with(getApplicationContext())
-                        .load(R.drawable.photosynqlogo)
+                        .load(R.drawable.ic_launcher)
                         .error(R.drawable.ic_launcher)
                         .into(imageVieweven);
                         optionsRelativeLayouteven.addView(optionTextVieweven, optionTVParamseven);

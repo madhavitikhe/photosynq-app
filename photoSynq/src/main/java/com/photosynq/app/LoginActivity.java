@@ -98,7 +98,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
             new_account_tv.setText(Html.fromHtml(account_text));
 
             TextView tutorial_tv = (TextView) findViewById(R.id.tutorial_txt);
-            String tutor_text = "Need help?  Here's a <a href=\"http://photosynq.venturit.org/users/sign_up\">Step by step tutorial</a> ";
+            String tutor_text = "Need help?  Here's a step by step tutorial</a> ";
             tutorial_tv.setMovementMethod(LinkMovementMethod.getInstance());
             tutorial_tv.setText(Html.fromHtml(tutor_text));
 
