@@ -1,7 +1,9 @@
 package com.photosynq.app.navigationDrawer;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +50,10 @@ public class FragmentUser extends Fragment{
 			             @Override
 			             public void onClick(View v)
 			             {
+                             SharedPreferences settings =  PreferenceManager.getDefaultSharedPreferences(getActivity());
+                             SharedPreferences.Editor editor = settings.edit();
+                             editor.clear();
+                             editor.commit();
 			            	 Intent intent = new Intent(getActivity(),LoginActivity.class);
 			            	 intent.putExtra("change_user", true);
 			            	 startActivityForResult(intent, 999);

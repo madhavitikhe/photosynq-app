@@ -88,87 +88,98 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
             startActivity(intent);
             //}
         }
-       else
-        {
-            setContentView(R.layout.welcome_screen);
-            getActionBar().hide();
-            TextView new_account_tv = (TextView) findViewById(R.id.createNewAccount);
-            String account_text = "or <a href=\"http://photosynq.venturit.net/users/sign_up\">Create new account</a> ";
-            new_account_tv.setMovementMethod(LinkMovementMethod.getInstance());
-            new_account_tv.setText(Html.fromHtml(account_text));
+       else {
+            getChangeUserIntent = getIntent().getBooleanExtra("change_user", false);
+            if (getChangeUserIntent) {
+                login();
 
-            TextView tutorial_tv = (TextView) findViewById(R.id.tutorial_txt);
-            String tutor_text = "Need help?  Here's a step by step tutorial</a> ";
-            tutorial_tv.setMovementMethod(LinkMovementMethod.getInstance());
-            tutorial_tv.setText(Html.fromHtml(tutor_text));
+            } else {
 
-            Button signIn = (Button) findViewById(R.id.sign_in_button);
-            signIn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    setContentView(R.layout.activity_login);
-                    getActionBar().show();
+                setContentView(R.layout.welcome_screen);
+                getActionBar().hide();
+                TextView new_account_tv = (TextView) findViewById(R.id.createNewAccount);
+                String account_text = "or <a href=\"http://photosynq.venturit.net/users/sign_up\">Create new account</a> ";
+                new_account_tv.setMovementMethod(LinkMovementMethod.getInstance());
+                new_account_tv.setText(Html.fromHtml(account_text));
 
+                TextView tutorial_tv = (TextView) findViewById(R.id.tutorial_txt);
+                String tutor_text = "Need help?  Here's a step by step tutorial</a> ";
+                tutorial_tv.setMovementMethod(LinkMovementMethod.getInstance());
+                tutorial_tv.setText(Html.fromHtml(tutor_text));
 
-                    mLoginFormView = findViewById(R.id.login_form);
-                    mLoginStatusView = findViewById(R.id.login_status);
-                    mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);
-
-
-
-                    getChangeUserIntent = getIntent().getBooleanExtra("change_user", false);
-                    if (getChangeUserIntent) {
-                        System.out.println("---------User Changed-----");
-                        // return;
+                Button signIn = (Button) findViewById(R.id.sign_in_button);
+                signIn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        login();
                     }
-                    else
-                    {
-                        if(!mEmail.equals(PrefUtils.PREFS_DEFAULT_VAL) && !mPassword.equals(PrefUtils.PREFS_DEFAULT_VAL) )
-                        {
-                            //if(CommonUtils.isConnected(getApplicationContext()))
-                            //{
-                            //	connect();
-                            //}
-                            //else
-                            //{
-                            Intent intent = new Intent(getApplicationContext(),NavigationDrawer.class);
-                            startActivity(intent);
-                            //}
-                        }
-                    }
-                    // Set up the login form.
-                    mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
-                    mEmailView = (EditText) findViewById(R.id.email);
-                    mEmailView.setText(mEmail);
-
-                    mPasswordView = (EditText) findViewById(R.id.password);
-                    mPasswordView
-                            .setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                                @Override
-                                public boolean onEditorAction(TextView textView, int id,
-                                                              KeyEvent keyEvent) {
-                                    if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                                        attemptLogin();
-                                        return true;
-                                    }
-                                    return false;
-                                }
-                            });
-
-
-                    findViewById(R.id.sign_in_button).setOnClickListener(
-                            new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    attemptLogin();
-                                }
-                            });
-                }
-            });
+                });
+            }
         }
 
 
 	}
+
+    public void login()
+    {
+        setContentView(R.layout.activity_login);
+        getActionBar().show();
+
+
+        mLoginFormView = findViewById(R.id.login_form);
+        mLoginStatusView = findViewById(R.id.login_status);
+        mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);
+
+
+
+        getChangeUserIntent = getIntent().getBooleanExtra("change_user", false);
+        if (getChangeUserIntent) {
+            System.out.println("---------User Changed-----");
+            // return;
+        }
+        else
+        {
+            if(!mEmail.equals(PrefUtils.PREFS_DEFAULT_VAL) && !mPassword.equals(PrefUtils.PREFS_DEFAULT_VAL) )
+            {
+                //if(CommonUtils.isConnected(getApplicationContext()))
+                //{
+                //	connect();
+                //}
+                //else
+                //{
+                Intent intent = new Intent(getApplicationContext(),NavigationDrawer.class);
+                startActivity(intent);
+                //}
+            }
+        }
+        // Set up the login form.
+        mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
+        mEmailView = (EditText) findViewById(R.id.email);
+        mEmailView.setText(mEmail);
+
+        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView
+                .setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView textView, int id,
+                                                  KeyEvent keyEvent) {
+                        if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                            attemptLogin();
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+
+        findViewById(R.id.sign_in_button).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        attemptLogin();
+                    }
+                });
+    }
 
 	/**
 	 * Attempts to sign in or register the account specified by the login form.
@@ -248,7 +259,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
 		// for very easy animations. If available, use these APIs to fade-in
 		// the progress spinner.
-		
+
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
 			int shortAnimTime = getResources().getInteger(
 					android.R.integer.config_shortAnimTime);
@@ -310,11 +321,11 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 				// TODO Log error
 				e.printStackTrace();
 			}
-			
-			if(getChangeUserIntent)
-			{
-				finish();
-			}
+
+			if(getChangeUserIntent){
+                finish();
+            }
+
 			else
 			{
 			Intent intent = new Intent(getApplicationContext(),NavigationDrawer.class);
@@ -327,7 +338,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 			mPasswordView.requestFocus();
 		}
 	}
-	
+
 	private void copyAssets() {
 	    AssetManager assetManager = getAssets();
 	    String[] files = null;
