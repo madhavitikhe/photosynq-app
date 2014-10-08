@@ -255,6 +255,9 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentSync()).commit();
                 setTitleActionBar("Data Sync Options");
                 break;
+            case 8:
+                exitApp();
+                break;
 		}			
 		//show selection of navigation drawer item.(set selected item color is dark).
 		//our navigation contain 7 elements i.e we check here with 7
@@ -332,7 +335,7 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
         startActivity(intent);
     }
 
-    public void exitApp(View view) {
+    public void exitApp() {
         new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("Quit")

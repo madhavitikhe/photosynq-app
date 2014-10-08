@@ -9,7 +9,8 @@
         <item>Project</item>
         <item>Data</item>
         <item>Review</item>
-        <item>Sync</item>   
+        <item>Sync</item>
+        <item>Exit</item>
     </string-array>
     <string-array name="sync_intervals">
             <item>5 mins</item>

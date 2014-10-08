@@ -161,7 +161,7 @@ public class FragmentSync extends Fragment{
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));		
 		return rootView;
 	}
-	
+
 	private class downloadDataAsyncTask extends AsyncTask<Void, Void, Void> {
 		 
         @Override
