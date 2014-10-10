@@ -38,6 +38,7 @@ public class FragmentData extends Fragment {
         userID = PrefUtils.getFromPrefs(getActivity(),PrefUtils.PREFS_LOGIN_USERNAME_KEY,
                 PrefUtils.PREFS_DEFAULT_VAL);
         List<Question> questions = db.getAllQuestionForProject(db.getSettings(userID).getProjectId());
+        //if project is not selected then it shows blank layout with message on data tab click.
         if(questions.size() <=0 )
         {
                 View rootView = inflater.inflate(R.layout.blank_layout, container, false);
