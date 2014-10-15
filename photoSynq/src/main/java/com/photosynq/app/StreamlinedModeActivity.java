@@ -221,37 +221,42 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                             int childCount = viewFlipper.getChildCount();
                             allSelectedQuestions.add(new Gson().toJson(question));
                             //allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
-
-
-                            if (displayedChild == childCount - 2 ) {
-                                viewFlipper.stopFlipping();
-                                if(reviewFlag)
-                                {
-                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
-                                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
-                                    reviewFlag = false;
-                                }
-                                else {
-                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
-                                    viewFlipper.showNext();
-                                }
-                                setMeasurementScreen();
+                            String str = userEnteredAnswer.getText().toString().trim();
+                            if(true == str.contains("\\n")){
+                               Toast.makeText(getApplicationContext(),"Re-Enter Answer..\\n is not allowed",Toast.LENGTH_LONG).show();
                             }
                             else
                             {
-                                if(reviewFlag)
-                                {
-                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
+                                if (displayedChild == childCount - 2 ) {
+                                    viewFlipper.stopFlipping();
+                                    if(reviewFlag)
+                                    {
+                                        allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
+                                        viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                                        reviewFlag = false;
+                                    }
+                                    else {
+                                        allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
+                                        viewFlipper.showNext();
+                                    }
                                     setMeasurementScreen();
-                                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
-                                    reviewFlag = false;
                                 }
-                                else {
-                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
-                                    viewFlipper.showNext();
+                                else
+                                {
+                                    if(reviewFlag)
+                                    {
+                                        allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
+                                        setMeasurementScreen();
+                                        viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                                        reviewFlag = false;
+                                    }
+                                    else {
+                                        allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
+                                        viewFlipper.showNext();
+                                    }
                                 }
+                                userEnteredAnswer.setText("");
                             }
-                            userEnteredAnswer.setText("");
                         }
                     });
 

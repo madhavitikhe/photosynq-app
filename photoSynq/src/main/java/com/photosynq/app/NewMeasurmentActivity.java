@@ -13,6 +13,7 @@ import android.os.Message;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -94,6 +95,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	private Data data;
 	private TextView que;
 	private TextView opt;
+    private Button measureBtn;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -222,6 +224,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			db = DatabaseHelper.getHelper(getApplicationContext());
 			List<Question> questions = db.getAllQuestionForProject(projectId);
 			ListView lst = (ListView) findViewById(R.id.measurement_list_view);
+            measureBtn = (Button) findViewById(R.id.measure_btn);
 
 			QuestionArrayAdapter questionAdapter = new QuestionArrayAdapter(this, questions);
 			lst.setAdapter(questionAdapter);
@@ -238,7 +241,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				mBluetoothService = new BluetoothService(getApplicationContext(), mHandler);
 			}
 
-			
+
 	}
 
     private void sendData(String data) {
@@ -254,21 +257,29 @@ GooglePlayServicesClient.OnConnectionFailedListener{
             byte[] send;
 				send = data.getBytes();
 				 mBluetoothService.write(send);
+            Toast.makeText(getApplicationContext(),"Send Data"+data,Toast.LENGTH_LONG).show();
             //byte[] bytes = ByteBuffer.allocate(4).putInt(9).array();
         }
     }
 
 	public void takeMeasurement(View view) throws JSONException
 	{
-		if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) 
-		{
-			 // Get the BLuetoothDevice object
-	        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
-	        mBluetoothService.connect(device);
-		}else {
-			mHandler.obtainMessage(MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, -1).sendToTarget();
-		}
-        
+        if(measureBtn.getText().equals("MEASURE")) {
+            if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
+                // Get the BLuetoothDevice object
+                BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
+                mBluetoothService.connect(device);
+            } else {
+                mHandler.obtainMessage(MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, -1).sendToTarget();
+            }
+            measureBtn.setText("CANCEL MEASURE");
+        }
+        else if(measureBtn.getText().equals("CANCEL MEASURE"))
+        {
+            sendData("-1+-1+");
+            Toast.makeText(getApplicationContext(),"Cancel Measure",Toast.LENGTH_LONG).show();
+            finish();
+        }
 //		String options = new String ("\"user_answers\": [\""+option1+"\","+"\""+option2+"\","+"\""+option3+"\" ],");
 //		Intent intent = new Intent(getApplicationContext(),DisplayResultsActivity.class);
 //		intent.putExtra(MainActivity.QUICK_MEASURE, quick_measure);
@@ -311,6 +322,11 @@ GooglePlayServicesClient.OnConnectionFailedListener{
          */
         mLocationClient.connect();
 
+    }
+
+    public void onResume(){
+        super.onResume();
+        measureBtn.setText("MEASURE");
     }
     
     
