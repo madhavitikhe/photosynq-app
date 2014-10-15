@@ -2,7 +2,11 @@
 package com.photosynq.app.navigationDrawer;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,14 +29,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.photosynq.app.AlarmReceiver;
 import com.photosynq.app.BluetoothActivity;
 import com.photosynq.app.LoginActivity;
 import com.photosynq.app.ProjectListActivity;
 import com.photosynq.app.R;
+import com.photosynq.app.SelectProtocolActivity;
 import com.photosynq.app.StreamlinedModeActivity;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
+import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.PrefUtils;
+
+import java.util.Calendar;
 
 public class NavigationDrawer extends ActionBarActivity implements FragmentHome.OnFragmentInteractionListener{
 	
@@ -48,6 +57,9 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
 	private String mEmail;
 	private TextView user_email;
     private boolean desktopflag = false;
+    private DatabaseHelper db;
+    private String userId;
+    AppSettings appSettings;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,9 +71,34 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
         }
 
 
+        db = DatabaseHelper.getHelper(getApplicationContext());
+        userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        appSettings = db.getSettings(userId);
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHome()).commit();
+        //When user install app first time following thing are set default.
+        String first_run = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_FIRST_RUN, "YES");
+        if (first_run.equals("YES"))
+        {
+            System.out.println("First time running? = YES");
+            setAlarm(getApplicationContext());
+            String userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+            appSettings.setModeType(Utils.APP_MODE_QUICK_MEASURE);
+            db.updateSettings(appSettings);
+            PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_FIRST_RUN,"NO");
+            PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_SAVE_SYNC_INTERVAL,"2");
+        }
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHome()).commit();
+        if(appSettings.getModeType().equals(Utils.APP_MODE_QUICK_MEASURE))
+        {
+            Intent intent = new Intent(getApplicationContext(),SelectProtocolActivity.class);
+            startActivity(intent);
+        }
+        else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
+        {
+            Intent intent = new Intent(getApplicationContext(),StreamlinedModeActivity.class);
+            startActivity(intent);
+        }
         setTitleActionBar(getResources().getString(R.string.app_name));
 
         getSupportActionBar().setIcon(R.drawable.ic_launcher);
@@ -70,9 +107,8 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);		
         
-        mEmail = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
         user_email = (TextView) findViewById(R.id.userEmail);
-        user_email.setText(mEmail);
+        user_email.setText(userId);
 
 		listDrawer = (ListView) findViewById(R.id.listDrawer);        
 		linearDrawer = (LinearLayout) findViewById(R.id.linearDrawer);		
@@ -224,8 +260,22 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
 
             case 0:
 
-                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHome()).commit();
-                setTitleActionBar(getResources().getString(R.string.app_name));
+//                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHome()).commit();
+//                setTitleActionBar(getResources().getString(R.string.app_name));
+                String btDevice = appSettings.getConnectionId();
+                AppSettings appSettings = db.getSettings(userId);
+                    if(appSettings.getModeType().equals(Utils.APP_MODE_QUICK_MEASURE))
+                    {
+                        Intent intent = new Intent(getApplicationContext(),SelectProtocolActivity.class);
+                        intent.putExtra(BluetoothService.DEVICE_ADDRESS, btDevice);
+                        intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_QUICK_MEASURE);
+                        startActivity(intent);
+                    }
+                    else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
+                    {
+                        Intent intent = new Intent(getApplicationContext(),StreamlinedModeActivity.class);
+                        startActivity(intent);
+                    }
                 break;
             case 1:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentMode()).commit();
@@ -292,8 +342,8 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         //Handle the back button
         if(keyCode == KeyEvent.KEYCODE_BACK) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHome()).commit();
+//            FragmentManager fragmentManager = getSupportFragmentManager();
+//            fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHome()).commit();
             setTitleActionBar(getResources().getString(R.string.app_name));
             return true;
         }
@@ -307,27 +357,27 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
         return drawerToggle.onOptionsItemSelected(item);
         }
 
-    public void listResearchProjects(View view)
-    {
-        DatabaseHelper db = DatabaseHelper.getHelper(getApplicationContext());
-        String userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-        AppSettings appSettings = db.getSettings(userId);
-        if(appSettings.getModeType().equals(Utils.APP_MODE_NORMAL))
-        {
-            Intent intent = new Intent(getApplicationContext(),ProjectListActivity.class);
-            intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_NORMAL);
-            startActivity(intent);
-        }
-        else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
-        {
-            Intent intent = new Intent(getApplicationContext(),StreamlinedModeActivity.class);
-            startActivity(intent);
-        }
-        else
-        {
-            Toast.makeText(getApplicationContext(), "Select mode type first", Toast.LENGTH_LONG).show();
-        }
-    }
+//    public void listResearchProjects(View view)
+//    {
+//        DatabaseHelper db = DatabaseHelper.getHelper(getApplicationContext());
+//        String userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+//        AppSettings appSettings = db.getSettings(userId);
+//        if(appSettings.getModeType().equals(Utils.APP_MODE_NORMAL))
+//        {
+//            Intent intent = new Intent(getApplicationContext(),ProjectListActivity.class);
+//            intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_NORMAL);
+//            startActivity(intent);
+//        }
+//        else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
+//        {
+//            Intent intent = new Intent(getApplicationContext(),StreamlinedModeActivity.class);
+//            startActivity(intent);
+//        }
+//        else
+//        {
+//            Toast.makeText(getApplicationContext(), "Select mode type first", Toast.LENGTH_LONG).show();
+//        }
+//    }
     public void quickMeasurement(View view)
     {
         Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);
@@ -351,4 +401,14 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
                     .setNegativeButton("No", null)
                     .show();
    }
+
+    public void setAlarm(Context context) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.SECOND, 10);
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),3600000*2, alarmIntent);//3600000*2 means 2 Hours
+        System.out.println("-----------Alarm is set-------");
+    }
 }

@@ -17,11 +17,11 @@
         android:orientation="vertical" >
 
         <RadioButton
-            android:id="@+id/normal_mode_radio"
+            android:id="@+id/quick_measure_mode_radio"
             android:layout_width="fill_parent"
             android:button="@null"
             android:drawableRight="@android:drawable/btn_radio"
-            android:text="@string/normal_mode"
+            android:text="@string/quick_measure_mode"
             android:textSize="24sp" />
 
         <RadioButton

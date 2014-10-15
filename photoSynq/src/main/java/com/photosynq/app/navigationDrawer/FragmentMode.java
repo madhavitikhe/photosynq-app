@@ -44,16 +44,21 @@ public class FragmentMode extends Fragment{
 		//Set cuurent settings 
 		if(null != appSettings.getModeType())
 		{
-			if (appSettings.getModeType().equals(Utils.APP_MODE_NORMAL))
-			{
-				RadioButton rb = (RadioButton)rootView.findViewById(R.id.normal_mode_radio);
-				rb.setChecked(true);
-			}
+//			if (appSettings.getModeType().equals(Utils.APP_MODE_NORMAL))
+//			{
+//				RadioButton rb = (RadioButton)rootView.findViewById(R.id.normal_mode_radio);
+//				rb.setChecked(true);
+//			}
+            if (appSettings.getModeType().equals(Utils.APP_MODE_QUICK_MEASURE))
+            {
+                RadioButton rb = (RadioButton)rootView.findViewById(R.id.quick_measure_mode_radio);
+                rb.setChecked(true);
+            }
 			else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
 			{
-				RadioButton rb = (RadioButton)rootView.findViewById(R.id.streamline_mode_radio);
-				rb.setChecked(true);
-			}
+            RadioButton rb = (RadioButton)rootView.findViewById(R.id.streamline_mode_radio);
+            rb.setChecked(true);
+        }
 		}
 		
 		radioGroup = (RadioGroup) rootView.findViewById(R.id.radioGroup);
@@ -67,11 +72,17 @@ public class FragmentMode extends Fragment{
     		
 		    	switch (position)
 		    	{
-		    	case 0 :
-		    		appSettings.setModeType(Utils.APP_MODE_NORMAL);
-		    		db.updateSettings(appSettings);
-		    		Toast.makeText(getActivity(), Utils.APP_MODE_NORMAL,Toast.LENGTH_SHORT).show();	
-		    		break;
+//		    	case 0 :
+//		    		appSettings.setModeType(Utils.APP_MODE_NORMAL);
+//		    		db.updateSettings(appSettings);
+//		    		Toast.makeText(getActivity(), Utils.APP_MODE_NORMAL,Toast.LENGTH_SHORT).show();
+//		    		break;
+                case 0 :
+                    appSettings.setModeType(Utils.APP_MODE_QUICK_MEASURE);
+                    db.updateSettings(appSettings);
+                    Toast.makeText(getActivity(), Utils.APP_MODE_QUICK_MEASURE,Toast.LENGTH_SHORT).show();
+                    break;
+
 		    	case 1 :
 		    		appSettings.setModeType(Utils.APP_MODE_STREAMLINE);
 		    		db.updateSettings(appSettings);

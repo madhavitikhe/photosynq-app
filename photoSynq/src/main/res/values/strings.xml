@@ -52,6 +52,7 @@
     <string name="measure_btn"> MEASURE </string>
     <string name="streamlined_mode">Streamline Mode</string>
     <string name="normal_mode">Normal Mode</string>
+    <string name="quick_measure_mode">Quick Measure Mode</string>
     <string name="sign_out">Sign Out</string>
     <string name="close">Close</string>
     <string name="review">Review</string>
