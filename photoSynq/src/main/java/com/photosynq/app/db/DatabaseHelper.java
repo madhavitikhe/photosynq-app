@@ -751,8 +751,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}
 		c.close();
 		return protocols;
-
 	}
+
+    // Get all protocols
+    public List<Protocol> getFewProtocolList() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        List<Protocol> protocols = new ArrayList<Protocol>();
+        int[] protocolsID = {37,45,23,11,31,48,49};
+        System.out.println(protocolsID + "" + protocolsID.length);
+        for(int i = 0; i < protocolsID.length; i++) {
+            String selectQuery = "SELECT  * FROM " + TABLE_PROTOCOL + " WHERE " + C_ID + " = " + protocolsID[i];
+
+            System.out.println(selectQuery);
+            Log.e("DATABASE_HELPER_getAllProtocol", selectQuery);
+
+            Cursor c = db.rawQuery(selectQuery, null);
+
+            if (c.moveToFirst()) {
+                do {
+                    Protocol protocol = new Protocol();
+                    protocol.setRecordHash(c.getString(c
+                            .getColumnIndex(C_RECORD_HASH)));
+                    protocol.setId(c.getString(c.getColumnIndex(C_ID)));
+                    protocol.setDescription(c.getString(c
+                            .getColumnIndex(C_DESCRIPTION)));
+                    protocol.setName(c.getString(c.getColumnIndex(C_NAME)));
+                    protocol.setProtocol_json(c.getString(c
+                            .getColumnIndex(C_PROTOCOL_JSON)));
+                    protocol.setSlug(c.getString(c.getColumnIndex(C_SLUG)));
+                    protocol.setMacroId(c.getString(c.getColumnIndex(C_MACRO_ID)));
+
+                    // adding to todo list
+                    protocols.add(protocol);
+                } while (c.moveToNext());
+            }
+            c.close();
+        }
+        return protocols;
+    }
+
 
 	public Protocol getProtocol(String protocolId) {
 		SQLiteDatabase db = this.getReadableDatabase();

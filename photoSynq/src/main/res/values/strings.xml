@@ -84,6 +84,7 @@
     <string name="no_porject_selected">Please select project.</string>
     <string name="busy">busy</string>
     <string name="connected">Connected, Click to start measurement</string>
+    <string name="show_all_protocols">Show All Protocols</string>
 
 
 </resources>

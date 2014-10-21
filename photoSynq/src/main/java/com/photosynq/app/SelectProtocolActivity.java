@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -46,14 +47,33 @@ public class SelectProtocolActivity extends Activity {
 		
 		// Initialize ListView
 		protocolList = (ListView) findViewById(R.id.protocol_list_view);
-		
-		refreshProtocolList();
-		
+
+		showFewProtocolList();
+
 		if(arrayadapter.isEmpty())
 		{
 			new ProtocolListAsync().execute();
 		}
-		
+
+        final Button showAllProtocolsBtn = new Button(this);
+        showAllProtocolsBtn.setText(R.string.show_all_protocols);
+        protocolList.addFooterView(showAllProtocolsBtn);
+
+        showAllProtocolsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(showAllProtocolsBtn.getText().equals("Show All Protocols")){
+                    showAllProtocolList();
+                    showAllProtocolsBtn.setText("Less Protocol List");
+                }else if (showAllProtocolsBtn.getText().equals("Less Protocol List")){
+                    showFewProtocolList();
+                    showAllProtocolsBtn.setText("Show All Protocols");
+                }
+
+
+            }
+        });
+
 		protocolList.setOnItemClickListener(new OnItemClickListener() {
 		    @Override
 		    public void onItemClick(AdapterView<?> adapter, View view, int position, long id){
@@ -88,12 +108,19 @@ public class SelectProtocolActivity extends Activity {
 		});
 	}
 	
-	private void refreshProtocolList() {
+	private void showFewProtocolList() {
 		db = DatabaseHelper.getHelper(getApplicationContext());
-		protocols = db.getAllProtocolsList();
-		arrayadapter = new ProtocolArrayAdapter(this, protocols); 
+		protocols = db.getFewProtocolList();
+		arrayadapter = new ProtocolArrayAdapter(this, protocols);
 		protocolList.setAdapter(arrayadapter);
 	}
+
+    private void showAllProtocolList() {
+        db = DatabaseHelper.getHelper(getApplicationContext());
+        protocols = db.getAllProtocolsList();
+        arrayadapter = new ProtocolArrayAdapter(this, protocols);
+        protocolList.setAdapter(arrayadapter);
+    }
 	
 	private class ProtocolListAsync extends AsyncTask<Void, Void, Void> {
 		 
@@ -120,7 +147,7 @@ public class SelectProtocolActivity extends Activity {
             // Dismiss the progress dialog
             if (pDialog.isShowing())
                 pDialog.dismiss();
-            refreshProtocolList();
+            showFewProtocolList();
          Toast.makeText(getApplicationContext(), "Protocol list up to date", Toast.LENGTH_SHORT).show();
         }
     }
