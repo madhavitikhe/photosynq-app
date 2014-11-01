@@ -222,8 +222,11 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                             allSelectedQuestions.add(new Gson().toJson(question));
                             //allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
                             String str = userEnteredAnswer.getText().toString().trim();
-                            if(true == str.contains("\\n")){
-                               Toast.makeText(getApplicationContext(),"Re-Enter Answer..\\n is not allowed",Toast.LENGTH_LONG).show();
+                            if(true == str.matches(".*['{}!].*") ||
+                                    true == str.contains("\\n") ||
+                                    true == str.contains("[")||
+                                    true == str.contains("]")){
+                               Toast.makeText(getApplicationContext(),"Re-Enter Answer... special character is not allowed",Toast.LENGTH_LONG).show();
                             }
                             else
                             {
@@ -1303,12 +1306,12 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
         File appDir = new File(cache.getParent());
         if(appDir.exists()){
             String[] children = appDir.list();
-            for(String s : children){
-                if(!s.equals("lib")){
-                    deleteDir(new File(appDir, s));
-                    Log.i("TAG", "**************** File /data/data/APP_PACKAGE/" + s +" DELETED *******************");
-                }
-            }
+//            for(String s : children){
+//                if(!s.equals("lib")){
+                    deleteDir(new File(appDir, children[1]));
+//                    Log.i("TAG", "**************** File /data/data/APP_PACKAGE/" + s +" DELETED *******************");
+//                }
+//            }
         }
     }
 
