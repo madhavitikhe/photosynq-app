@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,7 +29,6 @@ public class FragmentMode extends Fragment{
 	RadioGroup radioGroup;
 	int position;
 	int pos1;
-	RadioButton rb;
 	private DatabaseHelper db;
 	private String userId;
 	
@@ -66,13 +69,13 @@ public class FragmentMode extends Fragment{
 		radioGroup = (RadioGroup) rootView.findViewById(R.id.radioGroup);
         radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 		public void onCheckedChanged(RadioGroup group, int checkedId) {
-			
+
 			position = radioGroup.indexOfChild(rootView.findViewById(checkedId));
-			
+
 			userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
     		AppSettings appSettings = db.getSettings(userId);
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-    		
+
 		    	switch (position)
 		    	{
 //		    	case 0 :
@@ -102,6 +105,20 @@ public class FragmentMode extends Fragment{
 		    	}
 		}
 	});
+
+        RadioButton quickMeasureRadio = (RadioButton) rootView.findViewById(R.id.quick_measure_mode_radio);
+        String getQuickMeasureText = quickMeasureRadio.getText().toString();
+        Spannable Passspan1 = new SpannableString(getQuickMeasureText);
+        Passspan1.setSpan(new RelativeSizeSpan(1.85f), 0, 17, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        quickMeasureRadio.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+        quickMeasureRadio.setText(Passspan1);
+
+        RadioButton ProjectSelectedRadio = (RadioButton) rootView.findViewById(R.id.streamline_mode_radio);
+        String getProSelectedText = ProjectSelectedRadio.getText().toString();
+        Spannable Passspan2 = new SpannableString(getProSelectedText);
+        Passspan2.setSpan(new RelativeSizeSpan(1.85f), 0, 21, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ProjectSelectedRadio.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+        ProjectSelectedRadio.setText(Passspan2);
 
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));		
 		return rootView;
