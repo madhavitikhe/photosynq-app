@@ -1081,6 +1081,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return false;
 	}
 
+    public void deleteAllData(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_OPTION,null,null);
+        db.delete(TABLE_DATA,null,null);
+        db.delete(TABLE_MACRO,null,null);
+        db.delete(TABLE_PROTOCOL,null,null);
+        db.delete(TABLE_QUESTION,null,null);
+        db.delete(TABLE_RESEARCH_PROJECT,null,null);
+        db.delete(TABLE_SETTINGS,null,null);
+
+    }
+
 	// closing database
 	public void closeDB() {
 		SQLiteDatabase db = this.getReadableDatabase();
