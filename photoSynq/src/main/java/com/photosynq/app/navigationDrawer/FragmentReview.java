@@ -52,14 +52,13 @@ public class FragmentReview extends Fragment {
         TextView tvUser = (TextView) rootView.findViewById(R.id.user_text);
         TextView tvBluetoothId = (TextView) rootView.findViewById(R.id.connection_text);
         TextView tvProjectId = (TextView) rootView.findViewById(R.id.project_text);
-        //TextView tvQuestions = (TextView) rootView.findViewById(R.id.tvQuestions);
 
-        //Set cuurent settings
+        //Set current settings
         if(null != appSettings.getModeType())
         {
-            if (appSettings.getModeType().equals(Utils.APP_MODE_NORMAL))
+            if (appSettings.getModeType().equals(Utils.APP_MODE_QUICK_MEASURE))
             {
-                tvMode.setText(getResources().getString(R.string.normal_mode));
+                tvMode.setText(getResources().getString(R.string.quick_measure_mode));
             }
             else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
             {
@@ -80,10 +79,8 @@ public class FragmentReview extends Fragment {
             String projectId = appSettings.getProjectId();
             tvProjectId.setText(db.getResearchProject(projectId).getName());
 
-
             List<Question> questions = db.getAllQuestionForProject(appSettings.getProjectId());
             TableRow row = new TableRow(getActivity());
-
 
             int maxLoop = 1;
             HashMap<String,ArrayList<Integer>> populatedValues = new HashMap();
@@ -125,9 +122,11 @@ public class FragmentReview extends Fragment {
             }
             questionsTableLayout.addView(row);
 
-                for (int i = 0; i < maxLoop; i++) {
+                for (int i = 0; i < maxLoop; i++)
+                {
                     TableRow rowOptions = new TableRow(getActivity());
-                    for (Question question : questions) {
+                    for (Question question : questions)
+                    {
                         TextView tv = new TextView(getActivity());
                         tv.setText("");
                         tv.setTextSize(20);
@@ -155,9 +154,6 @@ public class FragmentReview extends Fragment {
                                         tv.setText(val.toString());
                                     }
 
-//                                    String val = DataUtils.getAutoIncrementedValue(getActivity(), question.getQuestionId(), "" + i);
-//                                    if (!val.equals("-1") && !val.equals("-2"))
-//                                        tv.setText(val);
                                 } else if (data.getType().equals(Data.SCAN_CODE)) {
                                     tv.setText("Scan");
                                 }

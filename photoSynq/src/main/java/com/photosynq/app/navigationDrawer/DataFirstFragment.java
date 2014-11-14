@@ -26,8 +26,6 @@ import com.photosynq.app.utils.PrefUtils;
 
 public class DataFirstFragment extends Fragment implements View.OnFocusChangeListener {
 
-	public Button save_btn;
-	public DatabaseHelper db;
 	private String userId;
 	private String questionId;
     private int questionValueType;
@@ -44,15 +42,19 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
     private boolean prev;
     private boolean next;
     private ViewPager viewPager;
-    ImageView prev_indicator;
-    ImageView next_indicator;
+    private ImageView prev_indicator;
+    private ImageView next_indicator;
+    public Button save_btn;
+    public DatabaseHelper db;
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
+        /**
+         * Receive sended value from FragmentData.
+         */
         Bundle extras = getArguments();
-
         if(null != extras)
         {
             questionId = extras.getString(DatabaseHelper.C_QUESTION_ID);
@@ -68,7 +70,6 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
 
         prev_indicator = (ImageView)rootView.findViewById(R.id.prev_data);
         next_indicator = (ImageView)rootView.findViewById(R.id.next_data);
-//
         Button saveButton = (Button)rootView.findViewById(R.id.save_btn);
         Button prevButton = (Button)rootView.findViewById(R.id.prev_btn);
         if(prev)
@@ -165,7 +166,12 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
         TextView questionTextView = (TextView) rootView.findViewById(R.id.question_layout);
         Question question = db.getQuestionForProject(projectId,questionId);
         questionTextView.setText(question.getQuestionText());
-        if(questionValueType == 1 ) {//1 for project selected.
+
+        /**
+         * If QuestionValueType is 1 then question type is project selected,
+         * else QuestionValueType is 2 then question type is user selected.
+         */
+        if(questionValueType == 1 ) {
             TextView lbl = (TextView)rootView.findViewById(R.id.select_from_web_lbl);
             lbl.setVisibility(View.VISIBLE);
             RadioGroup radioGroupQuestionType = (RadioGroup)rootView.findViewById(R.id.radioGroupQuestionType);
@@ -188,7 +194,7 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
                 View child = subRelativeRadio2.getChildAt(i);
                 child.setEnabled(false);
             }
-        }else if(questionValueType == 2 ) {//2 for user selected.
+        }else if(questionValueType == 2 ) {
             Data retrieveData = db.getData(userId, projectId, questionId);
             if (null != retrieveData.getType()) {
                 switch (QuestionType.valueOf(retrieveData.getType())) {
@@ -228,7 +234,7 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
 	return rootView;
  }
 
-    //auto save all values of auto increment on focus change(from,to,repeat)
+    //Auto save all values of auto increment on focus change(from,to,repeat)
     @Override
     public void onFocusChange(View view, boolean hasFocus) {
 
@@ -246,14 +252,14 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
     }
 
 
-    //it gets current item position of viewpager
+    //Returns current position of viewpager.
     private int getItem(int i) {
         int a = viewPager.getCurrentItem();
         i = i + a;
         return i;
     }
 
-    //its save all user selected values into database like(user selected, fixed value, auto inc, scan code)
+    //Save all user selected values into database like(user selected, fixed value, auto inc, scan code)
     public void saveData(boolean noMessage) {
         Data data = new Data();
         data.setUser_id(userId);
@@ -267,19 +273,11 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
         if (selectedRadioButtonId == userSelectedRadio.getId()) {
 
             data.setType(QuestionType.USER_SELECTED.getStatusCode());
-//            if(!next) {
-//                if(noMessage)
-//                    Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
-//            }
 
         } else if (selectedRadioButtonId == fixedValueRadio.getId()) {
 
             data.setType(QuestionType.FIXED_VALUE.getStatusCode());
             data.setValue(fixed_value_edit_text.getText().toString());
-//            if(!next) {
-//                if(noMessage)
-//                    Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
-//            }
 
         } else if (selectedRadioButtonId == autoIncRadio.getId()) {
 
@@ -294,26 +292,15 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
                 }else
                 {
                     data.setValue(from_edit_text.getText().toString() + "," + to_edit_text.getText().toString() + "," + repeat_edit_text.getText().toString());
-//                    if(!next) {
-//                        if(noMessage)
-//                            Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
-//                    }
                 }
 
         } else if (selectedRadioButtonId == scanCodeRadio.getId()) {
 
             data.setType(QuestionType.SCAN_CODE.getStatusCode());
-//            if(!next) {
-//                Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
-//            }
         }
 
         db.updateData(data);
         if(data.getType().equals(QuestionType.PROJECT_SELECTED.name())){
-//            if(!next) {
-//                if(noMessage)
-//                    Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
-//            }
         }
     }//end save data function..
 

@@ -26,11 +26,6 @@ public class FragmentData extends Fragment {
 	DatabaseHelper db;
 	private String userID;
 
-//	public static FragmentData newInstance() {
-//		FragmentData fragment = new FragmentData();
-//		return fragment;
-//	}
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -38,7 +33,10 @@ public class FragmentData extends Fragment {
         userID = PrefUtils.getFromPrefs(getActivity(),PrefUtils.PREFS_LOGIN_USERNAME_KEY,
                 PrefUtils.PREFS_DEFAULT_VAL);
         List<Question> questions = db.getAllQuestionForProject(db.getSettings(userID).getProjectId());
-        //if project is not selected then it shows blank layout with message on data tab click.
+
+        /**
+         * if project is not selected then it shows blank layout with message on data tab click.
+         */
         if(questions.size() <=0 )
         {
                 View rootView = inflater.inflate(R.layout.blank_layout, container, false);
@@ -48,16 +46,21 @@ public class FragmentData extends Fragment {
         }
 		View rootView = inflater.inflate(R.layout.fragment_data,container, false);
 		viewPager = (ViewPager) rootView.findViewById(R.id.viewPager);
+       // viewPager = (NonSwipableViewPager) rootView.findViewById(R.id.viewPager);
 
-		List<Fragment> fragments = getFragments(questions);
-		pageAdapter = new MyPageAdapter(getActivity().getSupportFragmentManager(), fragments);
+        List<Fragment> fragments = getFragments(questions);
+        pageAdapter = new MyPageAdapter(getActivity().getSupportFragmentManager(), fragments);
 
-		viewPager.setAdapter(pageAdapter);
-		
+        viewPager.setAdapter(pageAdapter);
+
+
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
 		return rootView;
 	}
 
+    /**
+     * It's calculate fragment size and send boolean values for prev and next to DataFirstFragment.
+     */
 	private List<Fragment> getFragments(List<Question> questions) {
 		List<Fragment> fList = new ArrayList<Fragment>();
             for (int i = 0; i< questions.size(); i++) {

@@ -24,6 +24,11 @@
             android:text="@string/quick_measure_mode"
             android:textSize="24sp" />
 
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Take a Single Measurement without saving the results"/>-->
+
         <RadioButton
             android:id="@+id/streamline_mode_radio"
             android:layout_width="fill_parent"
@@ -32,6 +37,12 @@
             android:drawableRight="@android:drawable/btn_radio"
             android:text="@string/streamlined_mode"
             android:textSize="24sp" />
+
     </RadioGroup>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/radioGroup"
+        android:text="Take a Measurement as part of a Project and contribute the data (select the project from the left menu bar)"/>
 
 </RelativeLayout>

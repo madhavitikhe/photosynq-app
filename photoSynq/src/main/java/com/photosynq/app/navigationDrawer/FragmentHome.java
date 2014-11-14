@@ -30,10 +30,6 @@ import java.util.Calendar;
  *
  */
 public class FragmentHome extends Fragment {
-//    private static final String ARG_PARAM1 = "param1";
-
-//    private String mParam1;
-
 
     private OnFragmentInteractionListener mListener;
     private DatabaseHelper db;
@@ -61,7 +57,7 @@ public class FragmentHome extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            //mParam1 = getArguments().getString(ARG_PARAM1);
+
         }
     }
 
@@ -125,14 +121,19 @@ public class FragmentHome extends Fragment {
     public interface OnFragmentInteractionListener {
         public void onFragmentInteraction(Uri uri);
     }
-    //setAlarm method sets interval time to executing sync in background and show notification to user.
+
+    /**
+     * This method sets interval time to executing sync in background and show notification to user.
+     * time in milliseconds.
+     * @param context
+     */
     public void setAlarm(Context context) {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.SECOND, 10);
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent  alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
         AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),3600000*2, alarmIntent);//3600000*2 means 2 Hours
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),3600000*2, alarmIntent);//3600000*2 = 2 Hours
         System.out.println("-----------Alarm is set-------");
     }
 }
