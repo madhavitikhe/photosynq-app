@@ -8,9 +8,7 @@ collect and share plant health data from anywhere in the world.
 
 ## Screens
 
-Code of a demo application is in `Photosynq` directory.
-
-The demo app is also ready for download on [Google Play](https://play.google.com/store/apps/details?id=com.photosynq.app)
+Download this application from [Google Play](https://play.google.com/store/apps/details?id=com.photosynq.app)
 
 ![](screens/WelcomeScreens.png)
 ![](screens/MainDrawer.png)
@@ -22,6 +20,10 @@ The demo app is also ready for download on [Google Play](https://play.google.com
 
 ##Download and Import
 
+### Setup
+Download Android Studio
+[here](https://developer.android.com/sdk/installing/studio.html)
+
 ###Android Studio/Gradle
 
  - download/clone repository and import Photosynq as project: `File -> Import Project` and select
@@ -30,14 +32,12 @@ The demo app is also ready for download on [Google Play](https://play.google.com
 
 ##Third party libraries used in this app - 
 
- - GSon - GSon license [here](http://www.apache.org/licenses/LICENSE-2.0)
- - Picasso - Picasso license [here](http://www.apache.org/licenses/LICENSE-2.0)
- - Zxing - Zxing core library license [here](http://www.apache.org/licenses/LICENSE-2.0)
+ - GSon - GSon license [here](https://github.com/eatnumber1/google-gson/blob/master/LICENSE)
+ - Picasso - Picasso license [here](https://github.com/square/picasso/blob/master/LICENSE.txt)
+ - Zxing - Zxing core library license [here](https://github.com/embarkmobile/zxing-android-minimal/blob/master/COPYING)
  
 
 
-### Setup
-Download Android Studio
-[here](https://developer.android.com/sdk/installing/studio.html)
+
 
 
