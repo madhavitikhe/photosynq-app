@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,12 +26,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.photosynq.app.AlarmReceiver;
 import com.photosynq.app.BluetoothActivity;
 import com.photosynq.app.LoginActivity;
-import com.photosynq.app.ProjectListActivity;
 import com.photosynq.app.R;
 import com.photosynq.app.SelectProtocolActivity;
 import com.photosynq.app.StreamlinedModeActivity;
@@ -70,12 +67,13 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
             return;
         }
 
-
+        FragmentManager fragmentManager = getSupportFragmentManager();
         db = DatabaseHelper.getHelper(getApplicationContext());
         userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
         appSettings = db.getSettings(userId);
 //        FragmentManager fragmentManager = getSupportFragmentManager();
 //        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHome()).commit();
+
         //When user install app first time following thing are set default.
         String first_run = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_FIRST_RUN, "YES");
         if (first_run.equals("YES"))
@@ -83,21 +81,22 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
             System.out.println("First time running? = YES");
             setAlarm(getApplicationContext());
             String userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-            appSettings.setModeType(Utils.APP_MODE_QUICK_MEASURE);
-            db.updateSettings(appSettings);
+//            appSettings.setModeType(Utils.APP_MODE_QUICK_MEASURE);
+//            db.updateSettings(appSettings);
             PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_FIRST_RUN,"NO");
             PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_SAVE_SYNC_INTERVAL,"2");
+            fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentConnection()).commit();
+            setTitleActionBar("Select Measurement Device (bluetooth)");
         }
 
-        if(appSettings.getModeType().equals(Utils.APP_MODE_QUICK_MEASURE))
-        {
-            Intent intent = new Intent(getApplicationContext(),SelectProtocolActivity.class);
-            startActivity(intent);
-        }
-        else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
-        {
-            Intent intent = new Intent(getApplicationContext(),StreamlinedModeActivity.class);
-            startActivity(intent);
+        if(null != appSettings.getModeType()) {
+            if (appSettings.getModeType().equals(Utils.APP_MODE_QUICK_MEASURE)) {
+                Intent intent = new Intent(getApplicationContext(), SelectProtocolActivity.class);
+                startActivity(intent);
+            } else if (appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE)) {
+                Intent intent = new Intent(getApplicationContext(), StreamlinedModeActivity.class);
+                startActivity(intent);
+            }
         }
         setTitleActionBar(getResources().getString(R.string.app_name));
 
@@ -127,7 +126,7 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
 		drawerToggle = new ActionBarDrawerToggleCompat(this, layoutDrawer);		
 		layoutDrawer.setDrawerListener(drawerToggle);
        		
-		//user sign out after click on signout option from navigation drawer.
+		//User sign out after click on signout option from navigation drawer.
         TextView sign_out=(TextView) findViewById(R.id.signOut);
         sign_out.setOnClickListener(new OnClickListener() {
 
@@ -251,8 +250,12 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
 			// TODO Auto-generated method stub
 			layoutDrawer.closeDrawer(linearDrawer);
 		}
-	};	
-	
+	};
+
+    /**
+     * This method sets the title of selected navigation drawer item.
+     * @param position  selected item position.
+     */
 	private void setFragmentList(int position){
 		
 		FragmentManager fragmentManager = getSupportFragmentManager();
@@ -287,7 +290,7 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
                 break;
             case 3:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentConnection()).commit();
-                setTitleActionBar("Select Bluetooth Device");
+                setTitleActionBar("Select Measurement Device (bluetooth)");
                 break;
             case 4:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();
@@ -411,4 +414,5 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
         alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),3600000*2, alarmIntent);//3600000*2 means 2 Hours
         System.out.println("-----------Alarm is set-------");
     }
+
 }

@@ -48,19 +48,30 @@
         android:text="Time between Sync attempts with website. Sync includes projects, protocols, macros, and data."/>
 
 </LinearLayout>
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-         >
 
-        <Button
-            android:id="@+id/sync_btn"
+     <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+        <LinearLayout
+            android:id="@+id/btnLL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/sync_btn" >
-        </Button>
+            android:layout_alignParentBottom="true">
+            <Button
+                android:id="@+id/sync_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/sync_btn" />
+
+            <Button
+                android:id="@+id/clear_cache"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/clear_cache"/>
+        </LinearLayout>
+
     </RelativeLayout>
 
 </RelativeLayout>

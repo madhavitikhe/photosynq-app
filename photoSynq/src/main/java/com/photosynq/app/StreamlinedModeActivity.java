@@ -1269,51 +1269,6 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.clearCache:
-                db.deleteAllData();
-                new DataDownloadAsync().execute();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+             return super.onOptionsItemSelected(item);
         }
-    }
-
-    private class DataDownloadAsync extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // Showing progress dialog
-            DataUtils.downloadData(getApplicationContext());
-            pDialog = new ProgressDialog(StreamlinedModeActivity.this);
-            pDialog.setMessage("Please wait...");
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-
-        @Override
-        protected Void doInBackground(Void... arg0) {
-            // Creating service handler class instance
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            // Dismiss the progress dialog
-            if (pDialog.isShowing())
-                pDialog.dismiss();
-
-            appSettings = db.getSettings(userId);
-            String first_run = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_FIRST_RUN, "YES");
-            if (first_run.equals("NO"))
-            {
-                appSettings.setModeType(Utils.APP_MODE_QUICK_MEASURE);
-                db.updateSettings(appSettings);
-                PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_FIRST_RUN,"NO");
-            }
-            //Toast.makeText(getApplicationContext(), "List is up to date", Toast.LENGTH_SHORT).show();
-        }
-    }
 }

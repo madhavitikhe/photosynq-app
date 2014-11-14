@@ -50,9 +50,9 @@
     <string name="keep_data">Keep Data Successfully</string>
     <string name="sync_successful">Sync successful!</string>
     <string name="measure_btn"> MEASURE </string>
-    <string name="streamlined_mode">Streamline Mode</string>
+    <string name="streamlined_mode">Project Measurement</string>
     <string name="normal_mode">Normal Mode</string>
-    <string name="quick_measure_mode">Quick Measure Mode</string>
+    <string name="quick_measure_mode">Quick Measurement</string>
     <string name="sign_out">Sign Out</string>
     <string name="close">Close</string>
     <string name="review">Review</string>
@@ -64,6 +64,7 @@
     <string name="pairDevice">Pair Device</string>
     <string name="save_interval_btn">Save interval</string>
     <string name="sync_btn">Sync Data</string>
+    <string name="clear_cache">Clear Cache</string>
     <string name="sync_interval_lbl">Sync interval (in mins)</string>
     <string name="userSelected">User Selected</string>
     <string name="selectFromWeb">Set of answers cannot be changed here.  If you are the project lead, you can change the set of answers by editing the project</string>
