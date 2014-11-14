@@ -110,7 +110,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			getAllSelectedOptions = extras.getStringArrayList("All_Options");
 			getAllSelectedQuestions = extras.getStringArrayList("All_Questions");
 			userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-			
+
 			if (null == protocolJson) protocolJson="";
 			System.out.println(this.getClass().getName()+"############app mode="+appMode);
 		}
@@ -724,10 +724,9 @@ GooglePlayServicesClient.OnConnectionFailedListener{
                 mStatusLine.setText(R.string.start_measure);
                 String dataString;
                 String options = new String ("\"user_answers\": [\""+option1+"\","+"\""+option2+"\","+"\""+option3+"\" ],");
-                long time= System.currentTimeMillis();
                 if (options.equals(""))
                 {
-                	 dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
+                	 dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "")+"\n];";
                 }
                 else
                 {
@@ -735,11 +734,11 @@ GooglePlayServicesClient.OnConnectionFailedListener{
                 	if(!currentLocation.equals("NONE"))
                 	{
                 		options = options+"\"location\":["+currentLocation+"],";
-                		dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
+                		dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options)+"\n];";
                 	}
                 	else
                 	{
-                		dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
+                		dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options)+"\n];";
                 	}
                 }
                 System.out.println("###### writing data.js :"+dataString);
@@ -749,7 +748,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
         		intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
         		intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocolJson);
         		intent.putExtra(Utils.APP_MODE, appMode);
-        		String reading = measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",");
+        		String reading = measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options);
         		//reading = reading.replaceFirst("\\{", "{"+options);
         		intent.putExtra(DatabaseHelper.C_READING, reading);
         		startActivity(intent);
