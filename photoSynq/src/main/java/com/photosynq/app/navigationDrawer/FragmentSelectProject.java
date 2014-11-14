@@ -1,8 +1,6 @@
 package com.photosynq.app.navigationDrawer;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,12 +17,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.photosynq.app.R;
+import com.photosynq.app.StreamlinedModeActivity;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
+
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class FragmentSelectProject extends Fragment{
 	
@@ -71,13 +73,19 @@ public class FragmentSelectProject extends Fragment{
 				@Override
 				public void onClick(View arg0) {
 					FragmentManager fm = getActivity().getSupportFragmentManager();
-					
+                    String first_install_cycle = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE, "YES");
+                    if( first_install_cycle.equals("YES")) {
+                        Intent intent = new Intent(getActivity(), StreamlinedModeActivity.class);
+                        startActivity(intent);
+                        PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE, "NO");
+                    }
+
 					String userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		    		AppSettings appSettings = db.getSettings(userId);
-
 					appSettings.setProjectId(recordid);
 					db.updateSettings(appSettings);
-					fm.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();	
+					fm.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();
+
 				}
 			});
 

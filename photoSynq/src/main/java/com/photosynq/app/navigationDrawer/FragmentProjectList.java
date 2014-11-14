@@ -90,24 +90,26 @@ public class FragmentProjectList extends Fragment{
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));	
 		return rootView;
 	}
-	
+
+    /**
+     * When project list is empty it's calls async task (GetDataAsync()) and download project list.
+     */
 	public void checkDataOnProjectList()
 	{
 		if(arrayadapter.isEmpty())
 		{
-			//it call async task (GetDataAsync()) and download project list.
 			new GetDataAsync().execute();
 		}
 	}
-	
+
+    /**
+     * Download list of research project and set to listview.
+     */
 	private void refreshProjectList() {
-		//db = new DatabaseHelper(getApplicationContext());
 		db = DatabaseHelper.getHelper(getActivity());
 		researchProjectList = db.getAllResearchProjects();
 		arrayadapter = new NavigationDrawerResearchProjectArrayAdapter(getActivity(), researchProjectList); 
 		projectList.setAdapter(arrayadapter);
-		//System.out.println("DBCLosing");
-		//db.closeDB();
 	}
 	
 	private class GetDataAsync extends AsyncTask<Void, Void, Void> {
@@ -116,7 +118,6 @@ public class FragmentProjectList extends Fragment{
         protected void onPreExecute() {
             super.onPreExecute();
             // Showing progress dialog
-            //downloadData();
             DataUtils.downloadData(getActivity());
             pDialog = new ProgressDialog(getActivity());
             pDialog.setMessage("Please wait...");

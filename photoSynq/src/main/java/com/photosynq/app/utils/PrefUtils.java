@@ -12,13 +12,13 @@ public class PrefUtils {
     public static final String PREFS_CURRENT_LOCATION = "CURRENT_LOCATION" ;
     public static final String PREFS_CONNECTION_ID = "CONNECTION_ID";
     public static final String PREFS_FIRST_RUN = "FIRST_RUN";
+    public static final String PREFS_FIRST_INSTALL_CYCLE = "FIRST_INSTALL_CYCLE";
     public static final String PREFS_SAVE_SYNC_INTERVAL = "SAVE_SYNC_INTERVAL";
     public static final String PREFS_QUESTION_INDEX = "FREQ_OF_QUESTION";
     public static final String PREFS_BIO_KEY = "USER_BIO" ;
     public static final String PREFS_NAME_KEY = "NAME";
     public static final String PREFS_INSTITUTE_KEY = "INSTITUTE";
     public static final String PREFS_THUMB_URL_KEY = "THUMB_URL";
-    // public static String PREFS_QUESTION_INDEX_VALUES = "QUESTION_INDEX_VALUES";
 
     /**
      * Called to save supplied value in shared preferences against given key.

@@ -81,12 +81,12 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
             System.out.println("First time running? = YES");
             setAlarm(getApplicationContext());
             String userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-//            appSettings.setModeType(Utils.APP_MODE_QUICK_MEASURE);
-//            db.updateSettings(appSettings);
-            PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_FIRST_RUN,"NO");
-            PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_SAVE_SYNC_INTERVAL,"2");
+
             fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentConnection()).commit();
             setTitleActionBar("Select Measurement Device (bluetooth)");
+            PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_FIRST_RUN,"NO");
+            PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE,"YES");
+            PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_SAVE_SYNC_INTERVAL,"2");
         }
 
         if(null != appSettings.getModeType()) {

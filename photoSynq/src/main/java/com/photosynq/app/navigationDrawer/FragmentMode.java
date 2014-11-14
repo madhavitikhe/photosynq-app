@@ -1,7 +1,9 @@
 package com.photosynq.app.navigationDrawer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,9 +13,9 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.Toast;
 
 import com.photosynq.app.R;
+import com.photosynq.app.SelectProtocolActivity;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.utils.PrefUtils;
@@ -69,6 +71,7 @@ public class FragmentMode extends Fragment{
 			
 			userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
     		AppSettings appSettings = db.getSettings(userId);
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
     		
 		    	switch (position)
 		    	{
@@ -80,13 +83,21 @@ public class FragmentMode extends Fragment{
                 case 0 :
                     appSettings.setModeType(Utils.APP_MODE_QUICK_MEASURE);
                     db.updateSettings(appSettings);
-                    Toast.makeText(getActivity(), Utils.APP_MODE_QUICK_MEASURE,Toast.LENGTH_SHORT).show();
+                    String first_install_cycle = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE, "YES");
+                    if( first_install_cycle.equals("YES")) {
+                        Intent intent = new Intent(getActivity(), SelectProtocolActivity.class);
+                        startActivity(intent);
+                        PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE,"NO");
+                    }
                     break;
 
 		    	case 1 :
 		    		appSettings.setModeType(Utils.APP_MODE_STREAMLINE);
 		    		db.updateSettings(appSettings);
-			    	Toast.makeText(getActivity(), Utils.APP_MODE_STREAMLINE,Toast.LENGTH_SHORT).show(); 
+                    String first_install = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE, "YES");
+                    if( first_install.equals("YES")) {
+                        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();
+                    }
 			    	break;
 		    	}
 		}
