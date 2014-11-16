@@ -1,6 +1,5 @@
 package com.photosynq.app.navigationDrawer;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.photosynq.app.R;
-import com.photosynq.app.StreamlinedModeActivity;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.ResearchProject;
@@ -49,6 +47,7 @@ public class FragmentSelectProject extends Fragment{
 		
 		
 		db = DatabaseHelper.getHelper(getActivity());
+
 		Bundle extras = getArguments();
 		if (extras != null) {
 			recordid = extras.getString(DatabaseHelper.C_ID);
@@ -60,7 +59,7 @@ public class FragmentSelectProject extends Fragment{
 			getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 			int screenWidth = displaymetrics.widthPixels;
 			//int screenHeight = displaymetrics.heightPixels;
-			
+            final FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 			TextView tvProjetTitle = (TextView) rootView.findViewById(R.id.project_name);
 			TextView tvProjetDesc = (TextView) rootView.findViewById(R.id.project_desc);
 			TextView tvStartDate = (TextView) rootView.findViewById(R.id.start_date);
@@ -73,19 +72,20 @@ public class FragmentSelectProject extends Fragment{
 				@Override
 				public void onClick(View arg0) {
 					FragmentManager fm = getActivity().getSupportFragmentManager();
+                    String userId = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
                     String first_install_cycle = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE, "YES");
                     if( first_install_cycle.equals("YES")) {
-                        Intent intent = new Intent(getActivity(), StreamlinedModeActivity.class);
-                        startActivity(intent);
+                        AppSettings appSettings = db.getSettings(userId);
+                        appSettings.setProjectId(recordid);
+                        db.updateSettings(appSettings);
+                        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentStreamlinedMode()).commit();
                         PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE, "NO");
+                    }else {
+                        AppSettings appSettings = db.getSettings(userId);
+                        appSettings.setProjectId(recordid);
+                        db.updateSettings(appSettings);
+                        fm.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();
                     }
-
-					String userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-		    		AppSettings appSettings = db.getSettings(userId);
-					appSettings.setProjectId(recordid);
-					db.updateSettings(appSettings);
-					fm.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();
-
 				}
 			});
 

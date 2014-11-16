@@ -31,8 +31,6 @@ import com.photosynq.app.AlarmReceiver;
 import com.photosynq.app.BluetoothActivity;
 import com.photosynq.app.LoginActivity;
 import com.photosynq.app.R;
-import com.photosynq.app.SelectProtocolActivity;
-import com.photosynq.app.StreamlinedModeActivity;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.utils.BluetoothService;
@@ -91,20 +89,18 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
 
         if(null != appSettings.getModeType()) {
             if (appSettings.getModeType().equals(Utils.APP_MODE_QUICK_MEASURE)) {
-                Intent intent = new Intent(getApplicationContext(), SelectProtocolActivity.class);
-                startActivity(intent);
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentSelectProtocol()).commit();
             } else if (appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE)) {
-                Intent intent = new Intent(getApplicationContext(), StreamlinedModeActivity.class);
-                startActivity(intent);
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentStreamlinedMode()).commit();
             }
         }
         setTitleActionBar(getResources().getString(R.string.app_name));
 
         getSupportActionBar().setIcon(R.drawable.ic_launcher);
-		setContentView(R.layout.navigation_drawer);		
-		
+		setContentView(R.layout.navigation_drawer);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);		
+        getSupportActionBar().setHomeButtonEnabled(true);
         
         user_email = (TextView) findViewById(R.id.userEmail);
         user_email.setText(userId);
@@ -269,15 +265,17 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
                 AppSettings appSettings = db.getSettings(userId);
                     if(appSettings.getModeType().equals(Utils.APP_MODE_QUICK_MEASURE))
                     {
-                        Intent intent = new Intent(getApplicationContext(),SelectProtocolActivity.class);
-                        intent.putExtra(BluetoothService.DEVICE_ADDRESS, btDevice);
-                        intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_QUICK_MEASURE);
-                        startActivity(intent);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(BluetoothService.DEVICE_ADDRESS, btDevice);
+                        bundle.putString(Utils.APP_MODE, Utils.APP_MODE_QUICK_MEASURE);
+                        FragmentSelectProtocol fragment=new FragmentSelectProtocol();
+                        fragment.setArguments(bundle);
+
+                        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentSelectProtocol()).commit();
                     }
                     else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
                     {
-                        Intent intent = new Intent(getApplicationContext(),StreamlinedModeActivity.class);
-                        startActivity(intent);
+                        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentStreamlinedMode()).commit();
                     }
                 break;
             case 1:

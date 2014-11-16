@@ -1,6 +1,5 @@
 package com.photosynq.app.navigationDrawer;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,7 +18,6 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.photosynq.app.R;
-import com.photosynq.app.SelectProtocolActivity;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.utils.PrefUtils;
@@ -88,8 +86,7 @@ public class FragmentMode extends Fragment{
                     db.updateSettings(appSettings);
                     String first_install_cycle = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE, "YES");
                     if( first_install_cycle.equals("YES")) {
-                        Intent intent = new Intent(getActivity(), SelectProtocolActivity.class);
-                        startActivity(intent);
+                        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentSelectProtocol()).commit();
                         PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE,"NO");
                     }
                     break;
