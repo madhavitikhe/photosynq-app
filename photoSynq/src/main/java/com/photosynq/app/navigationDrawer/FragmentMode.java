@@ -20,6 +20,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
+import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.PrefUtils;
 
 public class FragmentMode extends Fragment{
@@ -29,6 +30,7 @@ public class FragmentMode extends Fragment{
 	int pos1;
 	private DatabaseHelper db;
 	private String userId;
+    String deviceAddress;
 	
     public static FragmentMode newInstance() {
         FragmentMode fragment = new FragmentMode();
@@ -43,7 +45,12 @@ public class FragmentMode extends Fragment{
 		db = DatabaseHelper.getHelper(getActivity());
 		userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		AppSettings appSettings = db.getSettings(userId);
-		
+
+        Bundle extras = getArguments();
+        if(extras != null) {
+            deviceAddress = extras.getString(BluetoothService.DEVICE_ADDRESS);
+        }
+
 		//Set cuurent settings 
 		if(null != appSettings.getModeType())
 		{
@@ -86,7 +93,12 @@ public class FragmentMode extends Fragment{
                     db.updateSettings(appSettings);
                     String first_install_cycle = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE, "YES");
                     if( first_install_cycle.equals("YES")) {
-                        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentSelectProtocol()).commit();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(BluetoothService.DEVICE_ADDRESS, deviceAddress);
+                        FragmentSelectProtocol fragment=new FragmentSelectProtocol();
+                        fragment.setArguments(bundle);
+
+                        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
                         PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE,"NO");
                     }
                     break;

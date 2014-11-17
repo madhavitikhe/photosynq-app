@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
+import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.PrefUtils;
 
 import java.lang.reflect.Method;
@@ -106,7 +107,13 @@ public class FragmentConnection extends Fragment{
                     db.updateSettings(appSettings);
                     String first_run = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE, "YES");
                     if( first_run.equals("YES")) {
-                        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentMode()).commit();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(BluetoothService.DEVICE_ADDRESS, ""+btDevice);
+                        bundle.putString(Utils.APP_MODE, Utils.APP_MODE_QUICK_MEASURE);
+                        FragmentMode fragment=new FragmentMode();
+                        fragment.setArguments(bundle);
+
+                        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
                     }
 
                     if (null != appSettings.getConnectionId()) {

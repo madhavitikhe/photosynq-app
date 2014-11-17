@@ -111,9 +111,10 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
     private BluetoothAdapter mBluetoothAdapter = null;
     private TextView mStatusLine;
     private String mConnectedDeviceName = null;
-    private String option1 = "";
-    private String option3 = "";
-    private String option2 = "";
+//    private String option1 = "";
+//    private String option3 = "";
+//    private String option2 = "";
+      ArrayList<String> allOptions;
 
     private boolean clearflag = false;
     private boolean reviewFlag = false;
@@ -207,7 +208,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 //                    return;
                 }
 
-                if(data.getType().equals(Data.USER_SELECTED))
+                if(null != data.getType() && data.getType().equals(Data.USER_SELECTED))
                 {
                     LayoutInflater infltr = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     View viewUserSelected = infltr.inflate(R.layout.user_selected, null, false);
@@ -270,13 +271,13 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 
                     viewFlipper.addView(viewUserSelected);
                 }
-                else if(data.getType().equals(Data.FIXED_VALUE))
+                else if(null != data.getType() && data.getType().equals(Data.FIXED_VALUE))
                 {
                     //if(questionLoop<= allSelectedOptions.size())
                     allSelectedOptions.set(questionLoop,data.getValue());
                     fixedValueCount++;
                 }
-                else if(data.getType().equals(Data.AUTO_INCREMENT))
+                else if(null != data.getType() && data.getType().equals(Data.AUTO_INCREMENT))
                 {
                     autoIncProjecSize = autoIncProjecSize + 1;
                     if((data.getValue()).equals(Data.NO_VALUE))
@@ -300,7 +301,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 
                     PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_QUESTION_INDEX, "0");
                 }
-                else if(data.getType().equals(Data.SCAN_CODE))
+                else if(null != data.getType() && data.getType().equals(Data.SCAN_CODE))
                 {
                     LayoutInflater infltr = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     View viewScanCode = infltr.inflate(R.layout.barcode_reader, null,true);
@@ -688,23 +689,35 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                     // String readMessage = new String(readBuf, 0, msg.arg1);
                     mStatusLine.setText(R.string.connected);
                     String dataString;
-                    String options = new String ("\"user_answers\": [\""+option1+"\","+"\""+option2+"\","+"\""+option3+"\" ],");
+                    StringBuffer options = new StringBuffer();
+                    options.append("\"user_answers\": [");
+                    //loop
+                    for(int i=0;i<allOptions.size();i++){
+                        options.append("\"" + allOptions.get(i) + "\"");
+                        if(i < allOptions.size()-1)
+                        options.append(",");
+                    }
+                    options.append(" ],");
+//                    String options = new String ("\"user_answers\": [\""+option1+"\","+"\""+option2+"\","+"\""+option3+"\" ],");
                     long time= System.currentTimeMillis();
                     if (options.equals(""))
                     {
                         dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
+                        System.out.println("All Options"+dataString);
                     }
                     else
                     {
                         String currentLocation = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_CURRENT_LOCATION, "NONE");
                         if(!currentLocation.equals("NONE"))
                         {
-                            options = options+"\"location\":["+currentLocation+"],";
+                            options = options.append("\"location\":["+currentLocation+"],");
                             dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
+                            System.out.println("All Options"+dataString);
                         }
                         else
                         {
                             dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
+                            System.out.println("All Options"+dataString);
                         }
                     }
                     System.out.println("###### writing data.js :"+dataString);
@@ -771,6 +784,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 
         //int optionLoop = 0;
         List<Question> allQuestions = db.getAllQuestionForProject(projectId);
+        allOptions = new ArrayList<String>();
         for (int i = 0; i < allQuestions.size(); i++) {
 
 
@@ -882,25 +896,28 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 //                    }
 //                });
             }
-            try{
-                if(i==0)
-                {
-                    option1= data_value;
-                }else if(i == 1)
-                {
-                    option2 = data_value;
-                }else if(i==2)
-                {
-                    option3 = data_value;
-                }
-
-//                    option1 = (String) getAllSelectedOptions.get(0);
-//                    option2 = (String) getAllSelectedOptions.get(1);
-//                    option3 = (String) getAllSelectedOptions.get(2);
-            }catch ( IndexOutOfBoundsException ex)
-            {
-                //eat the exceptions !!!! Basically ignore questions less or more than 3
-            }
+            //for(int j=0;j<allSelectedOptions.size();j++){
+                allOptions.add(data_value);
+           // }
+//            try{
+//                if(i==0)
+//                {
+//                    option1= data_value;
+//                }else if(i == 1)
+//                {
+//                    option2 = data_value;
+//                }else if(i==2)
+//                {
+//                    option3 = data_value;
+//                }
+//
+////                    option1 = (String) getAllSelectedOptions.get(0);
+////                    option2 = (String) getAllSelectedOptions.get(1);
+////                    option3 = (String) getAllSelectedOptions.get(2);
+//            }catch ( IndexOutOfBoundsException ex)
+//            {
+//                //eat the exceptions !!!! Basically ignore questions less or more than 3
+//            }
 
             mStatusLine = (TextView) getActivity().findViewById(R.id.statusMessage);
 

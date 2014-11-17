@@ -19,10 +19,12 @@ import com.photosynq.app.NewMeasurmentActivity;
 import com.photosynq.app.ProtocolArrayAdapter;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.DataUtils;
+import com.photosynq.app.utils.PrefUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,16 +34,16 @@ import java.util.List;
 public class FragmentSelectProtocol extends Fragment {
 
     ListView protocolList;
-    DatabaseHelper db;
     private String deviceAddress;
     List<Protocol> protocols;
     ProtocolArrayAdapter arrayadapter;
     private ProgressDialog pDialog;
+    private DatabaseHelper db;
+    private String userId;
+    AppSettings appSettings;
 	
 	public static FragmentSelectProtocol newInstance() {
-        Bundle bundle = new Bundle();
 		FragmentSelectProtocol fragment = new FragmentSelectProtocol();
-        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -49,10 +51,19 @@ public class FragmentSelectProtocol extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_select_protocol, container, false);
+        db = DatabaseHelper.getHelper(getActivity());
+        userId = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        appSettings = db.getSettings(userId);
 
         Bundle extras = getArguments();
         if (extras != null) {
             deviceAddress = extras.getString(BluetoothService.DEVICE_ADDRESS);
+        }
+
+        if(deviceAddress == null){
+            appSettings = db.getSettings(userId);
+            String btDevice = appSettings.getConnectionId();
+            deviceAddress = btDevice;
         }
         // Initialize ListView
         protocolList = (ListView) rootView.findViewById(R.id.protocol_list_view);
@@ -163,8 +174,8 @@ public class FragmentSelectProtocol extends Fragment {
         }
     }
 
-    public void takeMeasurement(View view) {
-//        finish();
-//        startActivity(getIntent());
-    }
+//    public void takeMeasurement(View view) {
+////        finish();
+////        startActivity(getIntent());
+//    }
 }

@@ -271,7 +271,7 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
                         FragmentSelectProtocol fragment=new FragmentSelectProtocol();
                         fragment.setArguments(bundle);
 
-                        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentSelectProtocol()).commit();
+                        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
                     }
                     else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
                     {

@@ -52,9 +52,9 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	private DatabaseHelper db;
 	private String userId;
 	private String appMode;
-	public String option1="";
-	public String option3="";
-	public String option2="";
+//	public String option1="";
+//	public String option3="";
+//	public String option2="";
 	
 	public String question1="";
 	public String question2="";
@@ -96,6 +96,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	private TextView que;
 	private TextView opt;
     private Button measureBtn;
+    ArrayList<String> allOptions;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +114,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 
 			if (null == protocolJson) protocolJson="";
 			System.out.println(this.getClass().getName()+"############app mode="+appMode);
+            allOptions = new ArrayList<String>();
 		}
 		
 		if(null != getAllSelectedQuestions)
@@ -148,6 +150,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		    LinearLayout liLayout = (LinearLayout) findViewById(R.id.linearlayoutoptions);
 		    int optionLoop = 0;
 		    List<Question> allQuestions = db.getAllQuestionForProject(projectId);
+
 		    for (int i = 0; i < allQuestions.size(); i++) {
 
                 String data_value= new String("");
@@ -195,25 +198,28 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				    liLayout.addView(opt);
                     optionLoop++;
 			    }
-                try{
-                    if(i==0)
-                    {
-                        option1= data_value;
-                    }else if(i == 1)
-                    {
-                        option2 = data_value;
-                    }else if(i==2)
-                    {
-                        option3 = data_value;
-                    }
 
-//                    option1 = (String) getAllSelectedOptions.get(0);
-//                    option2 = (String) getAllSelectedOptions.get(1);
-//                    option3 = (String) getAllSelectedOptions.get(2);
-                }catch ( IndexOutOfBoundsException ex)
-                {
-                    //eat the exceptions !!!! Basically ignore questions less or more than 3
-                }
+                    allOptions.add(data_value);
+
+//                try{
+//                    if(i==0)
+//                    {
+//                        option1= data_value;
+//                    }else if(i == 1)
+//                    {
+//                        option2 = data_value;
+//                    }else if(i==2)
+//                    {
+//                        option3 = data_value;
+//                    }
+//
+////                    option1 = (String) getAllSelectedOptions.get(0);
+////                    option2 = (String) getAllSelectedOptions.get(1);
+////                    option3 = (String) getAllSelectedOptions.get(2);
+//                }catch ( IndexOutOfBoundsException ex)
+//                {
+//                    //eat the exceptions !!!! Basically ignore questions less or more than 3
+//                }
 			     
 			}
 
@@ -257,7 +263,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
             byte[] send;
 				send = data.getBytes();
 				 mBluetoothService.write(send);
-            Toast.makeText(getApplicationContext(),"Send Data"+data,Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(),"Send Data"+data,Toast.LENGTH_LONG).show();
             //byte[] bytes = ByteBuffer.allocate(4).putInt(9).array();
         }
     }
@@ -277,7 +283,6 @@ GooglePlayServicesClient.OnConnectionFailedListener{
         else if(measureBtn.getText().equals("CANCEL MEASURE"))
         {
             sendData("-1+-1+");
-            Toast.makeText(getApplicationContext(),"Cancel Measure",Toast.LENGTH_LONG).show();
             finish();
         }
 //		String options = new String ("\"user_answers\": [\""+option1+"\","+"\""+option2+"\","+"\""+option3+"\" ],");
@@ -723,8 +728,17 @@ GooglePlayServicesClient.OnConnectionFailedListener{
                // String readMessage = new String(readBuf, 0, msg.arg1);
                 mStatusLine.setText(R.string.start_measure);
                 String dataString;
-                String options = new String ("\"user_answers\": [\""+option1+"\","+"\""+option2+"\","+"\""+option3+"\" ],");
-                if (options.equals(""))
+                StringBuffer options = new StringBuffer();
+                options.append("\"user_answers\": [\"");
+                //loop
+                for(int i=0;i<allOptions.size();i++){
+                    options.append("\"" + allOptions.get(i) + "\"");
+                    if(i < allOptions.size()-1)
+                        options.append(",");
+                }
+                options.append("\" ],");
+
+                if (options.toString().equals(""))
                 {
                 	 dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "")+"\n];";
                 }
@@ -733,7 +747,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
                 	String currentLocation = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, "NONE");
                 	if(!currentLocation.equals("NONE"))
                 	{
-                		options = options+"\"location\":["+currentLocation+"],";
+                		options.append("\"location\":["+currentLocation+"],");
                 		dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options)+"\n];";
                 	}
                 	else

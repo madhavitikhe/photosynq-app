@@ -46,7 +46,7 @@ public class BluetoothService {
     public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
     public static final int STATE_CONNECTED = 3;  // now connected to a remote device
     
-    public static String DEVICE_ADDRESS;
+    public static final String DEVICE_ADDRESS = "BLUETOOTH_ADDRESS";
 
     /**
      * Constructor. Prepares a new BluetoothChat session.
