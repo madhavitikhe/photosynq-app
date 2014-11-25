@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -98,14 +99,17 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
             } else {
 
                 setContentView(R.layout.welcome_screen);
-                getActionBar().hide();
+                ActionBar actionBar = getActionBar();
+                if(actionBar != null)
+                    actionBar.hide();
+
                 TextView new_account_tv = (TextView) findViewById(R.id.createNewAccount);
-                String account_text = "or <a href=\"http://photosynq.venturit.net/users/sign_up\">Create new account</a> ";
+                String account_text = "or <a href=\"" + HTTPConnection.SERVER_URL + "users/sign_up\">Create new account</a> ";
                 new_account_tv.setMovementMethod(LinkMovementMethod.getInstance());
                 new_account_tv.setText(Html.fromHtml(account_text));
 
                 TextView tutorial_tv = (TextView) findViewById(R.id.tutorial_txt);
-                String tutor_text = "Need help?  Here's a step by step tutorial</a> ";
+                String tutor_text = "Need help?  Here's a step by step tutorial";
                 tutorial_tv.setMovementMethod(LinkMovementMethod.getInstance());
                 tutorial_tv.setText(Html.fromHtml(tutor_text));
 
@@ -125,7 +129,9 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
     public void login()
     {
         setContentView(R.layout.activity_login);
-        getActionBar().show();
+        ActionBar actionBar = getActionBar();
+        if(actionBar != null)
+            actionBar.show();
 
 
         mLoginFormView = findViewById(R.id.login_form);

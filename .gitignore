@@ -23,3 +23,4 @@ local.properties
 proguard/
 .metadata
 appcompat_v7/
+.idea

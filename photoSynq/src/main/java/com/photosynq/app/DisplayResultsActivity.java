@@ -1,10 +1,11 @@
 package com.photosynq.app;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.IntentCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +27,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 
-public class DisplayResultsActivity extends ActionBarActivity {
+public class DisplayResultsActivity extends Activity {
 
 	WebView webview;
 	private String projectId;
@@ -43,7 +44,9 @@ public class DisplayResultsActivity extends ActionBarActivity {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_results);
-		getActionBar().hide();
+        ActionBar actionBar = getActionBar();
+        if(actionBar != null)
+            actionBar.hide();
 		
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {

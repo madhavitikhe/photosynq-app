@@ -1,4 +1,3 @@
-
 package com.photosynq.app.navigationDrawer;
 
 import android.app.Activity;
@@ -16,6 +15,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -39,24 +39,24 @@ import com.photosynq.app.utils.PrefUtils;
 import java.util.Calendar;
 
 public class NavigationDrawer extends ActionBarActivity implements FragmentHome.OnFragmentInteractionListener{
-	
-	public static final String LAST_POSITION = "LAST_POSITION";
+
+    public static final String LAST_POSITION = "LAST_POSITION";
     private int lastPosition = 0;
-	private ListView listDrawer;    
-	private int counterItemDownloads;
-	protected DrawerLayout layoutDrawer;		
-	private LinearLayout linearDrawer;
-	private RelativeLayout userDrawer;
-	private NavigationAdapter navigationAdapter;
-	private ActionBarDrawerToggleCompat drawerToggle;
-	private String mEmail;
-	private TextView user_email;
+    private ListView listDrawer;
+    private int counterItemDownloads;
+    protected DrawerLayout layoutDrawer;
+    private LinearLayout linearDrawer;
+    private RelativeLayout userDrawer;
+    private NavigationAdapter navigationAdapter;
+    private ActionBarDrawerToggleCompat drawerToggle;
+    private String mEmail;
+    private TextView user_email;
     private boolean desktopflag = false;
     private DatabaseHelper db;
     private String userId;
     AppSettings appSettings;
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         boolean finish = getIntent().getBooleanExtra("finish", false);
         if (finish) {
@@ -96,50 +96,55 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
         }
         setTitleActionBar(getResources().getString(R.string.app_name));
 
-        getSupportActionBar().setIcon(R.drawable.ic_launcher);
-		setContentView(R.layout.navigation_drawer);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null)
+            actionBar.setIcon(R.drawable.ic_launcher);
+        setContentView(R.layout.navigation_drawer);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        
+        if(actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
+        if(actionBar != null)
+            actionBar.setHomeButtonEnabled(true);
+
         user_email = (TextView) findViewById(R.id.userEmail);
         user_email.setText(userId);
 
-		listDrawer = (ListView) findViewById(R.id.listDrawer);        
-		linearDrawer = (LinearLayout) findViewById(R.id.linearDrawer);		
-		layoutDrawer = (DrawerLayout) findViewById(R.id.layoutDrawer);	
-		
-		userDrawer = (RelativeLayout) findViewById(R.id.userDrawer);
-		userDrawer.setOnClickListener(userOnClick);
-		
-		if (listDrawer != null) {
-			navigationAdapter = NavigationAdapter.getNavigationAdapter(this);
-		}
+        listDrawer = (ListView) findViewById(R.id.listDrawer);
+        linearDrawer = (LinearLayout) findViewById(R.id.linearDrawer);
+        layoutDrawer = (DrawerLayout) findViewById(R.id.layoutDrawer);
 
-		listDrawer.setAdapter(navigationAdapter);
-		listDrawer.setOnItemClickListener(new DrawerItemClickListener());
+        userDrawer = (RelativeLayout) findViewById(R.id.userDrawer);
+        userDrawer.setOnClickListener(userOnClick);
 
-		drawerToggle = new ActionBarDrawerToggleCompat(this, layoutDrawer);		
-		layoutDrawer.setDrawerListener(drawerToggle);
-       		
-		//User sign out after click on signout option from navigation drawer.
+        if (listDrawer != null) {
+            navigationAdapter = NavigationAdapter.getNavigationAdapter(this);
+        }
+
+        listDrawer.setAdapter(navigationAdapter);
+        listDrawer.setOnItemClickListener(new DrawerItemClickListener());
+
+        drawerToggle = new ActionBarDrawerToggleCompat(this, layoutDrawer);
+        layoutDrawer.setDrawerListener(drawerToggle);
+
+        //User sign out after click on signout option from navigation drawer.
         TextView sign_out=(TextView) findViewById(R.id.signOut);
         sign_out.setOnClickListener(new OnClickListener() {
 
-                @Override
-                public void onClick(View v) {
-                	//Delete user preferences(Credentials).
-                	SharedPreferences settings =  PreferenceManager.getDefaultSharedPreferences(getBaseContext());                          
-    		        SharedPreferences.Editor editor = settings.edit();
-    		        editor.clear();
-    		        editor.commit();
-    		        Intent intent = new Intent(getApplicationContext(),NavigationDrawer.class);
-    		        intent.putExtra("finish", true);
-	            	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-	                startActivity(intent);
-	                finish();	
-                }
-            });
+            @Override
+            public void onClick(View v) {
+                //Delete user preferences(Credentials).
+                SharedPreferences settings =  PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                SharedPreferences.Editor editor = settings.edit();
+                editor.clear();
+                editor.commit();
+                Intent intent = new Intent(getApplicationContext(),NavigationDrawer.class);
+                intent.putExtra("finish", true);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         Thread t = new Thread(new Runnable() {
 
@@ -163,7 +168,7 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
         });
 
         t.start();
-	}
+    }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -171,91 +176,97 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
-	        @Override
-	        public void onItemClick(AdapterView<?> parent, View view, int posicao, long id) {          	        	
-		    	setLastPosition(posicao);        	
-		    	setFragmentList(lastPosition);	  
-		    	layoutDrawer.closeDrawer(linearDrawer);	    	
-	        }
-	    }	
-	
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		// TODO Auto-generated method stub		
-		super.onSaveInstanceState(outState);		
-		outState.putInt(LAST_POSITION, lastPosition);					
-	}
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int posicao, long id) {
+            setLastPosition(posicao);
+            setFragmentList(lastPosition);
+            layoutDrawer.closeDrawer(linearDrawer);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        // TODO Auto-generated method stub
+        super.onSaveInstanceState(outState);
+        outState.putInt(LAST_POSITION, lastPosition);
+    }
 
 
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);	     
-	    drawerToggle.syncState();	
-	 }	
-	
-	public void setTitleActionBar(CharSequence title) {
-    	getSupportActionBar().setTitle(title);
-    }	
-	
-	public void setSubtitleActionBar(CharSequence subTitle) {
-    	getSupportActionBar().setSubtitle(subTitle);
-    }	
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
+    }
 
-	public void setIconActionBar(int icon) {    	
-    	getSupportActionBar().setIcon(icon);
-    }	
-	
-	public void setLastPosition(int position){
-		this.lastPosition = position;
-	}	
-		
-	private class ActionBarDrawerToggleCompat extends ActionBarDrawerToggle {
+    public void setTitleActionBar(CharSequence title) {
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null)
+            actionBar.setTitle(title);
+    }
 
-		public ActionBarDrawerToggleCompat(Activity mActivity, DrawerLayout mDrawerLayout){
-			super(
-			    mActivity,
-			    mDrawerLayout, 
-  			    R.drawable.ic_drawer,
-  			    0,0);
-		}
-		
-		@Override
-		public void onDrawerClosed(View view) {			
-			supportInvalidateOptionsMenu();				
-		}
+    public void setSubtitleActionBar(CharSequence subTitle) {
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null)
+            actionBar.setSubtitle(subTitle);
+    }
 
-		@Override
-		public void onDrawerOpened(View drawerView) {	
-			navigationAdapter.notifyDataSetChanged();			
-			supportInvalidateOptionsMenu();			
-		}		
-	}
-		  
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		// TODO Auto-generated method stub
-		super.onConfigurationChanged(newConfig);
-		drawerToggle.onConfigurationChanged(newConfig);		
-	}
-	
-   
-    
-	private OnClickListener userOnClick = new OnClickListener() {		
-		@Override
-		public void onClick(View v) {
-			// TODO Auto-generated method stub
-			layoutDrawer.closeDrawer(linearDrawer);
-		}
-	};
+    public void setIconActionBar(int icon) {
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null)
+            actionBar.setIcon(icon);
+    }
+
+    public void setLastPosition(int position){
+        this.lastPosition = position;
+    }
+
+    private class ActionBarDrawerToggleCompat extends ActionBarDrawerToggle {
+
+        public ActionBarDrawerToggleCompat(Activity mActivity, DrawerLayout mDrawerLayout){
+            super(
+                    mActivity,
+                    mDrawerLayout,
+                    R.drawable.ic_drawer,
+                    0,0);
+        }
+
+        @Override
+        public void onDrawerClosed(View view) {
+            supportInvalidateOptionsMenu();
+        }
+
+        @Override
+        public void onDrawerOpened(View drawerView) {
+            navigationAdapter.notifyDataSetChanged();
+            supportInvalidateOptionsMenu();
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        // TODO Auto-generated method stub
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+
+
+    private OnClickListener userOnClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // TODO Auto-generated method stub
+            layoutDrawer.closeDrawer(linearDrawer);
+        }
+    };
 
     /**
      * This method sets the title of selected navigation drawer item.
      * @param position  selected item position.
      */
-	private void setFragmentList(int position){
-		
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		switch (position) {
+    private void setFragmentList(int position){
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        switch (position) {
 
             case 0:
 
@@ -263,20 +274,20 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
 //                setTitleActionBar(getResources().getString(R.string.app_name));
                 String btDevice = appSettings.getConnectionId();
                 AppSettings appSettings = db.getSettings(userId);
-                    if(appSettings.getModeType().equals(Utils.APP_MODE_QUICK_MEASURE))
-                    {
-                        Bundle bundle = new Bundle();
-                        bundle.putString(BluetoothService.DEVICE_ADDRESS, btDevice);
-                        bundle.putString(Utils.APP_MODE, Utils.APP_MODE_QUICK_MEASURE);
-                        FragmentSelectProtocol fragment=new FragmentSelectProtocol();
-                        fragment.setArguments(bundle);
+                if(appSettings.getModeType().equals(Utils.APP_MODE_QUICK_MEASURE))
+                {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(BluetoothService.DEVICE_ADDRESS, btDevice);
+                    bundle.putString(Utils.APP_MODE, Utils.APP_MODE_QUICK_MEASURE);
+                    FragmentSelectProtocol fragment=new FragmentSelectProtocol();
+                    fragment.setArguments(bundle);
 
-                        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
-                    }
-                    else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
-                    {
-                        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentStreamlinedMode()).commit();
-                    }
+                    fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+                }
+                else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
+                {
+                    fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentStreamlinedMode()).commit();
+                }
                 break;
             case 1:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentMode()).commit();
@@ -309,35 +320,35 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
             case 8:
                 exitApp();
                 break;
-		}			
-		//show selection of navigation drawer item.(set selected item color is dark).
-		//our navigation contain 7 elements i.e we check here with 7
-		if (position < 8){
-			navigationAdapter.resetarCheck();			
-			navigationAdapter.setChecked(position, true);
-		}
-	}
+        }
+        //show selection of navigation drawer item.(set selected item color is dark).
+        //our navigation contain 7 elements i.e we check here with 7
+        if (position < 8){
+            navigationAdapter.resetarCheck();
+            navigationAdapter.setChecked(position, true);
+        }
+    }
 
-	public void setTitleFragments(int position){	
-		setIconActionBar(Utils.iconNavigation[position]);
-		setSubtitleActionBar(Utils.getTitleItem(NavigationDrawer.this, position));				
-	}
+    public void setTitleFragments(int position){
+        setIconActionBar(Utils.iconNavigation[position]);
+        setSubtitleActionBar(Utils.getTitleItem(NavigationDrawer.this, position));
+    }
 
-	public int getCounterItemDownloads() {
-		return counterItemDownloads;
-	}
+    public int getCounterItemDownloads() {
+        return counterItemDownloads;
+    }
 
-	public void setCounterItemDownloads(int value) {
-		this.counterItemDownloads = value;
-	}
-	
-	protected void onActivityResult(int requestCode, int resultCode, Intent intent) 
-	{
-		super.onActivityResult(requestCode, resultCode, intent);
-		mEmail = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-		user_email.setText(mEmail);
+    public void setCounterItemDownloads(int value) {
+        this.counterItemDownloads = value;
+    }
 
-	}
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent)
+    {
+        super.onActivityResult(requestCode, resultCode, intent);
+        mEmail = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        user_email.setText(mEmail);
+
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -356,9 +367,9 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return drawerToggle.onOptionsItemSelected(item);
-        }
+    }
 
-//    public void listResearchProjects(View view)
+    //    public void listResearchProjects(View view)
 //    {
 //        DatabaseHelper db = DatabaseHelper.getHelper(getApplicationContext());
 //        String userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
@@ -388,20 +399,20 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
 
     public void exitApp() {
         new AlertDialog.Builder(this)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle("Quit")
-                    .setMessage("Do You Want to Close the Application")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //Stop the activity
-                            NavigationDrawer.this.finish();
-                        }
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Quit")
+                .setMessage("Do You Want to Close the Application")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Stop the activity
+                        NavigationDrawer.this.finish();
+                    }
 
-                    })
-                    .setNegativeButton("No", null)
-                    .show();
-   }
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
 
     public void setAlarm(Context context) {
         Calendar calendar = Calendar.getInstance();

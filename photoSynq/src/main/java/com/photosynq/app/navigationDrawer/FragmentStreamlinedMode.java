@@ -13,8 +13,9 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.DialogFragment;
+import android.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -149,13 +150,14 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
          * Create a new location client, using the enclosing class to
          * handle callbacks.
          */
-        mLocationClient = new LocationClient(getActivity(), this, this);
+        ctx = getActivity();
+        mLocationClient = new LocationClient(ctx, this, this);
 //        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 //        View contentView = inflater.inflate(R.layout.activity_streamlined_mode, null, false);
 //        layoutDrawer.addView(contentView,1);
         allSelectedOptions= new ArrayList<String>();
         allSelectedQuestions = new ArrayList<String>();
-        ctx = getActivity();
+
 
         //Show question and option on viewflipper.
         //db = new DatabaseHelper(ctx);
@@ -170,7 +172,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 
         if(questions.size() == 0 || null == deviceAddress)
         {
-            Toast.makeText(getActivity(),"Please complete data setup first.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(ctx,"Please complete data setup first.",Toast.LENGTH_SHORT).show();
 //            return;
         }
         for (final Question question : questions) {
@@ -204,13 +206,13 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
             {
                 if( null == data.getType() || null == data.getValue())
                 {
-                    Toast.makeText(getActivity(),"Incomplete information, please define answer types in data tab.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx,"Incomplete information, please define answer types in data tab.",Toast.LENGTH_SHORT).show();
 //                    return;
                 }
 
                 if(null != data.getType() && data.getType().equals(Data.USER_SELECTED))
                 {
-                    LayoutInflater infltr = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    LayoutInflater infltr = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     View viewUserSelected = infltr.inflate(R.layout.user_selected, null, false);
                     viewUserSelected.setTag(question.getQuestionId());
                     TextView questionText = (TextView)viewUserSelected.findViewById(R.id.question_layout);
@@ -232,7 +234,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                                     true == str.contains("\\n") ||
                                     true == str.contains("[")||
                                     true == str.contains("]")){
-                               Toast.makeText(getActivity(),"Re-Enter Answer... special character is not allowed",Toast.LENGTH_LONG).show();
+                               Toast.makeText(ctx,"Re-Enter Answer... special character is not allowed",Toast.LENGTH_LONG).show();
                             }
                             else
                             {
@@ -282,7 +284,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                     autoIncProjecSize = autoIncProjecSize + 1;
                     if((data.getValue()).equals(Data.NO_VALUE))
                     {
-                        Toast.makeText(getActivity(),"Incomplete information, please define answer types in data tab.",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx,"Incomplete information, please define answer types in data tab.",Toast.LENGTH_SHORT).show();
 //                        return;
                     }
                     if(questions.size() == autoIncProjecSize)
@@ -303,7 +305,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                 }
                 else if(null != data.getType() && data.getType().equals(Data.SCAN_CODE))
                 {
-                    LayoutInflater infltr = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    LayoutInflater infltr = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     View viewScanCode = infltr.inflate(R.layout.barcode_reader, null,true);
                     viewScanCode.setId(Integer.parseInt(question.getQuestionId()));
                     viewScanCode.setTag(question.getQuestionId());
@@ -317,7 +319,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                             public void onClick(View v) {
                                 scanMode = true;
                                 allSelectedQuestions.add(new Gson().toJson(question));
-                                Intent intent = new Intent(getActivity(),CaptureActivity.class);
+                                Intent intent = new Intent(ctx,CaptureActivity.class);
                                 intent.setAction("com.google.zxing.client.android.SCAN");
                                 // this stops saving ur barcode in barcode scanner app's history
                                 intent.putExtra("SAVE_HISTORY", false);
@@ -403,7 +405,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                         }
                     });
 
-                    Picasso.with(getActivity())
+                    Picasso.with(ctx)
                     .load(R.drawable.ic_launcher)
                     .error(R.drawable.ic_launcher)
                     .into(imageView);
@@ -472,7 +474,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                             }
                         });
 
-                        Picasso.with(getActivity())
+                        Picasso.with(ctx)
                         .load(R.drawable.ic_launcher)
                         .error(R.drawable.ic_launcher)
                         .into(imageVieweven);
@@ -491,7 +493,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
         }
             questionLoop++;
     }
-        LayoutInflater infltr = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater infltr = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View measurementScreen = infltr.inflate(R.layout.activity_display_selected_questions_options, null,false);
         measurementScreen.setId(9595);
         viewFlipper.addView(measurementScreen);
@@ -542,13 +544,13 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 
     private void refreshMeasrementScreen() {
         viewFlipper.removeViewAt(viewFlipper.getChildCount()-1); //0 based index
-        LayoutInflater infltr = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater infltr = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View measurementScreen = infltr.inflate(R.layout.activity_display_selected_questions_options, null,false);
         measurementScreen.setId(9595);
         viewFlipper.addView(measurementScreen);
         Button measureButton = (Button)measurementScreen.findViewById(R.id.measure_btn);
         if (mBluetoothService == null) {
-            mBluetoothService = new BluetoothService(getActivity(), mHandler);
+            mBluetoothService = new BluetoothService(ctx, mHandler);
         }
         if (mBluetoothService.getState() == BluetoothService.STATE_CONNECTED)
         {
@@ -600,7 +602,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                             if(protocolJson.length() ==0)
                             {
                                 //db = new DatabaseHelper(getApplicationContext());
-                                db = DatabaseHelper.getHelper(getActivity());
+                                db = DatabaseHelper.getHelper(ctx);
                                 ResearchProject rp =  db.getResearchProject(projectId);
                                 String[] protocol_ids = rp.getProtocols_ids().trim().split(",");
                                 System.out.println("***************Sequence of protocol id is***********"+rp.getProtocols_ids());
@@ -632,7 +634,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 
                                         // Writing macros_variable.js file with protocol and macro relations
                                         System.out.println("######Writing macros_variable.js file:"+data);
-                                        CommonUtils.writeStringToFile(getActivity(), "macros_variable.js", data);
+                                        CommonUtils.writeStringToFile(ctx, "macros_variable.js", data);
 
                                         protocolJson = "["+protocolJson.substring(0, protocolJson.length()-1) +"]"; // remove last comma and add suqare brackets and start and end.
 
@@ -648,7 +650,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                                     else
                                     {
                                         mStatusLine.setText("No protocol defined for this project.");
-                                        Toast.makeText(getActivity(), "No protocol defined for this project.", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(ctx, "No protocol defined for this project.", Toast.LENGTH_LONG).show();
                                         break;
                                     }
 
@@ -707,7 +709,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                     }
                     else
                     {
-                        String currentLocation = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_CURRENT_LOCATION, "NONE");
+                        String currentLocation = PrefUtils.getFromPrefs(ctx, PrefUtils.PREFS_CURRENT_LOCATION, "NONE");
                         if(!currentLocation.equals("NONE"))
                         {
                             options = options.append("\"location\":["+currentLocation+"],");
@@ -721,9 +723,9 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                         }
                     }
                     System.out.println("###### writing data.js :"+dataString);
-                    CommonUtils.writeStringToFile(getActivity(), "data.js", dataString);
+                    CommonUtils.writeStringToFile(ctx, "data.js", dataString);
                     //mBluetoothService.stop();
-                    Intent intent = new Intent(getActivity(),DisplayResultsActivity.class);
+                    Intent intent = new Intent(ctx,DisplayResultsActivity.class);
                     intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
                     intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocolJson);
                     intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
@@ -735,16 +737,16 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                 case MESSAGE_DEVICE_NAME:
                     // save the connected device's name
                     mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
-                    Toast.makeText(getActivity(), "Connected to "
+                    Toast.makeText(ctx, "Connected to "
                             + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
 
                     break;
                 case MESSAGE_TOAST:
-                    Toast.makeText(getActivity(), msg.getData().getString(TOAST),
+                    Toast.makeText(ctx, msg.getData().getString(TOAST),
                             Toast.LENGTH_SHORT).show();
                     break;
                 case MESSAGE_STOP:
-                    Toast.makeText(getActivity(), msg.getData().getString(TOAST),
+                    Toast.makeText(ctx, msg.getData().getString(TOAST),
                             Toast.LENGTH_SHORT).show();
                     mBluetoothService.stop();
                     break;
@@ -755,7 +757,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
     private void sendData(String data) {
         // Check that we're actually connected before trying anything
         if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
-            Toast.makeText(getActivity(),"Not Connected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ctx,"Not Connected", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -787,8 +789,8 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
         allOptions = new ArrayList<String>();
         for (int i = 0; i < allQuestions.size(); i++) {
 
-
-            View reviewItem = getActivity().getLayoutInflater().inflate(R.layout.protocol_list_item, null);
+            FragmentActivity fragmentActivity = getActivity();
+            View reviewItem = fragmentActivity.getLayoutInflater().inflate(R.layout.protocol_list_item, null);
             liLayout.addView(reviewItem);
 
             TextView tvQuestion = (TextView) reviewItem.findViewById(R.id.protocol_name);
@@ -812,7 +814,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
             //llp.setMargins(0, 10, 0, 10);
             //opt.setTextSize(16);
             //opt.setLayoutParams(llp);
-            String userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+            String userId = PrefUtils.getFromPrefs(fragmentActivity , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
             data = db.getData(userId, projectId, allQuestions.get(i).getQuestionId());
             //if selected option type is User_Selected, Fixed_Value, Auto_Increment, Scan_Code
             if(null != data.getUser_id() && null != data.getProject_id() &&  null != data.getQuestion_id())
@@ -820,8 +822,8 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                 //Question and Option shown only if selected option type is 'Auto_Increment'
                 if(data.getType().equals(Data.AUTO_INCREMENT))
                 {
-                    int index = Integer.parseInt(PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_QUESTION_INDEX, "-1"));
-                    int optionvalue = Integer.parseInt(DataUtils.getAutoIncrementedValue(getActivity(), allQuestions.get(i).getQuestionId(), "" + index));
+                    int index = Integer.parseInt(PrefUtils.getFromPrefs(fragmentActivity, PrefUtils.PREFS_QUESTION_INDEX, "-1"));
+                    int optionvalue = Integer.parseInt(DataUtils.getAutoIncrementedValue(fragmentActivity, allQuestions.get(i).getQuestionId(), "" + index));
                     //que.setText("Question -  " + allQuestions.get(i).getQuestionText());
                     tvQuestion.setText(allQuestions.get(i).getQuestionText());
                     //liLayout.addView(que);
@@ -919,7 +921,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 //                //eat the exceptions !!!! Basically ignore questions less or more than 3
 //            }
 
-            mStatusLine = (TextView) getActivity().findViewById(R.id.statusMessage);
+            mStatusLine = (TextView) fragmentActivity.findViewById(R.id.statusMessage);
 
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (!mBluetoothAdapter.isEnabled()) {
@@ -927,7 +929,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                 startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             }
             if (mBluetoothService == null) {
-                mBluetoothService = new BluetoothService(getActivity(), mHandler);
+                mBluetoothService = new BluetoothService(fragmentActivity, mHandler);
             }
 
         }
@@ -979,8 +981,9 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
     private boolean servicesConnected() {
 
         // Check that Google Play services is available
+        FragmentActivity fragmentActivity = getActivity();
         int resultCode =
-                GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity());
+                GooglePlayServicesUtil.isGooglePlayServicesAvailable(fragmentActivity);
 
         // If Google Play services is available
         if (ConnectionResult.SUCCESS == resultCode) {
@@ -992,7 +995,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
             // Google Play services was not available for some reason
         } else {
             // Display an error dialog
-            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode, getActivity(), 0);
+            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode, fragmentActivity, 0);
             if (dialog != null) {
                 dialog.show();
 //                ErrorDialogFragment errorFragment = new ErrorDialogFragment();
@@ -1089,8 +1092,9 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d("PHOTOSYNQ", "Location changed:"+LocationUtils.getLatLng(getActivity(), location));
-        PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_CURRENT_LOCATION, LocationUtils.getLatLng(getActivity(), location));
+        FragmentActivity fragmentActivity = getActivity();
+        Log.d("PHOTOSYNQ", "Location changed:"+LocationUtils.getLatLng(fragmentActivity, location));
+        PrefUtils.saveToPrefs(fragmentActivity, PrefUtils.PREFS_CURRENT_LOCATION, LocationUtils.getLatLng(fragmentActivity, location));
     }
 
     /**
