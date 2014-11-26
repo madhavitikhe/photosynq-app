@@ -1,7 +1,7 @@
 package com.photosynq.app.navigationDrawer;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -231,7 +231,7 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
 
         }
 	rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));
-	return rootView;
+    return rootView;
  }
 
     //Auto save all values of auto increment on focus change(from,to,repeat)

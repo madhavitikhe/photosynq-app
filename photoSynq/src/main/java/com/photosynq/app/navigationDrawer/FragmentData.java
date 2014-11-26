@@ -1,9 +1,10 @@
 package com.photosynq.app.navigationDrawer;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,12 +50,12 @@ public class FragmentData extends Fragment {
        // viewPager = (NonSwipableViewPager) rootView.findViewById(R.id.viewPager);
 
         List<Fragment> fragments = getFragments(questions);
-        pageAdapter = new MyPageAdapter(getActivity().getSupportFragmentManager(), fragments);
+        pageAdapter = new MyPageAdapter(getActivity().getFragmentManager(), fragments);
 
         viewPager.setAdapter(pageAdapter);
 
 
-		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
+		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		return rootView;
 	}
 
@@ -116,5 +117,6 @@ public class FragmentData extends Fragment {
 			return this.fragments.size();
 		}
 
-	}
+
+    }
 }

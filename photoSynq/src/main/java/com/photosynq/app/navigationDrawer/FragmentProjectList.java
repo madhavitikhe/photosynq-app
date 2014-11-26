@@ -3,8 +3,8 @@ package com.photosynq.app.navigationDrawer;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,7 +77,7 @@ public class FragmentProjectList extends Fragment{
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 					long itemId) {
 				ResearchProject rp = (ResearchProject) projectList.getItemAtPosition(position);
-				FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+				FragmentManager fragmentManager = getActivity().getFragmentManager();
 				Bundle bundle = new Bundle();
 				bundle.putString(DatabaseHelper.C_ID, rp.getId());
 			    FragmentSelectProject f = new FragmentSelectProject(); 

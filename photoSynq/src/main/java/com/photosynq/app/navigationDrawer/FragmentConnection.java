@@ -11,8 +11,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,7 +98,7 @@ public class FragmentConnection extends Fragment{
 		    @Override
 		    public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
                 BluetoothDevice btDevice = (BluetoothDevice) pairedDeviceList.getItemAtPosition(position);
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentManager fragmentManager = getActivity().getFragmentManager();
                 Log.d("Pairing device : ", btDevice.getName());
                 try {
                     createBond(btDevice);

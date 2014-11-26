@@ -1,8 +1,8 @@
 package com.photosynq.app.navigationDrawer;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -59,7 +59,7 @@ public class FragmentSelectProject extends Fragment{
 			getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 			int screenWidth = displaymetrics.widthPixels;
 			//int screenHeight = displaymetrics.heightPixels;
-            final FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            final FragmentManager fragmentManager = getActivity().getFragmentManager();
 			TextView tvProjetTitle = (TextView) rootView.findViewById(R.id.project_name);
 			TextView tvProjetDesc = (TextView) rootView.findViewById(R.id.project_desc);
 			TextView tvStartDate = (TextView) rootView.findViewById(R.id.start_date);
@@ -71,7 +71,7 @@ public class FragmentSelectProject extends Fragment{
 				
 				@Override
 				public void onClick(View arg0) {
-					FragmentManager fm = getActivity().getSupportFragmentManager();
+					FragmentManager fm = getActivity().getFragmentManager();
                     String userId = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
                     String first_install_cycle = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE, "YES");
                     if( first_install_cycle.equals("YES")) {

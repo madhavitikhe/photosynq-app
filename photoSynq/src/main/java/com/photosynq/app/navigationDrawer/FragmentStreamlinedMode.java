@@ -14,13 +14,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -789,8 +785,8 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
         allOptions = new ArrayList<String>();
         for (int i = 0; i < allQuestions.size(); i++) {
 
-            FragmentActivity fragmentActivity = getActivity();
-            View reviewItem = fragmentActivity.getLayoutInflater().inflate(R.layout.protocol_list_item, null);
+            Activity activity = getActivity();
+            View reviewItem = activity.getLayoutInflater().inflate(R.layout.protocol_list_item, null);
             liLayout.addView(reviewItem);
 
             TextView tvQuestion = (TextView) reviewItem.findViewById(R.id.protocol_name);
@@ -814,7 +810,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
             //llp.setMargins(0, 10, 0, 10);
             //opt.setTextSize(16);
             //opt.setLayoutParams(llp);
-            String userId = PrefUtils.getFromPrefs(fragmentActivity , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+            String userId = PrefUtils.getFromPrefs(activity , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
             data = db.getData(userId, projectId, allQuestions.get(i).getQuestionId());
             //if selected option type is User_Selected, Fixed_Value, Auto_Increment, Scan_Code
             if(null != data.getUser_id() && null != data.getProject_id() &&  null != data.getQuestion_id())
@@ -822,8 +818,8 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                 //Question and Option shown only if selected option type is 'Auto_Increment'
                 if(data.getType().equals(Data.AUTO_INCREMENT))
                 {
-                    int index = Integer.parseInt(PrefUtils.getFromPrefs(fragmentActivity, PrefUtils.PREFS_QUESTION_INDEX, "-1"));
-                    int optionvalue = Integer.parseInt(DataUtils.getAutoIncrementedValue(fragmentActivity, allQuestions.get(i).getQuestionId(), "" + index));
+                    int index = Integer.parseInt(PrefUtils.getFromPrefs(activity, PrefUtils.PREFS_QUESTION_INDEX, "-1"));
+                    int optionvalue = Integer.parseInt(DataUtils.getAutoIncrementedValue(activity, allQuestions.get(i).getQuestionId(), "" + index));
                     //que.setText("Question -  " + allQuestions.get(i).getQuestionText());
                     tvQuestion.setText(allQuestions.get(i).getQuestionText());
                     //liLayout.addView(que);
@@ -921,7 +917,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 //                //eat the exceptions !!!! Basically ignore questions less or more than 3
 //            }
 
-            mStatusLine = (TextView) fragmentActivity.findViewById(R.id.statusMessage);
+            mStatusLine = (TextView) activity.findViewById(R.id.statusMessage);
 
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (!mBluetoothAdapter.isEnabled()) {
@@ -929,7 +925,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                 startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             }
             if (mBluetoothService == null) {
-                mBluetoothService = new BluetoothService(fragmentActivity, mHandler);
+                mBluetoothService = new BluetoothService(activity, mHandler);
             }
 
         }
@@ -981,9 +977,9 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
     private boolean servicesConnected() {
 
         // Check that Google Play services is available
-        FragmentActivity fragmentActivity = getActivity();
+        Activity activity = getActivity();
         int resultCode =
-                GooglePlayServicesUtil.isGooglePlayServicesAvailable(fragmentActivity);
+                GooglePlayServicesUtil.isGooglePlayServicesAvailable(activity);
 
         // If Google Play services is available
         if (ConnectionResult.SUCCESS == resultCode) {
@@ -995,7 +991,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
             // Google Play services was not available for some reason
         } else {
             // Display an error dialog
-            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode, fragmentActivity, 0);
+            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode, activity, 0);
             if (dialog != null) {
                 dialog.show();
 //                ErrorDialogFragment errorFragment = new ErrorDialogFragment();
@@ -1092,9 +1088,9 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 
     @Override
     public void onLocationChanged(Location location) {
-        FragmentActivity fragmentActivity = getActivity();
-        Log.d("PHOTOSYNQ", "Location changed:"+LocationUtils.getLatLng(fragmentActivity, location));
-        PrefUtils.saveToPrefs(fragmentActivity, PrefUtils.PREFS_CURRENT_LOCATION, LocationUtils.getLatLng(fragmentActivity, location));
+        Activity activity = getActivity();
+        Log.d("PHOTOSYNQ", "Location changed:"+LocationUtils.getLatLng(activity, location));
+        PrefUtils.saveToPrefs(activity, PrefUtils.PREFS_CURRENT_LOCATION, LocationUtils.getLatLng(activity, location));
     }
 
     /**

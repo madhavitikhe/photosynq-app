@@ -1,8 +1,8 @@
 package com.photosynq.app.navigationDrawer;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
@@ -79,7 +79,7 @@ public class FragmentMode extends Fragment{
 
 			userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
     		AppSettings appSettings = db.getSettings(userId);
-            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            FragmentManager fragmentManager = getActivity().getFragmentManager();
 
 		    	switch (position)
 		    	{

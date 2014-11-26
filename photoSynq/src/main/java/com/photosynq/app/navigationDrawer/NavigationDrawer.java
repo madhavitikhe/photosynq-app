@@ -1,5 +1,6 @@
 package com.photosynq.app.navigationDrawer;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -13,10 +14,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.FragmentManager;
+import android.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,7 +37,7 @@ import com.photosynq.app.utils.PrefUtils;
 
 import java.util.Calendar;
 
-public class NavigationDrawer extends ActionBarActivity implements FragmentHome.OnFragmentInteractionListener{
+public class NavigationDrawer extends Activity implements FragmentHome.OnFragmentInteractionListener{
 
     public static final String LAST_POSITION = "LAST_POSITION";
     private int lastPosition = 0;
@@ -58,6 +57,8 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.navigation_drawer);
         boolean finish = getIntent().getBooleanExtra("finish", false);
         if (finish) {
             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
@@ -65,7 +66,7 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
             return;
         }
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         db = DatabaseHelper.getHelper(getApplicationContext());
         userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
         appSettings = db.getSettings(userId);
@@ -95,17 +96,6 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
             }
         }
         setTitleActionBar(getResources().getString(R.string.app_name));
-
-        ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null)
-            actionBar.setIcon(R.drawable.ic_launcher);
-        setContentView(R.layout.navigation_drawer);
-
-        if(actionBar != null)
-            actionBar.setDisplayHomeAsUpEnabled(true);
-
-        if(actionBar != null)
-            actionBar.setHomeButtonEnabled(true);
 
         user_email = (TextView) findViewById(R.id.userEmail);
         user_email.setText(userId);
@@ -199,19 +189,19 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
     }
 
     public void setTitleActionBar(CharSequence title) {
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getActionBar();
         if(actionBar != null)
             actionBar.setTitle(title);
     }
 
     public void setSubtitleActionBar(CharSequence subTitle) {
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getActionBar();
         if(actionBar != null)
             actionBar.setSubtitle(subTitle);
     }
 
     public void setIconActionBar(int icon) {
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getActionBar();
         if(actionBar != null)
             actionBar.setIcon(icon);
     }
@@ -232,13 +222,13 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
 
         @Override
         public void onDrawerClosed(View view) {
-            supportInvalidateOptionsMenu();
+            //?? supportInvalidateOptionsMenu();
         }
 
         @Override
         public void onDrawerOpened(View drawerView) {
             navigationAdapter.notifyDataSetChanged();
-            supportInvalidateOptionsMenu();
+            //?? supportInvalidateOptionsMenu();
         }
     }
 
@@ -265,7 +255,7 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
      */
     private void setFragmentList(int position){
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         switch (position) {
 
             case 0:
@@ -356,7 +346,8 @@ public class NavigationDrawer extends ActionBarActivity implements FragmentHome.
         if(keyCode == KeyEvent.KEYCODE_BACK) {
 //            FragmentManager fragmentManager = getSupportFragmentManager();
 //            fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHome()).commit();
-            setTitleActionBar(getResources().getString(R.string.app_name));
+            //?? setTitleActionBar(getResources().getString(R.string.app_name));
+            layoutDrawer.openDrawer(linearDrawer);
             return true;
         }
         else {
