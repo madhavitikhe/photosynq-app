@@ -1,5 +1,6 @@
 package com.photosynq.app.navigationDrawer;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -40,8 +41,14 @@ public class FragmentMode extends Fragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-			
-		final View rootView = inflater.inflate(R.layout.fragment_mode, container, false);
+
+        ActionBar actionBar = getActivity().getActionBar();
+        if(actionBar!=null) {
+            actionBar.show();
+            actionBar.setTitle(getResources().getString(R.string.title_activity_mode));
+        }
+
+        final View rootView = inflater.inflate(R.layout.fragment_mode, container, false);
 		db = DatabaseHelper.getHelper(getActivity());
 		userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 		AppSettings appSettings = db.getSettings(userId);
@@ -99,6 +106,7 @@ public class FragmentMode extends Fragment{
                         fragment.setArguments(bundle);
 
                         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+
                         PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE,"NO");
                     }
                     break;

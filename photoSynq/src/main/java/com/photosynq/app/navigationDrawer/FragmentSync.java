@@ -1,5 +1,6 @@
 package com.photosynq.app.navigationDrawer;
 
+import android.app.ActionBar;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -51,7 +52,14 @@ public class FragmentSync extends Fragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_sync, container, false);
+
+        ActionBar actionBar = getActivity().getActionBar();
+        if(actionBar!=null) {
+            actionBar.show();
+            actionBar.setTitle(getResources().getString(R.string.title_activity_select_sync_options));
+        }
+
+        View rootView = inflater.inflate(R.layout.fragment_sync, container, false);
         db = DatabaseHelper.getHelper(getActivity());
 		intervalSpinner = (Spinner) rootView.findViewById(R.id.interval_time_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),

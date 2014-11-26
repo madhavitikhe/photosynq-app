@@ -81,8 +81,8 @@ public class NavigationDrawer extends Activity implements FragmentHome.OnFragmen
             setAlarm(getApplicationContext());
             String userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 
-            fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentConnection()).commit();
-            setTitleActionBar("Select Measurement Device (bluetooth)");
+            // fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentConnection()).commit();
+            // setTitleActionBar("Select Measurement Device (bluetooth)");
             PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_FIRST_RUN,"NO");
             PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE,"YES");
             PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_SAVE_SYNC_INTERVAL,"2");
@@ -264,7 +264,12 @@ public class NavigationDrawer extends Activity implements FragmentHome.OnFragmen
 //                setTitleActionBar(getResources().getString(R.string.app_name));
                 String btDevice = appSettings.getConnectionId();
                 AppSettings appSettings = db.getSettings(userId);
-                if(appSettings.getModeType().equals(Utils.APP_MODE_QUICK_MEASURE))
+                String modeType = appSettings.getModeType();
+                if(modeType == null)
+                {
+                    fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentConnection()).commit();
+                }
+                else if(modeType.equals(Utils.APP_MODE_QUICK_MEASURE))
                 {
                     Bundle bundle = new Bundle();
                     bundle.putString(BluetoothService.DEVICE_ADDRESS, btDevice);
@@ -274,38 +279,31 @@ public class NavigationDrawer extends Activity implements FragmentHome.OnFragmen
 
                     fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
                 }
-                else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
+                else if(modeType.equals(Utils.APP_MODE_STREAMLINE))
                 {
                     fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentStreamlinedMode()).commit();
                 }
                 break;
             case 1:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentMode()).commit();
-                setTitleActionBar("Select Measurement Mode");
                 break;
             case 2:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentUser()).commit();
-                setTitleActionBar("Select User");
                 break;
             case 3:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentConnection()).commit();
-                setTitleActionBar("Select Measurement Device (bluetooth)");
                 break;
             case 4:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();
-                setTitleActionBar("Select Project");
                 break;
             case 5:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentData()).commit();
-                setTitleActionBar("Select User-defined Data");
                 break;
             case 6:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentReview()).commit();
-                setTitleActionBar("Review All Settings");
                 break;
             case 7:
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentSync()).commit();
-                setTitleActionBar("Data Sync Options");
                 break;
             case 8:
                 exitApp();

@@ -1,5 +1,6 @@
 package com.photosynq.app.navigationDrawer;
 
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -50,6 +51,13 @@ public class FragmentSelectProtocol extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        ActionBar actionBar = getActivity().getActionBar();
+        if(actionBar!=null) {
+            actionBar.show();
+            actionBar.setTitle(getResources().getString(R.string.title_activity_select_protocol));
+        }
+
         View rootView = inflater.inflate(R.layout.activity_select_protocol, container, false);
         db = DatabaseHelper.getHelper(getActivity());
         userId = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);

@@ -1,5 +1,6 @@
 package com.photosynq.app.navigationDrawer;
 
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -42,8 +43,14 @@ public class FragmentProjectList extends Fragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
-		View rootView = inflater.inflate(R.layout.fragment_project_list, container, false);
+
+        ActionBar actionBar = getActivity().getActionBar();
+        if(actionBar!=null) {
+            actionBar.show();
+            actionBar.setTitle(getResources().getString(R.string.title_activity_select_project));
+        }
+
+        View rootView = inflater.inflate(R.layout.fragment_project_list, container, false);
 		
 		projectList = (ListView) rootView.findViewById(R.id.project_list);
 		selectedProjectText = (TextView) rootView.findViewById(R.id.selectedProjectText);

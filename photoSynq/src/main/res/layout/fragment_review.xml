@@ -130,7 +130,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".6"
                     android:textSize="20sp"
-                    android:text="raea asdf ;la  ads;ad's;fka adlfad;slf asdfl asd fasdf lasdkf ads" />
+                    android:text="@string/no_porject_selected" />
             </LinearLayout>
 
                 <TableLayout

@@ -1,5 +1,6 @@
 package com.photosynq.app.navigationDrawer;
 
+import android.app.ActionBar;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
@@ -41,6 +42,13 @@ public class FragmentReview extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        ActionBar actionBar = getActivity().getActionBar();
+        if(actionBar!=null) {
+            actionBar.show();
+            actionBar.setTitle(getResources().getString(R.string.title_activity_review));
+        }
+
         View rootView = inflater.inflate(R.layout.fragment_review, container, false);
         userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
         db = DatabaseHelper.getHelper(getActivity());
@@ -82,7 +90,7 @@ public class FragmentReview extends Fragment {
             List<Question> questions = db.getAllQuestionForProject(appSettings.getProjectId());
             TableRow row = new TableRow(getActivity());
 
-            int maxLoop = 1;
+            int maxLoop = 0;
             HashMap<String,ArrayList<Integer>> populatedValues = new HashMap();
             for (Question question : questions) {
                     TextView tv = new TextView(getActivity());
@@ -120,7 +128,8 @@ public class FragmentReview extends Fragment {
                     }
                 }
             }
-            questionsTableLayout.addView(row);
+            if(questions.size() > 0)
+                questionsTableLayout.addView(row);
 
                 for (int i = 0; i < maxLoop; i++)
                 {

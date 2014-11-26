@@ -1,5 +1,6 @@
 package com.photosynq.app.navigationDrawer;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -129,8 +130,12 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_streamlined_mode, container, false);
-        mStatusLine = (TextView) rootView.findViewById(R.id.statusMessage);
+
         fixedValueCount = 0;
+
+        ActionBar actionBar = getActivity().getActionBar();
+        if(actionBar != null)
+            actionBar.hide();
 
         //Location related
 
@@ -166,7 +171,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
         viewFlipper = (ViewFlipper) rootView.findViewById(R.id.ViewFlipper01);
         int questionLoop =0;
 
-        if(questions.size() == 0 || null == deviceAddress)
+        if((null == projectId && questions.size() == 0) || null == deviceAddress)
         {
             Toast.makeText(ctx,"Please complete data setup first.",Toast.LENGTH_SHORT).show();
 //            return;
@@ -491,6 +496,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
     }
         LayoutInflater infltr = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View measurementScreen = infltr.inflate(R.layout.activity_display_selected_questions_options, null,false);
+        mStatusLine = (TextView) measurementScreen.findViewById(R.id.statusMessage);
         measurementScreen.setId(9595);
         viewFlipper.addView(measurementScreen);
 //        if(fixedValueCount == questions.size()) {
@@ -501,9 +507,14 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
         measureButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (mBluetoothService == null) {
+                    mBluetoothService = new BluetoothService(ctx, mHandler);
+                }
                 if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED)
                 {
                     // Get the BLuetoothDevice object
+                    if(mBluetoothAdapter == null)
+                        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                     BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
                     mBluetoothService.connect(device);
                 }else {
@@ -542,6 +553,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
         viewFlipper.removeViewAt(viewFlipper.getChildCount()-1); //0 based index
         LayoutInflater infltr = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View measurementScreen = infltr.inflate(R.layout.activity_display_selected_questions_options, null,false);
+        mStatusLine = (TextView) measurementScreen.findViewById(R.id.statusMessage);
         measurementScreen.setId(9595);
         viewFlipper.addView(measurementScreen);
         Button measureButton = (Button)measurementScreen.findViewById(R.id.measure_btn);
@@ -557,9 +569,14 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
         measureButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (mBluetoothService == null) {
+                    mBluetoothService = new BluetoothService(ctx, mHandler);
+                }
                 if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED)
                 {
                     // Get the BLuetoothDevice object
+                    if(mBluetoothAdapter == null)
+                        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                     BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
                     mBluetoothService.connect(device);
                 }else {
@@ -744,7 +761,8 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                 case MESSAGE_STOP:
                     Toast.makeText(ctx, msg.getData().getString(TOAST),
                             Toast.LENGTH_SHORT).show();
-                    mBluetoothService.stop();
+                    if (mBluetoothService != null)
+                        mBluetoothService.stop();
                     break;
             }
         }
@@ -752,6 +770,9 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 
     private void sendData(String data) {
         // Check that we're actually connected before trying anything
+        if (mBluetoothService == null) {
+            mBluetoothService = new BluetoothService(ctx, mHandler);
+        }
         if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
             Toast.makeText(ctx,"Not Connected", Toast.LENGTH_SHORT).show();
             return;
@@ -848,14 +869,13 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                     tvOption.setText(allSelectedOptions.get(i));
                     //opt.setText("Option -  " + allSelectedOptions.get(optionLoop));
                     data_value = allSelectedOptions.get(i);
-                    reviewItem.setOnTouchListener(new View.OnTouchListener() {
+                    reviewItem.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public boolean onTouch(View view, MotionEvent motionEvent) {
+                        public void onClick(View view) {
                             reviewFlag = true;
                             View child = viewFlipper.findViewWithTag(view.getTag());
                             viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(child));
                             refreshMeasrementScreen();
-                            return false;
                         }
                     });
 //                    que.setOnClickListener(new OnClickListener() {

@@ -3,6 +3,7 @@ package com.photosynq.app.navigationDrawer;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -52,8 +53,14 @@ public class FragmentConnection extends Fragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-			
-		View rootView = inflater.inflate(R.layout.fragment_connection, container, false);
+
+        ActionBar actionBar = getActivity().getActionBar();
+        if(actionBar!=null) {
+            actionBar.show();
+            actionBar.setTitle(getResources().getString(R.string.title_activity_connection));
+        }
+
+        View rootView = inflater.inflate(R.layout.fragment_connection, container, false);
 		
 		db = DatabaseHelper.getHelper(getActivity());
 		userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);

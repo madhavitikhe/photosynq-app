@@ -1,5 +1,6 @@
 package com.photosynq.app.navigationDrawer;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.utils.PrefUtils;
@@ -30,21 +32,39 @@ public class FragmentData extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+
+        ActionBar actionBar = getActivity().getActionBar();
+        if(actionBar!=null) {
+            actionBar.show();
+            actionBar.setTitle(getResources().getString(R.string.title_activity_data));
+        }
+
         db = DatabaseHelper.getHelper(getActivity());
         userID = PrefUtils.getFromPrefs(getActivity(),PrefUtils.PREFS_LOGIN_USERNAME_KEY,
                 PrefUtils.PREFS_DEFAULT_VAL);
-        List<Question> questions = db.getAllQuestionForProject(db.getSettings(userID).getProjectId());
+
 
         /**
          * if project is not selected then it shows blank layout with message on data tab click.
          */
-        if(questions.size() <=0 )
+        AppSettings appSettings = db.getSettings(userID);
+        if(null == appSettings.getProjectId())
         {
                 View rootView = inflater.inflate(R.layout.blank_layout, container, false);
                 TextView tv = (TextView)rootView.findViewById(R.id.messagetv);
                 tv.setText(R.string.project_not_selected);
                 return rootView;
         }
+
+        List<Question> questions = db.getAllQuestionForProject(db.getSettings(userID).getProjectId());
+        if(questions.size() <=0 )
+        {
+            View rootView = inflater.inflate(R.layout.blank_layout, container, false);
+            TextView tv = (TextView)rootView.findViewById(R.id.messagetv);
+            tv.setText(R.string.no_que_for_project_selected);
+            return rootView;
+        }
+
 		View rootView = inflater.inflate(R.layout.fragment_data,container, false);
 		viewPager = (ViewPager) rootView.findViewById(R.id.viewPager);
        // viewPager = (NonSwipableViewPager) rootView.findViewById(R.id.viewPager);

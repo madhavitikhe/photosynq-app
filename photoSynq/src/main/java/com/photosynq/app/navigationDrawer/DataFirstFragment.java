@@ -42,8 +42,8 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
     private boolean prev;
     private boolean next;
     private ViewPager viewPager;
-    private ImageView prev_indicator;
-    private ImageView next_indicator;
+    //private ImageView prev_indicator;
+    //private ImageView next_indicator;
     public Button save_btn;
     public DatabaseHelper db;
 
@@ -68,14 +68,14 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
 		db = DatabaseHelper.getHelper(getActivity());
 		projectId = db.getSettings(userId).getProjectId();
 
-        prev_indicator = (ImageView)rootView.findViewById(R.id.prev_data);
-        next_indicator = (ImageView)rootView.findViewById(R.id.next_data);
+        //prev_indicator = (ImageView)rootView.findViewById(R.id.prev_data);
+        //next_indicator = (ImageView)rootView.findViewById(R.id.next_data);
         Button saveButton = (Button)rootView.findViewById(R.id.save_btn);
         Button prevButton = (Button)rootView.findViewById(R.id.prev_btn);
         if(prev)
         {
            prevButton.setVisibility(View.VISIBLE);
-         prev_indicator.setVisibility(View.VISIBLE);
+           //prev_indicator.setVisibility(View.VISIBLE);
            prevButton.setText("<  Prev");
            prevButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -90,12 +90,12 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
         else
         {
             prevButton.setVisibility(View.GONE);
-            prev_indicator.setVisibility(View.GONE);
+            //prev_indicator.setVisibility(View.GONE);
         }
         if(!next)
         {
             saveButton.setVisibility(View.GONE);
-            next_indicator.setVisibility(View.GONE);
+            //next_indicator.setVisibility(View.GONE);
         }
         else
         {
@@ -304,13 +304,21 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
         }
     }//end save data function..
 
+    @Override
     public void onPause() {
         saveData(true);
         super.onPause();
     }
 
+    @Override
     public void onResume() {
         saveData(false);
         super.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        saveData(true);
     }
 }
