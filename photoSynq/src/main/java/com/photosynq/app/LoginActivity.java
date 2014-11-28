@@ -165,6 +165,9 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
         mEmailView = (EditText) findViewById(R.id.email);
         mEmailView.setText(mEmail);
 
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.showSoftInput(mEmailView, InputMethodManager.SHOW_IMPLICIT);
+
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView
                 .setOnEditorActionListener(new TextView.OnEditorActionListener() {
