@@ -359,7 +359,8 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                     optionTextView.setText(question.getOptions().get(i-1));
                     ImageView imageView = new ImageView(ctx);
                     imageView.setId(i - 1);
-                    RelativeLayout.LayoutParams imageVParams = new RelativeLayout.LayoutParams(300, 300);
+                    RelativeLayout.LayoutParams imageVParams = new RelativeLayout.LayoutParams(300,300);
+                    imageVParams.setMargins(10,10,10,10);
                     imageVParams.addRule(RelativeLayout.BELOW, optionTextView.getId());
                     imageView.setTag(questionLoop);
                     imageView.setOnClickListener(new OnClickListener() {
@@ -431,6 +432,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                         ImageView imageVieweven = new ImageView(ctx);
                         imageVieweven.setId(i);
                         RelativeLayout.LayoutParams imageVParamseven = new RelativeLayout.LayoutParams(300, 300);
+                        imageVParamseven.setMargins(10,10,10,10);
                         imageVParamseven.addRule(RelativeLayout.BELOW, optionTextVieweven.getId());
                         imageVieweven.setTag(questionLoop);
                         imageVieweven.setOnClickListener(new OnClickListener() {

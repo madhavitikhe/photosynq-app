@@ -124,11 +124,11 @@ public class FragmentData extends Fragment {
 			super(fm);
 			this.fragments = fragments;
 			this.fm = fm;
-		}
+        }
 
 		@Override
 		public Fragment getItem(int position) {
-			fm.beginTransaction().attach(fragments.get(position)).commit();
+            fm.beginTransaction().attach(fragments.get(position)).commit();
 			return this.fragments.get(position);
 		}
 
@@ -139,4 +139,5 @@ public class FragmentData extends Fragment {
 
 
     }
+
 }

@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PhotoSynqAndroidStudio.iml" filepath="$PROJECT_DIR$/PhotoSynqAndroidStudio.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ph.iml" filepath="$PROJECT_DIR$/ph.iml" />
       <module fileurl="file://$PROJECT_DIR$/photoSynq/photoSynq.iml" filepath="$PROJECT_DIR$/photoSynq/photoSynq.iml" />
       <module fileurl="file://$PROJECT_DIR$/photosynq-app.iml" filepath="$PROJECT_DIR$/photosynq-app.iml" />
     </modules>

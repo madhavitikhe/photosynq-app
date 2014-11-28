@@ -52,6 +52,7 @@
         <activity
             android:name="com.photosynq.app.NewMeasurmentActivity"
             android:configChanges="orientation|screenSize"
+            android:parentActivityName=".navigationDrawer.NavigationDrawer"
             android:label="@string/title_activity_new_measurment" >
         </activity>
         <activity

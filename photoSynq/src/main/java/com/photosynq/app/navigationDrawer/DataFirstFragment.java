@@ -80,9 +80,10 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
            prevButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    saveData(false);
-                    viewPager = (ViewPager) getActivity().findViewById(R.id.viewPager);
-                    viewPager.setCurrentItem(getItem(-1), true);
+                    if(saveData(false)) {
+                        viewPager = (ViewPager) getActivity().findViewById(R.id.viewPager);
+                        viewPager.setCurrentItem(getItem(-1), true);
+                    }
                 }
             });
 //            prev_data.setVisibility(View.GONE);
@@ -127,9 +128,10 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveData(true);
-                viewPager = (ViewPager) getActivity().findViewById(R.id.viewPager);
-                viewPager.setCurrentItem(getItem(+1), true);
+                if(saveData(true)) {
+                    viewPager = (ViewPager) getActivity().findViewById(R.id.viewPager);
+                    viewPager.setCurrentItem(getItem(+1), true);
+                }
             }
         });
 
@@ -260,7 +262,8 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
     }
 
     //Save all user selected values into database like(user selected, fixed value, auto inc, scan code)
-    public void saveData(boolean noMessage) {
+    public boolean saveData(boolean noMessage) {
+        boolean retVal = true;
         Data data = new Data();
         data.setUser_id(userId);
         data.setProject_id(projectId);
@@ -276,23 +279,30 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
 
         } else if (selectedRadioButtonId == fixedValueRadio.getId()) {
 
-            data.setType(QuestionType.FIXED_VALUE.getStatusCode());
-            data.setValue(fixed_value_edit_text.getText().toString());
+            if (fixed_value_edit_text.getText().toString().isEmpty()) {
+                fixed_value_edit_text.setError("Please enter value");
+                retVal = false;
+            }else {
+                data.setType(QuestionType.FIXED_VALUE.getStatusCode());
+                data.setValue(fixed_value_edit_text.getText().toString());
+            }
 
         } else if (selectedRadioButtonId == autoIncRadio.getId()) {
 
-            data.setType(QuestionType.AUTO_INCREMENT.getStatusCode());
-
-                if (from_edit_text.getText().toString().isEmpty()) {
-                    from_edit_text.setError("Please enter value");
-                } else if (to_edit_text.getText().toString().isEmpty()) {
-                    to_edit_text.setError("Please enter value");
-                } else if (repeat_edit_text.getText().toString().isEmpty()) {
-                    repeat_edit_text.setError("Please enter value");
-                }else
-                {
-                    data.setValue(from_edit_text.getText().toString() + "," + to_edit_text.getText().toString() + "," + repeat_edit_text.getText().toString());
-                }
+            if (from_edit_text.getText().toString().isEmpty()) {
+                from_edit_text.setError("Please enter value");
+                retVal = false;
+            } else if (to_edit_text.getText().toString().isEmpty()) {
+                to_edit_text.setError("Please enter value");
+                retVal = false;
+            } else if (repeat_edit_text.getText().toString().isEmpty()) {
+                repeat_edit_text.setError("Please enter value");
+                retVal = false;
+            }else
+            {
+                data.setType(QuestionType.AUTO_INCREMENT.getStatusCode());
+                data.setValue(from_edit_text.getText().toString() + "," + to_edit_text.getText().toString() + "," + repeat_edit_text.getText().toString());
+            }
 
         } else if (selectedRadioButtonId == scanCodeRadio.getId()) {
 
@@ -302,6 +312,8 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
         db.updateData(data);
         if(data.getType().equals(QuestionType.PROJECT_SELECTED.name())){
         }
+
+        return retVal;
     }//end save data function..
 
     @Override

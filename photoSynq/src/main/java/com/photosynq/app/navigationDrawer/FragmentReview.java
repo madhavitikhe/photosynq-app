@@ -90,11 +90,11 @@ public class FragmentReview extends Fragment {
             List<Question> questions = db.getAllQuestionForProject(appSettings.getProjectId());
             TableRow row = new TableRow(getActivity());
 
-            int maxLoop = 0;
+            int maxLoop = 1;
             HashMap<String,ArrayList<Integer>> populatedValues = new HashMap();
             for (Question question : questions) {
                     TextView tv = new TextView(getActivity());
-                    tv.setLayoutParams(new TableRow.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f));
+                    tv.setLayoutParams(new TableRow.LayoutParams(250, LayoutParams.WRAP_CONTENT, 1f));
                     tv.setText(question.getQuestionText());
                     tv.setLines(3);
                     tv.setTextSize(20);
@@ -128,24 +128,19 @@ public class FragmentReview extends Fragment {
                     }
                 }
             }
-            if(questions.size() > 0)
+            if(questions.size() > 0) {
                 questionsTableLayout.addView(row);
 
-                for (int i = 0; i < maxLoop; i++)
-                {
+                for (int i = 0; i < maxLoop; i++) {
                     TableRow rowOptions = new TableRow(getActivity());
-                    for (Question question : questions)
-                    {
+                    for (Question question : questions) {
                         TextView tv = new TextView(getActivity());
                         tv.setText("");
                         tv.setTextSize(20);
 
-                        if(question.getQuestionType() == Question.PROJECT_DEFINED)
-                        {
+                        if (question.getQuestionType() == Question.PROJECT_DEFINED) {
                             tv.setText("Proj");
-                        }
-                        else
-                        {
+                        } else {
                             // tv.setBackgroundColor(getResources().getColor(R.color.blue_dark));
 
                             data = db.getData(userId, projectId, question.getQuestionId());
@@ -157,8 +152,7 @@ public class FragmentReview extends Fragment {
 
                                 } else if (data.getType().equals(Data.AUTO_INCREMENT)) {
 
-                                    if (i < populatedValues.get(question.getQuestionId()).size())
-                                    {
+                                    if (i < populatedValues.get(question.getQuestionId()).size()) {
                                         Integer val = populatedValues.get(question.getQuestionId()).get(i);
                                         tv.setText(val.toString());
                                     }
@@ -168,7 +162,7 @@ public class FragmentReview extends Fragment {
                                 }
                             }
                         }
-                        tv.setLayoutParams(new TableRow.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f));
+                        tv.setLayoutParams(new TableRow.LayoutParams(250, LayoutParams.WRAP_CONTENT, 1f));
                         tv.setPadding(10, 10, 10, 10);
                         tv.setBackgroundResource(R.drawable.border);
 
@@ -176,6 +170,7 @@ public class FragmentReview extends Fragment {
                     }
                     questionsTableLayout.addView(rowOptions);
                 }
+            }
         }
         rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));
         return rootView;
