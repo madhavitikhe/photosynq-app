@@ -34,7 +34,6 @@ import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
-import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.LocationUtils;
 import com.photosynq.app.utils.PrefUtils;
 
@@ -164,7 +163,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				    if(data.getType().equals(Data.AUTO_INCREMENT))
 				    {
 				    	int index = Integer.parseInt(PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_QUESTION_INDEX, "-1"));
-				    	int optionvalue = Integer.parseInt(DataUtils.getAutoIncrementedValue(getApplicationContext(), allQuestions.get(i).getQuestionId(), ""+index));
+				    	int optionvalue = Integer.parseInt(CommonUtils.getAutoIncrementedValue(getApplicationContext(), allQuestions.get(i).getQuestionId(), ""+index));
 				    	que.setText("Question -  " + allQuestions.get(i).getQuestionText());
 				    	liLayout.addView(que);
                         if(optionvalue != -1)
@@ -273,8 +272,13 @@ GooglePlayServicesClient.OnConnectionFailedListener{
         if(measureBtn.getText().equals("MEASURE")) {
             if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
                 // Get the BLuetoothDevice object
-                BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
-                mBluetoothService.connect(device);
+                if(null == deviceAddress)
+                {
+                    Toast.makeText(this,"Measurement device not configured, Please configure measurement device (bluetooth).",Toast.LENGTH_SHORT).show();
+                }else {
+                    BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
+                    mBluetoothService.connect(device);
+                }
             } else {
                 mHandler.obtainMessage(MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, -1).sendToTarget();
             }
@@ -606,6 +610,10 @@ GooglePlayServicesClient.OnConnectionFailedListener{
                 		//db = new DatabaseHelper(getApplicationContext());
                 		db = DatabaseHelper.getHelper(getApplicationContext());
                 		ResearchProject rp =  db.getResearchProject(projectId);
+                        if(null == rp){
+                            Toast.makeText(getApplicationContext(), "Project not selected, Please select the project.", Toast.LENGTH_LONG).show();
+                            break;
+                        }
                 		String[] protocol_ids = rp.getProtocols_ids().trim().split(",");
                 		System.out.println("***************Sequence of protocol id is***********"+rp.getProtocols_ids());
                 		

@@ -18,7 +18,6 @@ import com.photosynq.app.model.Protocol;
 import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
-import com.photosynq.app.utils.DataUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -128,8 +127,8 @@ public class SelectProtocolActivity extends Activity {
         protected void onPreExecute() {
             super.onPreExecute();
             // Showing progress dialog
-           DataUtils.downloadData(getApplicationContext());
-           pDialog = new ProgressDialog(SelectProtocolActivity.this);
+
+            pDialog = new ProgressDialog(SelectProtocolActivity.this);
             pDialog.setMessage("Please wait...");
             pDialog.setCancelable(false);
             pDialog.show();
@@ -138,6 +137,7 @@ public class SelectProtocolActivity extends Activity {
         @Override
         protected Void doInBackground(Void... arg0) {
             // Creating service handler class instance
+            //DataUtils.downloadData(getApplicationContext(), pDialog);
              return null;
         }
  

@@ -52,7 +52,6 @@ import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
-import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.LocationUtils;
 import com.photosynq.app.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
@@ -806,7 +805,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                 if(data.getType().equals(Data.AUTO_INCREMENT))
                 {
                     int index = Integer.parseInt(PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_QUESTION_INDEX, "-1"));
-                    int optionvalue = Integer.parseInt(DataUtils.getAutoIncrementedValue(getApplicationContext(), allQuestions.get(i).getQuestionId(), "" + index));
+                    int optionvalue = Integer.parseInt(CommonUtils.getAutoIncrementedValue(getApplicationContext(), allQuestions.get(i).getQuestionId(), "" + index));
                     //que.setText("Question -  " + allQuestions.get(i).getQuestionText());
                     tvQuestion.setText(allQuestions.get(i).getQuestionText());
                     //liLayout.addView(que);

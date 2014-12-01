@@ -1,11 +1,12 @@
 package com.photosynq.app;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
 
-import com.photosynq.app.utils.DataUtils;
+import com.photosynq.app.utils.SyncHandler;
 
 public class AlarmService extends Service {
     @Override
@@ -22,11 +23,11 @@ public class AlarmService extends Service {
         super.onCreate();
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public void onStart(Intent intent, int startId) {
-        super.onStart(intent, startId);
-        new SyncDataAsyncTask().execute();
+    public int onStartCommand(Intent intent, int flag, int startId) {
+        new SyncDataAsyncTask().execute(this);
+
+        return super.onStartCommand(intent, flag, startId);
     }
 
     @Override
@@ -37,14 +38,16 @@ public class AlarmService extends Service {
     }
 
 
-    private class SyncDataAsyncTask extends AsyncTask<Void, Void, Void> {
+    private class SyncDataAsyncTask extends AsyncTask<Object, Void, Void> {
         protected void onPreExecute() {
             super.onPreExecute();
 
         }
 
-        protected Void doInBackground(Void... arg0) {
-            DataUtils.downloadData(getApplicationContext());
+        protected Void doInBackground(Object... arg) {
+            //DataUtils.downloadData((Context)arg0[0], null);
+            //?? SyncHandler syncHandler = new SyncHandler((Context)arg[0]);
+            //?? syncHandler.DoSync();
             return null;
         }
 

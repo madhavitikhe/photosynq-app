@@ -19,6 +19,7 @@ public class PrefUtils {
     public static final String PREFS_NAME_KEY = "NAME";
     public static final String PREFS_INSTITUTE_KEY = "INSTITUTE";
     public static final String PREFS_THUMB_URL_KEY = "THUMB_URL";
+    public static final String PREFS_SHOW_DIRECTIONS = "SHOW_DIRECTIONS";
 
     /**
      * Called to save supplied value in shared preferences against given key.

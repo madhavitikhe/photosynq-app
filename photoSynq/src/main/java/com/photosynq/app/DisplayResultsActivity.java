@@ -16,8 +16,10 @@ import android.widget.Toast;
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ProjectResult;
+import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.response.UpdateData;
+import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
 
 import org.apache.http.entity.StringEntity;
@@ -131,7 +133,7 @@ public class DisplayResultsActivity extends Activity {
 				UpdateData updateData = new UpdateData(getApplicationContext(), Long.toString(inserted_row));
 				mDataTask = new HTTPConnection(input);
 				mDataTask.delegate = updateData;
-				mDataTask.execute(context,HTTPConnection.PHOTOSYNQ_DATA_URL+projectId+"/data.json", "POST");
+				mDataTask.execute(context, Constants.PHOTOSYNQ_DATA_URL+projectId+"/data.json", "POST");
 				view.setVisibility(View.INVISIBLE);
 				discard.setVisibility(View.INVISIBLE);
 				finish();

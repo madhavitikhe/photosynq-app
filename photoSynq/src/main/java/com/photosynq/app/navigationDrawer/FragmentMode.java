@@ -105,7 +105,7 @@ public class FragmentMode extends Fragment{
                         FragmentSelectProtocol fragment=new FragmentSelectProtocol();
                         fragment.setArguments(bundle);
 
-                        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+                        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment, fragment.getClass().getName()).commit();
 
                         PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE,"NO");
                     }
@@ -116,7 +116,7 @@ public class FragmentMode extends Fragment{
 		    		db.updateSettings(appSettings);
                     String first_install = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE, "YES");
                     if( first_install.equals("YES")) {
-                        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();
+                        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentProjectList(), FragmentProjectList.class.getName()).commit();
                     }
 			    	break;
 		    	}

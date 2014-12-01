@@ -7,6 +7,9 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.photosynq.app.HTTP.HTTPConnection;
+import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.Data;
+import com.photosynq.app.model.Question;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,6 +22,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 @SuppressLint("SimpleDateFormat")
@@ -45,7 +49,7 @@ public class CommonUtils {
     public static boolean isConnected(Context context) {
         if (isNetworkAvailable(context)) {
             try {
-                HttpURLConnection urlc = (HttpURLConnection) (new URL(HTTPConnection.SERVER_URL).openConnection());
+                HttpURLConnection urlc = (HttpURLConnection) (new URL(Constants.SERVER_URL).openConnection());
                 urlc.setRequestProperty("User-Agent", "Test");
                 urlc.setRequestProperty("Connection", "close");
                 urlc.setConnectTimeout(1500);
@@ -118,7 +122,48 @@ public class CommonUtils {
 		}
 
 	}
-	
 
+    /**
+     * This function is call when user selects 'Auto Increment' option, this
+     * function get input text(from,to and repeat) from user and calculates
+     * auto increment values and stored it into populatesValues variable,
+     * cycle performs (to*repeat=total) times.
+     * Ex.
+     * From    1
+     * To      2
+     * Repeat  3
+     *
+     * PopulatesValues are --
+     * 		1	2
+     * 		1	2
+     * 		1	2
+     */
+    public static String getAutoIncrementedValue(Context ctx,String question_id, String index) {
+        if(Integer.parseInt(index) == -1) {
+            return "-2";
+        }
+
+        String userId = PrefUtils.getFromPrefs(ctx , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        DatabaseHelper db = DatabaseHelper.getHelper(ctx);
+        String projectId = db.getSettings(userId).getProjectId();
+        Question question = db.getQuestionForProject(projectId, question_id);
+        Data data = db.getData(userId, projectId, question.getQuestionId());
+        String[] items = data.getValue().split(",");
+        int from = Integer.parseInt(items[0]);
+        int to = Integer.parseInt(items[1]);
+        int repeat = Integer.parseInt(items[2]);
+        ArrayList<Integer> populatedValues = new ArrayList<Integer>();
+        for(int i=from;i<=to;i++){
+            for(int j=0;j<repeat;j++){
+                populatedValues.add(i);
+
+            }
+        }
+
+        if(Integer.parseInt(index) > populatedValues.size()-1)
+            return "-1";
+
+        return populatedValues.get(Integer.parseInt(index)).toString();
+    }
 
 }

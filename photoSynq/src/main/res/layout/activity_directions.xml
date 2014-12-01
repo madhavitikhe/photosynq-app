@@ -131,13 +131,12 @@
         android:orientation="horizontal"
         android:paddingTop="10dp" >
 
-        <Button
-            android:id="@+id/dir_next_btn"
+        <CheckBox
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:onClick="onDirNextClicked"
-            android:text="@string/next" >
-        </Button>
+            android:text="Got it! Please don't show this any more"
+            android:id="@+id/showDirections"
+            android:onClick="onCheckBoxClicked"/>
     </RelativeLayout>
 
 </LinearLayout>

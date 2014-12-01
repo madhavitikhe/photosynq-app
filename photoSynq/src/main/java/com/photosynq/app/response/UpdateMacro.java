@@ -1,5 +1,6 @@
 package com.photosynq.app.response;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.widget.Toast;
 
@@ -9,10 +10,12 @@ import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Macro;
 import com.photosynq.app.utils.CommonUtils;
+import com.photosynq.app.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,12 +32,15 @@ public class UpdateMacro implements PhotosynqResponse {
     @Override
     public void onResponseReceived(String result) {
 
+        Date date = new Date();
+        System.out.println("UpdateMacro Start onResponseReceived: " + date.getTime());
+
         DatabaseHelper db = DatabaseHelper.getHelper(context);
 
         JSONArray jArray;
 
         if (null != result) {
-            if(result.equals(HTTPConnection.SERVER_NOT_ACCESSIBLE))
+            if(result.equals(Constants.SERVER_NOT_ACCESSIBLE))
             {
                 Toast.makeText(context, R.string.server_not_reachable, Toast.LENGTH_LONG).show();
                 return;
@@ -73,5 +79,8 @@ public class UpdateMacro implements PhotosynqResponse {
         }
         System.out.println("###### writing macros :......");
         CommonUtils.writeStringToFile(context, "macros.js", dataString.toString());
+
+        Date date1 = new Date();
+        System.out.println("UpdateMacro End onResponseReceived: " + date1.getTime());
     }
 }

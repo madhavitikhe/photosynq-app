@@ -84,13 +84,13 @@ public class FragmentSelectProject extends Fragment{
                         AppSettings appSettings = db.getSettings(userId);
                         appSettings.setProjectId(recordid);
                         db.updateSettings(appSettings);
-                        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentStreamlinedMode()).commit();
+                        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentStreamlinedMode(), FragmentStreamlinedMode.class.getName()).commit();
                         PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE, "NO");
                     }else {
                         AppSettings appSettings = db.getSettings(userId);
                         appSettings.setProjectId(recordid);
                         db.updateSettings(appSettings);
-                        fm.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();
+                        fm.beginTransaction().replace(R.id.content_frame, new FragmentProjectList(), FragmentProjectList.class.getName()).commit();
                     }
 				}
 			});

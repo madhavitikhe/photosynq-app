@@ -3,6 +3,7 @@ package com.photosynq.app;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,8 +19,8 @@ import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.navigationDrawer.Utils;
-import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.PrefUtils;
+import com.photosynq.app.utils.SyncHandler;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class ProjectListActivity extends Activity {
     List<ResearchProject> researchProjectList;
     ResearchProjectArrayAdapter arrayadapter;
     private View contentView;
-	private ProgressDialog pDialog;
+	//private ProgressDialog pDialog;
     String image_url;
     
 	@SuppressLint("NewApi")
@@ -131,25 +132,26 @@ public class ProjectListActivity extends Activity {
         protected void onPreExecute() {
             super.onPreExecute();
             // Showing progress dialog
-            DataUtils.downloadData(getApplicationContext());
-            pDialog = new ProgressDialog(ProjectListActivity.this);
-            pDialog.setMessage("Please wait...");
-            pDialog.setCancelable(false);
-            pDialog.show();
+            //pDialog = new ProgressDialog(ProjectListActivity.this);
+            //pDialog.setMessage("Please wait...");
+            //pDialog.setCancelable(false);
+            //pDialog.show();
         }
  
         @Override
         protected Void doInBackground(Void... arg0) {
             // Creating service handler class instance
-             return null;
+            SyncHandler syncHandler = new SyncHandler(getApplicationContext());
+            syncHandler.DoSync();
+            return null;
         }
  
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             // Dismiss the progress dialog
-            if (pDialog.isShowing())
-                pDialog.dismiss();
+            //if (pDialog.isShowing())
+            //    pDialog.dismiss();
             refreshProjectList();
          //Toast.makeText(getApplicationContext(), "List is up to date", Toast.LENGTH_SHORT).show();
         }

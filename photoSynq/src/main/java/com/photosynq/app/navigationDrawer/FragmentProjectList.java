@@ -13,17 +13,20 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.photosynq.app.HTTP.PhotosynqResponse;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.ResearchProject;
-import com.photosynq.app.utils.DataUtils;
+import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
+import com.photosynq.app.utils.SyncHandler;
 
 import java.util.List;
 
-public class FragmentProjectList extends Fragment{
+public class FragmentProjectList extends Fragment implements PhotosynqResponse{
 	
 	ListView projectList;
 	TextView selectedProjectText;
@@ -31,7 +34,7 @@ public class FragmentProjectList extends Fragment{
 	DatabaseHelper db;
 	NavigationDrawerResearchProjectArrayAdapter arrayadapter;
 	View view = null;
-	private ProgressDialog pDialog;
+	//private ProgressDialog pDialog;
 	
     public static FragmentProjectList newInstance() {
         Bundle bundle = new Bundle();
@@ -87,9 +90,9 @@ public class FragmentProjectList extends Fragment{
 				FragmentManager fragmentManager = getActivity().getFragmentManager();
 				Bundle bundle = new Bundle();
 				bundle.putString(DatabaseHelper.C_ID, rp.getId());
-			    FragmentSelectProject f = new FragmentSelectProject(); 
-			    f.setArguments(bundle);
-				fragmentManager.beginTransaction().replace(R.id.content_frame,f).commit();
+			    FragmentSelectProject fragment = new FragmentSelectProject();
+			    fragment.setArguments(bundle);
+				fragmentManager.beginTransaction().replace(R.id.content_frame,fragment, fragment.getClass().getName()).commit();
 
 			}
 		});
@@ -105,7 +108,8 @@ public class FragmentProjectList extends Fragment{
 	{
 		if(arrayadapter.isEmpty())
 		{
-			new GetDataAsync().execute();
+			SyncHandler syncHandler = new SyncHandler((NavigationDrawer)getActivity());
+            syncHandler.DoSync();
 		}
 	}
 
@@ -118,34 +122,15 @@ public class FragmentProjectList extends Fragment{
 		arrayadapter = new NavigationDrawerResearchProjectArrayAdapter(getActivity(), researchProjectList); 
 		projectList.setAdapter(arrayadapter);
 	}
-	
-	private class GetDataAsync extends AsyncTask<Void, Void, Void> {
-		 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // Showing progress dialog
-            DataUtils.downloadData(getActivity());
-            pDialog = new ProgressDialog(getActivity());
-            pDialog.setMessage("Please wait...");
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
- 
-        @Override
-        protected Void doInBackground(Void... arg0) {
-            // Creating service handler class instance
-             return null;
-        }
- 
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            // Dismiss the progress dialog
-            if (pDialog.isShowing())
-                pDialog.dismiss();
+
+    @Override
+    public void onResponseReceived(String result) {
+
+        if(result.equals(Constants.SERVER_NOT_ACCESSIBLE)){
+            Toast.makeText(getActivity(), R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+        }else {
             refreshProjectList();
-         //Toast.makeText(getActivity(), "List is up to date", Toast.LENGTH_SHORT).show();
         }
+
     }
 }

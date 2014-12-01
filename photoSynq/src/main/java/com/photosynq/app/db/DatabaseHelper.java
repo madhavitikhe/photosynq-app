@@ -340,23 +340,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		Cursor c = db.rawQuery(selectQuery, null);
 
-		if (c != null)
-			c.moveToFirst();
+        if (c != null) {
+            c.moveToFirst();
 
-		ResearchProject rp = new ResearchProject();
-		rp.setId(c.getString(c.getColumnIndex(C_ID)));
-		rp.setName(c.getString(c.getColumnIndex(C_NAME)));
-		rp.setDescription(c.getString(c.getColumnIndex(C_DESCRIPTION)));
-		rp.setDirToCollab(c.getString(c.getColumnIndex(C_DIR_TO_COLLAB)));
-		rp.setStartDate(c.getString(c.getColumnIndex(C_START_DATE)));
-		rp.setEndDate(c.getString(c.getColumnIndex(C_END_DATE)));
-		rp.setImageUrl(c.getString(c.getColumnIndex(C_IMAGE_URL)));
-		rp.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
-		rp.setProtocols_ids(c.getString(c.getColumnIndex(C_PROTOCOL_IDS)));
-		rp.setBeta(c.getString(c.getColumnIndex(C_BETA)));
-
-		c.close();
-		return rp;
+            if (c.getCount() > 0) {
+                ResearchProject rp = new ResearchProject();
+                rp.setId(c.getString(c.getColumnIndex(C_ID)));
+                rp.setName(c.getString(c.getColumnIndex(C_NAME)));
+                rp.setDescription(c.getString(c.getColumnIndex(C_DESCRIPTION)));
+                rp.setDirToCollab(c.getString(c.getColumnIndex(C_DIR_TO_COLLAB)));
+                rp.setStartDate(c.getString(c.getColumnIndex(C_START_DATE)));
+                rp.setEndDate(c.getString(c.getColumnIndex(C_END_DATE)));
+                rp.setImageUrl(c.getString(c.getColumnIndex(C_IMAGE_URL)));
+                rp.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
+                rp.setProtocols_ids(c.getString(c.getColumnIndex(C_PROTOCOL_IDS)));
+                rp.setBeta(c.getString(c.getColumnIndex(C_BETA)));
+                return rp;
+            }
+            c.close();
+        }
+        return null;
 	}
 
 	// Get all research project information from database.

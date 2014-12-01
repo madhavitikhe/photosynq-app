@@ -60,6 +60,12 @@ public class FragmentConnection extends Fragment{
             actionBar.setTitle(getResources().getString(R.string.title_activity_connection));
         }
 
+        //When user install app first time, show help screen.
+        String first_run = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_FIRST_RUN, "YES");
+        if (first_run.equals("YES")){
+
+        }
+
         View rootView = inflater.inflate(R.layout.fragment_connection, container, false);
 		
 		db = DatabaseHelper.getHelper(getActivity());
@@ -120,7 +126,7 @@ public class FragmentConnection extends Fragment{
                         FragmentMode fragment=new FragmentMode();
                         fragment.setArguments(bundle);
 
-                        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+                        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment, fragment.getClass().getName()).commit();
                     }
 
                     if (null != appSettings.getConnectionId()) {

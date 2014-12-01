@@ -41,6 +41,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.gson.Gson;
 import com.google.zxing.client.android.CaptureActivity;
+import com.photosynq.app.DirectionsActivity;
 import com.photosynq.app.DisplayResultsActivity;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
@@ -51,7 +52,6 @@ import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
-import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.LocationUtils;
 import com.photosynq.app.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
@@ -117,7 +117,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
     private boolean clearflag = false;
     private boolean reviewFlag = false;
     private int fixedValueCount = 0;
-    private ProgressDialog pDialog;
+    //private ProgressDialog pDialog;
 
     public static FragmentStreamlinedMode newInstance() {
         Bundle bundle = new Bundle();
@@ -171,11 +171,22 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
         viewFlipper = (ViewFlipper) rootView.findViewById(R.id.ViewFlipper01);
         int questionLoop =0;
 
-        if((null == projectId && questions.size() == 0) || null == deviceAddress)
+        if(null == projectId)
         {
-            Toast.makeText(ctx,"Please complete data setup first.",Toast.LENGTH_SHORT).show();
-//            return;
+            Toast.makeText(ctx,"Project not selected, Please select the project.",Toast.LENGTH_SHORT).show();
         }
+        if(null == deviceAddress)
+        {
+            Toast.makeText(ctx,"Measurement device not configured, Please configure measurement device (bluetooth).",Toast.LENGTH_SHORT).show();
+        }
+
+        String showDirections = PrefUtils.getFromPrefs(ctx, PrefUtils.PREFS_SHOW_DIRECTIONS, "YES");
+        if(showDirections.equals("YES")){
+            Intent openMainActivity= new Intent(ctx, DirectionsActivity.class);
+            startActivity(openMainActivity);
+        }
+
+
         for (final Question question : questions) {
             scanMode = false;
             allSelectedOptions.add(questionLoop,"");
@@ -517,11 +528,24 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                     // Get the BLuetoothDevice object
                     if(mBluetoothAdapter == null)
                         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-                    BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
-                    mBluetoothService.connect(device);
+                    if(null == deviceAddress)
+                    {
+                        Toast.makeText(ctx,"Measurement device not configured, Please configure measurement device (bluetooth).",Toast.LENGTH_SHORT).show();
+                    }else {
+                        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
+                        mBluetoothService.connect(device);
+                    }
                 }else {
                     mHandler.obtainMessage(MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, -1).sendToTarget();
                 }
+            }
+        });
+        Button directionsButton = (Button)measurementScreen.findViewById(R.id.directions_btn);
+        directionsButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent openMainActivity= new Intent(ctx, DirectionsActivity.class);
+                startActivity(openMainActivity);
             }
         });
         rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));
@@ -579,11 +603,24 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                     // Get the BLuetoothDevice object
                     if(mBluetoothAdapter == null)
                         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-                    BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
-                    mBluetoothService.connect(device);
+                    if(null == deviceAddress)
+                    {
+                        Toast.makeText(ctx,"Measurement device not configured, Please configure measurement device (bluetooth).",Toast.LENGTH_SHORT).show();
+                    }else {
+                        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
+                        mBluetoothService.connect(device);
+                    }
                 }else {
                     mHandler.obtainMessage(MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, -1).sendToTarget();
                 }
+            }
+        });
+        Button directionsButton = (Button)measurementScreen.findViewById(R.id.directions_btn);
+        directionsButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent openMainActivity= new Intent(ctx, DirectionsActivity.class);
+                startActivity(openMainActivity);
             }
         });
     }
@@ -619,6 +656,10 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                                 //db = new DatabaseHelper(getApplicationContext());
                                 db = DatabaseHelper.getHelper(ctx);
                                 ResearchProject rp =  db.getResearchProject(projectId);
+                                if(null == rp){
+                                    Toast.makeText(ctx, "Project not selected, Please select the project.", Toast.LENGTH_LONG).show();
+                                    break;
+                                }
                                 String[] protocol_ids = rp.getProtocols_ids().trim().split(",");
                                 System.out.println("***************Sequence of protocol id is***********"+rp.getProtocols_ids());
 
@@ -842,7 +883,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                 if(data.getType().equals(Data.AUTO_INCREMENT))
                 {
                     int index = Integer.parseInt(PrefUtils.getFromPrefs(activity, PrefUtils.PREFS_QUESTION_INDEX, "-1"));
-                    int optionvalue = Integer.parseInt(DataUtils.getAutoIncrementedValue(activity, allQuestions.get(i).getQuestionId(), "" + index));
+                    int optionvalue = Integer.parseInt(CommonUtils.getAutoIncrementedValue(activity, allQuestions.get(i).getQuestionId(), "" + index));
                     //que.setText("Question -  " + allQuestions.get(i).getQuestionText());
                     tvQuestion.setText(allQuestions.get(i).getQuestionText());
                     //liLayout.addView(que);

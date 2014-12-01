@@ -1,5 +1,6 @@
 package com.photosynq.app.response;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.widget.Toast;
 
@@ -10,9 +11,12 @@ import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Option;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
+import com.photosynq.app.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.Date;
 
 /**
  * Created by shekhar on 9/19/14.
@@ -25,12 +29,16 @@ public class UpdateProject implements PhotosynqResponse {
     }
     @Override
     public void onResponseReceived(String result) {
+
+        Date date = new Date();
+        System.out.println("UpdateProject Start onResponseReceived: " + date.getTime());
+
         DatabaseHelper db = DatabaseHelper.getHelper(context);
         JSONArray jArray;
 
         if(null!= result)
         {
-            if(result.equals(HTTPConnection.SERVER_NOT_ACCESSIBLE))
+            if(result.equals(Constants.SERVER_NOT_ACCESSIBLE))
             {
                 Toast.makeText(context, R.string.server_not_reachable, Toast.LENGTH_LONG).show();
                 return;
@@ -76,5 +84,8 @@ public class UpdateProject implements PhotosynqResponse {
                 e.printStackTrace();
             }
         }
+
+        Date date1 = new Date();
+        System.out.println("UpdateProject End onResponseReceived: " + date1.getTime());
     }
 }

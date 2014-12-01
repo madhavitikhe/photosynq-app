@@ -23,23 +23,24 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.photosynq.app.AlarmReceiver;
+import com.photosynq.app.HTTP.PhotosynqResponse;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
-import com.photosynq.app.utils.DataUtils;
+import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
+import com.photosynq.app.utils.SyncHandler;
 
 import java.util.Calendar;
 
-public class FragmentSync extends Fragment{
+public class FragmentSync extends Fragment implements PhotosynqResponse{
 
 	public Button syncBtn;
     public Button clearCacheBtn;
 	public Spinner intervalSpinner;
 	private AlarmManager alarmMgr;
 	private PendingIntent alarmIntent;
-	private ProgressDialog pDialog;
-    private DatabaseHelper db;
+	private DatabaseHelper db;
     private String userId;
     AppSettings appSettings;
     int flag = 0;
@@ -113,12 +114,11 @@ public class FragmentSync extends Fragment{
                     alarmMgr = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
                     if (set_interval_time == 0) {
                         alarmMgr.cancel(alarmIntent);
-                        Toast.makeText(getActivity(), "Sync interval saved successfully!", Toast.LENGTH_SHORT).show();
                     } else {
                         alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), set_interval_time * 60000, alarmIntent);//3600000*2 means 2 Hours and 60000 = 1 min
                         System.out.println("-----------Sync alarm is set-------");
-                        Toast.makeText(getActivity(), "Sync interval saved successfully!", Toast.LENGTH_SHORT).show();
                     }
+                    Toast.makeText(getActivity(), "Sync interval saved successfully!", Toast.LENGTH_SHORT).show();
                 }
                 adapterView.setTag(Integer.toString(i));
             }
@@ -134,7 +134,8 @@ public class FragmentSync extends Fragment{
 
             @Override
             public void onClick(View v) {
-                new downloadDataAsyncTask().execute();
+                SyncHandler syncHandler = new SyncHandler((NavigationDrawer)getActivity());
+                syncHandler.DoSync();
                 flag = 0;
             }
         });
@@ -144,7 +145,8 @@ public class FragmentSync extends Fragment{
             @Override
             public void onClick(View view) {
                 db.deleteAllData();
-                new downloadDataAsyncTask().execute();
+                SyncHandler syncHandler = new SyncHandler((NavigationDrawer)getActivity());
+                syncHandler.DoSync();
                 flag = 1;
             }
         });
@@ -153,45 +155,27 @@ public class FragmentSync extends Fragment{
 		return rootView;
 	}
 
-	private class downloadDataAsyncTask extends AsyncTask<Void, Void, Void> {
-		 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // Showing progress dialog
-            DataUtils.downloadData(getActivity());
-            pDialog = new ProgressDialog(getActivity());
-            pDialog.setMessage("Please wait...");
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
- 
-        @Override
-        protected Void doInBackground(Void... arg0) {
-            // Creating service handler class instance
-             return null;
-        }
- 
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            // Dismiss the progress dialog
-            if (pDialog.isShowing())
-                pDialog.dismiss();
-            if(flag == 1){
+
+
+    @Override
+    public void onResponseReceived(String result) {
+        if(result.equals(Constants.SERVER_NOT_ACCESSIBLE)){
+            Toast.makeText(getActivity(), R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+        }else {
+            if (flag == 1) {
                 userId = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
                 appSettings = db.getSettings(userId);
                 String first_run = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_FIRST_RUN, "YES");
-                if (first_run.equals("NO"))
-                {
+                if (first_run.equals("NO")) {
                     appSettings.setModeType(Utils.APP_MODE_QUICK_MEASURE);
                     db.updateSettings(appSettings);
-                    PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_FIRST_RUN,"NO");
+                    PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_FIRST_RUN, "NO");
                 }
             }
-         //Toast.makeText(getActivity(), R.string.sync_successful, Toast.LENGTH_SHORT).show();
         }
+     //Toast.makeText(getActivity(), R.string.sync_successful, Toast.LENGTH_SHORT).show();
     }
+
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {

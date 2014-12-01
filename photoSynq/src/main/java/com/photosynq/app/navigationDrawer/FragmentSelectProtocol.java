@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.photosynq.app.HTTP.PhotosynqResponse;
 import com.photosynq.app.NewMeasurmentActivity;
 import com.photosynq.app.ProtocolArrayAdapter;
 import com.photosynq.app.R;
@@ -24,21 +25,21 @@ import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
-import com.photosynq.app.utils.DataUtils;
+import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
+import com.photosynq.app.utils.SyncHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
 
-public class FragmentSelectProtocol extends Fragment {
+public class FragmentSelectProtocol extends Fragment implements PhotosynqResponse{
 
     ListView protocolList;
     private String deviceAddress;
     List<Protocol> protocols;
     ProtocolArrayAdapter arrayadapter;
-    private ProgressDialog pDialog;
     private DatabaseHelper db;
     private String userId;
     AppSettings appSettings;
@@ -79,7 +80,8 @@ public class FragmentSelectProtocol extends Fragment {
 
         if(arrayadapter.isEmpty())
         {
-            new ProtocolListAsync().execute();
+            SyncHandler syncHandler = new SyncHandler((NavigationDrawer)getActivity());
+            syncHandler.DoSync();
         }
 
         final Button showAllProtocolsBtn = new Button(getActivity());
@@ -152,31 +154,12 @@ public class FragmentSelectProtocol extends Fragment {
         protocolList.setAdapter(arrayadapter);
     }
 
-    private class ProtocolListAsync extends AsyncTask<Void, Void, Void> {
+    @Override
+    public void onResponseReceived(String result) {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // Showing progress dialog
-            DataUtils.downloadData(getActivity());
-            pDialog = new ProgressDialog(getActivity());
-            pDialog.setMessage("Please wait...");
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-
-        @Override
-        protected Void doInBackground(Void... arg0) {
-            // Creating service handler class instance
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            // Dismiss the progress dialog
-            if (pDialog.isShowing())
-                pDialog.dismiss();
+        if(result.equals(Constants.SERVER_NOT_ACCESSIBLE)){
+            Toast.makeText(getActivity(), R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+        }else {
             showFewProtocolList();
             Toast.makeText(getActivity(), "Protocol list up to date", Toast.LENGTH_SHORT).show();
         }

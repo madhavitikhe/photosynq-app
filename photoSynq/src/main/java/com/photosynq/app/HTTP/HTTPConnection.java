@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.photosynq.app.utils.CommonUtils;
+import com.photosynq.app.utils.Constants;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -22,22 +23,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-public class HTTPConnection extends AsyncTask<Object, String, String>{
-    public static final String SERVER_NOT_ACCESSIBLE = "SERVER_NOT_ACCESSIBLE";
-    public static final String SERVER_URL = "http://photosynq.venturit.org/";
-    public static final String API_VER = "api/v1/";
-
-	public static final String PHOTOSYNQ_LOGIN_URL = SERVER_URL+API_VER+"sign_in.json";
-	public static final String PHOTOSYNQ_PROJECTS_LIST_URL = SERVER_URL+API_VER+"projects.json?";
-	public static final String PHOTOSYNQ_PROTOCOLS_LIST_URL = SERVER_URL+API_VER+"protocols.json?";
-	public static final String PHOTOSYNQ_MACROS_LIST_URL =SERVER_URL+API_VER+ "macros.json?";
-	public static final String PHOTOSYNQ_DATA_URL = SERVER_URL+API_VER+"projects/";
-
-	public PhotosynqResponse delegate = null;
-	private String username;
+public class HTTPConnection extends AsyncTask<Object, Object, String>{
+    private String username;
 	private String password;
 	private StringEntity input = null;
-	
+    public PhotosynqResponse delegate = null;
+
 	public HTTPConnection(String username, String password)
 	{
 		this.username=username;
@@ -85,42 +76,41 @@ public class HTTPConnection extends AsyncTask<Object, String, String>{
         String responseString = null;
         if(!CommonUtils.isConnected(context))
         {
-            return SERVER_NOT_ACCESSIBLE;
+            return Constants.SERVER_NOT_ACCESSIBLE;
         }
         Log.d("PHOTOSYNQ-HTTPConnection", "in async task");
         try {
-        	Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ URI"+uri[1]);
-        	if("POST".equals((String) uri[2]) )
-        	{
-        		postRequest = new HttpPost((String)uri[1]);
-        		if(null!=input)
-            	{
-            		postRequest.setEntity(input);
-            	}
-        		Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing POST request");
-        		response = httpclient.execute(postRequest);
-        	}else if ("GET".equals((String) uri[2]) )
-        	{
-        		getRequest = new HttpGet((String)uri[1]);
-        		Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing GET request");
-        		response = httpclient.execute(getRequest);
-        	}
+            Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ URI"+uri[1]);
+            if("POST".equals((String) uri[2]) )
+            {
+                postRequest = new HttpPost((String)uri[1]);
+                if(null!=input)
+                {
+                    postRequest.setEntity(input);
+                }
+                Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing POST request");
+                response = httpclient.execute(postRequest);
+            }else if ("GET".equals((String) uri[2]) ) {
+                getRequest = new HttpGet((String) uri[1]);
+                Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing GET request");
+                response = httpclient.execute(getRequest);
+            }
+            Log.d("PHOTOSYNQ-HTTPConnection", "in async task");
 
-        	if(null!=response)
-        	{
-	            StatusLine statusLine = response.getStatusLine();
-	            if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-	                ByteArrayOutputStream out = new ByteArrayOutputStream();
-	                response.getEntity().writeTo(out);
-	                out.close();
-	                responseString = out.toString();
-	            } else{
-	                //Closes the connection.
-	                response.getEntity().getContent().close();
-	                throw new IOException(statusLine.getReasonPhrase());
-	            }
-        	}
-        	
+            if (null != response) {
+                StatusLine statusLine = response.getStatusLine();
+                if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    response.getEntity().writeTo(out);
+                    out.close();
+                    responseString = out.toString();
+                } else {
+                    //Closes the connection.
+                    response.getEntity().getContent().close();
+                    throw new IOException(statusLine.getReasonPhrase());
+                }
+            }
+
         } catch (ClientProtocolException e) {
             //TODO Handle problems..
         } catch (IOException e) {

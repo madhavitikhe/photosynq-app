@@ -94,6 +94,8 @@
     <string name="busy">busy</string>
     <string name="connected">Connected, Click to start measurement</string>
     <string name="show_all_protocols">Show All Protocols</string>
-
+    <string name="title_activity_demo">DemoActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="loading_progress">syncing data with PhotosynQ.org, please wait...</string>
 
 </resources>
