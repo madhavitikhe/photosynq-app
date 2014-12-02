@@ -112,6 +112,8 @@ public class FragmentSelectProtocol extends Fragment implements PhotosynqRespons
                 intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_QUICK_MEASURE);
                 intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocol.getProtocol_json());
                 intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress);
+                intent.putExtra(Protocol.NAME, protocol.getName());
+                intent.putExtra(Protocol.DESCRIPTION, protocol.getDescription());
                 try {
                     StringBuffer dataString = new StringBuffer();
                     dataString.append("var protocols={");

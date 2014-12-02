@@ -180,17 +180,6 @@ public class NavigationDrawer extends Activity implements FragmentProgress.OnFra
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        // Restore state members from saved instance
-        if (savedInstanceState != null) {
-            setLastPosition(savedInstanceState.getInt(LAST_POSITION));
-            setFragmentList(lastPosition);
-        }
-    }
-
-    @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         drawerToggle.syncState();

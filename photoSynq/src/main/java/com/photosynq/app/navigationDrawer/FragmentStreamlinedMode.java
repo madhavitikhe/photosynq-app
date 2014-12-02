@@ -550,7 +550,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
         });
         rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));
         return rootView;
-}
+    }
 
 
     @Override
@@ -558,7 +558,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 		super.onResume();
 		if (!scanMode )
 		{
-            viewFlipper.setDisplayedChild(0);
+            //viewFlipper.setDisplayedChild(0);
             List<Question> questions = db.getAllQuestionForProject(projectId);
 
             if(clearflag) {

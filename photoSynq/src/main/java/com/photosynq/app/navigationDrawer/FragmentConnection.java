@@ -102,7 +102,7 @@ public class FragmentConnection extends Fragment{
             }
 		}
 		
-		NavigationDrawerBluetoothArrayAdapter btArrayAdapter = new NavigationDrawerBluetoothArrayAdapter(getActivity(), btDeviceList);
+		final NavigationDrawerBluetoothArrayAdapter btArrayAdapter = new NavigationDrawerBluetoothArrayAdapter(getActivity(), btDeviceList);
 		pairedDeviceList.setAdapter(btArrayAdapter);
 		
 		
@@ -134,8 +134,11 @@ public class FragmentConnection extends Fragment{
                     }
 
                     pairedDeviceList.setItemsCanFocus(true);
+
                     RadioButton radiolistitem = (RadioButton) view.findViewById(R.id.blue_conn_radio);
-                    radiolistitem.performClick();
+                    radiolistitem.setChecked(true);
+
+                    btArrayAdapter.notifyDataSetInvalidated();
                 } catch (Exception e) {
 
                 }

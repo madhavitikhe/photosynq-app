@@ -65,6 +65,9 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	private String protocolJson="";
 	// Name of the connected device
 	private String mConnectedDeviceName = null;
+
+    private String protocolName;
+    private String protocolDescription;
 	
 	// A request to connect to Location Services
     private LocationRequest mLocationRequest;
@@ -94,6 +97,8 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	private Data data;
 	private TextView que;
 	private TextView opt;
+    private TextView protNameTV;
+    private TextView protDescTV;
     private Button measureBtn;
     ArrayList<String> allOptions;
 
@@ -109,6 +114,8 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			protocolJson = extras.getString(DatabaseHelper.C_PROTOCOL_JSON);
 			getAllSelectedOptions = extras.getStringArrayList("All_Options");
 			getAllSelectedQuestions = extras.getStringArrayList("All_Questions");
+            protocolName = extras.getString(Protocol.NAME);
+            protocolDescription = extras.getString(Protocol.DESCRIPTION);
 			userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 
 			if (null == protocolJson) protocolJson="";
@@ -226,13 +233,11 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		}else
 		{
 			setContentView(R.layout.activity_new_measurment);
-			db = DatabaseHelper.getHelper(getApplicationContext());
-			List<Question> questions = db.getAllQuestionForProject(projectId);
-			ListView lst = (ListView) findViewById(R.id.measurement_list_view);
+			protNameTV = (TextView) findViewById(R.id.protocol_name);
+            protDescTV = (TextView) findViewById(R.id.protocol_desc);
+            protNameTV.setText(protocolName);
+            protDescTV.setText(protocolDescription);
             measureBtn = (Button) findViewById(R.id.measure_btn);
-
-			QuestionArrayAdapter questionAdapter = new QuestionArrayAdapter(this, questions);
-			lst.setAdapter(questionAdapter);
 			
 		}
 		mStatusLine = (TextView) findViewById(R.id.statusMessage);

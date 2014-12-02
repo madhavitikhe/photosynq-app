@@ -62,8 +62,9 @@
           android:layout_marginRight="18dp"
           android:checked="true"
           android:focusable="false"
+          android:clickable="false"
           android:focusableInTouchMode="false"
-          android:visibility="gone"/>
+          android:visibility="gone" />
 
 	</RelativeLayout>
 </FrameLayout>
