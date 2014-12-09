@@ -182,8 +182,12 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 
         String showDirections = PrefUtils.getFromPrefs(ctx, PrefUtils.PREFS_SHOW_DIRECTIONS, "YES");
         if(showDirections.equals("YES")){
-            Intent openMainActivity= new Intent(ctx, DirectionsActivity.class);
-            startActivity(openMainActivity);
+            if(null != projectId) {
+                Intent openMainActivity = new Intent(ctx, DirectionsActivity.class);
+                openMainActivity.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+                openMainActivity.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
+                startActivity(openMainActivity);
+            }
         }
 
 
@@ -545,6 +549,8 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
             @Override
             public void onClick(View view) {
                 Intent openMainActivity= new Intent(ctx, DirectionsActivity.class);
+                openMainActivity.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+                openMainActivity.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
                 startActivity(openMainActivity);
             }
         });
@@ -620,6 +626,8 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
             @Override
             public void onClick(View view) {
                 Intent openMainActivity= new Intent(ctx, DirectionsActivity.class);
+                openMainActivity.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+                openMainActivity.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
                 startActivity(openMainActivity);
             }
         });

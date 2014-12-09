@@ -5,6 +5,10 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="20" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -12,12 +16,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.CLEAR_APP_CACHE"/>
-
-    <uses-sdk
-        android:minSdkVersion="11"
-        android:targetSdkVersion="20" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.CLEAR_APP_CACHE" />
 
     <application
         android:allowBackup="true"
@@ -26,6 +26,7 @@
         <activity
             android:name="com.photosynq.app.LoginActivity"
             android:label="@string/app_name"
+            android:screenOrientation="locked"
             android:noHistory="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,33 +36,39 @@
         </activity>
         <activity
             android:name="com.photosynq.app.ProjectListActivity"
-            android:label="@string/research_project_str" >
+            android:label="@string/research_project_str"
+            android:screenOrientation="locked">
         </activity>
         <activity
             android:name="com.photosynq.app.ProjectDescriptionActivity"
-            android:label="@string/title_activity_project_description" >
+            android:label="@string/title_activity_project_description"
+            android:screenOrientation="locked">
         </activity>
         <activity
             android:name="com.photosynq.app.DirectionsActivity"
-            android:label="@string/title_activity_directions" >
+            android:label="@string/title_activity_directions"
+            android:screenOrientation="locked">
         </activity>
         <activity
             android:name="com.photosynq.app.BluetoothActivity"
-            android:label="@string/title_activity_bluetooth" >
+            android:label="@string/title_activity_bluetooth"
+            android:screenOrientation="locked">
         </activity>
         <activity
             android:name="com.photosynq.app.NewMeasurmentActivity"
-            android:configChanges="orientation|screenSize"
-            android:parentActivityName=".navigationDrawer.NavigationDrawer"
-            android:label="@string/title_activity_new_measurment" >
+            android:screenOrientation="locked"
+            android:label="@string/title_activity_new_measurment"
+            android:parentActivityName="com.photosynq.app.navigationDrawer.NavigationDrawer" >
         </activity>
         <activity
             android:name="com.photosynq.app.DisplayResultsActivity"
+            android:screenOrientation="locked"
             android:label="@string/title_activity_display_results"
             android:noHistory="true" >
         </activity>
         <activity
             android:name="com.photosynq.app.SelectProtocolActivity"
+            android:screenOrientation="locked"
             android:label="@string/title_activity_select_protocol" >
         </activity>
 
@@ -77,22 +84,20 @@
 
         <activity
             android:name="com.photosynq.app.StreamlinedModeActivity"
-            android:configChanges="orientation|screenSize"
+            android:screenOrientation="locked"
             android:label="@string/streamlined_mode" >
         </activity>
         <activity
             android:name="com.photosynq.app.navigationDrawer.NavigationDrawer"
-            android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="adjustPan">
+            android:screenOrientation="locked"
+            android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
             xmlns:tools="http://schemas.android.com/tools"
-            tools:replace="android:configChanges"
-			android:name="com.google.zxing.client.android.CaptureActivity"
-            android:configChanges="orientation|screenSize" >
-		</activity>
-
-        
+            android:name="com.google.zxing.client.android.CaptureActivity"
+            android:configChanges="orientation|screenSize"
+            tools:replace="android:configChanges" >
+        </activity>
     </application>
 
 </manifest>
