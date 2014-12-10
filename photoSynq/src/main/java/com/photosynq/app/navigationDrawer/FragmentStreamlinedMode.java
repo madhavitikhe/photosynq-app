@@ -117,6 +117,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
     private boolean clearflag = false;
     private boolean reviewFlag = false;
     private int fixedValueCount = 0;
+    private boolean mIsMeasureBtnClicked = false;
     //private ProgressDialog pDialog;
 
     public static FragmentStreamlinedMode newInstance() {
@@ -524,6 +525,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
         measureButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                mIsMeasureBtnClicked = true;
                 if (mBluetoothService == null) {
                     mBluetoothService = new BluetoothService(ctx, mHandler);
                 }
@@ -564,7 +566,8 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 		super.onResume();
 		if (!scanMode )
 		{
-            //viewFlipper.setDisplayedChild(0);
+            if(mIsMeasureBtnClicked)
+                viewFlipper.setDisplayedChild(0);
             List<Question> questions = db.getAllQuestionForProject(projectId);
 
             if(clearflag) {
@@ -579,6 +582,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
             clearflag = true;
  		}
 		scanMode = false;
+        mIsMeasureBtnClicked = false;
 	}
 
     private void refreshMeasrementScreen() {
@@ -601,6 +605,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
         measureButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                mIsMeasureBtnClicked = true;
                 if (mBluetoothService == null) {
                     mBluetoothService = new BluetoothService(ctx, mHandler);
                 }
