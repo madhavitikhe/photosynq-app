@@ -69,11 +69,31 @@ public class FragmentData extends Fragment {
 		viewPager = (ViewPager) rootView.findViewById(R.id.viewPager);
        // viewPager = (NonSwipableViewPager) rootView.findViewById(R.id.viewPager);
 
-        List<Fragment> fragments = getFragments(questions);
-        pageAdapter = new MyPageAdapter(getActivity().getFragmentManager(), fragments);
+        final List<Fragment> fragments = getFragments(questions);
+        pageAdapter = new MyPageAdapter(getFragmentManager(), fragments);
 
         viewPager.setAdapter(pageAdapter);
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                if(state == ViewPager.SCROLL_STATE_DRAGGING) {
+                    int currentFragmentIdx = viewPager.getCurrentItem();
+                    DataFirstFragment f = (DataFirstFragment) fragments.get(currentFragmentIdx);
+                    f.saveData(true);
+                }
+
+            }
+        });
 
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		return rootView;
@@ -129,7 +149,7 @@ public class FragmentData extends Fragment {
 		@Override
 		public Fragment getItem(int position) {
             fm.beginTransaction().attach(fragments.get(position)).commit();
-			return this.fragments.get(position);
+            return this.fragments.get(position);
 		}
 
 		@Override

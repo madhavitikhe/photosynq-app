@@ -128,7 +128,7 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(saveData(true)) {
+                if(saveData(false)) {
                     viewPager = (ViewPager) getActivity().findViewById(R.id.viewPager);
                     viewPager.setCurrentItem(getItem(+1), true);
                 }
@@ -242,13 +242,13 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
 
         switch (view.getId()) {
             case R.id.from_editText:
-                saveData(true);
+                saveData(false);
                 break;
             case R.id.to_editText:
-                saveData(true);
+                saveData(false);
                 break;
             case R.id.repeat_editText:
-                saveData(true);
+                saveData(false);
                 break;
         }
     }
@@ -262,7 +262,7 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
     }
 
     //Save all user selected values into database like(user selected, fixed value, auto inc, scan code)
-    public boolean saveData(boolean noMessage) {
+    public boolean saveData(boolean showMessage) {
         boolean retVal = true;
         Data data = new Data();
         data.setUser_id(userId);
@@ -324,7 +324,7 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
 
     @Override
     public void onResume() {
-        saveData(false);
+        //saveData(false);
         super.onResume();
     }
 
