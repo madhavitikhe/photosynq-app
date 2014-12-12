@@ -118,6 +118,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
     private boolean reviewFlag = false;
     private int fixedValueCount = 0;
     private boolean mIsMeasureBtnClicked = false;
+    private boolean mIsCancelMeasureBtnClicked = false;
     //private ProgressDialog pDialog;
 
     public static FragmentStreamlinedMode newInstance() {
@@ -521,7 +522,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 //            setMeasurementScreen();
 //        }
         // add on click listener
-        Button measureButton = (Button)measurementScreen.findViewById(R.id.measure_btn);
+        final Button measureButton = (Button)measurementScreen.findViewById(R.id.measure_btn);
         measureButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -529,20 +530,28 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                 if (mBluetoothService == null) {
                     mBluetoothService = new BluetoothService(ctx, mHandler);
                 }
-                if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED)
-                {
-                    // Get the BLuetoothDevice object
-                    if(mBluetoothAdapter == null)
-                        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-                    if(null == deviceAddress)
-                    {
-                        Toast.makeText(ctx,"Measurement device not configured, Please configure measurement device (bluetooth).",Toast.LENGTH_SHORT).show();
-                    }else {
-                        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
-                        mBluetoothService.connect(device);
+                if (measureButton.getText().equals("MEASURE")) {
+                    if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
+                        // Get the BLuetoothDevice object
+                        if (mBluetoothAdapter == null)
+                            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                        if (null == deviceAddress) {
+                            Toast.makeText(ctx, "Measurement device not configured, Please configure measurement device (bluetooth).", Toast.LENGTH_SHORT).show();
+                        } else {
+                            BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
+                            mBluetoothService.connect(device);
+                        }
+                    } else {
+                        mHandler.obtainMessage(MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, -1).sendToTarget();
                     }
-                }else {
-                    mHandler.obtainMessage(MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, -1).sendToTarget();
+                    measureButton.setText("CANCEL");
+                    measureButton.setBackgroundColor(Color.RED);
+                }else if(measureButton.getText().equals("CANCEL"))
+                {
+                    mIsCancelMeasureBtnClicked = true;
+                    mHandler.obtainMessage(MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, 0).sendToTarget();
+                    measureButton.setText("MEASURE");
+                    measureButton.setBackgroundColor(Color.GRAY);
                 }
             }
         });
@@ -583,6 +592,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
  		}
 		scanMode = false;
         mIsMeasureBtnClicked = false;
+        mIsCancelMeasureBtnClicked = false;
 	}
 
     private void refreshMeasrementScreen() {
@@ -592,7 +602,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
         mStatusLine = (TextView) measurementScreen.findViewById(R.id.statusMessage);
         measurementScreen.setId(9595);
         viewFlipper.addView(measurementScreen);
-        Button measureButton = (Button)measurementScreen.findViewById(R.id.measure_btn);
+        final Button measureButton = (Button)measurementScreen.findViewById(R.id.measure_btn);
         if (mBluetoothService == null) {
             mBluetoothService = new BluetoothService(ctx, mHandler);
         }
@@ -606,23 +616,33 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
             @Override
             public void onClick(View view) {
                 mIsMeasureBtnClicked = true;
-                if (mBluetoothService == null) {
-                    mBluetoothService = new BluetoothService(ctx, mHandler);
-                }
-                if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED)
-                {
-                    // Get the BLuetoothDevice object
-                    if(mBluetoothAdapter == null)
-                        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-                    if(null == deviceAddress)
-                    {
-                        Toast.makeText(ctx,"Measurement device not configured, Please configure measurement device (bluetooth).",Toast.LENGTH_SHORT).show();
-                    }else {
-                        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
-                        mBluetoothService.connect(device);
+                if(measureButton.getText().equals("MEASURE")){
+                    if (mBluetoothService == null) {
+                        mBluetoothService = new BluetoothService(ctx, mHandler);
                     }
-                }else {
-                    mHandler.obtainMessage(MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, -1).sendToTarget();
+                    if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED)
+                    {
+                        // Get the BLuetoothDevice object
+                        if(mBluetoothAdapter == null)
+                            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                        if(null == deviceAddress)
+                        {
+                            Toast.makeText(ctx,"Measurement device not configured, Please configure measurement device (bluetooth).",Toast.LENGTH_SHORT).show();
+                        }else {
+                            BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
+                            mBluetoothService.connect(device);
+                        }
+                    }else {
+                        mHandler.obtainMessage(MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, -1).sendToTarget();
+                    }
+                    measureButton.setText("CANCEL");
+                    measureButton.setBackgroundColor(Color.RED);
+                }else if(measureButton.getText().equals("CANCEL"))
+                {
+                    mIsCancelMeasureBtnClicked = false;
+                    mHandler.obtainMessage(MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, 0).sendToTarget();
+                    measureButton.setText("MEASURE");
+                    measureButton.setBackgroundColor(Color.GRAY);
                 }
             }
         });
@@ -662,80 +682,83 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                     if(D) Log.i("PHOTOSYNC", "MESSAGE_STATE_CHANGE: " + msg.arg1);
                     switch (msg.arg1) {
                         case BluetoothService.STATE_CONNECTED:
-                            mStatusLine.setText(R.string.title_connected_to);
-                            mStatusLine.append(mConnectedDeviceName);
-                            if(protocolJson.length() ==0)
-                            {
-                                //db = new DatabaseHelper(getApplicationContext());
-                                db = DatabaseHelper.getHelper(ctx);
-                                ResearchProject rp =  db.getResearchProject(projectId);
-                                if(null == rp){
-                                    Toast.makeText(ctx, "Project not selected, Please select the project.", Toast.LENGTH_LONG).show();
-                                    break;
+                            if(msg.arg2 == 0){//Sending cancel request to the device
+                                sendData("-1+-1+");
+                                if (mBluetoothService != null) {
+                                    if(mBluetoothService.getState() == BluetoothService.STATE_CONNECTED){
+                                        mBluetoothService.stop();
+                                    }
                                 }
-                                String[] protocol_ids = rp.getProtocols_ids().trim().split(",");
-                                System.out.println("***************Sequence of protocol id is***********"+rp.getProtocols_ids());
+                                mStatusLine.setText("Measurement cancel");
+                            }else {
+                                mStatusLine.setText(R.string.title_connected_to);
+                                mStatusLine.append(mConnectedDeviceName);
+                                if (protocolJson.length() == 0) {
+                                    //db = new DatabaseHelper(getApplicationContext());
+                                    db = DatabaseHelper.getHelper(ctx);
+                                    ResearchProject rp = db.getResearchProject(projectId);
+                                    if (null == rp) {
+                                        Toast.makeText(ctx, "Project not selected, Please select the project.", Toast.LENGTH_LONG).show();
+                                        break;
+                                    }
+                                    String[] protocol_ids = rp.getProtocols_ids().trim().split(",");
+                                    System.out.println("***************Sequence of protocol id is***********" + rp.getProtocols_ids());
 
-                                try {
-                                    StringBuffer dataString = new StringBuffer();
-                                    String[] projectProtocols = rp.getProtocols_ids().split(",");
-                                    if(rp.getProtocols_ids().length() >=1)
-                                    {
-                                        //JSONArray protocolJsonArray = new JSONArray();
-                                        for (String protocolId : projectProtocols) {
-                                            Protocol protocol = db.getProtocol(protocolId);
-                                            JSONObject detailProtocolObject = new JSONObject();
-                                            detailProtocolObject.put("protocolid", protocol.getId());
-                                            detailProtocolObject.put("protocol_name", protocol.getId());
-                                            detailProtocolObject.put("macro_id", protocol.getMacroId());
-                                            //protocolJsonArray.put(detailProtocolObject);
-                                            dataString.append("\""+protocol.getId()+"\""+":"+detailProtocolObject.toString()+",");
+                                    try {
+                                        StringBuffer dataString = new StringBuffer();
+                                        String[] projectProtocols = rp.getProtocols_ids().split(",");
+                                        if (rp.getProtocols_ids().length() >= 1) {
+                                            //JSONArray protocolJsonArray = new JSONArray();
+                                            for (String protocolId : projectProtocols) {
+                                                Protocol protocol = db.getProtocol(protocolId);
+                                                JSONObject detailProtocolObject = new JSONObject();
+                                                detailProtocolObject.put("protocolid", protocol.getId());
+                                                detailProtocolObject.put("protocol_name", protocol.getId());
+                                                detailProtocolObject.put("macro_id", protocol.getMacroId());
+                                                //protocolJsonArray.put(detailProtocolObject);
+                                                dataString.append("\"" + protocol.getId() + "\"" + ":" + detailProtocolObject.toString() + ",");
 
-                                            if(protocol.getProtocol_json().trim().length() > 1)
-                                            {
-                                                protocolJson +=  "{"+protocol.getProtocol_json().trim().substring(1, protocol.getProtocol_json().trim().length()-1)+"},";
+                                                if (protocol.getProtocol_json().trim().length() > 1) {
+                                                    protocolJson += "{" + protocol.getProtocol_json().trim().substring(1, protocol.getProtocol_json().trim().length() - 1) + "},";
+                                                }
+
                                             }
 
-                                        }
 
+                                            String data = "var protocols={" + dataString.substring(0, dataString.length() - 1) + "}";
 
-                                        String data = "var protocols={"+dataString.substring(0, dataString.length()-1) +"}";
+                                            // Writing macros_variable.js file with protocol and macro relations
+                                            System.out.println("######Writing macros_variable.js file:" + data);
+                                            CommonUtils.writeStringToFile(ctx, "macros_variable.js", data);
 
-                                        // Writing macros_variable.js file with protocol and macro relations
-                                        System.out.println("######Writing macros_variable.js file:"+data);
-                                        CommonUtils.writeStringToFile(ctx, "macros_variable.js", data);
+                                            protocolJson = "[" + protocolJson.substring(0, protocolJson.length() - 1) + "]"; // remove last comma and add suqare brackets and start and end.
 
-                                        protocolJson = "["+protocolJson.substring(0, protocolJson.length()-1) +"]"; // remove last comma and add suqare brackets and start and end.
-
-                                        System.out.println("$$$$$$$$$$$$$$ protocol json sending to device :"+protocolJson+"length:"+protocolJson.length());
-                                        //db.closeDB();
-                                        //String obj = "[{\"environmental\":[[\"light_intensity\",0]],\"tcs_to_act\":100,\"protocol_name\":\"baseline_sample\",\"protocols_delay\":5,\"act_background_light\":20,\"actintensity1\":5,\"actintensity2\":5,\"averages\":1,\"wait\":0,\"cal_true\":2,\"analog_averages\":1,\"pulsesize\":10,\"pulsedistance\":3000,\"calintensity\":255,\"pulses\":[400],\"detectors\":[[34]],\"measlights\":[[14]]},{\"tcs_to_act\":100,\"environmental\":[[\"relative_humidity\",0],[\"temperature\",0],[\"light_intensity\",0]],\"protocols_delay\":5,\"act_background_light\":20,\"protocol_name\":\"fluorescence\",\"baselines\":[1,1,1,1],\"averages\":1,\"wait\":0,\"cal_true\":0,\"analog_averages\":1,\"act_light\":20,\"pulsesize\":10,\"pulsedistance\":10000,\"actintensity1\":5,\"actintensity2\":50,\"measintensity\":7,\"calintensity\":255,\"pulses\":[50,50,50,50],\"detectors\":[[34],[34],[34],[34]],\"measlights\":[[15],[15],[15],[15]],\"act\":[0,1,0,0]},{\"protocol_name\":\"chlorophyll_spad_ndvi\",\"baselines\":[0,0,0,0],\"environmental\":[[\"relative_humidity\",1],[\"temperature\",1],[\"light_intensity\",1]],\"measurements\":1,\"measurements_delay\":1,\"averages\":1,\"wait\":0,\"cal_true\":0,\"analog_averages\":1,\"pulsesize\":20,\"pulsedistance\":3000,\"actintensity1\":8,\"actintensity2\":8,\"measintensity\":80,\"calintensity\":255,\"pulses\":[100],\"detectors\":[[34,35,35,34]],\"measlights\":[[12,20,12,20]]}]";
-                                        //	String protocol= "[{\"protocol_name\":\"fluorescence\",\"baselines\":[1,1,1,1],\"averages\":1,\"wait\":0,\"cal_true\":0,\"analog_averages\":12,\"act_light\":20,\"pulsesize\":50,\"pulsedistance\":3000,\"actintensity1\":100,\"actintensity2\":100,\"measintensity\":3,\"calintensity\":255,\"pulses\":[50,50,50,50],\"detectors\":[[34],[34],[34],[34]],\"measlights\":[[15],[15],[15],[15]],\"act\":[2,1,2,2]}]";
+                                            System.out.println("$$$$$$$$$$$$$$ protocol json sending to device :" + protocolJson + "length:" + protocolJson.length());
+                                            //db.closeDB();
+                                            //String obj = "[{\"environmental\":[[\"light_intensity\",0]],\"tcs_to_act\":100,\"protocol_name\":\"baseline_sample\",\"protocols_delay\":5,\"act_background_light\":20,\"actintensity1\":5,\"actintensity2\":5,\"averages\":1,\"wait\":0,\"cal_true\":2,\"analog_averages\":1,\"pulsesize\":10,\"pulsedistance\":3000,\"calintensity\":255,\"pulses\":[400],\"detectors\":[[34]],\"measlights\":[[14]]},{\"tcs_to_act\":100,\"environmental\":[[\"relative_humidity\",0],[\"temperature\",0],[\"light_intensity\",0]],\"protocols_delay\":5,\"act_background_light\":20,\"protocol_name\":\"fluorescence\",\"baselines\":[1,1,1,1],\"averages\":1,\"wait\":0,\"cal_true\":0,\"analog_averages\":1,\"act_light\":20,\"pulsesize\":10,\"pulsedistance\":10000,\"actintensity1\":5,\"actintensity2\":50,\"measintensity\":7,\"calintensity\":255,\"pulses\":[50,50,50,50],\"detectors\":[[34],[34],[34],[34]],\"measlights\":[[15],[15],[15],[15]],\"act\":[0,1,0,0]},{\"protocol_name\":\"chlorophyll_spad_ndvi\",\"baselines\":[0,0,0,0],\"environmental\":[[\"relative_humidity\",1],[\"temperature\",1],[\"light_intensity\",1]],\"measurements\":1,\"measurements_delay\":1,\"averages\":1,\"wait\":0,\"cal_true\":0,\"analog_averages\":1,\"pulsesize\":20,\"pulsedistance\":3000,\"actintensity1\":8,\"actintensity2\":8,\"measintensity\":80,\"calintensity\":255,\"pulses\":[100],\"detectors\":[[34,35,35,34]],\"measlights\":[[12,20,12,20]]}]";
+                                            //	String protocol= "[{\"protocol_name\":\"fluorescence\",\"baselines\":[1,1,1,1],\"averages\":1,\"wait\":0,\"cal_true\":0,\"analog_averages\":12,\"act_light\":20,\"pulsesize\":50,\"pulsedistance\":3000,\"actintensity1\":100,\"actintensity2\":100,\"measintensity\":3,\"calintensity\":255,\"pulses\":[50,50,50,50],\"detectors\":[[34],[34],[34],[34]],\"measlights\":[[15],[15],[15],[15]],\"act\":[2,1,2,2]}]";
 //    	                		for (String chunk : protocolJson.split("(?<=,)")) {
 //    								sendData(chunk);
 //    							}
-                                        sendData(protocolJson);
-                                    }
-                                    else
-                                    {
-                                        mStatusLine.setText("No protocol defined for this project.");
-                                        Toast.makeText(ctx, "No protocol defined for this project.", Toast.LENGTH_LONG).show();
-                                        break;
-                                    }
+                                            sendData(protocolJson);
+                                        } else {
+                                            mStatusLine.setText("No protocol defined for this project.");
+                                            Toast.makeText(ctx, "No protocol defined for this project.", Toast.LENGTH_LONG).show();
+                                            break;
+                                        }
 
-                                } catch (JSONException e) {
-                                    // TODO Auto-generated catch block
-                                    e.printStackTrace();
+                                    } catch (JSONException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    protocolJson = "[" + protocolJson + "]";
+                                    System.out.println("sending protocol to device using quick measure : " + protocolJson + "length:" + protocolJson.length());
+                                    sendData(protocolJson);
                                 }
-                            }else
-                            {
-                                protocolJson = "["+protocolJson+"]";
-                                System.out.println("sending protocol to device using quick measure : "+protocolJson +"length:"+protocolJson.length());
-                                sendData(protocolJson);
+
+                                mStatusLine.setText("Initializing measurement please wait ...");
                             }
-
-                            mStatusLine.setText("Initializing measurement please wait ...");
-
 
                             break;
                         case BluetoothService.STATE_CONNECTING:
@@ -754,54 +777,50 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                     //String writeMessage = new String(writeBuf);
                     break;
                 case MESSAGE_READ:
-                    // byte[] readBuf = (byte[]) msg.obj;
-                    StringBuffer measurement = (StringBuffer)msg.obj;
-                    // construct a string from the valid bytes in the buffer
-                    // String readMessage = new String(readBuf, 0, msg.arg1);
-                    mStatusLine.setText(R.string.connected);
-                    String dataString;
-                    StringBuffer options = new StringBuffer();
-                    options.append("\"user_answers\": [");
-                    //loop
-                    for(int i=0;i<allOptions.size();i++){
-                        options.append("\"" + allOptions.get(i) + "\"");
-                        if(i < allOptions.size()-1)
-                        options.append(",");
-                    }
-                    options.append(" ],");
+                    if(mIsCancelMeasureBtnClicked == false) {
+                        // byte[] readBuf = (byte[]) msg.obj;
+                        StringBuffer measurement = (StringBuffer) msg.obj;
+                        // construct a string from the valid bytes in the buffer
+                        // String readMessage = new String(readBuf, 0, msg.arg1);
+                        mStatusLine.setText(R.string.connected);
+                        String dataString;
+                        StringBuffer options = new StringBuffer();
+                        options.append("\"user_answers\": [");
+                        //loop
+                        for (int i = 0; i < allOptions.size(); i++) {
+                            options.append("\"" + allOptions.get(i) + "\"");
+                            if (i < allOptions.size() - 1)
+                                options.append(",");
+                        }
+                        options.append(" ],");
 //                    String options = new String ("\"user_answers\": [\""+option1+"\","+"\""+option2+"\","+"\""+option3+"\" ],");
-                    long time= System.currentTimeMillis();
-                    if (options.equals(""))
-                    {
-                        dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
-                        System.out.println("All Options"+dataString);
-                    }
-                    else
-                    {
-                        String currentLocation = PrefUtils.getFromPrefs(ctx, PrefUtils.PREFS_CURRENT_LOCATION, "NONE");
-                        if(!currentLocation.equals("NONE"))
-                        {
-                            options = options.append("\"location\":["+currentLocation+"],");
-                            dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
-                            System.out.println("All Options"+dataString);
+                        long time = System.currentTimeMillis();
+                        if (options.equals("")) {
+                            dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceAll("\\{", "{\"time\":\"" + time + "\",") + "\n];";
+                            System.out.println("All Options" + dataString);
+                        } else {
+                            String currentLocation = PrefUtils.getFromPrefs(ctx, PrefUtils.PREFS_CURRENT_LOCATION, "NONE");
+                            if (!currentLocation.equals("NONE")) {
+                                options = options.append("\"location\":[" + currentLocation + "],");
+                                dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options).replaceAll("\\{", "{\"time\":\"" + time + "\",") + "\n];";
+                                System.out.println("All Options" + dataString);
+                            } else {
+                                dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options).replaceAll("\\{", "{\"time\":\"" + time + "\",") + "\n];";
+                                System.out.println("All Options" + dataString);
+                            }
                         }
-                        else
-                        {
-                            dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
-                            System.out.println("All Options"+dataString);
-                        }
+                        System.out.println("###### writing data.js :" + dataString);
+                        CommonUtils.writeStringToFile(ctx, "data.js", dataString);
+                        //mBluetoothService.stop();
+                        Intent intent = new Intent(ctx, DisplayResultsActivity.class);
+                        intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+                        intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocolJson);
+                        intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
+                        String reading = measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options).replaceAll("\\{", "{\"time\":\"" + time + "\",");
+                        //reading = reading.replaceFirst("\\{", "{"+options);
+                        intent.putExtra(DatabaseHelper.C_READING, reading);
+                        startActivity(intent);
                     }
-                    System.out.println("###### writing data.js :"+dataString);
-                    CommonUtils.writeStringToFile(ctx, "data.js", dataString);
-                    //mBluetoothService.stop();
-                    Intent intent = new Intent(ctx,DisplayResultsActivity.class);
-                    intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
-                    intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocolJson);
-                    intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
-                    String reading = measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",");
-                    //reading = reading.replaceFirst("\\{", "{"+options);
-                    intent.putExtra(DatabaseHelper.C_READING, reading);
-                    startActivity(intent);
                     break;
                 case MESSAGE_DEVICE_NAME:
                     // save the connected device's name
