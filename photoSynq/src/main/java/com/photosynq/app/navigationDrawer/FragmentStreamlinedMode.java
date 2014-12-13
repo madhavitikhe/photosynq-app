@@ -119,6 +119,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
     private int fixedValueCount = 0;
     private boolean mIsMeasureBtnClicked = false;
     private boolean mIsCancelMeasureBtnClicked = false;
+    private Button measureButton;
     //private ProgressDialog pDialog;
 
     public static FragmentStreamlinedMode newInstance() {
@@ -182,16 +183,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
             Toast.makeText(ctx,"Measurement device not configured, Please configure measurement device (bluetooth).",Toast.LENGTH_SHORT).show();
         }
 
-        String showDirections = PrefUtils.getFromPrefs(ctx, PrefUtils.PREFS_SHOW_DIRECTIONS, "YES");
-        if(showDirections.equals("YES")){
-            if(null != projectId) {
-                Intent openMainActivity = new Intent(ctx, DirectionsActivity.class);
-                openMainActivity.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
-                openMainActivity.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
-                startActivity(openMainActivity);
-            }
-        }
-
+        boolean isAnsIncomplete = false;
 
         for (final Question question : questions) {
             scanMode = false;
@@ -224,8 +216,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
             {
                 if( null == data.getType() || null == data.getValue())
                 {
-                    Toast.makeText(ctx,"Incomplete information, please define answer types in data tab.",Toast.LENGTH_SHORT).show();
-//                    return;
+                    isAnsIncomplete = true;
                 }
 
                 if(null != data.getType() && data.getType().equals(Data.USER_SELECTED))
@@ -513,6 +504,21 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
         }
             questionLoop++;
     }
+
+        if(isAnsIncomplete){
+            Toast.makeText(ctx,"Incomplete information, please define answer types in data tab.",Toast.LENGTH_SHORT).show();
+        }else{
+            String showDirections = PrefUtils.getFromPrefs(ctx, PrefUtils.PREFS_SHOW_DIRECTIONS, "YES");
+            if(showDirections.equals("YES")){
+                if(null != projectId && null != deviceAddress) {
+                    Intent openMainActivity = new Intent(ctx, DirectionsActivity.class);
+                    openMainActivity.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+                    openMainActivity.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
+                    startActivity(openMainActivity);
+                }
+            }
+        }
+
         LayoutInflater infltr = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View measurementScreen = infltr.inflate(R.layout.activity_display_selected_questions_options, null,false);
         mStatusLine = (TextView) measurementScreen.findViewById(R.id.statusMessage);
@@ -577,14 +583,18 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 		{
             if(mIsMeasureBtnClicked)
                 viewFlipper.setDisplayedChild(0);
+
             List<Question> questions = db.getAllQuestionForProject(projectId);
 
-            if(clearflag) {
-                refreshMeasrementScreen();
+            int viewCount = viewFlipper.getChildCount();
+            if((viewCount - 1) == questions.size())
+                refreshMeasrementScreen(viewFlipper.getChildAt(viewCount - 1));
 
-                //allSelectedOptions = new ArrayList<String>();
-                //allSelectedQuestions = new ArrayList<String>();
-            }
+            //allSelectedOptions = new ArrayList<String>();
+            //allSelectedQuestions = new ArrayList<String>();
+
+            //fixedValueCount = getActivity().getIntent().getExtras().getInt("fixedValueCount");
+            //autoIncProjecSize = getActivity().getIntent().getExtras().getInt("autoIncProjecSize");
             if(fixedValueCount == questions.size() || autoIncProjecSize == questions.size()|| fixedValueCount+autoIncProjecSize == questions.size()) {
                 setMeasurementScreen();
             }
@@ -595,14 +605,9 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
         mIsCancelMeasureBtnClicked = false;
 	}
 
-    private void refreshMeasrementScreen() {
-        viewFlipper.removeViewAt(viewFlipper.getChildCount()-1); //0 based index
-        LayoutInflater infltr = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View measurementScreen = infltr.inflate(R.layout.activity_display_selected_questions_options, null,false);
+    private void refreshMeasrementScreen(View measurementScreen){
         mStatusLine = (TextView) measurementScreen.findViewById(R.id.statusMessage);
-        measurementScreen.setId(9595);
-        viewFlipper.addView(measurementScreen);
-        final Button measureButton = (Button)measurementScreen.findViewById(R.id.measure_btn);
+        measureButton = (Button)measurementScreen.findViewById(R.id.measure_btn);
         if (mBluetoothService == null) {
             mBluetoothService = new BluetoothService(ctx, mHandler);
         }
@@ -639,7 +644,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                     measureButton.setBackgroundColor(Color.RED);
                 }else if(measureButton.getText().equals("CANCEL"))
                 {
-                    mIsCancelMeasureBtnClicked = false;
+                    mIsCancelMeasureBtnClicked = true;
                     mHandler.obtainMessage(MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, 0).sendToTarget();
                     measureButton.setText("MEASURE");
                     measureButton.setBackgroundColor(Color.GRAY);
@@ -656,6 +661,15 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                 startActivity(openMainActivity);
             }
         });
+    }
+
+    private void openQuestionScreen() {
+        viewFlipper.removeViewAt(viewFlipper.getChildCount()-1); //0 based index
+        LayoutInflater infltr = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View measurementScreen = infltr.inflate(R.layout.activity_display_selected_questions_options, null,false);
+        measurementScreen.setId(9595);
+        viewFlipper.addView(measurementScreen);
+        refreshMeasrementScreen(measurementScreen);
     }
 
 
@@ -680,6 +694,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
             switch (msg.what) {
                 case MESSAGE_STATE_CHANGE:
                     if(D) Log.i("PHOTOSYNC", "MESSAGE_STATE_CHANGE: " + msg.arg1);
+
                     switch (msg.arg1) {
                         case BluetoothService.STATE_CONNECTED:
                             if(msg.arg2 == 0){//Sending cancel request to the device
@@ -821,6 +836,12 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                         intent.putExtra(DatabaseHelper.C_READING, reading);
                         startActivity(intent);
                     }
+                    mIsMeasureBtnClicked = false;
+                    mIsCancelMeasureBtnClicked = false;
+                    if(measureButton.getText().equals("CANCEL")) {
+                        measureButton.setText("MEASURE");
+                        measureButton.setBackgroundColor(Color.GRAY);
+                    }
                     break;
                 case MESSAGE_DEVICE_NAME:
                     // save the connected device's name
@@ -830,8 +851,16 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
 
                     break;
                 case MESSAGE_TOAST:
-                    Toast.makeText(ctx, msg.getData().getString(TOAST),
-                            Toast.LENGTH_SHORT).show();
+                    if(mIsCancelMeasureBtnClicked == false){
+                        Toast.makeText(ctx, msg.getData().getString(TOAST),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    mIsMeasureBtnClicked = false;
+                    mIsCancelMeasureBtnClicked = false;
+                    if(measureButton.getText().equals("CANCEL")) {
+                        measureButton.setText("MEASURE");
+                        measureButton.setBackgroundColor(Color.GRAY);
+                    }
                     break;
                 case MESSAGE_STOP:
                     Toast.makeText(ctx, msg.getData().getString(TOAST),
@@ -950,7 +979,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                             reviewFlag = true;
                             View child = viewFlipper.findViewWithTag(view.getTag());
                             viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(child));
-                            refreshMeasrementScreen();
+                            openQuestionScreen();
                         }
                     });
 //                    que.setOnClickListener(new OnClickListener() {
@@ -978,7 +1007,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                         reviewFlag = true;
                         View child = viewFlipper.findViewWithTag(view.getTag());
                         viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(child));
-                        refreshMeasrementScreen();
+                        openQuestionScreen();
                     }
                 });
 //                que.setOnClickListener(new OnClickListener() {

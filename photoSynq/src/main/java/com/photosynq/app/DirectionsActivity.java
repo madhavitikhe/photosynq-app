@@ -90,5 +90,9 @@ public class DirectionsActivity extends Activity {
         else
             PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_SHOW_DIRECTIONS, "YES");
 	}
+
+    public void onCloseBtnClicked(View view){
+        finish();
+    }
 	
 }
