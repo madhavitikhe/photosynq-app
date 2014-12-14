@@ -116,13 +116,13 @@ public class DisplayResultsActivity extends Activity {
                 PrefUtils.saveToPrefs(context, PrefUtils.PREFS_QUESTION_INDEX, ""+ (index+1));
 				
 				JSONObject request_data = new JSONObject();
-				JSONObject jo = new JSONObject(reading);
 				try {
-						request_data.put("user_email", email);
-						request_data.put("user_token", authToken);
-						request_data.put("data", jo);
-						 input = new StringEntity(request_data.toString());
-						input.setContentType("application/json");
+                    JSONObject jo = new JSONObject(reading);
+                    request_data.put("user_email", email);
+                    request_data.put("user_token", authToken);
+                    request_data.put("data", jo);
+                    input = new StringEntity(request_data.toString());
+                    input.setContentType("application/json");
 				} catch (JSONException e) {
 					e.printStackTrace();
 				} catch (UnsupportedEncodingException e) {

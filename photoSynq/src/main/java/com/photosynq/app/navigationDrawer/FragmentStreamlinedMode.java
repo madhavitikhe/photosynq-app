@@ -587,8 +587,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
             List<Question> questions = db.getAllQuestionForProject(projectId);
 
             int viewCount = viewFlipper.getChildCount();
-            if((viewCount - 1) == questions.size())
-                refreshMeasrementScreen(viewFlipper.getChildAt(viewCount - 1));
+            refreshMeasrementScreen(viewFlipper.getChildAt(viewCount - 1));
 
             //allSelectedOptions = new ArrayList<String>();
             //allSelectedQuestions = new ArrayList<String>();
@@ -836,11 +835,12 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                         intent.putExtra(DatabaseHelper.C_READING, reading);
                         startActivity(intent);
                     }
-                    mIsMeasureBtnClicked = false;
                     mIsCancelMeasureBtnClicked = false;
-                    if(measureButton.getText().equals("CANCEL")) {
-                        measureButton.setText("MEASURE");
-                        measureButton.setBackgroundColor(Color.GRAY);
+                    if(measureButton != null) {
+                        if (measureButton.getText().equals("CANCEL")) {
+                            measureButton.setText("MEASURE");
+                            measureButton.setBackgroundColor(Color.GRAY);
+                        }
                     }
                     break;
                 case MESSAGE_DEVICE_NAME:
@@ -855,11 +855,12 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                         Toast.makeText(ctx, msg.getData().getString(TOAST),
                                 Toast.LENGTH_SHORT).show();
                     }
-                    mIsMeasureBtnClicked = false;
                     mIsCancelMeasureBtnClicked = false;
-                    if(measureButton.getText().equals("CANCEL")) {
-                        measureButton.setText("MEASURE");
-                        measureButton.setBackgroundColor(Color.GRAY);
+                    if(measureButton != null) {
+                        if (measureButton.getText().equals("CANCEL")) {
+                            measureButton.setText("MEASURE");
+                            measureButton.setBackgroundColor(Color.GRAY);
+                        }
                     }
                     break;
                 case MESSAGE_STOP:
