@@ -13,10 +13,10 @@ public class AlarmReceiver extends BroadcastReceiver
     public void onReceive(Context context, Intent intent)
     {
 //      	DataUtils.download(context);
-       //Intent service1 = new Intent(context, AlarmService.class);
-       //context.startService(service1);
+       //Intent service = new Intent(context, AlarmService.class);
+       //context.startService(service);
        SyncHandler syncHandler = new SyncHandler(context);
-       syncHandler.DoSync();
+       syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE);
 
        System.out.println("----------------------sync data onReceive complete-----------------");
         

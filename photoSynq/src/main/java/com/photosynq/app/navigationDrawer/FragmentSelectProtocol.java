@@ -81,7 +81,7 @@ public class FragmentSelectProtocol extends Fragment implements PhotosynqRespons
         if(arrayadapter.isEmpty())
         {
             SyncHandler syncHandler = new SyncHandler((NavigationDrawer)getActivity());
-            syncHandler.DoSync();
+            syncHandler.DoSync(SyncHandler.PROTOCOL_LIST_MODE);
         }
 
         final Button showAllProtocolsBtn = new Button(getActivity());

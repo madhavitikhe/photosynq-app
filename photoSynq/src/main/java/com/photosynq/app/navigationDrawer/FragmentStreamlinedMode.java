@@ -604,6 +604,53 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
         mIsCancelMeasureBtnClicked = false;
 	}
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent){
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        if (resultCode == Activity.RESULT_OK) {
+            String contents = intent.getStringExtra("SCAN_RESULT");
+            int displayedChild = viewFlipper.getDisplayedChild();
+            int childCount = viewFlipper.getChildCount();
+
+            if (displayedChild == childCount - 2) {
+                viewFlipper.stopFlipping();
+
+                if(reviewFlag)
+                {
+                    allSelectedOptions.set(requestCode,contents);
+                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                    reviewFlag = false;
+                }
+                else {
+                    allSelectedOptions.set(requestCode,contents);
+                    viewFlipper.showNext();
+                }
+                setMeasurementScreen();
+            }
+            else
+            {
+                if(reviewFlag)
+                {
+                    allSelectedOptions.set(requestCode,contents);
+                    setMeasurementScreen();
+                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                    reviewFlag = false;
+                }
+                else {
+                    allSelectedOptions.set(requestCode,contents);
+                    viewFlipper.showNext();
+                }
+            }
+
+
+            Toast.makeText(ctx, contents, Toast.LENGTH_SHORT).show();
+        } else if (resultCode == Activity.RESULT_CANCELED) {
+            // Handle cancel
+            Toast.makeText(ctx, "Cancelled", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void refreshMeasrementScreen(View measurementScreen){
         mStatusLine = (TextView) measurementScreen.findViewById(R.id.statusMessage);
         measureButton = (Button)measurementScreen.findViewById(R.id.measure_btn);

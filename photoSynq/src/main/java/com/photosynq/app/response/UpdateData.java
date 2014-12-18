@@ -47,12 +47,15 @@ public class UpdateData implements PhotosynqResponse{
 
 			if (status.toUpperCase().equals("SUCCESS"))
 			{
-                Toast.makeText(context, R.string.data_uploaded_to_server, Toast.LENGTH_LONG).show();
-				db = DatabaseHelper.getHelper(context);
-                System.out.println("Deleting row id:"+rowid);
-				db.deleteResult(rowid);
+                //Toast.makeText(context, R.string.data_uploaded_to_server, Toast.LENGTH_LONG).show();
+                long row_id = Long.parseLong(rowid);
+                if(row_id != -1) {
+                    db = DatabaseHelper.getHelper(context);
+                    System.out.println("Deleting row id:" + rowid);
+                    db.deleteResult(rowid);
+                }
 			}else {
-                Toast.makeText(context, jo.getString("notice"), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, jo.getString("notice"), Toast.LENGTH_SHORT).show();
             }
 
 		} catch (JSONException e) {

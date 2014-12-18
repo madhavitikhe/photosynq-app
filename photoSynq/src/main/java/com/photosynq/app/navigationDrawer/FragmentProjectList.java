@@ -109,7 +109,7 @@ public class FragmentProjectList extends Fragment implements PhotosynqResponse{
 		if(arrayadapter.isEmpty())
 		{
 			SyncHandler syncHandler = new SyncHandler((NavigationDrawer)getActivity());
-            syncHandler.DoSync();
+            syncHandler.DoSync(SyncHandler.PROJECT_LIST_MODE);
 		}
 	}
 

@@ -323,6 +323,7 @@ public class NavigationDrawer extends Activity implements FragmentProgress.OnFra
         this.counterItemDownloads = value;
     }
 
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent){
         super.onActivityResult(requestCode, resultCode, intent);
         mEmail = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);

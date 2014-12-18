@@ -135,7 +135,7 @@ public class FragmentSync extends Fragment implements PhotosynqResponse{
             @Override
             public void onClick(View v) {
                 SyncHandler syncHandler = new SyncHandler((NavigationDrawer)getActivity());
-                syncHandler.DoSync();
+                syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE);
                 flag = 0;
             }
         });
@@ -146,7 +146,7 @@ public class FragmentSync extends Fragment implements PhotosynqResponse{
             public void onClick(View view) {
                 db.deleteAllData();
                 SyncHandler syncHandler = new SyncHandler((NavigationDrawer)getActivity());
-                syncHandler.DoSync();
+                syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE);
                 flag = 1;
             }
         });

@@ -28,11 +28,7 @@ public class ProjectListActivity extends Activity {
 
 	ListView projectList;
 	DatabaseHelper db;
-	HTTPConnection mProjListTask = null;
-    HTTPConnection mProtocolListTask = null;
-    HTTPConnection mMacroListTask = null;
-    HTTPConnection mUpdateDataTask = null;
-    String email;
+	String email;
     String authToken;
     List<ResearchProject> researchProjectList;
     ResearchProjectArrayAdapter arrayadapter;
@@ -142,7 +138,7 @@ public class ProjectListActivity extends Activity {
         protected Void doInBackground(Void... arg0) {
             // Creating service handler class instance
             SyncHandler syncHandler = new SyncHandler(getApplicationContext());
-            syncHandler.DoSync();
+            syncHandler.DoSync(SyncHandler.PROJECT_LIST_MODE);
             return null;
         }
  
