@@ -30,19 +30,33 @@ public class UpdateMacro implements PhotosynqResponse {
         this.context = context;
     }
     @Override
-    public void onResponseReceived(String result) {
+    public void onResponseReceived(final String result) {
 
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                processResult(result);
+            }
+        });
+
+        t.start();
+
+    }
+
+    private void processResult(String result) {
         Date date = new Date();
         System.out.println("UpdateMacro Start onResponseReceived: " + date.getTime());
 
         DatabaseHelper db = DatabaseHelper.getHelper(context);
-
+        db.openWriteDatabase();
+        db.openReadDatabase();
         JSONArray jArray;
 
         if (null != result) {
             if(result.equals(Constants.SERVER_NOT_ACCESSIBLE))
             {
                 Toast.makeText(context, R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+                db.closeWriteDatabase();
+                db.closeReadDatabase();
                 return;
             }
 
@@ -79,7 +93,8 @@ public class UpdateMacro implements PhotosynqResponse {
         }
         System.out.println("###### writing macros :......");
         CommonUtils.writeStringToFile(context, "macros.js", dataString.toString());
-
+        db.closeWriteDatabase();
+        db.closeReadDatabase();
         Date date1 = new Date();
         System.out.println("UpdateMacro End onResponseReceived: " + date1.getTime());
     }
