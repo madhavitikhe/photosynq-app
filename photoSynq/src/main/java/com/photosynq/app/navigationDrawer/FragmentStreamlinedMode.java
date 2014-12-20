@@ -841,46 +841,50 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                     if(mIsCancelMeasureBtnClicked == false) {
                         // byte[] readBuf = (byte[]) msg.obj;
                         StringBuffer measurement = (StringBuffer) msg.obj;
-                        // construct a string from the valid bytes in the buffer
-                        // String readMessage = new String(readBuf, 0, msg.arg1);
-                        mStatusLine.setText(R.string.connected);
-                        String dataString;
-                        StringBuffer options = new StringBuffer();
-                        options.append("\"user_answers\": [");
-                        //loop
-                        for (int i = 0; i < allOptions.size(); i++) {
-                            options.append("\"" + allOptions.get(i) + "\"");
-                            if (i < allOptions.size() - 1)
-                                options.append(",");
-                        }
-                        options.append(" ],");
+                        // Do not process the message if contain pwr_off from device
+                        if (!measurement.toString().contains("pwr_off")) {
+
+                            // construct a string from the valid bytes in the buffer
+                            // String readMessage = new String(readBuf, 0, msg.arg1);
+                            mStatusLine.setText(R.string.connected);
+                            String dataString;
+                            StringBuffer options = new StringBuffer();
+                            options.append("\"user_answers\": [");
+                            //loop
+                            for (int i = 0; i < allOptions.size(); i++) {
+                                options.append("\"" + allOptions.get(i) + "\"");
+                                if (i < allOptions.size() - 1)
+                                    options.append(",");
+                            }
+                            options.append(" ],");
 //                    String options = new String ("\"user_answers\": [\""+option1+"\","+"\""+option2+"\","+"\""+option3+"\" ],");
-                        long time = System.currentTimeMillis();
-                        if (options.equals("")) {
-                            dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceAll("\\{", "{\"time\":\"" + time + "\",") + "\n];";
-                            System.out.println("All Options" + dataString);
-                        } else {
-                            String currentLocation = PrefUtils.getFromPrefs(ctx, PrefUtils.PREFS_CURRENT_LOCATION, "NONE");
-                            if (!currentLocation.equals("NONE")) {
-                                options = options.append("\"location\":[" + currentLocation + "],");
-                                dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options).replaceAll("\\{", "{\"time\":\"" + time + "\",") + "\n];";
+                            long time = System.currentTimeMillis();
+                            if (options.equals("")) {
+                                dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceAll("\\{", "{\"time\":\"" + time + "\",") + "\n];";
                                 System.out.println("All Options" + dataString);
                             } else {
-                                dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options).replaceAll("\\{", "{\"time\":\"" + time + "\",") + "\n];";
-                                System.out.println("All Options" + dataString);
+                                String currentLocation = PrefUtils.getFromPrefs(ctx, PrefUtils.PREFS_CURRENT_LOCATION, "NONE");
+                                if (!currentLocation.equals("NONE")) {
+                                    options = options.append("\"location\":[" + currentLocation + "],");
+                                    dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options).replaceAll("\\{", "{\"time\":\"" + time + "\",") + "\n];";
+                                    System.out.println("All Options" + dataString);
+                                } else {
+                                    dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options).replaceAll("\\{", "{\"time\":\"" + time + "\",") + "\n];";
+                                    System.out.println("All Options" + dataString);
+                                }
                             }
+                            System.out.println("###### writing data.js :" + dataString);
+                            CommonUtils.writeStringToFile(ctx, "data.js", dataString);
+                            //mBluetoothService.stop();
+                            Intent intent = new Intent(ctx, DisplayResultsActivity.class);
+                            intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+                            intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocolJson);
+                            intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
+                            String reading = measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options).replaceAll("\\{", "{\"time\":\"" + time + "\",");
+                            //reading = reading.replaceFirst("\\{", "{"+options);
+                            intent.putExtra(DatabaseHelper.C_READING, reading);
+                            startActivity(intent);
                         }
-                        System.out.println("###### writing data.js :" + dataString);
-                        CommonUtils.writeStringToFile(ctx, "data.js", dataString);
-                        //mBluetoothService.stop();
-                        Intent intent = new Intent(ctx, DisplayResultsActivity.class);
-                        intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
-                        intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocolJson);
-                        intent.putExtra(Utils.APP_MODE, Utils.APP_MODE_STREAMLINE);
-                        String reading = measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options).replaceAll("\\{", "{\"time\":\"" + time + "\",");
-                        //reading = reading.replaceFirst("\\{", "{"+options);
-                        intent.putExtra(DatabaseHelper.C_READING, reading);
-                        startActivity(intent);
                     }
                     mIsCancelMeasureBtnClicked = false;
                     if(measureButton != null) {
@@ -944,6 +948,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
     {
         View measurementView = getActivity().findViewById(9595);
         LinearLayout liLayout = (LinearLayout) measurementView.findViewById(R.id.linearlayoutoptions);
+        liLayout.removeAllViews();
         ArrayList<Question> selectedQuestions = new ArrayList<Question>();
         if(null != allSelectedQuestions)
         {

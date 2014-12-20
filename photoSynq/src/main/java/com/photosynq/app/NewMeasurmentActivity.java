@@ -737,48 +737,45 @@ GooglePlayServicesClient.OnConnectionFailedListener{
             case MESSAGE_READ:
                // byte[] readBuf = (byte[]) msg.obj;
             	StringBuffer measurement = (StringBuffer)msg.obj;
-                // construct a string from the valid bytes in the buffer
-               // String readMessage = new String(readBuf, 0, msg.arg1);
-                mStatusLine.setText(R.string.start_measure);
-                String dataString;
-                StringBuffer options = new StringBuffer();
-                options.append("\"user_answers\": [\"");
-                //loop
-                for(int i=0;i<allOptions.size();i++){
-                    options.append("\"" + allOptions.get(i) + "\"");
-                    if(i < allOptions.size()-1)
-                        options.append(",");
-                }
-                options.append("\" ],");
+                // Do not process the message if contain pwr_off from device
+                if (!measurement.toString().contains("pwr_off")) {
+                    // construct a string from the valid bytes in the buffer
+                    // String readMessage = new String(readBuf, 0, msg.arg1);
+                    mStatusLine.setText(R.string.start_measure);
+                    String dataString;
+                    StringBuffer options = new StringBuffer();
+                    options.append("\"user_answers\": [\"");
+                    //loop
+                    for (int i = 0; i < allOptions.size(); i++) {
+                        options.append("\"" + allOptions.get(i) + "\"");
+                        if (i < allOptions.size() - 1)
+                            options.append(",");
+                    }
+                    options.append("\" ],");
 
-                if (options.toString().equals(""))
-                {
-                	 dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "")+"\n];";
+                    if (options.toString().equals("")) {
+                        dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "") + "\n];";
+                    } else {
+                        String currentLocation = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, "NONE");
+                        if (!currentLocation.equals("NONE")) {
+                            options.append("\"location\":[" + currentLocation + "],");
+                            dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options) + "\n];";
+                        } else {
+                            dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options) + "\n];";
+                        }
+                    }
+                    System.out.println("###### writing data.js :" + dataString);
+                    CommonUtils.writeStringToFile(getApplicationContext(), "data.js", dataString);
+                    //mBluetoothService.stop();
+                    Intent intent = new Intent(getApplicationContext(), DisplayResultsActivity.class);
+                    intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+                    intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocolJson);
+                    intent.putExtra(Utils.APP_MODE, appMode);
+                    String reading = measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options);
+                    //reading = reading.replaceFirst("\\{", "{"+options);
+                    intent.putExtra(DatabaseHelper.C_READING, reading);
+                    startActivity(intent);
                 }
-                else
-                {
-                	String currentLocation = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, "NONE");
-                	if(!currentLocation.equals("NONE"))
-                	{
-                		options.append("\"location\":["+currentLocation+"],");
-                		dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options)+"\n];";
-                	}
-                	else
-                	{
-                		dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options)+"\n];";
-                	}
-                }
-                System.out.println("###### writing data.js :"+dataString);
-                CommonUtils.writeStringToFile(getApplicationContext(), "data.js", dataString);
-                //mBluetoothService.stop();
-                Intent intent = new Intent(getApplicationContext(),DisplayResultsActivity.class);
-        		intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
-        		intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocolJson);
-        		intent.putExtra(Utils.APP_MODE, appMode);
-        		String reading = measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options);
-        		//reading = reading.replaceFirst("\\{", "{"+options);
-        		intent.putExtra(DatabaseHelper.C_READING, reading);
-        		startActivity(intent);
                 break;
             case MESSAGE_DEVICE_NAME:
                 // save the connected device's name
