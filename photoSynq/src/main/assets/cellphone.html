@@ -105,7 +105,7 @@ jQuery(document).ready(function(){
 			ListContainer += '</div>';
 
 			var simpleHTML ='';
-			
+			var macro = false;
 			if(macrcoID){
 				var fn = window['macro_'+macrcoID];
 				if (typeof fn === "function"){
@@ -118,7 +118,7 @@ jQuery(document).ready(function(){
 				}
 			}
 
-			// Add macro data to table
+            // Add macro data to table
 			//---------------------------------------------------------------------
 			if(macro){
 				var col = 1;
@@ -147,6 +147,8 @@ jQuery(document).ready(function(){
 					col++;
 				}
 				DetailedContainer += '</tr>'
+			}else{
+
 			}
 
 			// Add environmental & misc data to table
