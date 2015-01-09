@@ -19,6 +19,9 @@ import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.PrefUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +67,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	public static final String C_PROTOCOL_JSON = "protocol_json";
 	private static final String C_MACRO_ID = "macro_id";
+    private static final String C_PROTOCOL_PRE_SEL = "protocol_pre_sel";
 
 	// Macro column names
 	private static final String C_DEFAULT_X_AXIS = "default_x_axis";
@@ -110,8 +114,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String CREATE_TABLE_PROTOCOL = "CREATE TABLE "
 			+ TABLE_PROTOCOL + "(" + C_RECORD_HASH + " TEXT ," + C_ID
 			+ " TEXT ," + C_NAME + " TEXT ," + C_PROTOCOL_JSON + " TEXT ,"
-			+ C_DESCRIPTION + " TEXT ," + C_MACRO_ID + " TEXT ," + C_SLUG
-			+ " TEXT)";
+			+ C_DESCRIPTION + " TEXT ," + C_MACRO_ID + " TEXT ," + C_SLUG + " TEXT ,"
+            + C_PROTOCOL_PRE_SEL +" TEXT)";
 
 	// Macro table create statement
 	private static final String CREATE_TABLE_MACRO = "CREATE TABLE "
@@ -740,6 +744,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					null != protocol.getMacroId() ? protocol.getMacroId() : "");
 			values.put(C_SLUG, null != protocol.getSlug() ? protocol.getSlug()
 					: "");
+            values.put(C_PROTOCOL_PRE_SEL,
+                    null != protocol.getPreSelected() ? protocol.getPreSelected() : "");
 			// insert row
 			long row_id = db.insert(TABLE_PROTOCOL, null, values);
 			if (row_id >= 0) {
@@ -772,6 +778,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		values.put(C_MACRO_ID,
 				null != protocol.getMacroId() ? protocol.getMacroId() : "");
 		values.put(C_SLUG, null != protocol.getSlug() ? protocol.getSlug() : "");
+        values.put(C_PROTOCOL_PRE_SEL, null != protocol.getPreSelected() ? protocol.getPreSelected() : "");
 
 		int rowsaffected = db.update(TABLE_PROTOCOL, values, C_ID + " = ?",
 				new String[] { String.valueOf(protocol.getId()) });
@@ -798,7 +805,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		if (c.moveToFirst()) {
 			do {
 				Protocol protocol = new Protocol();
-				protocol.setRecordHash(c.getString(c
+                protocol.setRecordHash(c.getString(c
 						.getColumnIndex(C_RECORD_HASH)));
 				protocol.setId(c.getString(c.getColumnIndex(C_ID)));
 				protocol.setDescription(c.getString(c
@@ -808,6 +815,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 						.getColumnIndex(C_PROTOCOL_JSON)));
 				protocol.setSlug(c.getString(c.getColumnIndex(C_SLUG)));
 				protocol.setMacroId(c.getString(c.getColumnIndex(C_MACRO_ID)));
+                protocol.setPreSelected(c.getString(c.getColumnIndex(C_PROTOCOL_PRE_SEL)));
 
 				// adding to todo list
 				protocols.add(protocol);
@@ -820,39 +828,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Get all protocols
     public List<Protocol> getFewProtocolList() {
-        SQLiteDatabase db = openReadDatabase();
         List<Protocol> protocols = new ArrayList<Protocol>();
-        int[] protocolsID = {37,45,23,11,31,48,49};
-        System.out.println(protocolsID + "" + protocolsID.length);
-        for(int i = 0; i < protocolsID.length; i++) {
-            String selectQuery = "SELECT  * FROM " + TABLE_PROTOCOL + " WHERE " + C_ID + " = " + protocolsID[i];
+        List<Protocol> allProtocols = getAllProtocolsList();
 
-            System.out.println(selectQuery);
-            Log.e("DATABASE_HELPER_getAllProtocol", selectQuery);
-
-            Cursor c = db.rawQuery(selectQuery, null);
-
-            if (c.moveToFirst()) {
-                do {
-                    Protocol protocol = new Protocol();
-                    protocol.setRecordHash(c.getString(c
-                            .getColumnIndex(C_RECORD_HASH)));
-                    protocol.setId(c.getString(c.getColumnIndex(C_ID)));
-                    protocol.setDescription(c.getString(c
-                            .getColumnIndex(C_DESCRIPTION)));
-                    protocol.setName(c.getString(c.getColumnIndex(C_NAME)));
-                    protocol.setProtocol_json(c.getString(c
-                            .getColumnIndex(C_PROTOCOL_JSON)));
-                    protocol.setSlug(c.getString(c.getColumnIndex(C_SLUG)));
-                    protocol.setMacroId(c.getString(c.getColumnIndex(C_MACRO_ID)));
-
-                    // adding to todo list
-                    protocols.add(protocol);
-                } while (c.moveToNext());
+        for(int proIdx = 0 ; proIdx < allProtocols.size(); proIdx++){
+            Protocol protocol = allProtocols.get(proIdx);
+            if(protocol.isPreSelected()){
+                protocols.add(protocol);
             }
-            c.close();
+
         }
-        closeReadDatabase();
+
         return protocols;
     }
 
@@ -878,6 +864,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					.getColumnIndex(C_PROTOCOL_JSON)));
 			protocol.setSlug(c.getString(c.getColumnIndex(C_SLUG)));
 			protocol.setMacroId(c.getString(c.getColumnIndex(C_MACRO_ID)));
+            protocol.setPreSelected(c.getString(c.getColumnIndex(C_PROTOCOL_PRE_SEL)));
 		}
 		c.close();
         closeReadDatabase();
