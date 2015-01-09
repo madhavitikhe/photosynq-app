@@ -225,6 +225,8 @@ public class NavigationDrawer extends Activity implements FragmentProgress.OnFra
         @Override
         public void onDrawerOpened(View drawerView) {
             navigationAdapter.notifyDataSetChanged();
+            mEmail = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+            user_email.setText(mEmail);
             //?? supportInvalidateOptionsMenu();
         }
     }
