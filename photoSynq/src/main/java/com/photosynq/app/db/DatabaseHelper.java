@@ -27,7 +27,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	// Database Version
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	// Database Name
 	private static final String DATABASE_NAME = "PhotoSynqDB";
 	// Table Names
