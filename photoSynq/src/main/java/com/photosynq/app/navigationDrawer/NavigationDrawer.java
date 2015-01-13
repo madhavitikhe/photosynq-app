@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -166,8 +167,21 @@ public class NavigationDrawer extends Activity implements FragmentProgress.OnFra
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int posicao, long id) {
-            setLastPosition(posicao);
-            setFragmentList(lastPosition);
+
+            boolean retVal = true;
+            if(lastPosition == 5) {
+                FragmentManager fragmentManager = getFragmentManager();
+                Fragment fragment = fragmentManager.findFragmentByTag(FragmentData.class.getName());
+                if (fragment != null) {
+
+                    retVal = ((FragmentData) fragment).saveData();
+                }
+            }
+
+            if(retVal) {
+                setLastPosition(posicao);
+                setFragmentList(lastPosition);
+            }
             layoutDrawer.closeDrawer(linearDrawer);
         }
     }

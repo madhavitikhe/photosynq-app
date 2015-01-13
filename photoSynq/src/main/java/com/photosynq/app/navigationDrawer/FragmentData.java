@@ -24,7 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FragmentData extends Fragment {
-	MyPageAdapter pageAdapter;
+    List<Fragment> fragments;
+    MyPageAdapter pageAdapter;
     ViewPager viewPager;
 	DatabaseHelper db;
 	private String userID;
@@ -69,7 +70,7 @@ public class FragmentData extends Fragment {
 		viewPager = (ViewPager) rootView.findViewById(R.id.viewPager);
        // viewPager = (NonSwipableViewPager) rootView.findViewById(R.id.viewPager);
 
-        final List<Fragment> fragments = getFragments(questions);
+        fragments = getFragments(questions);
         pageAdapter = new MyPageAdapter(getFragmentManager(), fragments);
 
         viewPager.setAdapter(pageAdapter);
@@ -99,6 +100,18 @@ public class FragmentData extends Fragment {
 		return rootView;
 	}
 
+    public boolean saveData(){
+        boolean retVal = false;
+
+        int fragCnt = fragments.size();
+        for(int idx = 0; idx < fragCnt; idx++){
+            retVal = ((DataFirstFragment)fragments.get(idx)).saveData(false);
+            if(retVal == false)
+                break;
+        }
+
+        return  retVal;
+    }
     /**
      * It's calculate fragment size and send boolean values for prev and next to DataFirstFragment.
      */
@@ -156,7 +169,6 @@ public class FragmentData extends Fragment {
 		public int getCount() {
 			return this.fragments.size();
 		}
-
 
     }
 

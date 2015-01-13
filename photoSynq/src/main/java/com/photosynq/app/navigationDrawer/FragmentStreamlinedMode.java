@@ -189,6 +189,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
             scanMode = false;
             allSelectedOptions.add(questionLoop,"");
             LinearLayout mainLinearLayout = new LinearLayout(ctx);
+            mainLinearLayout.setBackgroundColor(Color.WHITE);
             mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
             mainLinearLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 

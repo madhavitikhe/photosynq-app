@@ -262,6 +262,10 @@ public class DataFirstFragment extends Fragment implements View.OnFocusChangeLis
     //Save all user selected values into database like(user selected, fixed value, auto inc, scan code)
     public boolean saveData(boolean showMessage) {
         boolean retVal = true;
+
+        if(radioGroup == null)
+            return true;
+
         Data data = new Data();
         data.setUser_id(userId);
         data.setProject_id(projectId);
