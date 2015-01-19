@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -20,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.photosynq.app.AlarmReceiver;
@@ -44,6 +46,10 @@ public class FragmentSync extends Fragment implements PhotosynqResponse{
     private String userId;
     AppSettings appSettings;
     int flag = 0;
+    private TextView autoSyncText;
+    private TextView syncTimeText;
+    private Typeface robotoRegular;
+    private Typeface robotoMedium;
 	
     public static FragmentSync newInstance() {
         FragmentSync fragment = new FragmentSync();
@@ -62,6 +68,14 @@ public class FragmentSync extends Fragment implements PhotosynqResponse{
 
         View rootView = inflater.inflate(R.layout.fragment_sync, container, false);
         db = DatabaseHelper.getHelper(getActivity());
+        robotoRegular = Typeface.createFromAsset(getActivity().getAssets(), "Roboto-Regular.ttf");
+        robotoMedium = Typeface.createFromAsset(getActivity().getAssets(), "Roboto-Medium.ttf");
+
+        autoSyncText = (TextView) rootView.findViewById(R.id.auto_sync_text);
+        syncTimeText = (TextView) rootView.findViewById(R.id.sync_time_text);
+        autoSyncText.setTypeface(robotoMedium);
+        syncTimeText.setTypeface(robotoRegular);
+
 		intervalSpinner = (Spinner) rootView.findViewById(R.id.interval_time_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.sync_intervals, android.R.layout.simple_spinner_item);
@@ -130,6 +144,7 @@ public class FragmentSync extends Fragment implements PhotosynqResponse{
         });
 
 		syncBtn = (Button) rootView.findViewById(R.id.sync_btn);
+        syncBtn.setTypeface(robotoMedium);
 		syncBtn.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -141,6 +156,7 @@ public class FragmentSync extends Fragment implements PhotosynqResponse{
         });
 
         clearCacheBtn = (Button) rootView.findViewById(R.id.clear_cache);
+        clearCacheBtn.setTypeface(robotoRegular);
         clearCacheBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
