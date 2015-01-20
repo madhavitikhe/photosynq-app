@@ -43,97 +43,28 @@ var replacements = {
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------
-// Array with Highchart colors
-//-----------------------------------------------------------------------------------------------------------------------------------
-
-// First five bootstrap
-var HighchartColors = [
-   '#428bca', 
-   '#5cb85c', 
-   '#f0ad4e', 
-   '#5bc0de', 
-   '#d9534f', 
-   '#492970',
-   '#f28f43', 
-   '#77a1e5', 
-   '#c42525', 
-   '#a6c96a'
-];
-
-//-----------------------------------------------------------------------------------------------------------------------------------
 // Array with variables to hide from user in cellphone app
 //-----------------------------------------------------------------------------------------------------------------------------------
-var variablehidephone = [ 'userinput_1_question',
+var variablehidephone = [
+	'userinput_1_question',
 	'userinput_1_answer',
 	'userinput_2_question',
 	'userinput_2_answer',
 	'device_id',
 	'firmware_version',
-	"time",
+	'time',
+	'protocol_id',
 	'protocol_number',
 	'protocol_name',
 	'baseline_sample',
 	'baseline_values',
 	'chlorophyll_spad_calibration',
-	//'light_intensity',
 	'red',
 	'green',
 	'blue',
-	//'relative_humidity',
-	//'temperature',
-	//'co2_content',
 	'board_temperature',
 	'averages',
 	'repeats',
 	'data_raw',
 	'end'
 ];
-
-//-----------------------------------------------------------------------------------------------------------------------------------
-// Initial data for plot on phone
-//-----------------------------------------------------------------------------------------------------------------------------------
-var plotoptionsphone = {
-	chart: {
-		//zoomType: 'xy',
-		pinchType : 'none',
-		type: 'line',
-		animation: false,
-		height:200
-	},
-	title: {
-		text: false
-	},
-	subtitle: {
-		text: false
-	},
-	xAxis: {
-		title: {
-			text: 'Measuring pulses'
-		}
-	},
-	yAxis: {
-		title: {
-			text: 'Intensitity'
-		},
-		plotLines: [{
-			value: 0,
-			width: 1,
-			color: '#808080'
-		}]
-	},
-	plotOptions: {
-		series: {
-			animation: false
-		}
-	},
-	tooltip: false,
-	legend: false,
-	credits: false,
-	series: [{
-		marker: {
-			enabled: false
-		},
-		lineWidth: 6,
-		data: []
-	}]
-};
