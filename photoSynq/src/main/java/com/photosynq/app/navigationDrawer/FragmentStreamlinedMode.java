@@ -537,7 +537,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                 if (mBluetoothService == null) {
                     mBluetoothService = new BluetoothService(ctx, mHandler);
                 }
-                if (measureButton.getText().equals("MEASURE")) {
+                if (measureButton.getText().equals("+ Take Measurement")) {
                     if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
                         // Get the BLuetoothDevice object
                         if (mBluetoothAdapter == null)
@@ -557,7 +557,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                 {
                     mIsCancelMeasureBtnClicked = true;
                     mHandler.obtainMessage(MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, 0).sendToTarget();
-                    measureButton.setText("MEASURE");
+                    measureButton.setText("+ Take Measurement");
                     measureButton.setBackgroundColor(Color.GRAY);
                 }
             }
@@ -668,7 +668,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
             @Override
             public void onClick(View view) {
                 mIsMeasureBtnClicked = true;
-                if(measureButton.getText().equals("MEASURE")){
+                if(measureButton.getText().equals("+ Take Measurement")){
                     if (mBluetoothService == null) {
                         mBluetoothService = new BluetoothService(ctx, mHandler);
                     }
@@ -693,7 +693,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                 {
                     mIsCancelMeasureBtnClicked = true;
                     mHandler.obtainMessage(MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, 0).sendToTarget();
-                    measureButton.setText("MEASURE");
+                    measureButton.setText("+ Take Measurement");
                     measureButton.setBackgroundColor(Color.GRAY);
                 }
             }
@@ -890,7 +890,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                     mIsCancelMeasureBtnClicked = false;
                     if(measureButton != null) {
                         if (measureButton.getText().equals("CANCEL")) {
-                            measureButton.setText("MEASURE");
+                            measureButton.setText("+ Take Measurement");
                             measureButton.setBackgroundColor(Color.GRAY);
                         }
                     }
@@ -910,7 +910,7 @@ public class FragmentStreamlinedMode extends Fragment implements LocationListene
                     mIsCancelMeasureBtnClicked = false;
                     if(measureButton != null) {
                         if (measureButton.getText().equals("CANCEL")) {
-                            measureButton.setText("MEASURE");
+                            measureButton.setText("+ Take Measurement");
                             measureButton.setBackgroundColor(Color.GRAY);
                         }
                     }
