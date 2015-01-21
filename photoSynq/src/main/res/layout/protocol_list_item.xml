@@ -15,7 +15,7 @@
 		android:paddingTop="15dp"
 		android:paddingBottom="15dp"
 		android:paddingRight="15dp"
-		android:background="@drawable/selector_card_background"
+		android:background="#f1f5f7"
 		android:descendantFocusability="afterDescendants"
 		>
 
@@ -23,6 +23,8 @@
 			android:id="@+id/protocol_name"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+            android:textColor="#686969"
+            android:textSize="16sp"
 			android:textStyle="bold"
 			android:text=""/>
 

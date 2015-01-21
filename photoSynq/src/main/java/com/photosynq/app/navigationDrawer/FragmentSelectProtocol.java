@@ -3,6 +3,7 @@ package com.photosynq.app.navigationDrawer;
 import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -43,6 +44,8 @@ public class FragmentSelectProtocol extends Fragment implements PhotosynqRespons
     private DatabaseHelper db;
     private String userId;
     AppSettings appSettings;
+    private Button showAllProtocolsBtn;
+    private Typeface robotoMedium;
 	
 	public static FragmentSelectProtocol newInstance() {
 		FragmentSelectProtocol fragment = new FragmentSelectProtocol();
@@ -63,6 +66,7 @@ public class FragmentSelectProtocol extends Fragment implements PhotosynqRespons
         db = DatabaseHelper.getHelper(getActivity());
         userId = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
         appSettings = db.getSettings(userId);
+        robotoMedium = Typeface.createFromAsset(getActivity().getAssets(), "Roboto-Medium.ttf");
 
         Bundle extras = getArguments();
         if (extras != null) {
@@ -84,17 +88,15 @@ public class FragmentSelectProtocol extends Fragment implements PhotosynqRespons
             syncHandler.DoSync(SyncHandler.PROTOCOL_LIST_MODE);
         }
 
-        final Button showAllProtocolsBtn = new Button(getActivity());
-        showAllProtocolsBtn.setText(R.string.show_all_protocols);
-        protocolList.addFooterView(showAllProtocolsBtn);
-
+        showAllProtocolsBtn = (Button) rootView.findViewById(R.id.show_all_protocol_btn);
+        showAllProtocolsBtn.setTypeface(robotoMedium);
         showAllProtocolsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(showAllProtocolsBtn.getText().equals("Show All Protocols")){
                     showAllProtocolList();
-                    showAllProtocolsBtn.setText("Less Protocol List");
-                }else if (showAllProtocolsBtn.getText().equals("Less Protocol List")){
+                    showAllProtocolsBtn.setText("Show Pre-Selected Protocols");
+                }else if (showAllProtocolsBtn.getText().equals("Show Pre-Selected Protocols")){
                     showFewProtocolList();
                     showAllProtocolsBtn.setText("Show All Protocols");
                 }

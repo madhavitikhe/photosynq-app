@@ -1,6 +1,7 @@
 package com.photosynq.app;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ public class ProtocolArrayAdapter extends BaseAdapter implements ListAdapter {
     public final Context context;
 	public final List<Protocol> protocolList;
     LayoutInflater mInflater;
+    private Typeface robotoRegular;
 
 	public ProtocolArrayAdapter(Context context, List<Protocol> protocolList) {
 		//assert activity != null;
@@ -59,9 +61,11 @@ public class ProtocolArrayAdapter extends BaseAdapter implements ListAdapter {
 			//convertView = getLayoutInflater().inflate(R.layout.protocol_list_item, null);
         convertView = mInflater.inflate(R.layout.protocol_list_item, null);
 
+        robotoRegular = Typeface.createFromAsset(parent.getContext().getAssets(), "Roboto-Regular.ttf");
+
 		TextView tvProtocolName = (TextView) convertView.findViewById(R.id.protocol_name);
 		TextView tvProtocolDesc = (TextView) convertView.findViewById(R.id.protocol_desc);
-
+        tvProtocolName.setTypeface(robotoRegular);
 		Protocol protocol = getItem(position);
 		if (null != protocol) {
 			String protocolDesc;
@@ -69,7 +73,7 @@ public class ProtocolArrayAdapter extends BaseAdapter implements ListAdapter {
 				protocolDesc = protocol.getDescription();
 				tvProtocolName.setText(protocol.getName());
 				// only show 100 chars of descr.
-				tvProtocolDesc.setText(protocolDesc);//.substring(0, (projectDesc.length()<100?projectDesc.length():100))+"...");
+//				tvProtocolDesc.setText(protocolDesc);//.substring(0, (projectDesc.length()<100?projectDesc.length():100))+"...");
 				//tvProjectDesc.setText(projectDesc);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

@@ -56,7 +56,7 @@
     <string name="data_uploaded_to_server">Your data was successfully uploaded to the Photosynq server.</string>
     <string name="keep_data">Keep Data Successfully</string>
     <string name="sync_successful">Sync successful!</string>
-    <string name="measure_btn"> MEASURE </string>
+    <string name="measure_btn">+ Take Measurement</string>
     <string name="streamlined_mode">Project Measurement</string>
     <string name="normal_mode">Normal Mode</string>
     <string name="quick_measure_mode">Quick Measurement</string>
