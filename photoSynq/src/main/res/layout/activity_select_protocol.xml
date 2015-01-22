@@ -22,4 +22,23 @@ android:orientation="vertical">
         android:dividerHeight="10dp"
         />
 </LinearLayout>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50dip"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_margin="8dp">
+
+        <Button
+            android:id="@+id/show_all_protocol_btn"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#fc7351"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+            android:text="@string/show_all_protocols" >
+        </Button>
+    </RelativeLayout>
 </LinearLayout>

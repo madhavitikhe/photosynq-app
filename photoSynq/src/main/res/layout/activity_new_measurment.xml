@@ -26,6 +26,8 @@
                 android:id="@+id/protocol_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#616161"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:text=""/>
 
@@ -33,6 +35,8 @@
                 android:id="@+id/protocol_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#8c8c8c"
+                android:textSize="16sp"
                 android:text=""/>
 
         </LinearLayout>
@@ -41,13 +45,13 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="80dip"
+        android:layout_height="90dip"
         android:gravity="center"
         android:orientation="horizontal"
         android:paddingTop="5dp" >
-      <LinearLayout 
+      <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" 
+        android:layout_height="match_parent"
         android:orientation="vertical">
  		<TextView
             android:id="@+id/statusMessage"
@@ -55,11 +59,17 @@
             android:layout_height="wrap_content"
             android:text="@string/start_measure"
             android:textAlignment="center"
-            android:textSize="12sp" />
+            android:textColor="#8c8c8c"
+            android:layout_marginLeft="5dp"
+            android:textSize="14sp" />
         <Button
             android:id="@+id/measure_btn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:background="#fc7351"
+            android:textSize="18sp"
+            android:textColor="#ffffff"
             android:text="@string/measure_btn"
             android:onClick="takeMeasurement" >
         </Button>

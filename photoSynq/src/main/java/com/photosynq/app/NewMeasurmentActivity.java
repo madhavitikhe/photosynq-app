@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -101,6 +102,8 @@ GooglePlayServicesClient.OnConnectionFailedListener{
     private TextView protDescTV;
     private Button measureBtn;
     ArrayList<String> allOptions;
+    private Typeface robotoRegular;
+    private Typeface robotoMedium;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +120,9 @@ GooglePlayServicesClient.OnConnectionFailedListener{
             protocolName = extras.getString(Protocol.NAME);
             protocolDescription = extras.getString(Protocol.DESCRIPTION);
 			userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+
+            robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
+            robotoMedium = Typeface.createFromAsset(getAssets(), "Roboto-Medium.ttf");
 
 			if (null == protocolJson) protocolJson="";
 			System.out.println(this.getClass().getName()+"############app mode="+appMode);
@@ -235,13 +241,19 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			setContentView(R.layout.activity_new_measurment);
 			protNameTV = (TextView) findViewById(R.id.protocol_name);
             protDescTV = (TextView) findViewById(R.id.protocol_desc);
+
             protNameTV.setText(protocolName);
             protDescTV.setText(protocolDescription);
+
+            protNameTV.setTypeface(robotoRegular);
+            protDescTV.setTypeface(robotoRegular);
+
             measureBtn = (Button) findViewById(R.id.measure_btn);
+            measureBtn.setTypeface(robotoMedium);
 			
 		}
 		mStatusLine = (TextView) findViewById(R.id.statusMessage);
-				
+		mStatusLine.setTypeface(robotoRegular);
 			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 			if (!mBluetoothAdapter.isEnabled()) {
 				Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -274,7 +286,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 
 	public void takeMeasurement(View view) throws JSONException
 	{
-        if(measureBtn.getText().equals("MEASURE")) {
+        if(measureBtn.getText().equals("+ Take Measurement")) {
             if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
                 // Get the BLuetoothDevice object
                 if(null == deviceAddress)
@@ -340,7 +352,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 
     public void onResume(){
         super.onResume();
-        measureBtn.setText("MEASURE");
+        measureBtn.setText("+ Take Measurement");
     }
     
     

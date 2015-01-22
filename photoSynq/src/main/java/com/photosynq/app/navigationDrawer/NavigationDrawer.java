@@ -123,15 +123,17 @@ public class NavigationDrawer extends Activity implements FragmentProgress.OnFra
             @Override
             public void onClick(View v) {
                 //Delete user preferences(Credentials).
-                SharedPreferences settings =  PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                SharedPreferences.Editor editor = settings.edit();
-                editor.clear();
-                editor.commit();
-                Intent intent = new Intent(getApplicationContext(),NavigationDrawer.class);
-                intent.putExtra("finish", true);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                Intent intent = new Intent(getApplicationContext(),UserProfile.class);
                 startActivity(intent);
-                finish();
+//                SharedPreferences settings =  PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+//                SharedPreferences.Editor editor = settings.edit();
+//                editor.clear();
+//                editor.commit();
+//                Intent intent = new Intent(getApplicationContext(),NavigationDrawer.class);
+//                intent.putExtra("finish", true);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                startActivity(intent);
+//                finish();
             }
         });
 

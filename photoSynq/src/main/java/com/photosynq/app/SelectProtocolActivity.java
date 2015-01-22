@@ -3,6 +3,7 @@ package com.photosynq.app;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,6 +34,8 @@ public class SelectProtocolActivity extends Activity {
 	List<Protocol> protocols;
 	ProtocolArrayAdapter arrayadapter;
 	private ProgressDialog pDialog;
+    private Button showAllProtocolsBtn;
+    private Typeface robotoMedium;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,6 +49,7 @@ public class SelectProtocolActivity extends Activity {
 		
 		// Initialize ListView
 		protocolList = (ListView) findViewById(R.id.protocol_list_view);
+        robotoMedium = Typeface.createFromAsset(getAssets(), "Roboto-Medium.ttf");
 
 		showFewProtocolList();
 
@@ -54,17 +58,15 @@ public class SelectProtocolActivity extends Activity {
 			new ProtocolListAsync().execute();
 		}
 
-        final Button showAllProtocolsBtn = new Button(this);
-        showAllProtocolsBtn.setText(R.string.show_all_protocols);
-        protocolList.addFooterView(showAllProtocolsBtn);
-
+        showAllProtocolsBtn = (Button) findViewById(R.id.show_all_protocol_btn);
+        showAllProtocolsBtn.setTypeface(robotoMedium);
         showAllProtocolsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(showAllProtocolsBtn.getText().equals("Show All Protocols")){
                     showAllProtocolList();
-                    showAllProtocolsBtn.setText("Less Protocol List");
-                }else if (showAllProtocolsBtn.getText().equals("Less Protocol List")){
+                    showAllProtocolsBtn.setText("Show Pre-Selected Protocols");
+                }else if (showAllProtocolsBtn.getText().equals("Show Pre-Selected Protocols")){
                     showFewProtocolList();
                     showAllProtocolsBtn.setText("Show All Protocols");
                 }

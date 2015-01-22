@@ -56,7 +56,7 @@
     <string name="data_uploaded_to_server">Your data was successfully uploaded to the Photosynq server.</string>
     <string name="keep_data">Keep Data Successfully</string>
     <string name="sync_successful">Sync successful!</string>
-    <string name="measure_btn"> MEASURE </string>
+    <string name="measure_btn">+ Take Measurement</string>
     <string name="streamlined_mode">Project Measurement</string>
     <string name="normal_mode">Normal Mode</string>
     <string name="quick_measure_mode">Quick Measurement</string>
@@ -73,6 +73,7 @@
     <string name="sync_btn">Sync Data</string>
     <string name="clear_cache">Clear Cache</string>
     <string name="sync_interval_lbl">Sync interval (in mins)</string>
+    <string name="sync_time_msg">Time between Sync attempts with website. Sync includes projects, protocols, macros, and data.</string>
     <string name="userSelected">User Selected</string>
     <string name="selectFromWeb">Set of answers cannot be changed here.  If you are the project lead, you can change the set of answers by editing the project</string>
     <string name="fixedValue">Fixed value</string>
@@ -97,5 +98,6 @@
     <string name="title_activity_demo">DemoActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="loading_progress">syncing data with PhotosynQ.org, please wait...</string>
+    <string name="title_activity_user_profile">UserProfile</string>
 
 </resources>
