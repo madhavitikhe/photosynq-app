@@ -2,6 +2,7 @@ package com.photosynq.app.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
@@ -242,4 +243,20 @@ public class CommonUtils {
         return populatedValues.get(Integer.parseInt(index)).toString();
     }
 
+    public static Typeface getFontUiFontSolid(Context context) {
+
+        return Typeface.createFromAsset(context.getAssets(), "uifont-solid.otf");
+    }
+    public static Typeface getFontOpenSansLight(Context context) {
+        return Typeface.createFromAsset(context.getAssets(), "OpenSans-Light.ttf");
+    }
+    public static Typeface getFontRobotoLight(Context context) {
+        return Typeface.createFromAsset(context.getAssets(), "Roboto-Light.ttf");
+    }
+    public static Typeface getFontRobotoMedium(Context context) {
+        return Typeface.createFromAsset(context.getAssets(), "Roboto-Medium.ttf");
+    }
+    public static Typeface getFontRobotoRegular(Context context) {
+        return Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
+    }
 }
