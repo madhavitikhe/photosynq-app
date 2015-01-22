@@ -29,5 +29,8 @@
 	
 	<color name="green_google_play">#96AA39</color>	
 		
-    <color name="background_tab_pressed">#6633B5E5</color>	
+    <color name="background_tab_pressed">#6633B5E5</color>
+
+    <color name="app_name_gredient_start">#6b5aa3</color>
+    <color name="app_name_gredient_end">#39749e</color>
 </resources>

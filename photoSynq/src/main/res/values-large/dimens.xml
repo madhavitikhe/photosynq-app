@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="welcome_screen_app_name_size">30sp</dimen>
+    <dimen name="welcome_screen_app_icon_size">38sp</dimen>
+    <dimen name="welcome_screen_desc">18sp</dimen>
+</resources>

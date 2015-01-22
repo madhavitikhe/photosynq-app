@@ -9,6 +9,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Shader;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
@@ -27,11 +31,13 @@ import android.widget.Toast;
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.HTTP.PhotosynqResponse;
 import com.photosynq.app.navigationDrawer.NavigationDrawer;
+import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -60,8 +66,8 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 	private String mPassword;
 
 	// UI references.
-	private EditText mEmailView;
-	private EditText mPasswordView;
+    private EditText mEmailView;
+    private EditText mPasswordView;
 	private View mLoginFormView;
 	private View mLoginStatusView;
 	private TextView mLoginStatusMessageView;
@@ -77,6 +83,10 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 
 
 //		}
+        ActionBar actionBar = getActionBar();
+        if(actionBar != null)
+            actionBar.hide();
+
         copyAssets();
         mEmail = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
         mPassword = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_PASSWORD_KEY, PrefUtils.PREFS_DEFAULT_VAL);
@@ -100,21 +110,40 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
             } else {
 
                 setContentView(R.layout.welcome_screen);
-                ActionBar actionBar = getActionBar();
-                if(actionBar != null)
-                    actionBar.hide();
 
-                TextView new_account_tv = (TextView) findViewById(R.id.createNewAccount);
-                String account_text = "or <a href=\"" + Constants.SERVER_URL + "users/sign_up\">Create new account</a> ";
-                new_account_tv.setMovementMethod(LinkMovementMethod.getInstance());
-                new_account_tv.setText(Html.fromHtml(account_text));
+                Typeface uifontFace = CommonUtils.getFontUiFontSolid(this);
+                Typeface openSansLightFace = CommonUtils.getFontOpenSansLight(this);
+                Typeface robotoLightFace = CommonUtils.getFontRobotoLight(this);
+                Typeface robotoMediumFace = CommonUtils.getFontRobotoMedium(this);
 
-                TextView tutorial_tv = (TextView) findViewById(R.id.tutorial_txt);
-                String tutor_text = "Need help?  Here's a step by step tutorial";
-                tutorial_tv.setMovementMethod(LinkMovementMethod.getInstance());
-                tutorial_tv.setText(Html.fromHtml(tutor_text));
+                TextView tvIcon = (TextView) findViewById(R.id.txtAppIcon);
+                tvIcon.setTypeface(uifontFace);
+                TextView tvAppName = (TextView) findViewById(R.id.txtAppName);
+                tvAppName.setTypeface(openSansLightFace);
+                TextView tvWelcomeDesc = (TextView) findViewById(R.id.txtWelDesc);
+                tvWelcomeDesc.setTypeface(robotoLightFace);
+
+                Shader textShader=new LinearGradient(0, 0, 300, 0,
+                        getResources().getColor(R.color.app_name_gredient_start),
+                        getResources().getColor(R.color.app_name_gredient_end), Shader.TileMode.CLAMP);
+
+                tvIcon.getPaint().setShader(textShader);
+                tvIcon.setAlpha(0.5f);
+                tvAppName.getPaint().setShader(textShader);
+                tvAppName.setAlpha(0.5f);
+
+
+//                TextView new_account_tv = (TextView) findViewById(R.id.createNewAccount);
+//                String account_text = "or <a href=\"" + Constants.SERVER_URL + "users/sign_up\">Create new account</a> ";
+//                new_account_tv.setMovementMethod(LinkMovementMethod.getInstance());
+//                new_account_tv.setText(Html.fromHtml(account_text));
+//                new_account_tv.setTypeface(robotoMediumFace);
+
+                Button tutorial_btn = (Button) findViewById(R.id.tutorial_button);
+                tutorial_btn.setTypeface(robotoMediumFace);
 
                 Button signIn = (Button) findViewById(R.id.sign_in_button);
+                signIn.setTypeface(robotoMediumFace);
                 signIn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -130,9 +159,17 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
     public void login()
     {
         setContentView(R.layout.activity_login);
-        ActionBar actionBar = getActionBar();
-        if(actionBar != null)
-            actionBar.show();
+
+
+        Typeface uifontFace = CommonUtils.getFontUiFontSolid(this);
+        Typeface openSansLightFace = CommonUtils.getFontOpenSansLight(this);
+        Typeface robotoRegularFace = CommonUtils.getFontRobotoRegular(this);
+        Typeface robotoMediumFace = CommonUtils.getFontRobotoMedium(this);
+
+        TextView tvIcon = (TextView) findViewById(R.id.txtAppIcon);
+        tvIcon.setTypeface(uifontFace);
+        TextView tvAppName = (TextView) findViewById(R.id.txtAppName);
+        tvAppName.setTypeface(openSansLightFace);
 
 
         mLoginFormView = findViewById(R.id.login_form);
@@ -164,31 +201,34 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
         // Set up the login form.
         mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
         mEmailView = (EditText) findViewById(R.id.email);
+        mEmailView.setTypeface(robotoRegularFace);
         mEmailView.setText(mEmail);
 
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.showSoftInput(mEmailView, InputMethodManager.SHOW_IMPLICIT);
 
         mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView
-                .setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                    @Override
-                    public boolean onEditorAction(TextView textView, int id,
-                                                  KeyEvent keyEvent) {
-                        if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                            attemptLogin();
-                            return true;
-                        }
-                        return false;
-                    }
-                });
+        mPasswordView.setTypeface(robotoRegularFace);
+        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int id,
+                                          KeyEvent keyEvent) {
+                if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                    attemptLogin();
+                    return true;
+                }
+                return false;
+            }
+        });
 
 
-        findViewById(R.id.sign_in_button).setOnClickListener(
+        Button signinBtn = (Button) findViewById(R.id.sign_in_button);
+        signinBtn.setTypeface(robotoMediumFace);
+        signinBtn.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(mPasswordView.getWindowToken(), 0);
                         attemptLogin();
                     }
