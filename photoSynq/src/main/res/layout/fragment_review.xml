@@ -130,16 +130,21 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".6"
                     android:textSize="20sp"
-                    android:text="raea asdf ;la  ads;ad's;fka adlfad;slf asdfl asd fasdf lasdkf ads" />
+                    android:text="@string/no_porject_selected" />
             </LinearLayout>
+
+            <HorizontalScrollView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
 
                 <TableLayout
                     android:id="@+id/questionsTable"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
-                    android:stretchColumns="*" >
-                </TableLayout>
+                    android:stretchColumns="*"/>
+
+            </HorizontalScrollView>
 
         </LinearLayout>
     </ScrollView>

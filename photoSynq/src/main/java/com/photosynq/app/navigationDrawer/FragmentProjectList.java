@@ -1,10 +1,11 @@
 package com.photosynq.app.navigationDrawer;
 
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,17 +13,20 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.photosynq.app.HTTP.PhotosynqResponse;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.ResearchProject;
-import com.photosynq.app.utils.DataUtils;
+import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
+import com.photosynq.app.utils.SyncHandler;
 
 import java.util.List;
 
-public class FragmentProjectList extends Fragment{
+public class FragmentProjectList extends Fragment implements PhotosynqResponse{
 	
 	ListView projectList;
 	TextView selectedProjectText;
@@ -30,7 +34,7 @@ public class FragmentProjectList extends Fragment{
 	DatabaseHelper db;
 	NavigationDrawerResearchProjectArrayAdapter arrayadapter;
 	View view = null;
-	private ProgressDialog pDialog;
+	//private ProgressDialog pDialog;
 	
     public static FragmentProjectList newInstance() {
         Bundle bundle = new Bundle();
@@ -42,8 +46,14 @@ public class FragmentProjectList extends Fragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
-		View rootView = inflater.inflate(R.layout.fragment_project_list, container, false);
+
+        ActionBar actionBar = getActivity().getActionBar();
+        if(actionBar!=null) {
+            actionBar.show();
+            actionBar.setTitle(getResources().getString(R.string.title_activity_select_project));
+        }
+
+        View rootView = inflater.inflate(R.layout.fragment_project_list, container, false);
 		
 		projectList = (ListView) rootView.findViewById(R.id.project_list);
 		selectedProjectText = (TextView) rootView.findViewById(R.id.selectedProjectText);
@@ -77,12 +87,12 @@ public class FragmentProjectList extends Fragment{
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 					long itemId) {
 				ResearchProject rp = (ResearchProject) projectList.getItemAtPosition(position);
-				FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+				FragmentManager fragmentManager = getActivity().getFragmentManager();
 				Bundle bundle = new Bundle();
 				bundle.putString(DatabaseHelper.C_ID, rp.getId());
-			    FragmentSelectProject f = new FragmentSelectProject(); 
-			    f.setArguments(bundle);
-				fragmentManager.beginTransaction().replace(R.id.content_frame,f).commit();
+			    FragmentSelectProject fragment = new FragmentSelectProject();
+			    fragment.setArguments(bundle);
+				fragmentManager.beginTransaction().replace(R.id.content_frame,fragment, fragment.getClass().getName()).commit();
 
 			}
 		});
@@ -90,54 +100,37 @@ public class FragmentProjectList extends Fragment{
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));	
 		return rootView;
 	}
-	
+
+    /**
+     * When project list is empty it's calls async task (GetDataAsync()) and download project list.
+     */
 	public void checkDataOnProjectList()
 	{
 		if(arrayadapter.isEmpty())
 		{
-			//it call async task (GetDataAsync()) and download project list.
-			new GetDataAsync().execute();
+			SyncHandler syncHandler = new SyncHandler((NavigationDrawer)getActivity());
+            syncHandler.DoSync(SyncHandler.PROJECT_LIST_MODE);
 		}
 	}
-	
+
+    /**
+     * Download list of research project and set to listview.
+     */
 	private void refreshProjectList() {
-		//db = new DatabaseHelper(getApplicationContext());
 		db = DatabaseHelper.getHelper(getActivity());
 		researchProjectList = db.getAllResearchProjects();
 		arrayadapter = new NavigationDrawerResearchProjectArrayAdapter(getActivity(), researchProjectList); 
 		projectList.setAdapter(arrayadapter);
-		//System.out.println("DBCLosing");
-		//db.closeDB();
 	}
-	
-	private class GetDataAsync extends AsyncTask<Void, Void, Void> {
-		 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // Showing progress dialog
-            //downloadData();
-            DataUtils.downloadData(getActivity());
-            pDialog = new ProgressDialog(getActivity());
-            pDialog.setMessage("Please wait...");
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
- 
-        @Override
-        protected Void doInBackground(Void... arg0) {
-            // Creating service handler class instance
-             return null;
-        }
- 
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            // Dismiss the progress dialog
-            if (pDialog.isShowing())
-                pDialog.dismiss();
+
+    @Override
+    public void onResponseReceived(String result) {
+
+        if(result.equals(Constants.SERVER_NOT_ACCESSIBLE)){
+            Toast.makeText(getActivity(), R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+        }else {
             refreshProjectList();
-         //Toast.makeText(getActivity(), "List is up to date", Toast.LENGTH_SHORT).show();
         }
+
     }
 }

@@ -4,7 +4,9 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Build;
@@ -16,6 +18,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,6 +27,7 @@ import android.widget.Toast;
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.HTTP.PhotosynqResponse;
 import com.photosynq.app.navigationDrawer.NavigationDrawer;
+import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
 
 import org.json.JSONException;
@@ -96,14 +100,17 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
             } else {
 
                 setContentView(R.layout.welcome_screen);
-                getActionBar().hide();
+                ActionBar actionBar = getActionBar();
+                if(actionBar != null)
+                    actionBar.hide();
+
                 TextView new_account_tv = (TextView) findViewById(R.id.createNewAccount);
-                String account_text = "or <a href=\"http://photosynq.venturit.net/users/sign_up\">Create new account</a> ";
+                String account_text = "or <a href=\"" + Constants.SERVER_URL + "users/sign_up\">Create new account</a> ";
                 new_account_tv.setMovementMethod(LinkMovementMethod.getInstance());
                 new_account_tv.setText(Html.fromHtml(account_text));
 
                 TextView tutorial_tv = (TextView) findViewById(R.id.tutorial_txt);
-                String tutor_text = "Need help?  Here's a step by step tutorial</a> ";
+                String tutor_text = "Need help?  Here's a step by step tutorial";
                 tutorial_tv.setMovementMethod(LinkMovementMethod.getInstance());
                 tutorial_tv.setText(Html.fromHtml(tutor_text));
 
@@ -123,7 +130,9 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
     public void login()
     {
         setContentView(R.layout.activity_login);
-        getActionBar().show();
+        ActionBar actionBar = getActionBar();
+        if(actionBar != null)
+            actionBar.show();
 
 
         mLoginFormView = findViewById(R.id.login_form);
@@ -157,6 +166,9 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
         mEmailView = (EditText) findViewById(R.id.email);
         mEmailView.setText(mEmail);
 
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.showSoftInput(mEmailView, InputMethodManager.SHOW_IMPLICIT);
+
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView
                 .setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -176,6 +188,8 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(mPasswordView.getWindowToken(), 0);
                         attemptLogin();
                     }
                 });
@@ -248,7 +262,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 		showProgress(true);
 		mAuthTask = new HTTPConnection(mEmail, mPassword);
 		mAuthTask.delegate = this;
-		mAuthTask.execute(getApplicationContext(),HTTPConnection.PHOTOSYNQ_LOGIN_URL,"POST");
+		mAuthTask.execute(getApplicationContext(),Constants.PHOTOSYNQ_LOGIN_URL,"POST", this);
 	}
 
 	/**
@@ -300,7 +314,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 		showProgress(false);
 
 		if (null != result) {
-            if(result.equals(HTTPConnection.SERVER_NOT_ACCESSIBLE))
+            if(result.equals(Constants.SERVER_NOT_ACCESSIBLE))
             {
                 Toast.makeText(getApplicationContext(), R.string.server_not_reachable, Toast.LENGTH_LONG).show();
                 return;
@@ -325,14 +339,13 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 			if(getChangeUserIntent){
                 finish();
             }
-
 			else
 			{
-			Intent intent = new Intent(getApplicationContext(),NavigationDrawer.class);
-			startActivity(intent);
+			    Intent intent = new Intent(getApplicationContext(),NavigationDrawer.class);
+			    startActivity(intent);
 			}
 			// finish();
-		}		else
+		}else
 		{
 			mPasswordView.setError(getString(R.string.error_incorrect_password));
 			mPasswordView.requestFocus();

@@ -5,24 +5,39 @@
     android:background="#D6D6D6"
     android:orientation="vertical" >
 
-
-	    <ScrollView
-	    android:layout_width="fill_parent"
+    <ScrollView
+        android:layout_width="fill_parent"
         android:layout_height="0dip"
         android:layout_weight="1.0"
         android:fillViewport="true" >
 
-    <ListView
-        android:id="@+id/measurement_list_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:cacheColorHint="@android:color/transparent"
-        android:divider="@null"
-        android:dividerHeight="10dp"
-        android:footerDividersEnabled="true"
-        android:headerDividersEnabled="true"
-        android:listSelector="@android:color/transparent" />
-    </ScrollView>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="15dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:paddingRight="15dp"
+            android:background="@drawable/selector_card_background"
+            android:descendantFocusability="afterDescendants">
+
+            <TextView
+                android:id="@+id/protocol_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text=""/>
+
+            <TextView
+                android:id="@+id/protocol_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""/>
+
+        </LinearLayout>
+
+	</ScrollView>
 
     <RelativeLayout
         android:layout_width="fill_parent"

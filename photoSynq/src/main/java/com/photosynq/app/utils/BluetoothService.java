@@ -1,18 +1,5 @@
 package com.photosynq.app.utils;
 
-import static com.photosynq.app.NewMeasurmentActivity.DEVICE_NAME;
-import static com.photosynq.app.NewMeasurmentActivity.MESSAGE_DEVICE_NAME;
-import static com.photosynq.app.NewMeasurmentActivity.MESSAGE_READ;
-import static com.photosynq.app.NewMeasurmentActivity.MESSAGE_STATE_CHANGE;
-import static com.photosynq.app.NewMeasurmentActivity.MESSAGE_TOAST;
-import static com.photosynq.app.NewMeasurmentActivity.MESSAGE_WRITE;
-import static com.photosynq.app.NewMeasurmentActivity.TOAST;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.UUID;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -21,6 +8,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.UUID;
+
+import static com.photosynq.app.NewMeasurmentActivity.DEVICE_NAME;
+import static com.photosynq.app.NewMeasurmentActivity.MESSAGE_DEVICE_NAME;
+import static com.photosynq.app.NewMeasurmentActivity.MESSAGE_READ;
+import static com.photosynq.app.NewMeasurmentActivity.MESSAGE_STATE_CHANGE;
+import static com.photosynq.app.NewMeasurmentActivity.MESSAGE_TOAST;
+import static com.photosynq.app.NewMeasurmentActivity.MESSAGE_WRITE;
+import static com.photosynq.app.NewMeasurmentActivity.TOAST;
 
 
 public class BluetoothService {
@@ -46,7 +46,7 @@ public class BluetoothService {
     public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
     public static final int STATE_CONNECTED = 3;  // now connected to a remote device
     
-    public static String DEVICE_ADDRESS;
+    public static final String DEVICE_ADDRESS = "BLUETOOTH_ADDRESS";
 
     /**
      * Constructor. Prepares a new BluetoothChat session.
@@ -298,6 +298,7 @@ public class BluetoothService {
 			StringBuffer measurement=new StringBuffer();
 			int totalbytes =0;
 			int bytes;
+
 			// Keep listening to the InputStream while connected
 			while (true) {
 				try {
@@ -307,7 +308,8 @@ public class BluetoothService {
 					// Send the obtained bytes to the UI Activity
 //					mHandler.obtainMessage(ResultActivity.MESSAGE_READ, bytes,-1, buffer).sendToTarget();
 					String readMessage = new String(buffer, 0, bytes);
-					measurement.append(readMessage);
+                    long time= System.currentTimeMillis();
+					measurement.append(readMessage.replaceAll("\\{", "{\"time\":\""+time+"\","));
 					totalbytes += bytes;
 					if (readMessage.replaceAll("\\r\\n", "######").contains("############")) {
 						mHandler.obtainMessage(MESSAGE_READ, totalbytes,-1, measurement).sendToTarget();

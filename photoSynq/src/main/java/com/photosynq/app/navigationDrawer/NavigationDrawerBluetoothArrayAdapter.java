@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.ListAdapter;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -80,13 +81,13 @@ public class NavigationDrawerBluetoothArrayAdapter extends BaseAdapter implement
 
 				radiobtn.setChecked(position == selectedPosition);
 				radiobtn.setTag(position);
-				radiobtn.setOnClickListener(new View.OnClickListener() {
+				/*radiobtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         selectedPosition = (Integer)view.getTag();
                         notifyDataSetInvalidated();
                     }
-                });
+                });*/
 				if(bluetoothDevice.getBondState() == 10){
 					pairDeviceBtn.setVisibility(View.VISIBLE);
 					radiobtn.setVisibility(View.INVISIBLE);

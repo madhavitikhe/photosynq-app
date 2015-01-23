@@ -1,10 +1,11 @@
 package com.photosynq.app;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.IntentCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,9 +16,13 @@ import android.widget.Toast;
 import com.photosynq.app.HTTP.HTTPConnection;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ProjectResult;
+import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.response.UpdateData;
+import com.photosynq.app.utils.CommonUtils;
+import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
+import com.photosynq.app.utils.SyncHandler;
 
 import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
@@ -26,13 +31,12 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 
-public class DisplayResultsActivity extends ActionBarActivity {
+public class DisplayResultsActivity extends Activity {
 
 	WebView webview;
 	private String projectId;
 	private String reading;
 	private DatabaseHelper db;
-	private HTTPConnection mDataTask = null;
 	private String protocolJson="";
 	private String appMode;
 	Button keep;
@@ -43,7 +47,9 @@ public class DisplayResultsActivity extends ActionBarActivity {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_results);
-		getActionBar().hide();
+        ActionBar actionBar = getActionBar();
+        if(actionBar != null)
+            actionBar.hide();
 		
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
@@ -99,39 +105,20 @@ public class DisplayResultsActivity extends ActionBarActivity {
 		}
 		else
 		{
-				String authToken = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-				String email = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-				StringEntity input = null;
-				//System.out.println(reading);
-                db = DatabaseHelper.getHelper(getApplicationContext());
-                ProjectResult result = new ProjectResult(projectId, reading, "N");
-                long inserted_row =  db.createResult(result);
+            //System.out.println(reading);
+            int index = Integer.parseInt(PrefUtils.getFromPrefs(context, PrefUtils.PREFS_QUESTION_INDEX, "1"));
+            PrefUtils.saveToPrefs(context, PrefUtils.PREFS_QUESTION_INDEX, ""+ (index+1));
 
-                int index = Integer.parseInt(PrefUtils.getFromPrefs(context, PrefUtils.PREFS_QUESTION_INDEX, "1"));
-                PrefUtils.saveToPrefs(context, PrefUtils.PREFS_QUESTION_INDEX, ""+ (index+1));
-				
-				JSONObject request_data = new JSONObject();
-				JSONObject jo = new JSONObject(reading);
-				try {
-						request_data.put("user_email", email);
-						request_data.put("user_token", authToken);
-						request_data.put("data", jo);
-						 input = new StringEntity(request_data.toString());
-						input.setContentType("application/json");
-				} catch (JSONException e) {
-					e.printStackTrace();
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
-				
-				
-				UpdateData updateData = new UpdateData(getApplicationContext(), Long.toString(inserted_row));
-				mDataTask = new HTTPConnection(input);
-				mDataTask.delegate = updateData;
-				mDataTask.execute(context,HTTPConnection.PHOTOSYNQ_DATA_URL+projectId+"/data.json", "POST");
-				view.setVisibility(View.INVISIBLE);
-				discard.setVisibility(View.INVISIBLE);
-				finish();
+            db = DatabaseHelper.getHelper(getApplicationContext());
+            ProjectResult result = new ProjectResult(projectId, reading, "N");
+            db.createResult(result);
+
+            SyncHandler syncHandler = new SyncHandler(getApplicationContext());
+            syncHandler.DoSync(SyncHandler.UPLOAD_RESULTS_MODE);
+
+			view.setVisibility(View.INVISIBLE);
+			discard.setVisibility(View.INVISIBLE);
+			finish();
 		}
 	}
 	

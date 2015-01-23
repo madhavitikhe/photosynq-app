@@ -3,6 +3,7 @@ package com.photosynq.app.navigationDrawer;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -11,7 +12,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +29,7 @@ import android.widget.TextView;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
+import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.PrefUtils;
 
 import java.lang.reflect.Method;
@@ -50,8 +53,20 @@ public class FragmentConnection extends Fragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-			
-		View rootView = inflater.inflate(R.layout.fragment_connection, container, false);
+
+        ActionBar actionBar = getActivity().getActionBar();
+        if(actionBar!=null) {
+            actionBar.show();
+            actionBar.setTitle(getResources().getString(R.string.title_activity_connection));
+        }
+
+        //When user install app first time, show help screen.
+        String first_run = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_FIRST_RUN, "YES");
+        if (first_run.equals("YES")){
+
+        }
+
+        View rootView = inflater.inflate(R.layout.fragment_connection, container, false);
 		
 		db = DatabaseHelper.getHelper(getActivity());
 		userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
@@ -87,7 +102,7 @@ public class FragmentConnection extends Fragment{
             }
 		}
 		
-		NavigationDrawerBluetoothArrayAdapter btArrayAdapter = new NavigationDrawerBluetoothArrayAdapter(getActivity(), btDeviceList);
+		final NavigationDrawerBluetoothArrayAdapter btArrayAdapter = new NavigationDrawerBluetoothArrayAdapter(getActivity(), btDeviceList);
 		pairedDeviceList.setAdapter(btArrayAdapter);
 		
 		
@@ -96,20 +111,34 @@ public class FragmentConnection extends Fragment{
 		    @Override
 		    public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
                 BluetoothDevice btDevice = (BluetoothDevice) pairedDeviceList.getItemAtPosition(position);
+                FragmentManager fragmentManager = getActivity().getFragmentManager();
                 Log.d("Pairing device : ", btDevice.getName());
                 try {
                     createBond(btDevice);
                     bluetoothID = btDevice.getAddress();
                     appSettings.setConnectionId(bluetoothID);
                     db.updateSettings(appSettings);
+                    String first_run = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE, "YES");
+                    if( first_run.equals("YES")) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString(BluetoothService.DEVICE_ADDRESS, ""+btDevice);
+                        bundle.putString(Utils.APP_MODE, Utils.APP_MODE_QUICK_MEASURE);
+                        FragmentMode fragment=new FragmentMode();
+                        fragment.setArguments(bundle);
+
+                        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment, fragment.getClass().getName()).commit();
+                    }
 
                     if (null != appSettings.getConnectionId()) {
                         selectedConnectionText.setText(btDevice.getName());
                     }
 
                     pairedDeviceList.setItemsCanFocus(true);
+
                     RadioButton radiolistitem = (RadioButton) view.findViewById(R.id.blue_conn_radio);
-                    radiolistitem.performClick();
+                    radiolistitem.setChecked(true);
+
+                    btArrayAdapter.notifyDataSetInvalidated();
                 } catch (Exception e) {
 
                 }

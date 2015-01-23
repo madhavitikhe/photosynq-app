@@ -1,8 +1,7 @@
 package com.photosynq.app;
 
-import java.util.List;
-
-import android.app.Activity;
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -11,17 +10,24 @@ import android.widget.TextView;
 
 import com.photosynq.app.model.Protocol;
 
+import java.util.List;
+
 public class ProtocolArrayAdapter extends BaseAdapter implements ListAdapter {
 
-	private final Activity activity;
-	private final List<Protocol> protocolList;
+	//private final Activity activity;
+    public final Context context;
+	public final List<Protocol> protocolList;
+    LayoutInflater mInflater;
 
-	ProtocolArrayAdapter(Activity activity, List<Protocol> protocolList) {
-		assert activity != null;
+	public ProtocolArrayAdapter(Context context, List<Protocol> protocolList) {
+		//assert activity != null;
+        assert context != null;
 		assert protocolList != null;
 
 		this.protocolList = protocolList;
-		this.activity = activity;
+        this.context = context;
+		//this.activity = activity;
+        mInflater = LayoutInflater.from(context);
 	}
 
 	@Override
@@ -50,7 +56,8 @@ public class ProtocolArrayAdapter extends BaseAdapter implements ListAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null)
-			convertView = activity.getLayoutInflater().inflate(R.layout.protocol_list_item, null);
+			//convertView = getLayoutInflater().inflate(R.layout.protocol_list_item, null);
+        convertView = mInflater.inflate(R.layout.protocol_list_item, null);
 
 		TextView tvProtocolName = (TextView) convertView.findViewById(R.id.protocol_name);
 		TextView tvProtocolDesc = (TextView) convertView.findViewById(R.id.protocol_desc);

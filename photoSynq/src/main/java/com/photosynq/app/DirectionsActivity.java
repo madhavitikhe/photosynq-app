@@ -6,12 +6,14 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.CommonUtils;
+import com.photosynq.app.utils.PrefUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -26,6 +28,16 @@ public class DirectionsActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_directions);
+
+        CheckBox showDirCheck = (CheckBox)findViewById(R.id.showDirections);
+        if(showDirCheck != null) {
+            String showDirections = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_SHOW_DIRECTIONS, "YES");
+            if (showDirections.equals("YES"))
+                showDirCheck.setChecked(false);
+            else
+                showDirCheck.setChecked(true);
+        }
+
 		db = DatabaseHelper.getHelper(getApplicationContext());
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
@@ -70,12 +82,17 @@ public class DirectionsActivity extends Activity {
 		}
 	}
 
-	public void onDirNextClicked(View view)
+	public void onCheckBoxClicked(View view)
 	{
-		Intent intent = new Intent(getApplicationContext(),BluetoothActivity.class);
-		intent.putExtra(Utils.APP_MODE, appMode);
-		intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
-		startActivity(intent);
+        CheckBox checkBox = (CheckBox)view;
+        if(checkBox.isChecked())
+            PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_SHOW_DIRECTIONS, "NO");
+        else
+            PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_SHOW_DIRECTIONS, "YES");
 	}
+
+    public void onCloseBtnClicked(View view){
+        finish();
+    }
 	
 }

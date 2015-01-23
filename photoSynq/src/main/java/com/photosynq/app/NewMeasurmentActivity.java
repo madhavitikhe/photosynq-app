@@ -10,7 +10,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.DialogFragment;
+import android.app.DialogFragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -34,7 +34,6 @@ import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
-import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.LocationUtils;
 import com.photosynq.app.utils.PrefUtils;
 
@@ -52,9 +51,9 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	private DatabaseHelper db;
 	private String userId;
 	private String appMode;
-	public String option1="";
-	public String option3="";
-	public String option2="";
+//	public String option1="";
+//	public String option3="";
+//	public String option2="";
 	
 	public String question1="";
 	public String question2="";
@@ -66,6 +65,9 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	private String protocolJson="";
 	// Name of the connected device
 	private String mConnectedDeviceName = null;
+
+    private String protocolName;
+    private String protocolDescription;
 	
 	// A request to connect to Location Services
     private LocationRequest mLocationRequest;
@@ -95,7 +97,10 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	private Data data;
 	private TextView que;
 	private TextView opt;
+    private TextView protNameTV;
+    private TextView protDescTV;
     private Button measureBtn;
+    ArrayList<String> allOptions;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -109,10 +114,13 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			protocolJson = extras.getString(DatabaseHelper.C_PROTOCOL_JSON);
 			getAllSelectedOptions = extras.getStringArrayList("All_Options");
 			getAllSelectedQuestions = extras.getStringArrayList("All_Questions");
+            protocolName = extras.getString(Protocol.NAME);
+            protocolDescription = extras.getString(Protocol.DESCRIPTION);
 			userId = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-			
+
 			if (null == protocolJson) protocolJson="";
 			System.out.println(this.getClass().getName()+"############app mode="+appMode);
+            allOptions = new ArrayList<String>();
 		}
 		
 		if(null != getAllSelectedQuestions)
@@ -148,6 +156,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		    LinearLayout liLayout = (LinearLayout) findViewById(R.id.linearlayoutoptions);
 		    int optionLoop = 0;
 		    List<Question> allQuestions = db.getAllQuestionForProject(projectId);
+
 		    for (int i = 0; i < allQuestions.size(); i++) {
 
                 String data_value= new String("");
@@ -161,7 +170,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				    if(data.getType().equals(Data.AUTO_INCREMENT))
 				    {
 				    	int index = Integer.parseInt(PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_QUESTION_INDEX, "-1"));
-				    	int optionvalue = Integer.parseInt(DataUtils.getAutoIncrementedValue(getApplicationContext(), allQuestions.get(i).getQuestionId(), ""+index));
+				    	int optionvalue = Integer.parseInt(CommonUtils.getAutoIncrementedValue(getApplicationContext(), allQuestions.get(i).getQuestionId(), ""+index));
 				    	que.setText("Question -  " + allQuestions.get(i).getQuestionText());
 				    	liLayout.addView(que);
                         if(optionvalue != -1)
@@ -195,25 +204,28 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				    liLayout.addView(opt);
                     optionLoop++;
 			    }
-                try{
-                    if(i==0)
-                    {
-                        option1= data_value;
-                    }else if(i == 1)
-                    {
-                        option2 = data_value;
-                    }else if(i==2)
-                    {
-                        option3 = data_value;
-                    }
 
-//                    option1 = (String) getAllSelectedOptions.get(0);
-//                    option2 = (String) getAllSelectedOptions.get(1);
-//                    option3 = (String) getAllSelectedOptions.get(2);
-                }catch ( IndexOutOfBoundsException ex)
-                {
-                    //eat the exceptions !!!! Basically ignore questions less or more than 3
-                }
+                    allOptions.add(data_value);
+
+//                try{
+//                    if(i==0)
+//                    {
+//                        option1= data_value;
+//                    }else if(i == 1)
+//                    {
+//                        option2 = data_value;
+//                    }else if(i==2)
+//                    {
+//                        option3 = data_value;
+//                    }
+//
+////                    option1 = (String) getAllSelectedOptions.get(0);
+////                    option2 = (String) getAllSelectedOptions.get(1);
+////                    option3 = (String) getAllSelectedOptions.get(2);
+//                }catch ( IndexOutOfBoundsException ex)
+//                {
+//                    //eat the exceptions !!!! Basically ignore questions less or more than 3
+//                }
 			     
 			}
 
@@ -221,13 +233,11 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		}else
 		{
 			setContentView(R.layout.activity_new_measurment);
-			db = DatabaseHelper.getHelper(getApplicationContext());
-			List<Question> questions = db.getAllQuestionForProject(projectId);
-			ListView lst = (ListView) findViewById(R.id.measurement_list_view);
+			protNameTV = (TextView) findViewById(R.id.protocol_name);
+            protDescTV = (TextView) findViewById(R.id.protocol_desc);
+            protNameTV.setText(protocolName);
+            protDescTV.setText(protocolDescription);
             measureBtn = (Button) findViewById(R.id.measure_btn);
-
-			QuestionArrayAdapter questionAdapter = new QuestionArrayAdapter(this, questions);
-			lst.setAdapter(questionAdapter);
 			
 		}
 		mStatusLine = (TextView) findViewById(R.id.statusMessage);
@@ -257,7 +267,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
             byte[] send;
 				send = data.getBytes();
 				 mBluetoothService.write(send);
-            Toast.makeText(getApplicationContext(),"Send Data"+data,Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(),"Send Data"+data,Toast.LENGTH_LONG).show();
             //byte[] bytes = ByteBuffer.allocate(4).putInt(9).array();
         }
     }
@@ -267,8 +277,13 @@ GooglePlayServicesClient.OnConnectionFailedListener{
         if(measureBtn.getText().equals("MEASURE")) {
             if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
                 // Get the BLuetoothDevice object
-                BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
-                mBluetoothService.connect(device);
+                if(null == deviceAddress)
+                {
+                    Toast.makeText(this,"Measurement device not configured, Please configure measurement device (bluetooth).",Toast.LENGTH_SHORT).show();
+                }else {
+                    BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
+                    mBluetoothService.connect(device);
+                }
             } else {
                 mHandler.obtainMessage(MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, -1).sendToTarget();
             }
@@ -277,7 +292,6 @@ GooglePlayServicesClient.OnConnectionFailedListener{
         else if(measureBtn.getText().equals("CANCEL MEASURE"))
         {
             sendData("-1+-1+");
-            Toast.makeText(getApplicationContext(),"Cancel Measure",Toast.LENGTH_LONG).show();
             finish();
         }
 //		String options = new String ("\"user_answers\": [\""+option1+"\","+"\""+option2+"\","+"\""+option3+"\" ],");
@@ -601,6 +615,10 @@ GooglePlayServicesClient.OnConnectionFailedListener{
                 		//db = new DatabaseHelper(getApplicationContext());
                 		db = DatabaseHelper.getHelper(getApplicationContext());
                 		ResearchProject rp =  db.getResearchProject(projectId);
+                        if(null == rp){
+                            Toast.makeText(getApplicationContext(), "Project not selected, Please select the project.", Toast.LENGTH_LONG).show();
+                            break;
+                        }
                 		String[] protocol_ids = rp.getProtocols_ids().trim().split(",");
                 		System.out.println("***************Sequence of protocol id is***********"+rp.getProtocols_ids());
                 		
@@ -719,40 +737,45 @@ GooglePlayServicesClient.OnConnectionFailedListener{
             case MESSAGE_READ:
                // byte[] readBuf = (byte[]) msg.obj;
             	StringBuffer measurement = (StringBuffer)msg.obj;
-                // construct a string from the valid bytes in the buffer
-               // String readMessage = new String(readBuf, 0, msg.arg1);
-                mStatusLine.setText(R.string.start_measure);
-                String dataString;
-                String options = new String ("\"user_answers\": [\""+option1+"\","+"\""+option2+"\","+"\""+option3+"\" ],");
-                long time= System.currentTimeMillis();
-                if (options.equals(""))
-                {
-                	 dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
+                // Do not process the message if contain pwr_off from device
+                if (!measurement.toString().contains("pwr_off")) {
+                    // construct a string from the valid bytes in the buffer
+                    // String readMessage = new String(readBuf, 0, msg.arg1);
+                    mStatusLine.setText(R.string.start_measure);
+                    String dataString;
+                    StringBuffer options = new StringBuffer();
+                    options.append("\"user_answers\": [\"");
+                    //loop
+                    for (int i = 0; i < allOptions.size(); i++) {
+                        options.append("\"" + allOptions.get(i) + "\"");
+                        if (i < allOptions.size() - 1)
+                            options.append(",");
+                    }
+                    options.append("\" ],");
+
+                    if (options.toString().equals("")) {
+                        dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "") + "\n];";
+                    } else {
+                        String currentLocation = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, "NONE");
+                        if (!currentLocation.equals("NONE")) {
+                            options.append("\"location\":[" + currentLocation + "],");
+                            dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options) + "\n];";
+                        } else {
+                            dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options) + "\n];";
+                        }
+                    }
+                    System.out.println("###### writing data.js :" + dataString);
+                    CommonUtils.writeStringToFile(getApplicationContext(), "data.js", dataString);
+                    //mBluetoothService.stop();
+                    Intent intent = new Intent(getApplicationContext(), DisplayResultsActivity.class);
+                    intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+                    intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocolJson);
+                    intent.putExtra(Utils.APP_MODE, appMode);
+                    String reading = measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options);
+                    //reading = reading.replaceFirst("\\{", "{"+options);
+                    intent.putExtra(DatabaseHelper.C_READING, reading);
+                    startActivity(intent);
                 }
-                else
-                {
-                	String currentLocation = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, "NONE");
-                	if(!currentLocation.equals("NONE"))
-                	{
-                		options = options+"\"location\":["+currentLocation+"],";
-                		dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
-                	}
-                	else
-                	{
-                		dataString = "var data = [\n"+measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",")+"\n];";
-                	}
-                }
-                System.out.println("###### writing data.js :"+dataString);
-                CommonUtils.writeStringToFile(getApplicationContext(), "data.js", dataString);
-                //mBluetoothService.stop();
-                Intent intent = new Intent(getApplicationContext(),DisplayResultsActivity.class);
-        		intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
-        		intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocolJson);
-        		intent.putExtra(Utils.APP_MODE, appMode);
-        		String reading = measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{"+options).replaceAll("\\{", "{\"time\":\""+time+"\",");
-        		//reading = reading.replaceFirst("\\{", "{"+options);
-        		intent.putExtra(DatabaseHelper.C_READING, reading);
-        		startActivity(intent);
                 break;
             case MESSAGE_DEVICE_NAME:
                 // save the connected device's name

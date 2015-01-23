@@ -23,6 +23,13 @@
     <string name="choose_option">Choose Option</string>
     <string name="title_activity_display_results">Results</string>
     <string name="title_activity_select_protocol">Select Measurement Protocol</string>
+    <string name="title_activity_connection">Select Measurement Device (bluetooth)</string>
+    <string name="title_activity_data">Select User-defined Data</string>
+    <string name="title_activity_mode">Select Measurement Mode</string>
+    <string name="title_activity_select_project">Select Project</string>
+    <string name="title_activity_review">Review All Settings</string>
+    <string name="title_activity_select_user">Select User</string>
+    <string name="title_activity_select_sync_options">Data Sync Options</string>
     <string name="not_connected">You are not connected to a device</string>
     <string name="title_connecting">Connecting...</string>
     <string name="title_connected_to">Connected: </string>
@@ -50,9 +57,9 @@
     <string name="keep_data">Keep Data Successfully</string>
     <string name="sync_successful">Sync successful!</string>
     <string name="measure_btn"> MEASURE </string>
-    <string name="streamlined_mode">Streamline Mode</string>
+    <string name="streamlined_mode">Project Measurement</string>
     <string name="normal_mode">Normal Mode</string>
-    <string name="quick_measure_mode">Quick Measure Mode</string>
+    <string name="quick_measure_mode">Quick Measurement</string>
     <string name="sign_out">Sign Out</string>
     <string name="close">Close</string>
     <string name="review">Review</string>
@@ -64,6 +71,7 @@
     <string name="pairDevice">Pair Device</string>
     <string name="save_interval_btn">Save interval</string>
     <string name="sync_btn">Sync Data</string>
+    <string name="clear_cache">Clear Cache</string>
     <string name="sync_interval_lbl">Sync interval (in mins)</string>
     <string name="userSelected">User Selected</string>
     <string name="selectFromWeb">Set of answers cannot be changed here.  If you are the project lead, you can change the set of answers by editing the project</string>
@@ -80,11 +88,14 @@
     <string name="scan">Scan</string>
     <string name="scan_result">Scan Result</string>
     <string name="project_not_selected">No project selected</string>
+    <string name="no_que_for_project_selected">No Questions for project selected</string>
     <string name="no_hardware_selection">No hardware selected</string>
     <string name="no_porject_selected">Please select project.</string>
     <string name="busy">busy</string>
     <string name="connected">Connected, Click to start measurement</string>
     <string name="show_all_protocols">Show All Protocols</string>
-
+    <string name="title_activity_demo">DemoActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="loading_progress">syncing data with PhotosynQ.org, please wait...</string>
 
 </resources>

@@ -19,12 +19,15 @@ import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.PrefUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	// Database Version
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	// Database Name
 	private static final String DATABASE_NAME = "PhotoSynqDB";
 	// Table Names
@@ -64,6 +67,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	public static final String C_PROTOCOL_JSON = "protocol_json";
 	private static final String C_MACRO_ID = "macro_id";
+    private static final String C_PROTOCOL_PRE_SEL = "protocol_pre_sel";
 
 	// Macro column names
 	private static final String C_DEFAULT_X_AXIS = "default_x_axis";
@@ -110,8 +114,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String CREATE_TABLE_PROTOCOL = "CREATE TABLE "
 			+ TABLE_PROTOCOL + "(" + C_RECORD_HASH + " TEXT ," + C_ID
 			+ " TEXT ," + C_NAME + " TEXT ," + C_PROTOCOL_JSON + " TEXT ,"
-			+ C_DESCRIPTION + " TEXT ," + C_MACRO_ID + " TEXT ," + C_SLUG
-			+ " TEXT)";
+			+ C_DESCRIPTION + " TEXT ," + C_MACRO_ID + " TEXT ," + C_SLUG + " TEXT ,"
+            + C_PROTOCOL_PRE_SEL +" TEXT)";
 
 	// Macro table create statement
 	private static final String CREATE_TABLE_MACRO = "CREATE TABLE "
@@ -137,6 +141,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION); this.context =context;}
 
 	private static DatabaseHelper instance;
+    private int mWriteOpenCounter;
+    private int mReadOpenCounter;
+    private SQLiteDatabase mWriteDatabase;
+    private SQLiteDatabase mReadDatabase;
 
 	public static synchronized DatabaseHelper getHelper(Context context) {
 		if (instance == null)
@@ -144,6 +152,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		return instance;
 	}
+
+    public synchronized SQLiteDatabase openWriteDatabase() {
+        mWriteOpenCounter++;
+        if(mWriteOpenCounter == 1) {
+            // Opening new database
+            mWriteDatabase = this.getWritableDatabase();
+        }
+        return mWriteDatabase;
+    }
+
+    public synchronized void closeWriteDatabase() {
+        mWriteOpenCounter--;
+        if(mWriteOpenCounter == 0) {
+            // Closing database
+            if(mWriteDatabase.isOpen())
+                mWriteDatabase.close();
+        }
+        if(mWriteOpenCounter < 0)
+            mWriteOpenCounter = 0;
+    }
+
+    public synchronized SQLiteDatabase openReadDatabase() {
+        mReadOpenCounter++;
+        if(mReadOpenCounter == 1) {
+            // Opening new database
+            mReadDatabase = this.getReadableDatabase();
+        }
+        return mReadDatabase;
+    }
+
+    public synchronized void closeReadDatabase() {
+        mReadOpenCounter--;
+        if(mReadOpenCounter == 0) {
+            // Closing database
+            if(mReadDatabase.isOpen())
+                mReadDatabase.close();
+        }
+        if(mReadOpenCounter < 0)
+            mReadOpenCounter = 0;
+    }
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
@@ -175,8 +223,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	public long createResult(ProjectResult result) {
+        long retVal = -1;
 		try {
-			SQLiteDatabase db = this.getWritableDatabase();
+			SQLiteDatabase db = openWriteDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_PROJECT_ID,
@@ -189,19 +238,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			long row_id = db.insert(TABLE_RESULTS, null, values);
 
 			if (row_id >= 0) {
-				return row_id;
-			} else {
-				return -1;
+				retVal = row_id;
 			}
 		} catch (SQLiteConstraintException contraintException) {
-			return -1;
+
 		} catch (SQLException sqliteException) {
-			return -1;
+
 		}
+        closeWriteDatabase();
+        return retVal;
 	}
 
 	public List<ProjectResult> getAllResultsForProject(String projectId) {
-		SQLiteDatabase db = this.getReadableDatabase();
+		SQLiteDatabase db = openReadDatabase();
 		List<ProjectResult> projectsResults = new ArrayList<ProjectResult>();
 		String selectQuery = "SELECT  rowid,* FROM " + TABLE_RESULTS
 				+ " WHERE " + C_PROJECT_ID + " = " + projectId;
@@ -224,11 +273,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}
 
 		c.close();
+        closeReadDatabase();
 		return projectsResults;
 	}
 
 	public List<ProjectResult> getAllUnUploadedResults() {
-		SQLiteDatabase db = this.getReadableDatabase();
+		SQLiteDatabase db = openReadDatabase();
 		List<ProjectResult> projectsResults = new ArrayList<ProjectResult>();
 		String selectQuery = "SELECT rowid,* FROM " + TABLE_RESULTS + " WHERE "
 				+ C_UPLOADED + " = 'N'";
@@ -251,12 +301,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}
 
 		c.close();
+        closeReadDatabase();
 		return projectsResults;
 	}
 
 	public boolean updateResults(ProjectResult result) {
 
-		SQLiteDatabase db = this.getWritableDatabase();
+        boolean retVal = false;
+		SQLiteDatabase db = openWriteDatabase();
 
 		ContentValues values = new ContentValues();
 		values.put(C_PROJECT_ID,
@@ -272,24 +324,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				C_PROJECT_ID + " = ? and " + C_ROW_ID + " =?",
 				new String[] { String.valueOf(result.getProjectId()),
 						String.valueOf(result.getId()) });
-		// if update fails that indicates there is no then create new row
-		if (rowsaffected <= 0) {
-			return false;
-		}
 		// updating row
-		return false;
+		if (rowsaffected > 0) {
+			retVal = true;
+		}
+        closeWriteDatabase();
+		return retVal;
 	}
 
 	public void deleteResult(String rowid) {
-		SQLiteDatabase db = this.getWritableDatabase();
+		SQLiteDatabase db = openWriteDatabase();
 		db.delete(TABLE_RESULTS, C_ROW_ID + " = ?",
 				new String[] { String.valueOf(rowid) });
+        closeWriteDatabase();
 	}
 
 	// Insert research project information in database
 	public boolean createResearchProject(ResearchProject rp) {
+        boolean retVal = false;
 		try {
-			SQLiteDatabase db = this.getWritableDatabase();
+			SQLiteDatabase db = openWriteDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_ID, null != rp.getId() ? rp.getId() : "");
@@ -312,26 +366,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			long row_id = db.insert(TABLE_RESEARCH_PROJECT, null, values);
 
 			if (row_id >= 0) {
-				return true;
-			} else {
-				return false;
+				retVal = true;
 			}
 		} catch (SQLiteConstraintException contraintException) {
 			// If data already present then handle the case here.
 			Log.d("DATABASE_HELPER_RESEARCH_PROJECTS",
 					"Record already present in database for record hash ="
 							+ rp.getRecordHash());
-			return false;
 
-		} catch (SQLException sqliteException) {
-			return false;
-		}
-
+		} catch (SQLException sqliteException) {}
+        closeWriteDatabase();
+        return retVal;
 	}
 
 	// Get research project information from database
 	public ResearchProject getResearchProject(String id) {
-		SQLiteDatabase db = this.getReadableDatabase();
+        ResearchProject rp = null;
+		SQLiteDatabase db = openReadDatabase();
 
 		String selectQuery = "SELECT  * FROM " + TABLE_RESEARCH_PROJECT
 				+ " WHERE " + C_ID + " = '" + id + "'";
@@ -340,28 +391,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		Cursor c = db.rawQuery(selectQuery, null);
 
-		if (c != null)
-			c.moveToFirst();
+        if (c != null) {
+            c.moveToFirst();
 
-		ResearchProject rp = new ResearchProject();
-		rp.setId(c.getString(c.getColumnIndex(C_ID)));
-		rp.setName(c.getString(c.getColumnIndex(C_NAME)));
-		rp.setDescription(c.getString(c.getColumnIndex(C_DESCRIPTION)));
-		rp.setDirToCollab(c.getString(c.getColumnIndex(C_DIR_TO_COLLAB)));
-		rp.setStartDate(c.getString(c.getColumnIndex(C_START_DATE)));
-		rp.setEndDate(c.getString(c.getColumnIndex(C_END_DATE)));
-		rp.setImageUrl(c.getString(c.getColumnIndex(C_IMAGE_URL)));
-		rp.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
-		rp.setProtocols_ids(c.getString(c.getColumnIndex(C_PROTOCOL_IDS)));
-		rp.setBeta(c.getString(c.getColumnIndex(C_BETA)));
-
-		c.close();
-		return rp;
+            if (c.getCount() > 0) {
+                rp = new ResearchProject();
+                rp.setId(c.getString(c.getColumnIndex(C_ID)));
+                rp.setName(c.getString(c.getColumnIndex(C_NAME)));
+                rp.setDescription(c.getString(c.getColumnIndex(C_DESCRIPTION)));
+                rp.setDirToCollab(c.getString(c.getColumnIndex(C_DIR_TO_COLLAB)));
+                rp.setStartDate(c.getString(c.getColumnIndex(C_START_DATE)));
+                rp.setEndDate(c.getString(c.getColumnIndex(C_END_DATE)));
+                rp.setImageUrl(c.getString(c.getColumnIndex(C_IMAGE_URL)));
+                rp.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
+                rp.setProtocols_ids(c.getString(c.getColumnIndex(C_PROTOCOL_IDS)));
+                rp.setBeta(c.getString(c.getColumnIndex(C_BETA)));
+            }
+            c.close();
+        }
+        closeReadDatabase();
+        return rp;
 	}
 
 	// Get all research project information from database.
 	public List<ResearchProject> getAllResearchProjects() {
-		SQLiteDatabase db = this.getReadableDatabase();
+		SQLiteDatabase db = openReadDatabase();
 		List<ResearchProject> researchProjects = new ArrayList<ResearchProject>();
 		String selectQuery = "SELECT  * FROM " + TABLE_RESEARCH_PROJECT;
 
@@ -390,6 +444,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}
 
 		c.close();
+        closeReadDatabase();
 		return researchProjects;
 	}
 
@@ -398,7 +453,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	 */
 	public boolean updateResearchProject(ResearchProject rp) {
 
-		SQLiteDatabase db = this.getWritableDatabase();
+        boolean retVal = false;
+		SQLiteDatabase db = openWriteDatabase();
 
 		ContentValues values = new ContentValues();
 		values.put(C_ID, null != rp.getId() ? rp.getId() : "");
@@ -421,25 +477,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ " = ?", new String[] { String.valueOf(rp.getId()) });
 		// if update fails that indicates there is no then create new row
 		if (rowsaffected <= 0) {
-			return createResearchProject(rp);
-		}
-		// updating row
-		return false;
+			retVal = createResearchProject(rp);
+		}else{ // updating row
+            retVal = true;
+        }
+		closeWriteDatabase();
+		return retVal;
 	}
 
 	/*
 	 * Deleting a research project
 	 */
 	public void deleteResearchProject(String id) {
-		SQLiteDatabase db = this.getWritableDatabase();
+		SQLiteDatabase db = openWriteDatabase();
 		db.delete(TABLE_RESEARCH_PROJECT, C_ID + " = ?",
 				new String[] { String.valueOf(id) });
+        closeWriteDatabase();
 	}
 
 	// Insert a question in database
 	public boolean createQuestion(Question que) {
+        boolean retVal = false;
 		try {
-			SQLiteDatabase db = this.getWritableDatabase();
+			SQLiteDatabase db = openWriteDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_RECORD_HASH,
@@ -452,21 +512,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			// insert row
 			long row_id = db.insert(TABLE_QUESTION, null, values);
 			if (row_id >= 0) {
-				return true;
-			} else {
-				return false;
+				retVal = true;
 			}
 		} catch (SQLiteConstraintException contraintException) {
 			// If data already present then handle the case here.
-			return false;
 		} catch (SQLException sqliteException) {
-			return false;
 		}
+        closeWriteDatabase();
+        return retVal;
 	}
 
 	public boolean updateQuestion(Question question) {
+        boolean retVal = false;
 
-		SQLiteDatabase db = this.getWritableDatabase();
+		SQLiteDatabase db = openWriteDatabase();
 
 		ContentValues values = new ContentValues();
 		values.put(C_RECORD_HASH,
@@ -494,16 +553,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 		// if update fails that indicates there is no then create new row
 		if (rowsaffected <= 0) {
-			return createQuestion(question);
-		}
-		// updating row
-		return true;
+			retVal = createQuestion(question);
+		}else {
+            // updating row
+            retVal = true;
+        }
+        closeWriteDatabase();
+        return retVal;
 	}
 
 	// Insert Option in database
 	public boolean createOption(Option op) {
+        boolean retVal = false;
 		try {
-			SQLiteDatabase db = this.getWritableDatabase();
+			SQLiteDatabase db = openWriteDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_RECORD_HASH, op.getRecordHash());
@@ -516,21 +579,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			// insert row
 			long row_id = db.insert(TABLE_OPTION, null, values);
 			if (row_id >= 0) {
-				return true;
-			} else {
-				return false;
+				retVal = true;
 			}
 		} catch (SQLiteConstraintException contraintException) {
 			// If data already present then handle the case here.
-			return false;
 		} catch (SQLException sqliteException) {
-			return false;
 		}
+        closeWriteDatabase();
+        return retVal;
 	}
 
 	public boolean updateOption(Option option) {
-
-		SQLiteDatabase db = this.getWritableDatabase();
+        boolean retVal = false;
+		SQLiteDatabase db = openWriteDatabase();
 
 		ContentValues values = new ContentValues();
 		values.put(C_RECORD_HASH, option.getRecordHash());
@@ -546,13 +607,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				new String[] { String.valueOf(option.getRecordHash()) });
 		// if update fails that indicates there is no then create new row
 		if (rowsaffected <= 0) {
-			return createOption(option);
-		}
-		return false;
+			retVal = createOption(option);
+		}else {
+            retVal = true;
+        }
+        closeWriteDatabase();
+        return retVal;
 	}
 
 	public Question getQuestionForProject(String project_id,String question_id) {
-		SQLiteDatabase db = this.getReadableDatabase();
+		SQLiteDatabase db = openReadDatabase();
 		Question que= new Question();
 		String selectQuery = "SELECT  * FROM " + TABLE_QUESTION + " WHERE "
 				+ C_PROJECT_ID + " = " + project_id 
@@ -598,13 +662,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			}
 		}
 		c.close();
-
+        closeReadDatabase();
 		return que;
 	}
 	
 	// Get list of all questions for given project.
 	public List<Question> getAllQuestionForProject(String project_id) {
-		SQLiteDatabase db = this.getReadableDatabase();
+		SQLiteDatabase db = openReadDatabase();
 		List<Question> questions = new ArrayList<Question>();
 		String selectQuery = "SELECT  * FROM " + TABLE_QUESTION + " WHERE "
 				+ C_PROJECT_ID + " = " + project_id;
@@ -653,14 +717,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		}
 		c.close();
-
+        closeReadDatabase();
 		return questions;
 	}
 
 	// Insert Option in database
 	public boolean createProtocol(Protocol protocol) {
+        boolean retVal = false;
 		try {
-			SQLiteDatabase db = this.getWritableDatabase();
+			SQLiteDatabase db = openWriteDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_RECORD_HASH, protocol.getRecordHash());
@@ -679,23 +744,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					null != protocol.getMacroId() ? protocol.getMacroId() : "");
 			values.put(C_SLUG, null != protocol.getSlug() ? protocol.getSlug()
 					: "");
+            values.put(C_PROTOCOL_PRE_SEL,
+                    null != protocol.getPreSelected() ? protocol.getPreSelected() : "");
 			// insert row
 			long row_id = db.insert(TABLE_PROTOCOL, null, values);
 			if (row_id >= 0) {
-				return true;
-			} else {
-				return false;
+				retVal = true;
 			}
 		} catch (SQLiteConstraintException contraintException) {
 			// If data already present then handle the case here.
-			return false;
 		} catch (SQLException sqliteException) {
-			return false;
 		}
+        closeWriteDatabase();
+        return retVal;
 	}
 
 	public boolean updateProtocol(Protocol protocol) {
-		SQLiteDatabase db = this.getWritableDatabase();
+        boolean retVal = false;
+
+		SQLiteDatabase db = openWriteDatabase();
 
 		ContentValues values = new ContentValues();
 		values.put(C_RECORD_HASH, protocol.getRecordHash());
@@ -711,19 +778,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		values.put(C_MACRO_ID,
 				null != protocol.getMacroId() ? protocol.getMacroId() : "");
 		values.put(C_SLUG, null != protocol.getSlug() ? protocol.getSlug() : "");
+        values.put(C_PROTOCOL_PRE_SEL, null != protocol.getPreSelected() ? protocol.getPreSelected() : "");
 
 		int rowsaffected = db.update(TABLE_PROTOCOL, values, C_ID + " = ?",
 				new String[] { String.valueOf(protocol.getId()) });
 		// if update fails that indicates there is no then create new row
 		if (rowsaffected <= 0) {
-			return createProtocol(protocol);
-		}
-		return false;
+			retVal = createProtocol(protocol);
+		}else {
+            retVal = true;
+        }
+        closeWriteDatabase();
+        return retVal;
 	}
 
 	// Get all protocols
 	public List<Protocol> getAllProtocolsList() {
-		SQLiteDatabase db = this.getReadableDatabase();
+		SQLiteDatabase db = openReadDatabase();
 		List<Protocol> protocols = new ArrayList<Protocol>();
 		String selectQuery = "SELECT  * FROM " + TABLE_PROTOCOL;
 		System.out.println(selectQuery);
@@ -734,7 +805,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		if (c.moveToFirst()) {
 			do {
 				Protocol protocol = new Protocol();
-				protocol.setRecordHash(c.getString(c
+                protocol.setRecordHash(c.getString(c
 						.getColumnIndex(C_RECORD_HASH)));
 				protocol.setId(c.getString(c.getColumnIndex(C_ID)));
 				protocol.setDescription(c.getString(c
@@ -744,55 +815,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 						.getColumnIndex(C_PROTOCOL_JSON)));
 				protocol.setSlug(c.getString(c.getColumnIndex(C_SLUG)));
 				protocol.setMacroId(c.getString(c.getColumnIndex(C_MACRO_ID)));
+                protocol.setPreSelected(c.getString(c.getColumnIndex(C_PROTOCOL_PRE_SEL)));
 
 				// adding to todo list
 				protocols.add(protocol);
 			} while (c.moveToNext());
 		}
 		c.close();
+        closeReadDatabase();
 		return protocols;
 	}
 
     // Get all protocols
     public List<Protocol> getFewProtocolList() {
-        SQLiteDatabase db = this.getReadableDatabase();
         List<Protocol> protocols = new ArrayList<Protocol>();
-        int[] protocolsID = {37,45,23,11,31,48,49};
-        System.out.println(protocolsID + "" + protocolsID.length);
-        for(int i = 0; i < protocolsID.length; i++) {
-            String selectQuery = "SELECT  * FROM " + TABLE_PROTOCOL + " WHERE " + C_ID + " = " + protocolsID[i];
+        List<Protocol> allProtocols = getAllProtocolsList();
 
-            System.out.println(selectQuery);
-            Log.e("DATABASE_HELPER_getAllProtocol", selectQuery);
-
-            Cursor c = db.rawQuery(selectQuery, null);
-
-            if (c.moveToFirst()) {
-                do {
-                    Protocol protocol = new Protocol();
-                    protocol.setRecordHash(c.getString(c
-                            .getColumnIndex(C_RECORD_HASH)));
-                    protocol.setId(c.getString(c.getColumnIndex(C_ID)));
-                    protocol.setDescription(c.getString(c
-                            .getColumnIndex(C_DESCRIPTION)));
-                    protocol.setName(c.getString(c.getColumnIndex(C_NAME)));
-                    protocol.setProtocol_json(c.getString(c
-                            .getColumnIndex(C_PROTOCOL_JSON)));
-                    protocol.setSlug(c.getString(c.getColumnIndex(C_SLUG)));
-                    protocol.setMacroId(c.getString(c.getColumnIndex(C_MACRO_ID)));
-
-                    // adding to todo list
-                    protocols.add(protocol);
-                } while (c.moveToNext());
+        for(int proIdx = 0 ; proIdx < allProtocols.size(); proIdx++){
+            Protocol protocol = allProtocols.get(proIdx);
+            if(protocol.isPreSelected()){
+                protocols.add(protocol);
             }
-            c.close();
+
         }
+
         return protocols;
     }
 
 
 	public Protocol getProtocol(String protocolId) {
-		SQLiteDatabase db = this.getReadableDatabase();
+		SQLiteDatabase db = openReadDatabase();
 		Protocol protocol = new Protocol();
 		String selectQuery = "SELECT  * FROM " + TABLE_PROTOCOL + " WHERE "
 				+ C_ID + " = " + protocolId;
@@ -812,15 +864,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					.getColumnIndex(C_PROTOCOL_JSON)));
 			protocol.setSlug(c.getString(c.getColumnIndex(C_SLUG)));
 			protocol.setMacroId(c.getString(c.getColumnIndex(C_MACRO_ID)));
+            protocol.setPreSelected(c.getString(c.getColumnIndex(C_PROTOCOL_PRE_SEL)));
 		}
 		c.close();
+        closeReadDatabase();
 		return protocol;
 	}
 
 	// Insert Macro in database
 	public boolean createMacro(Macro macro) {
+        boolean retVal = false;
 		try {
-			SQLiteDatabase db = this.getWritableDatabase();
+			SQLiteDatabase db = openWriteDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_RECORD_HASH, macro.getRecordHash());
@@ -843,20 +898,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			// insert row
 			long row_id = db.insert(TABLE_MACRO, null, values);
 			if (row_id >= 0) {
-				return true;
-			} else {
-				return false;
+				retVal = true;
 			}
 		} catch (SQLiteConstraintException contraintException) {
 			// If data already present then handle the case here.
-			return false;
 		} catch (SQLException sqliteException) {
-			return false;
 		}
+
+        closeWriteDatabase();
+        return retVal;
 	}
 
 	public boolean updateMacro(Macro macro) {
-		SQLiteDatabase db = this.getWritableDatabase();
+        boolean retVal = false;
+		SQLiteDatabase db = openWriteDatabase();
 
 		ContentValues values = new ContentValues();
 		values.put(C_RECORD_HASH, macro.getRecordHash());
@@ -877,14 +932,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				new String[] { String.valueOf(macro.getId()) });
 		// if update fails that indicates there is no then create new row
 		if (rowsaffected <= 0) {
-			return createMacro(macro);
-		}
-		return false;
+			retVal = createMacro(macro);
+		}else{
+            retVal = true;
+        }
+		closeWriteDatabase();
+        return retVal;
 	}
 
 	// get macro from database
 	public Macro getMacro(String id) {
-		SQLiteDatabase db = this.getReadableDatabase();
+		SQLiteDatabase db = openReadDatabase();
 
 		String selectQuery = "SELECT  * FROM " + TABLE_MACRO + " WHERE " + C_ID
 				+ " = '" + id + "'";
@@ -905,11 +963,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		macro.setDefaultXAxis(c.getString(c.getColumnIndex(C_DEFAULT_X_AXIS)));
 		macro.setDefaultYAxis(c.getString(c.getColumnIndex(C_DEFAULT_Y_AXIS)));
 		macro.setJavascriptCode(c.getString(c.getColumnIndex(C_JAVASCRIPT_CODE)));
+
+        closeReadDatabase();
 		return macro;
 	}
 
 	public List<Macro> getAllMacros() {
-		SQLiteDatabase db = this.getReadableDatabase();
+		SQLiteDatabase db = openReadDatabase();
 		List<Macro> macros = new ArrayList<Macro>();
 		String selectQuery = "SELECT  * FROM " + TABLE_MACRO;
 		System.out.println(selectQuery);
@@ -938,12 +998,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			} while (c.moveToNext());
 		}
 		c.close();
+        closeReadDatabase();
 		return macros;
 	}
 
 	public boolean createSettings(AppSettings setting) {
+        boolean retVal = false;
 		try {
-			SQLiteDatabase db = this.getWritableDatabase();
+			SQLiteDatabase db = openWriteDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_MODE_TYPE, setting.getModeType());
@@ -954,21 +1016,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			// Inserting Row
 			long row_id = db.insert(TABLE_SETTINGS, null, values);
 			if (row_id >= 0) {
-				return true;
-			} else {
-				return false;
+				retVal = true;
 			}
 		} catch (SQLiteConstraintException contraintException) {
 			// If data already present then handle the case here.
-			return false;
 		} catch (SQLException sqliteException) {
-			return false;
 		}
+        closeWriteDatabase();
+        return retVal;
 	}
 
 	// Getting single parameters of settings
 	public AppSettings getSettings(String userID) {
-		SQLiteDatabase db = this.getReadableDatabase();
+		SQLiteDatabase db = openReadDatabase();
 
 		String selectQuery = "SELECT  * FROM " + TABLE_SETTINGS + " WHERE "
 				+ C_USER_ID + " = '" + userID + "'";
@@ -987,12 +1047,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			setting.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
 		}
 		c.close();
+        closeReadDatabase();
 		return setting;
 	}
 
 	// Updating single setting
 	public boolean updateSettings(AppSettings setting) {
-		SQLiteDatabase db = this.getWritableDatabase();
+        boolean retVal = false;
+		SQLiteDatabase db = openWriteDatabase();
 
 		ContentValues values = new ContentValues();
 		values.put(C_USER_ID, setting.getUserId());
@@ -1005,14 +1067,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				new String[] { String.valueOf(setting.getUserId()) });
 
 		if (rowUpdated <= 0) {
-			return createSettings(setting);
-		}
-		return false;
+			retVal = createSettings(setting);
+		}else{
+            retVal = true;
+        }
+		closeWriteDatabase();
+        return retVal;
 	}
 
 	public boolean createData(Data data) {
+        boolean retVal = false;
 		try {
-			SQLiteDatabase db = this.getWritableDatabase();
+			SQLiteDatabase db = openWriteDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_USER_ID, data.getUser_id());
@@ -1024,21 +1090,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			// Inserting Row
 			long row_id = db.insert(TABLE_DATA, null, values);
 			if (row_id >= 0) {
-				return true;
-			} else {
-				return false;
+				retVal = true;
 			}
 		} catch (SQLiteConstraintException contraintException) {
 			// If data already present then handle the case here.
-			return false;
 		} catch (SQLException sqliteException) {
-			return false;
 		}
+        closeWriteDatabase();
+        return retVal;
 	}
 
 	// Getting single parameters of settings
 	public Data getData(String userID, String projectID, String questionID) {
-		SQLiteDatabase db = this.getReadableDatabase();
+		SQLiteDatabase db = openReadDatabase();
 
 		String selectQuery = "SELECT  * FROM " + TABLE_DATA + " WHERE "
 				+ C_USER_ID + " = '" + userID + "' and " + C_PROJECT_ID + " = '" + projectID + "' and " + C_QUESTION_ID + " = '" + questionID + "'";
@@ -1057,12 +1121,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			data.setValue(c.getString(c.getColumnIndex(C_VALUES)));
 		}
 		c.close();
+        closeReadDatabase();
 		return data;
 	}
 
 	// Updating single setting
 	public boolean updateData(Data data) {
-		SQLiteDatabase db = this.getWritableDatabase();
+        boolean retVal = false;
+		SQLiteDatabase db = openWriteDatabase();
 
 		ContentValues values = new ContentValues();
 		values.put(C_USER_ID, data.getUser_id());
@@ -1076,16 +1142,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				new String[] { String.valueOf(data.getUser_id()),String.valueOf(data.getQuestion_id()),String.valueOf(data.getProject_id()) });
 
 		if (rowUpdated <= 0) {
-			return createData(data);
-		}
-		return false;
+			retVal = createData(data);
+		}else{
+            retVal = true;
+        }
+        closeWriteDatabase();
+		return retVal;
 	}
 
-	// closing database
-	public void closeDB() {
-		SQLiteDatabase db = this.getReadableDatabase();
-		if (db != null && db.isOpen())
-			db.close();
-	}
+    public void deleteAllData(){
+        SQLiteDatabase db = openWriteDatabase();
+        db.delete(TABLE_OPTION,null,null);
+        db.delete(TABLE_DATA,null,null);
+        db.delete(TABLE_MACRO,null,null);
+        db.delete(TABLE_PROTOCOL,null,null);
+        db.delete(TABLE_QUESTION,null,null);
+        db.delete(TABLE_RESEARCH_PROJECT,null,null);
+        db.delete(TABLE_SETTINGS,null,null);
+        closeWriteDatabase();
+    }
 
 }

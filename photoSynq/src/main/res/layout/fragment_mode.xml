@@ -21,7 +21,7 @@
             android:layout_width="fill_parent"
             android:button="@null"
             android:drawableRight="@android:drawable/btn_radio"
-            android:text="@string/quick_measure_mode"
+            android:text="Quick Measurement \n\nTake a Single Measurement without saving the results"
             android:textSize="24sp" />
 
         <RadioButton
@@ -30,8 +30,8 @@
             android:button="@null"
             android:paddingTop="50dip"
             android:drawableRight="@android:drawable/btn_radio"
-            android:text="@string/streamlined_mode"
+            android:text="Project Measurement \n\nTake a Measurement as part of a Project and contribute the data (select the project from the left menu bar)"
             android:textSize="24sp" />
-    </RadioGroup>
 
+    </RadioGroup>
 </RelativeLayout>

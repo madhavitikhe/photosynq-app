@@ -1,11 +1,9 @@
 package com.photosynq.app.navigationDrawer;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
+import android.app.ActionBar;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -26,6 +24,9 @@ import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 public class FragmentSelectProject extends Fragment{
 	
 	private String recordid = ""; 
@@ -42,11 +43,17 @@ public class FragmentSelectProject extends Fragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-			
-		View rootView = inflater.inflate(R.layout.activity_project_description, container, false);
-		
-		
+
+        ActionBar actionBar = getActivity().getActionBar();
+        if(actionBar!=null) {
+            actionBar.show();
+            actionBar.setTitle(getResources().getString(R.string.title_activity_select_project));
+        }
+
+        View rootView = inflater.inflate(R.layout.activity_project_description, container, false);
+
 		db = DatabaseHelper.getHelper(getActivity());
+
 		Bundle extras = getArguments();
 		if (extras != null) {
 			recordid = extras.getString(DatabaseHelper.C_ID);
@@ -58,7 +65,7 @@ public class FragmentSelectProject extends Fragment{
 			getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 			int screenWidth = displaymetrics.widthPixels;
 			//int screenHeight = displaymetrics.heightPixels;
-			
+            final FragmentManager fragmentManager = getActivity().getFragmentManager();
 			TextView tvProjetTitle = (TextView) rootView.findViewById(R.id.project_name);
 			TextView tvProjetDesc = (TextView) rootView.findViewById(R.id.project_desc);
 			TextView tvStartDate = (TextView) rootView.findViewById(R.id.start_date);
@@ -70,14 +77,21 @@ public class FragmentSelectProject extends Fragment{
 				
 				@Override
 				public void onClick(View arg0) {
-					FragmentManager fm = getActivity().getSupportFragmentManager();
-					
-					String userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-		    		AppSettings appSettings = db.getSettings(userId);
-
-					appSettings.setProjectId(recordid);
-					db.updateSettings(appSettings);
-					fm.beginTransaction().replace(R.id.content_frame, new FragmentProjectList()).commit();	
+					FragmentManager fm = getActivity().getFragmentManager();
+                    String userId = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+                    String first_install_cycle = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE, "YES");
+                    if( first_install_cycle.equals("YES")) {
+                        AppSettings appSettings = db.getSettings(userId);
+                        appSettings.setProjectId(recordid);
+                        db.updateSettings(appSettings);
+                        fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentStreamlinedMode(), FragmentStreamlinedMode.class.getName()).commit();
+                        PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE, "NO");
+                    }else {
+                        AppSettings appSettings = db.getSettings(userId);
+                        appSettings.setProjectId(recordid);
+                        db.updateSettings(appSettings);
+                        fm.beginTransaction().replace(R.id.content_frame, new FragmentProjectList(), FragmentProjectList.class.getName()).commit();
+                    }
 				}
 			});
 

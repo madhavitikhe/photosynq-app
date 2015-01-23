@@ -1,7 +1,5 @@
 package com.photosynq.app;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +12,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.photosynq.app.model.Question;
+
+import java.util.List;
 
 public class QuestionArrayAdapter extends BaseAdapter implements ListAdapter  {
 
@@ -79,22 +79,22 @@ public class QuestionArrayAdapter extends BaseAdapter implements ListAdapter  {
 								View view, int pos, long id) {
 							// TODO Auto-generated method stub
 							//System.out.println("$$$$$$$$$$$$$$$$ Pos="+pos+" id="+id + " data="+spinOptions.getSelectedItem().toString());
-							if(position==0)
-							{
-								((NewMeasurmentActivity)parent.getContext()).option1= spinOptions.getSelectedItem().toString();
-								((NewMeasurmentActivity)parent.getContext()).question1= question.getQuestionText();
-								//System.out.println("$$$$$$setting 1: "+spinOptions.getSelectedItem().toString());
-							}else if(position==1)
-							{
-								((NewMeasurmentActivity)parent.getContext()).option2= spinOptions.getSelectedItem().toString();
-								((NewMeasurmentActivity)parent.getContext()).question2= question.getQuestionText();
-								//System.out.println("$$$$$$setting 2: "+spinOptions.getSelectedItem().toString());
-							}else if(position==2)
-							{
-								((NewMeasurmentActivity)parent.getContext()).option3= spinOptions.getSelectedItem().toString();
-								((NewMeasurmentActivity)parent.getContext()).question3= question.getQuestionText();
-								//System.out.println("$$$$$$setting 3: "+spinOptions.getSelectedItem().toString());
-							}
+//							if(position==0)
+//							{
+//								((NewMeasurmentActivity)parent.getContext()).option1= spinOptions.getSelectedItem().toString();
+//								((NewMeasurmentActivity)parent.getContext()).question1= question.getQuestionText();
+//								//System.out.println("$$$$$$setting 1: "+spinOptions.getSelectedItem().toString());
+//							}else if(position==1)
+//							{
+//								((NewMeasurmentActivity)parent.getContext()).option2= spinOptions.getSelectedItem().toString();
+//								((NewMeasurmentActivity)parent.getContext()).question2= question.getQuestionText();
+//								//System.out.println("$$$$$$setting 2: "+spinOptions.getSelectedItem().toString());
+//							}else if(position==2)
+//							{
+//								((NewMeasurmentActivity)parent.getContext()).option3= spinOptions.getSelectedItem().toString();
+//								((NewMeasurmentActivity)parent.getContext()).question3= question.getQuestionText();
+//								//System.out.println("$$$$$$setting 3: "+spinOptions.getSelectedItem().toString());
+//							}
 						}
 
 						@Override

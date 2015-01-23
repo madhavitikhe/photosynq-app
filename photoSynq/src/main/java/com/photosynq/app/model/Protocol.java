@@ -4,6 +4,9 @@ import com.photosynq.app.utils.CommonUtils;
 
 public class Protocol {
 
+    public static final String NAME = "PROTOCOL_NAME";
+    public static final String DESCRIPTION = "PROTOCOL_DESCRIPTION";
+
 	private String recordHash;
 	private String id;
 	private String name;
@@ -11,12 +14,13 @@ public class Protocol {
 	private String description;
 	private String macroId;
 	private String slug;
-	
-	public Protocol()
+	private String mPreSelected;
+
+    public Protocol()
 	{
 		
 	}
-	public Protocol(String id, String name, String protocol_json,String description, String macroId, String slug)
+	public Protocol(String id, String name, String protocol_json,String description, String macroId, String slug, String preSelected)
 	{
 		this.id = id;
 		this.name = name;
@@ -25,6 +29,7 @@ public class Protocol {
 		this.macroId = macroId;
 		this.slug = slug;
 		this.recordHash = getProtocolRecordHash();
+        this.mPreSelected = preSelected;
 	}
 	private String getProtocolRecordHash() {
 		String recordString = (null != getId() ? getId(): "") 
@@ -32,7 +37,8 @@ public class Protocol {
 				+ (null != getProtocol_json()? getProtocol_json() : "" )
 				+ (null != getDescription()? getDescription() : "" )
 				+ (null != getMacroId()? getMacroId() : "" )
-				+ (null != getSlug()? getSlug() : "" );
+				+ (null != getSlug()? getSlug() : "" )
+                + (null != mPreSelected? mPreSelected : "" );
 		return CommonUtils.getMD5EncryptedString(recordString);
 	}
 	public String getRecordHash() {
@@ -77,6 +83,16 @@ public class Protocol {
 	public void setProtocol_json(String protocol_json) {
 		this.protocol_json = protocol_json;
 	}
-	
-	
+    public String getPreSelected(){
+        return mPreSelected;
+    }
+    public void setPreSelected(String preSelected){
+        mPreSelected = preSelected;
+    }
+    public boolean isPreSelected() {
+        if (mPreSelected.equals("true"))
+            return true;
+
+        return false;
+    }
 }

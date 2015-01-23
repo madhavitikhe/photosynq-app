@@ -124,20 +124,25 @@
         </LinearLayout>
     </ScrollView>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="60dip"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:paddingTop="10dp" >
 
-        <Button
-            android:id="@+id/dir_next_btn"
+        <CheckBox
             android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:onClick="onDirNextClicked"
-            android:text="@string/next" >
-        </Button>
-    </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:text="Got it! Please don't show this any more"
+            android:id="@+id/showDirections"
+            android:onClick="onCheckBoxClicked"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Close"
+            android:onClick="onCloseBtnClicked"/>
+    </LinearLayout>
 
 </LinearLayout>

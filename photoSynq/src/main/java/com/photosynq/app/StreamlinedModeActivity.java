@@ -2,6 +2,7 @@ package com.photosynq.app;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -9,10 +10,11 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.DialogFragment;
+import android.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,6 +44,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.gson.Gson;
 import com.google.zxing.client.android.CaptureActivity;
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.Question;
@@ -49,7 +52,6 @@ import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.navigationDrawer.Utils;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
-import com.photosynq.app.utils.DataUtils;
 import com.photosynq.app.utils.LocationUtils;
 import com.photosynq.app.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
@@ -64,29 +66,29 @@ import java.util.List;
 
 public class StreamlinedModeActivity extends Activity implements LocationListener,
         GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener{
+        GooglePlayServicesClient.OnConnectionFailedListener {
 
-	ViewFlipper viewFlipper;
-	private DatabaseHelper db;
-	private String projectId;
-	private String deviceAddress;
-	private Context ctx;
-	ArrayList<String> allSelectedOptions;
-	ArrayList<String> allSelectedQuestions ;
-	private Handler  handler = new Handler();
-	private boolean scanMode =false;
-	private int autoIncProjecSize = 0;
-    private String protocolJson="";
+    private DatabaseHelper db;
+    private String projectId;
+    private String deviceAddress;
+    private Context ctx;
+    ArrayList<String> allSelectedOptions;
+    ArrayList<String> allSelectedQuestions;
+    private Handler handler = new Handler();
+    private boolean scanMode = false;
+    private int autoIncProjecSize = 0;
+    private String protocolJson = "";
     private Data data;
-    //private TextView que;
-    //private TextView opt;
+    ViewFlipper viewFlipper;
+    private String userId;
+    AppSettings appSettings;
+
     // A request to connect to Location Services
     private LocationRequest mLocationRequest;
 
     // Stores the current instantiation of the location client in this object
     private LocationClient mLocationClient;
     //String[n] array;
-
 
     // Message types sent from the BluetoothService Handler
     public static final int MESSAGE_STATE_CHANGE = 1;
@@ -96,6 +98,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
     public static final int MESSAGE_TOAST = 5;
     public static final int MESSAGE_STOP = 6;
     private static final boolean D = true;
+
     // Key names received from the BluetoothService Handler
     public static final String DEVICE_NAME = "device_name";
     public static final String TOAST = "toast";
@@ -107,13 +110,14 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
     private BluetoothAdapter mBluetoothAdapter = null;
     private TextView mStatusLine;
     private String mConnectedDeviceName = null;
-    private String option1="";
-    private String option3="";
-    private String option2="";
+    private String option1 = "";
+    private String option3 = "";
+    private String option2 = "";
 
     private boolean clearflag = false;
     private boolean reviewFlag = false;
     private int fixedValueCount = 0;
+    private ProgressDialog pDialog;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -151,7 +155,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
 
         //Show question and option on viewflipper.
         //db = new DatabaseHelper(ctx);
-        String userId = PrefUtils.getFromPrefs(ctx, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        userId = PrefUtils.getFromPrefs(ctx, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
         db = DatabaseHelper.getHelper(ctx);
         projectId = db.getSettings(userId).getProjectId();
         deviceAddress = db.getSettings(userId).getConnectionId();
@@ -160,7 +164,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
         viewFlipper = (ViewFlipper) findViewById(R.id.ViewFlipper01);
         int questionLoop =0;
 
-        if(questions.size() == 0 || null == deviceAddress)
+        if((null == projectId && questions.size() == 0)  || null == deviceAddress)
         {
             Toast.makeText(getApplicationContext(),"Please complete data setup first.",Toast.LENGTH_SHORT).show();
             finish();
@@ -222,8 +226,11 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                             allSelectedQuestions.add(new Gson().toJson(question));
                             //allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
                             String str = userEnteredAnswer.getText().toString().trim();
-                            if(true == str.contains("\\n")){
-                               Toast.makeText(getApplicationContext(),"Re-Enter Answer..\\n is not allowed",Toast.LENGTH_LONG).show();
+                            if(true == str.matches(".*['{}!].*") ||
+                                    true == str.contains("\\n") ||
+                                    true == str.contains("[")||
+                                    true == str.contains("]")){
+                               Toast.makeText(getApplicationContext(),"Re-Enter Answer... special character is not allowed",Toast.LENGTH_LONG).show();
                             }
                             else
                             {
@@ -289,8 +296,6 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                         viewFlipper.showNext();
                     }
 //                        setMeasurementScreen();
-
-
                 }
 
                     PrefUtils.saveToPrefs(ctx, PrefUtils.PREFS_QUESTION_INDEX, "0");
@@ -320,50 +325,6 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                             }
                         });
 
-                      //View btnScanDone = viewScanCode.findViewById(R.id.done_scan_btn);
-//                      btnScanDone.setTag(questionLoop);
-//                      btnScanDone.setOnClickListener(new OnClickListener() {
-//
-//                        @Override
-//                        public void onClick(View v) {
-//                            int displayedChild = viewFlipper.getDisplayedChild();
-//                            int childCount = viewFlipper.getChildCount();
-//                            allSelectedQuestions.add(new Gson().toJson(question));
-//                            //allSelectedOptions.add(txtScanResult.getText().toString());
-//                            //allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
-//
-//                            if (displayedChild == childCount - 2) {
-//                                viewFlipper.stopFlipping();
-//
-//                                if(reviewFlag)
-//                                {
-//                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
-//                                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
-//                                    reviewFlag = false;
-//                                }
-//                                else {
-//                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
-//                                    viewFlipper.showNext();
-//                                }
-//                                setMeasurementScreen();
-//                            }
-//                            else
-//                            {
-//                                if(reviewFlag)
-//                                {
-//                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
-//                                    setMeasurementScreen();
-//                                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
-//                                    reviewFlag = false;
-//                                }
-//                                else {
-//                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),txtScanResult.getText().toString());
-//                                    viewFlipper.showNext();
-//                                }
-//                            }
-//                            txtScanResult.setText("");
-//                        }
-//                    });
                     viewFlipper.addView(viewScanCode);
                 }
             }
@@ -407,7 +368,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                             //allSelectedOptions.add(question.getOptions().get(v.getId()));
 
                             //allSelectedOptions.add(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
-                            for(int i=0;i<allSelectedOptions.size();i++)
+                            for (int i = 0; i < allSelectedOptions.size(); i++)
                             {
                                 System.out.println(allSelectedOptions.get(i));
                             }
@@ -844,7 +805,7 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
                 if(data.getType().equals(Data.AUTO_INCREMENT))
                 {
                     int index = Integer.parseInt(PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_QUESTION_INDEX, "-1"));
-                    int optionvalue = Integer.parseInt(DataUtils.getAutoIncrementedValue(getApplicationContext(), allQuestions.get(i).getQuestionId(), "" + index));
+                    int optionvalue = Integer.parseInt(CommonUtils.getAutoIncrementedValue(getApplicationContext(), allQuestions.get(i).getQuestionId(), "" + index));
                     //que.setText("Question -  " + allQuestions.get(i).getQuestionText());
                     tvQuestion.setText(allQuestions.get(i).getQuestionText());
                     //liLayout.addView(que);
@@ -1298,35 +1259,6 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
         if (mBluetoothService != null) mBluetoothService.stop();
     }
 
-    public void clearApplicationData() {
-        File cache = getCacheDir();
-        File appDir = new File(cache.getParent());
-        if(appDir.exists()){
-            String[] children = appDir.list();
-            for(String s : children){
-                if(!s.equals("lib")){
-                    deleteDir(new File(appDir, s));
-                    Log.i("TAG", "**************** File /data/data/APP_PACKAGE/" + s +" DELETED *******************");
-                }
-            }
-        }
-    }
-
-    public static boolean deleteDir(File dir) {
-        if (dir != null && dir.isDirectory()) {
-            String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    return false;
-                }
-            }
-        }
-
-
-        return dir.delete();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
@@ -1336,13 +1268,6 @@ public class StreamlinedModeActivity extends Activity implements LocationListene
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.clearCache:
-                //deleteCache(this);
-                clearApplicationData();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+             return super.onOptionsItemSelected(item);
         }
-    }
 }

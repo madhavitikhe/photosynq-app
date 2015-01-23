@@ -1,9 +1,10 @@
 package com.photosynq.app.navigationDrawer;
 
+import android.app.ActionBar;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,13 @@ public class FragmentReview extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        ActionBar actionBar = getActivity().getActionBar();
+        if(actionBar!=null) {
+            actionBar.show();
+            actionBar.setTitle(getResources().getString(R.string.title_activity_review));
+        }
+
         View rootView = inflater.inflate(R.layout.fragment_review, container, false);
         userId = PrefUtils.getFromPrefs(getActivity() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
         db = DatabaseHelper.getHelper(getActivity());
@@ -52,14 +60,13 @@ public class FragmentReview extends Fragment {
         TextView tvUser = (TextView) rootView.findViewById(R.id.user_text);
         TextView tvBluetoothId = (TextView) rootView.findViewById(R.id.connection_text);
         TextView tvProjectId = (TextView) rootView.findViewById(R.id.project_text);
-        //TextView tvQuestions = (TextView) rootView.findViewById(R.id.tvQuestions);
 
-        //Set cuurent settings
+        //Set current settings
         if(null != appSettings.getModeType())
         {
-            if (appSettings.getModeType().equals(Utils.APP_MODE_NORMAL))
+            if (appSettings.getModeType().equals(Utils.APP_MODE_QUICK_MEASURE))
             {
-                tvMode.setText(getResources().getString(R.string.normal_mode));
+                tvMode.setText(getResources().getString(R.string.quick_measure_mode));
             }
             else if(appSettings.getModeType().equals(Utils.APP_MODE_STREAMLINE))
             {
@@ -80,16 +87,14 @@ public class FragmentReview extends Fragment {
             String projectId = appSettings.getProjectId();
             tvProjectId.setText(db.getResearchProject(projectId).getName());
 
-
             List<Question> questions = db.getAllQuestionForProject(appSettings.getProjectId());
             TableRow row = new TableRow(getActivity());
-
 
             int maxLoop = 1;
             HashMap<String,ArrayList<Integer>> populatedValues = new HashMap();
             for (Question question : questions) {
                     TextView tv = new TextView(getActivity());
-                    tv.setLayoutParams(new TableRow.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f));
+                    tv.setLayoutParams(new TableRow.LayoutParams(250, LayoutParams.WRAP_CONTENT, 1f));
                     tv.setText(question.getQuestionText());
                     tv.setLines(3);
                     tv.setTextSize(20);
@@ -123,7 +128,8 @@ public class FragmentReview extends Fragment {
                     }
                 }
             }
-            questionsTableLayout.addView(row);
+            if(questions.size() > 0) {
+                questionsTableLayout.addView(row);
 
                 for (int i = 0; i < maxLoop; i++) {
                     TableRow rowOptions = new TableRow(getActivity());
@@ -132,12 +138,9 @@ public class FragmentReview extends Fragment {
                         tv.setText("");
                         tv.setTextSize(20);
 
-                        if(question.getQuestionType() == Question.PROJECT_DEFINED)
-                        {
+                        if (question.getQuestionType() == Question.PROJECT_DEFINED) {
                             tv.setText("Proj");
-                        }
-                        else
-                        {
+                        } else {
                             // tv.setBackgroundColor(getResources().getColor(R.color.blue_dark));
 
                             data = db.getData(userId, projectId, question.getQuestionId());
@@ -149,21 +152,17 @@ public class FragmentReview extends Fragment {
 
                                 } else if (data.getType().equals(Data.AUTO_INCREMENT)) {
 
-                                    if (i < populatedValues.get(question.getQuestionId()).size())
-                                    {
+                                    if (i < populatedValues.get(question.getQuestionId()).size()) {
                                         Integer val = populatedValues.get(question.getQuestionId()).get(i);
                                         tv.setText(val.toString());
                                     }
 
-//                                    String val = DataUtils.getAutoIncrementedValue(getActivity(), question.getQuestionId(), "" + i);
-//                                    if (!val.equals("-1") && !val.equals("-2"))
-//                                        tv.setText(val);
                                 } else if (data.getType().equals(Data.SCAN_CODE)) {
                                     tv.setText("Scan");
                                 }
                             }
                         }
-                        tv.setLayoutParams(new TableRow.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f));
+                        tv.setLayoutParams(new TableRow.LayoutParams(250, LayoutParams.WRAP_CONTENT, 1f));
                         tv.setPadding(10, 10, 10, 10);
                         tv.setBackgroundResource(R.drawable.border);
 
@@ -171,6 +170,7 @@ public class FragmentReview extends Fragment {
                     }
                     questionsTableLayout.addView(rowOptions);
                 }
+            }
         }
         rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));
         return rootView;
