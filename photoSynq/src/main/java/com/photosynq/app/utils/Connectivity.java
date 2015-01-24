@@ -42,7 +42,7 @@ public class Connectivity extends AsyncTask<String, String, String>{
     private static boolean hasActiveInternetConnection(Context context) {
         if (isNetworkAvailable(context)) {
             try {
-                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://photosynq.venturit.net").openConnection());
+                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://photosynq.org").openConnection());
                 urlc.setRequestProperty("User-Agent", "Test");
                 urlc.setRequestProperty("Connection", "close");
                 urlc.setConnectTimeout(1500);
