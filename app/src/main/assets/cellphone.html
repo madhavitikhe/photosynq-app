@@ -1,0 +1,288 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="bootstrap.min.css" media="all" rel="stylesheet" type="text/css">
+<link href="bootstrap-theme.min.css" media="all" rel="stylesheet" type="text/css">
+<link href="font-awesome.min.css" media="all" rel="stylesheet" type="text/css">
+<script src="jquery.min.js"></script>
+<script src="jquery.touchSwipe.min.js"></script>
+<script src="bootstrap.min.js"></script>
+<script src="highcharts.js"></script>
+<script src="jquery.sparkline.min.js"></script>
+<script src="math.js"></script>
+<script src="initalvariables.js"></script>
+<script src="macros.js"></script>
+<script src="macros_variable.js"></script>
+<script src="data.js"></script>
+<style type="text/css">
+    body { padding-top: 60px; padding-bottom: 40px;}
+    .carousel-indicators li {border-color: #333;}
+    .carousel-indicators .active {background-color: #333;}
+    #NavFooter {background-color:transparent; background-image:linear-gradient(rgba(245, 245, 245,
+    0.85) 0%, rgb(232, 232, 232) 100%)}
+    #NavHeader {background-color:transparent; background-image:linear-gradient(rgb(232, 232, 232)
+    0%, rgba(245, 245, 245, 0.85) 100%)}
+    .backgroundgraph {position:absolute;margin-left:-15px; margin-top:10px;}
+    .simplecontent {height:70px; overflow:hidden; overflow-y:auto;}
+</style>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	//------------------------------------------------------------------------------------
+	// Toggle Views
+	//------------------------------------------------------------------------------------
+	$('#BtnPlotsContainer, #BtnListContainer').on('click',function(){
+		if($($(this).val()).is(":visible"))
+			return false;
+		$('#BtnPlotsContainer, #BtnListContainer').removeClass('active');
+		$(this).addClass('active');
+		$('#PlotsContainer, #ListContainer, #NavFooter').toggle();
+		if($(this).val() == '#PlotsContainer'){
+			$('body').css('padding-bottom', '40px');
+		}
+		else
+			$('body').css('padding-bottom', '0px');
+	});
+
+	//------------------------------------------------------------------------------------
+	// Carousel View
+	//------------------------------------------------------------------------------------
+	$('#carousel').carousel({
+		interval: false
+	});
+	
+	$('body').swipe({
+		//Generic swipe handler for all directions
+		swipeLeft:function(event, direction, distance, duration, fingerCount) {
+			if($('#PlotsContainer').is(":visible"))
+				$('#carousel').carousel('next');
+		},
+		swipeRight: function() {
+			if($('#PlotsContainer').is(":visible"))
+				$('#carousel').carousel('prev');
+		},
+		threshold:75
+	});
+
+	$('#carousel').on('slid.bs.carousel', function (e) {
+		var visible = $('#carousel .active').index();
+		$('.carousel-indicators li').removeClass('active');
+		$('.carousel-indicators li:eq('+visible+')').addClass('active');
+	});
+	
+	
+	//------------------------------------------------------------------------------------
+	// Generate and display Views (from data.js)
+	//------------------------------------------------------------------------------------
+	var c= 0;
+	data = data[0];
+	// Loop through measurements
+	//---------------------------------------------------------------------
+	for(measurementID in data['sample']){
+		// Loop through Protocols
+		//---------------------------------------------------------------------
+		for(protocolkey in data['sample'][measurementID]){
+			
+			var protocol = data['sample'][measurementID][protocolkey];
+			var protocolID = protocol.protocol_id || false;
+			var protocolname  = protocols[protocolID].protocol_name || "Unknown";
+			var macrcoID = protocols[protocolID].macro_id || false;
+			var data_raw = protocol.data_raw || [];
+			
+			// Build graph with container
+			//---------------------------------------------------------------------
+			var DetailedContainer = '<div class="panel panel-default">';
+			DetailedContainer += '<div class="panel-heading">'+protocolname+'</div>';
+			DetailedContainer += '<div class="panel-body" id="plotRawData'+c+'" style="padding:0px"></div>';
+			DetailedContainer += '<table class="table table-condensed table-bordered" id="tableData'+c+'">';
+
+			// Build simpler view with graph
+			//---------------------------------------------------------------------
+			var ListContainer = '<div class="panel panel-default">';
+			ListContainer += '<div class="panel-heading" id="listplotRawData'+c+'">';
+			ListContainer += '<div class="backgroundgraph"></div>';
+			ListContainer += '<div class="row" style="z-index:2;min-height:90px;">';
+			ListContainer += '<div class="col-xs-12 text-right"><em>'+protocolname+'</em></div>';
+			ListContainer += '<div class="col-xs-12 simplecontent"></div>';
+			ListContainer += '</div>';
+			ListContainer += '</div>';
+
+			var simpleHTML ='';
+			var macro = false;
+			if(macrcoID){
+				var fn = window['macro_'+macrcoID];
+				if (typeof fn === "function"){
+					try{
+						var macro = fn.apply(null, new Array(protocol));
+					}
+					catch(e){
+						var macro = false;
+					}
+				}
+			}
+
+            // Add macro data to table
+			//---------------------------------------------------------------------
+			if(macro){
+				var col = 1;
+				DetailedContainer += '<tr>';
+				for(values in macro){
+					if(values == 'HTML' || values == 'GraphType' || values == 'Macro')
+						continue;
+					
+					if(col % 2 && col !== 1)
+						DetailedContainer += '</tr><tr>';
+					DetailedContainer += '<td style="width:50%">';
+					DetailedContainer += '<em class="text-muted">';
+					simpleHTML +='<div class="col-xs-3 text-center">'
+					if(replacements[values] != undefined){
+						DetailedContainer += replacements[values]
+						simpleHTML += '<h5>'+replacements[values]+'</h5>'
+					}
+					else{
+						DetailedContainer += values
+						simpleHTML += '<h5>'+values+'</h5>'
+					}
+					DetailedContainer += ':</em> ';
+					DetailedContainer += '<span style="margin-left:10px;word-wrap: break-word;">'+macro[values]+'</span>';
+					DetailedContainer += '</td>';
+					simpleHTML +=MathROUND(macro[values],3)+'</div>';
+					col++;
+				}
+				DetailedContainer += '</tr>'
+			}else{
+
+			}
+
+			// Add environmental & misc data to table
+			//---------------------------------------------------------------------
+			var col = 1;
+			DetailedContainer += '<tr>';
+			for(values in protocol){
+				if($.inArray(values, variablehidephone) == -1){
+					if(col % 2 && col !== 1)
+						DetailedContainer += '</tr><tr>';
+					DetailedContainer += '<td style="width:50%">';
+					DetailedContainer += '<em class="text-muted">';
+					if(replacements[values] != undefined)
+						DetailedContainer += replacements[values]
+					else
+						DetailedContainer += values
+					
+					DetailedContainer += ':</em> ';
+					DetailedContainer += '<span style="margin-left:10px;word-wrap: break-word;">'+MathROUND(protocol[values],3)+'</span>';
+					DetailedContainer += '</td>';
+					col++;
+				}
+			}
+			DetailedContainer += '</tr>'
+			DetailedContainer += '</table>';
+			DetailedContainer += '</div>';
+
+			
+			// Add DetailedContainer
+			//---------------------------------------------------------------------
+			if(c == 0){
+				$('.carousel-indicators').append('<li data-target="#carousel" data-slide-to="'+c+'" class="active"></li>');
+				$('#carousel .carousel-inner').append('<div class="item active">'+DetailedContainer+'</div>');
+			}
+			else{
+				$('.carousel-indicators').append('<li data-target="#carousel" data-slide-to="'+c+'"></li>');
+				$('#carousel .carousel-inner').append('<div class="item">'+DetailedContainer+'</div>');
+			}
+
+			// Add MiniContainer
+			$('#ListContainer').append(ListContainer);
+			$('#listplotRawData'+c+' .simplecontent').append(simpleHTML);
+
+			// Add colspan=2 to td if necessary
+			//---------------------------------------------------------------------
+			$('#tableData'+c+' tbody tr').each(function(k,v){
+				if($(v).children().length == 1)
+					$(v).children().prop('colspan',2)
+			});
+			
+			// Make graph changes according to macro
+			//---------------------------------------------------------------------
+			if(macro.GraphType){
+				if(macro.GraphType == 'line'){
+					plotoptionsphone['series'][0]['marker'] = { enabled: false};
+					plotoptionsphone['series'][0]['lineWidth'] = 4;
+				}
+				else if(macro.GraphType == 'points'){
+					plotoptionsphone['series'][0]['marker'] = { enabled: true};
+					plotoptionsphone['series'][0]['lineWidth'] = 0;
+				}
+				else if(macro.GraphType == 'pointline'){
+					plotoptionsphone['series'][0]['marker'] = { enabled: true};
+					plotoptionsphone['series'][0]['lineWidth'] = 4;
+				}
+			}
+			
+			// Add data to graph
+			//---------------------------------------------------------------------
+			plotoptionsphone['series'][0]['data'] = data_raw;
+			plotoptionsphone['chart']['width'] = $('#listplotRawData0').width();
+			plotoptionsphone['chart']['reflow'] = true;
+			
+			// Build graph
+			//---------------------------------------------------------------------
+			$('#plotRawData'+c).highcharts(plotoptionsphone);
+
+			// Build background graph for panel
+			//---------------------------------------------------------------------			
+			$('#listplotRawData'+c+' .backgroundgraph').sparkline(
+				plotoptionsphone.series[0].data, {
+					width: $('.panel').width()+'px',
+					height: '90px',
+					type: 'line',
+					lineColor: $('#listplotRawData'+c).css('border-color'),
+					lineWidth: 3,
+					fillColor: $('#listplotRawData'+c).css('background-color'),
+					minSpotColor: false,
+					maxSpotColor: false,
+					spotColor: false,
+					disableTooltips: true,
+					disableHighlight: true
+				});
+			c++;
+		}
+	}
+	
+	// Workaround to show icons (webfont loading issue)
+	//---------------------------------------------------------------------	
+	$('#BtnPlotsContainer').click();
+	$('#BtnListContainer').click();
+});
+
+</script>
+</head>
+<body>
+<div class="navbar navbar-default navbar-fixed-top" id="NavHeader" role="navigation">
+    <div class="container">
+        <div class="col-xs-6 navbar-brand">
+            <span class="text-success"><i class="fa fa-check-circle"></i>&nbsp; Done</span>
+        </div>
+        <div class="col-xs-6">
+            <div class="btn-group pull-right" style="margin-top:12px">
+                <button class="btn btn-default active" id="BtnListContainer" value="#ListContainer">
+                    <i class="fa fa-th-large"></i></button>
+                <button class="btn btn-default" id="BtnPlotsContainer" value="#PlotsContainer"><i
+                        class="fa fa-list"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div id="ListContainer"></div>
+    <div class="row" id="PlotsContainer" style="display:none;">
+        <div id="carousel" class="carousel slide">
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner col-xs-12"></div>
+        </div>
+    </div>
+    <nav class="navbar navbar-default navbar-fixed-bottom" id="NavFooter" role="navigation"
+         style="display:none;">
+        <ol class="carousel-indicators"></ol>
+    </nav>
+</body>
+</html>

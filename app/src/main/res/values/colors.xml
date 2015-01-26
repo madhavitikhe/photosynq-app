@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Wecome activity -->
+    <color name="welcome_desc">#dadee0</color>
+
+    <!-- App name shade on Welcome and Login activity-->
+    <color name="app_name_gredient_start">#6b5aa3</color>
+    <color name="app_name_gredient_end">#39749e</color>
+
+    <color name="white">#ffffff</color>
+    <!--<color name="gray">#FF888888</color>-->
+    <!--<color name="gray_line">#CCC</color>	-->
+    <!--<color name="black">#000000</color>-->
+    <!--<color name="background">#EEEEEE</color>	-->
+    <!---->
+    <!--<color name="backgroud_user">#161F29</color>	-->
+    <!---->
+    <color name="transparent">#00000000</color>
+    <!---->
+     <!-- Status para as lista 	-->
+    <color name="navigation_drawer">#2e3137</color>
+    <!--<color name="navigation_items">#ffffff</color>		-->
+    <!--<color name="gray_navegation">#ffffff</color>		-->
+
+    <color name="blue_light">#33B5E5</color>
+    <!--<color name="purple_light">#AA66CC</color>		-->
+    <color name="green">#5ec58b</color>
+    <color name="green_light">#99CC00</color>
+    <!--<color name="orange_light">#FFBB33</color>		-->
+    <!--<color name="red_light">#FF4444</color>		-->
+    <!---->
+    <!--<color name="blue_dark">#0099CC</color>-->
+    <!--<color name="purple_dark">#9933CC</color>		-->
+    <!--<color name="green_dark">#669900</color>										-->
+    <!--<color name="orange_dark">#FF8800</color>	-->
+    <!--<color name="red_dark">#CC0000</color>	-->
+    <!---->
+    <!--<color name="green_google_play">#96AA39</color>	-->
+    <!---->
+    <!--<color name="background_tab_pressed">#6633B5E5</color>-->
+</resources>

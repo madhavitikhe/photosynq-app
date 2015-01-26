@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/background"
+        android:scaleType="fitXY"/>
+
+
+    <LinearLayout
+        android:id="@+id/logolayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/txtAppIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="ethernet"
+            android:textSize="@dimen/activity_welcome_app_icon_size" />
+
+        <TextView
+            android:id="@+id/txtAppName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="PHOTOSYNQ"
+            android:textSize="@dimen/activity_welcome_app_name_size" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="35dp"
+        android:orientation="vertical"
+        android:layout_below="@+id/logolayout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create and contribute to plant related projects around the world"
+            android:textColor="@color/welcome_desc"
+            android:id="@+id/txtWelDesc"
+            android:gravity="center"
+            android:textSize="@dimen/activity_welcome_desc_size" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/sign_in_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="LOGIN"
+            android:textColor="#FFFFFF"
+            android:textSize="14dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="#fc7351"
+            android:layout_marginTop="47dp" />
+
+        <!--<TextView
+            android:id="@+id/createNewAccount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:textSize="14dp"
+            android:textAlignment="center"
+            android:text="Create new account"
+            android:textColor="#FFFFFF"/>-->
+
+        <Button
+            android:id="@+id/tutorial_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:background="@drawable/btn_layout"
+            android:textSize="14dp"
+            android:text="TAKE THE TOUR"
+            android:textColor="#FFFFFF"/>
+    </LinearLayout>
+</RelativeLayout>
