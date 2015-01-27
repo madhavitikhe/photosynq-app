@@ -107,6 +107,12 @@ public class NavigationDrawerFragment extends Fragment {
         TextView tvUserName = (TextView) linearLayout.findViewById(R.id.tvUserName);
         tvUserName.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoLight());
         tvUserName.setText(PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_NAME_KEY, ""));
+        tvUserName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectItem(4);
+            }
+        });
 
         String imageUrl = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_THUMB_URL_KEY, PrefUtils.PREFS_DEFAULT_VAL);
         ImageView profileImage = (ImageView) linearLayout.findViewById(R.id.user_profile_image);
@@ -114,6 +120,30 @@ public class NavigationDrawerFragment extends Fragment {
                 .load(imageUrl)
                 .error(R.drawable.fall_leaves)
                 .into(profileImage);
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectItem(4);
+            }
+        });
+
+        TextView tvDevicename = (TextView) linearLayout.findViewById(R.id.tvDeviceName);
+        tvDevicename.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoMedium());
+        tvDevicename.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectItem(5);
+            }
+        });
+
+        TextView tvDeviceAddress = (TextView) linearLayout.findViewById(R.id.tvDeviceAddress);
+        tvDeviceAddress.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoRegular());
+        tvDeviceAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectItem(5);
+            }
+        });
 
         mDrawerListView = (ListView) linearLayout.findViewById(R.id.navigation_item_list);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -126,10 +156,10 @@ public class NavigationDrawerFragment extends Fragment {
                 getActivity(),
                 R.layout.navigation_drawer_item,
                 new String[]{
-                        getString(R.string.title_section1),
-                        getString(R.string.title_section2),
-                        getString(R.string.title_section3),
-                        getString(R.string.title_section4)
+                        getString(R.string.discover_title),
+                        getString(R.string.my_projects_title),
+                        getString(R.string.quick_measurement_title),
+                        getString(R.string.sync_settings_title)
                 });
         mDrawerListView.setAdapter(mNavigationAdapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
@@ -216,9 +246,11 @@ public class NavigationDrawerFragment extends Fragment {
 
     private void selectItem(int position) {
         mCurrentSelectedPosition = position;
-        if (mDrawerListView != null) {
-            mDrawerListView.setItemChecked(position, true);
-            mNavigationAdapter.setItemSelected(position);
+        if(position < 5) {
+            if (mDrawerListView != null) {
+                mDrawerListView.setItemChecked(position, true);
+                mNavigationAdapter.setItemSelected(position);
+            }
         }
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);

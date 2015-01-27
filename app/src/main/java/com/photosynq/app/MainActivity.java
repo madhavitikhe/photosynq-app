@@ -16,7 +16,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
+import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.Switch;
 import android.widget.TextView;
 
 
@@ -36,6 +38,7 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -57,25 +60,54 @@ public class MainActivity extends ActionBarActivity
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                .commit();
+
+        switch (position){
+            case 0:
+                // Open Discover
+                break;
+            case 1:
+                // Open MyProjects
+                break;
+            case 2:
+                // Open Quick Measurement
+                break;
+            case 3:
+                // Sync Settings
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, SyncFragment.newInstance(position), SyncFragment.class.getName())
+                        .commit();
+                break;
+            case 4:
+                // Open Profile
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, ProfileFragment.newInstance(position), ProfileFragment.class.getName())
+                        .commit();
+                break;
+            case 5:
+                // Open select device
+                break;
+        }
+//        fragmentManager.beginTransaction()
+//                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+//                .commit();
     }
 
     public void onSectionAttached(int number) {
         switch (number) {
+            case 0:
+                mTitle = getString(R.string.discover_title);
+                break;
             case 1:
-                mTitle = getString(R.string.title_section1);
+                mTitle = getString(R.string.my_projects_title);
                 break;
             case 2:
-                mTitle = getString(R.string.title_section2);
+                mTitle = getString(R.string.quick_measurement_title);
                 break;
             case 3:
-                mTitle = getString(R.string.title_section3);
+                mTitle = getString(R.string.sync_settings_title);
                 break;
             case 4:
-                mTitle = getString(R.string.title_section4);
-                break;
+                mTitle = getString(R.string.profile_title);
         }
     }
 
@@ -113,46 +145,6 @@ public class MainActivity extends ActionBarActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
-        }
     }
 
 }

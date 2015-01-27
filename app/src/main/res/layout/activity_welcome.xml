@@ -24,6 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:text="ethernet"
+            android:textColor="@color/white"
             android:textSize="@dimen/activity_welcome_app_icon_size" />
 
         <TextView
@@ -32,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:text="PHOTOSYNQ"
+            android:textColor="@color/white"
             android:textSize="@dimen/activity_welcome_app_name_size" />
 
     </LinearLayout>
@@ -65,11 +67,11 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="LOGIN"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="14dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:background="#fc7351"
+            android:background="@drawable/btn_layout_orange"
             android:layout_marginTop="47dp" />
 
         <!--<TextView
@@ -81,16 +83,16 @@
             android:textSize="14dp"
             android:textAlignment="center"
             android:text="Create new account"
-            android:textColor="#FFFFFF"/>-->
+            android:textColor="@color/white"/>-->
 
         <Button
             android:id="@+id/tutorial_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:background="@drawable/btn_layout"
+            android:background="@drawable/btn_layout_transferent"
             android:textSize="14dp"
             android:text="TAKE THE TOUR"
-            android:textColor="#FFFFFF"/>
+            android:textColor="@color/white"/>
     </LinearLayout>
 </RelativeLayout>

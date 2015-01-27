@@ -2,14 +2,28 @@
 <resources>
 
     <string name="app_name">PHOTOSYNQ</string>
-    <string name="title_section1">Discover</string>
-    <string name="title_section2">My Projects</string>
-    <string name="title_section3">Quick Measurement</string>
-    <string name="title_section4">Sync Settings</string>
+    <string name="discover_title">Discover</string>
+    <string name="my_projects_title">My Projects</string>
+    <string name="quick_measurement_title">Quick Measurement</string>
+    <string name="sync_settings_title">Sync Settings</string>
+    <string name="profile_title">Profile</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
     <string name="server_not_reachable">Photosynq server is not reachable.</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+
+    <string name="error_sending_data">There was a problem saving your data with Photosynq server, But your data is safe and we will try to save it again in %1$s minutes.</string>
 
 </resources>

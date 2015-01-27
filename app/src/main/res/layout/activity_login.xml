@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:text="ethernet"
+            android:textColor="@color/white"
             android:textSize="@dimen/activity_welcome_app_icon_size" />
 
         <TextView
@@ -34,6 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:text="PHOTOSYNQ"
+            android:textColor="@color/white"
             android:textSize="@dimen/activity_welcome_app_name_size" />
 
     </LinearLayout>
@@ -78,9 +80,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="LOGIN"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/white"
                     android:textSize="14dp"
-                    android:background="#fc7351"
+                    android:background="@drawable/btn_layout_orange"
                     android:layout_marginTop="16dp" />
 
             </LinearLayout>

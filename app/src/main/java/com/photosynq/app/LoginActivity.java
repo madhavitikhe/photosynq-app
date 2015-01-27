@@ -175,15 +175,6 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
         tvIcon.setTypeface(uifontFace);
         TextView tvAppName = (TextView) findViewById(R.id.txtAppName);
         tvAppName.setTypeface(openSansLightFace);
-
-        Shader textShader=new LinearGradient(0, 0, 300, 0,
-                getResources().getColor(R.color.app_name_gredient_start),
-                getResources().getColor(R.color.app_name_gredient_end), Shader.TileMode.CLAMP);
-
-        tvIcon.getPaint().setShader(textShader);
-        tvIcon.setAlpha(0.5f);
-        tvAppName.getPaint().setShader(textShader);
-        tvAppName.setAlpha(0.5f);
     }
 
 
@@ -316,15 +307,9 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
                 e.printStackTrace();
             }
 
-            if(mIsChangeUser){
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
 
-                finish();
-            }
-            else
-            {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-            }
         }else
         {
             mPasswordView.setError(getString(R.string.error_incorrect_password));

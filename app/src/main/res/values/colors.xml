@@ -8,7 +8,7 @@
     <color name="app_name_gredient_end">#39749e</color>
 
     <color name="white">#ffffff</color>
-    <!--<color name="gray">#FF888888</color>-->
+    <color name="gray_light">#cacecf</color>
     <!--<color name="gray_line">#CCC</color>	-->
     <!--<color name="black">#000000</color>-->
     <!--<color name="background">#EEEEEE</color>	-->
@@ -26,6 +26,15 @@
     <!--<color name="purple_light">#AA66CC</color>		-->
     <color name="green">#5ec58b</color>
     <color name="green_light">#99CC00</color>
+    <color name="textPrimary">#616161</color>
+    <color name="textPrimaryLight">#8c8c8c</color>
+    <color name="btnOrange">#fc7351</color>
+    <color name="titlebar_gradient_start_color">#FFbbce72</color>
+    <color name="titlebar_gradient_end_color">#FF5ec58b</color>
+    <color name="navigation_drawer_background">#27292e</color>
+    <color name="fragment_background">#f1f5f7</color>
+    <color name="list_divider">#e4e4e4</color>
+    <color name="list_item_next">#aeaeae</color>
     <!--<color name="orange_light">#FFBB33</color>		-->
     <!--<color name="red_light">#FF4444</color>		-->
     <!---->

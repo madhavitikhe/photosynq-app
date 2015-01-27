@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/fragment_background"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_auto_sync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textSize="14sp"
+            android:textColor="@color/textPrimary"
+            android:text="AUTO-SYNC"/>
+
+        <Spinner
+            android:id="@+id/interval_time_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/tv_auto_sync"
+            android:background="@android:drawable/btn_dropdown"
+            android:spinnerMode="dropdown"/>
+
+
+        <TextView
+            android:id="@+id/tv_auto_sync_desc"
+            android:layout_below="@+id/interval_time_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Time between Sync attempts with website. Sync includes projects, protocols, macros, and data."
+            android:textColor="@color/textPrimaryLight"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/btnLL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_alignParentBottom="true">
+        <Button
+            android:id="@+id/btn_sync_data"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_layout_orange"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:text="Sync Data" />
+
+        <Button
+            android:id="@+id/btn_clear_cache"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_layout_gray_light"
+            android:textColor="@color/textPrimary"
+            android:textSize="16sp"
+            android:layout_weight="1"
+            android:text="Clear Cache"/>
+    </LinearLayout>
+
+</RelativeLayout>

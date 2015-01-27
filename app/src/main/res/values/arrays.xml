@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sync_intervals">
+            <item>5 minutes</item>
+            <item>30 minutes</item>
+            <item>1 hour</item>
+            <item>12 hours</item>
+            <item>1 day</item>
+            <item>Manual</item>
+    </string-array>
+</resources>
+

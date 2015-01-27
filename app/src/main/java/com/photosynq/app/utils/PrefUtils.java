@@ -19,6 +19,11 @@ public class PrefUtils {
     public static final String PREFS_INSTITUTE_KEY = "INSTITUTE";
     public static final String PREFS_THUMB_URL_KEY = "THUMB_URL";
 
+    // Store auto sync interval
+    public static final String PREFS_SAVE_SYNC_INTERVAL = "SAVE_SYNC_INTERVAL";
+
+    // Store geo location
+    public static final String PREFS_CURRENT_LOCATION = "CURRENT_LOCATION";
 
     /**
      * Called to save supplied value in shared preferences against given key.
