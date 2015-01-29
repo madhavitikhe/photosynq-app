@@ -1,0 +1,47 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:background="@color/fragment_background"
+android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="1">
+
+        <ListView
+            android:id="@+id/lv_protocol"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:headerDividersEnabled="true"
+            android:footerDividersEnabled="true"
+            android:listSelector="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@color/list_divider"
+            android:dividerHeight="1dp"
+            />
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="?actionBarSize"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/list_divider" />
+
+        <Button
+            android:id="@+id/show_all_protocol_btn"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_margin="10dp"
+            android:background="@drawable/btn_layout_orange"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:text="Show All Protocols" >
+        </Button>
+    </RelativeLayout>
+</LinearLayout>

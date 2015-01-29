@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/fragment_background"
+    android:descendantFocusability="afterDescendants">
+
+    <TextView
+        android:id="@+id/protocol_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:textColor="@color/textPrimary"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="test aksdj slkdfj sdfj sd dsfj sdf klfj a lkdj adj a a a a adk dkf adkfj ad j"/>
+
+    <TextView
+        android:id="@+id/tvNext"
+        android:layout_width="@dimen/next_arrow_width"
+        android:layout_height="@dimen/next_arrow_height"
+        android:layout_marginRight="8dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerInParent="true"
+        android:background="@drawable/next_arrow"
+        android:textColor="@color/list_item_next" />
+
+</RelativeLayout>

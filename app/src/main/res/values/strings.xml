@@ -18,12 +18,12 @@
     <string name="prompt_password">Password (optional)</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
-
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-
     <string name="error_sending_data">There was a problem saving your data with Photosynq server, But your data is safe and we will try to save it again in %1$s minutes.</string>
+    <string name="title_activity_quick_measurment">QuickMeasurmentActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

@@ -21,6 +21,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.photosynq.app.utils.BluetoothService;
+
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -70,6 +72,14 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 2:
                 // Open Quick Measurement
+                Bundle bundle = new Bundle();
+                bundle.putString(BluetoothService.DEVICE_ADDRESS, "test device");
+                QuickModeFragment quickModeFragment = QuickModeFragment.newInstance(position);
+                quickModeFragment.setArguments(bundle);
+
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, quickModeFragment, QuickModeFragment.class.getName())
+                        .commit();
                 break;
             case 3:
                 // Sync Settings
@@ -101,7 +111,7 @@ public class MainActivity extends ActionBarActivity
                 mTitle = getString(R.string.my_projects_title);
                 break;
             case 2:
-                mTitle = getString(R.string.quick_measurement_title);
+                mTitle = "Select Measurement";
                 break;
             case 3:
                 mTitle = getString(R.string.sync_settings_title);

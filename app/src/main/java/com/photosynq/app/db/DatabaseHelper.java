@@ -11,6 +11,7 @@ import android.util.Log;
 
 //??
 //import com.photosynq.app.model.AppSettings;
+import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Macro;
 import com.photosynq.app.model.Option;
@@ -823,24 +824,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         closeReadDatabase();
 		return protocols;
 	}
-//
-//    // Get all protocols
-//    public List<Protocol> getFewProtocolList() {
-//        List<Protocol> protocols = new ArrayList<Protocol>();
-//        List<Protocol> allProtocols = getAllProtocolsList();
-//
-//        for(int proIdx = 0 ; proIdx < allProtocols.size(); proIdx++){
-//            Protocol protocol = allProtocols.get(proIdx);
-//            if(protocol.isPreSelected()){
-//                protocols.add(protocol);
-//            }
-//
-//        }
-//
-//        return protocols;
-//    }
-//
-//
+
+    // Get pre-selected protocols
+    public List<Protocol> getFewProtocolList() {
+        List<Protocol> protocols = new ArrayList<Protocol>();
+        List<Protocol> allProtocols = getAllProtocolsList();
+
+        for(int proIdx = 0 ; proIdx < allProtocols.size(); proIdx++){
+            Protocol protocol = allProtocols.get(proIdx);
+            if(protocol.isPreSelected()){
+                protocols.add(protocol);
+            }
+
+        }
+
+        return protocols;
+    }
+
+
 //	public Protocol getProtocol(String protocolId) {
 //		SQLiteDatabase db = openReadDatabase();
 //		Protocol protocol = new Protocol();
@@ -1023,32 +1024,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //        closeWriteDatabase();
 //        return retVal;
 //	}
-//
-//	// Getting single parameters of settings
-//	public AppSettings getSettings(String userID) {
-//		SQLiteDatabase db = openReadDatabase();
-//
-//		String selectQuery = "SELECT  * FROM " + TABLE_SETTINGS + " WHERE "
-//				+ C_USER_ID + " = '" + userID + "'";
-//
-//		//System.out.println(selectQuery);
-//		//Log.e("DATABASE_HELPER_getSettings", selectQuery);
-//		AppSettings setting = new AppSettings();
-//		setting.setUserId(userID);
-//		Cursor c = db.rawQuery(selectQuery, null);
-//		if (c.moveToFirst()) {
-//
-//			setting.setUserId(c.getString(c.getColumnIndex(C_USER_ID)));
-//			setting.setModeType(c.getString(c.getColumnIndex(C_MODE_TYPE)));
-//			setting.setConnectionId(c.getString(c
-//					.getColumnIndex(C_CONNECTION_ID)));
-//			setting.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
-//		}
-//		c.close();
-//        closeReadDatabase();
-//		return setting;
-//	}
-//
+
+	// Getting single parameters of settings
+	public AppSettings getSettings(String userID) {
+		SQLiteDatabase db = openReadDatabase();
+
+		String selectQuery = "SELECT  * FROM " + TABLE_SETTINGS + " WHERE "
+				+ C_USER_ID + " = '" + userID + "'";
+
+		//System.out.println(selectQuery);
+		//Log.e("DATABASE_HELPER_getSettings", selectQuery);
+		AppSettings setting = new AppSettings();
+		setting.setUserId(userID);
+		Cursor c = db.rawQuery(selectQuery, null);
+		if (c.moveToFirst()) {
+
+			setting.setUserId(c.getString(c.getColumnIndex(C_USER_ID)));
+			setting.setModeType(c.getString(c.getColumnIndex(C_MODE_TYPE)));
+			setting.setConnectionId(c.getString(c
+					.getColumnIndex(C_CONNECTION_ID)));
+			setting.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
+		}
+		c.close();
+        closeReadDatabase();
+		return setting;
+	}
+
 //	// Updating single setting
 //	public boolean updateSettings(AppSettings setting) {
 //        boolean retVal = false;

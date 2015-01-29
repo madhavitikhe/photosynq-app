@@ -12,4 +12,6 @@
     <dimen name="activity_welcome_app_name_size">30sp</dimen>
     <dimen name="activity_welcome_app_icon_size">38sp</dimen>
     <dimen name="activity_welcome_desc_size">18sp</dimen>
+    <dimen name="next_arrow_width">7dp</dimen>
+    <dimen name="next_arrow_height">12dp</dimen>
 </resources>

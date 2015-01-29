@@ -35,7 +35,7 @@ public class SyncFragment extends Fragment {
      * The fragment argument representing the section number for this
      * fragment.
      */
-    private static final String ARG_SECTION_NUMBER = "section_number";
+    private static int mSectionNumber;
 
     private DatabaseHelper dbHelper;
     /**
@@ -44,9 +44,7 @@ public class SyncFragment extends Fragment {
      */
     public static SyncFragment newInstance(int sectionNumber) {
         SyncFragment fragment = new SyncFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        fragment.setArguments(args);
+        mSectionNumber = sectionNumber;
         return fragment;
     }
 
@@ -165,8 +163,7 @@ public class SyncFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(
-                getArguments().getInt(ARG_SECTION_NUMBER));
+        ((MainActivity) activity).onSectionAttached(mSectionNumber);
     }
 
     @Override

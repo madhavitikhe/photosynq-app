@@ -21,7 +21,7 @@
                         android:layout_gravity="center"
                         android:layout_alignParentTop="true"
                         android:layout_marginTop="10dp"
-                        android:src="@drawable/fall_leaves"/>
+                        android:src="@drawable/ic_launcher"/>
 
                     <TextView
                         android:id="@+id/user_name"
@@ -83,7 +83,7 @@
                             android:layout_height="1dp"
                             android:background="@color/list_divider" />
 
-                        <LinearLayout
+                        <RelativeLayout
                             android:id="@+id/layout_contacts"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
@@ -92,29 +92,28 @@
 
                             <TextView
                                 android:id="@+id/tv_contact"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_margin="8dp"
-                                android:layout_weight=".5"
                                 android:text="Contacts"
                                 android:textColor="@color/textPrimary" />
 
                             <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_width="@dimen/next_arrow_width"
+                                android:layout_height="@dimen/next_arrow_height"
                                 android:layout_marginRight="8dp"
-                                android:layout_weight=".5"
-                                android:gravity="right"
-                                android:text=">"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerInParent="true"
+                                android:background="@drawable/next_arrow"
                                 android:textColor="@color/list_item_next" />
-                        </LinearLayout>
+                        </RelativeLayout>
 
                         <View
                             android:layout_width="fill_parent"
                             android:layout_height="1dp"
                             android:background="@color/list_divider" />
 
-                        <LinearLayout
+                        <RelativeLayout
                             android:id="@+id/layout_projects"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
@@ -123,29 +122,29 @@
 
                             <TextView
                                 android:id="@+id/tv_projects"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_margin="8dp"
-                                android:layout_weight=".5"
                                 android:text="Projects"
                                 android:textColor="@color/textPrimary" />
 
                             <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_width="@dimen/next_arrow_width"
+                                android:layout_height="@dimen/next_arrow_height"
                                 android:layout_marginRight="8dp"
-                                android:layout_weight=".5"
-                                android:gravity="right"
-                                android:text=">"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerInParent="true"
+                                android:background="@drawable/next_arrow"
                                 android:textColor="@color/list_item_next" />
-                        </LinearLayout>
+
+                        </RelativeLayout>
 
                         <View
                             android:layout_width="fill_parent"
                             android:layout_height="1dp"
                             android:background="@color/list_divider" />
 
-                        <LinearLayout
+                        <RelativeLayout
                             android:id="@+id/layout_contrb"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
@@ -154,29 +153,28 @@
 
                             <TextView
                                 android:id="@+id/tv_contrb"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_margin="8dp"
-                                android:layout_weight=".5"
                                 android:text="Contributions"
                                 android:textColor="@color/textPrimary" />
 
                             <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_width="@dimen/next_arrow_width"
+                                android:layout_height="@dimen/next_arrow_height"
                                 android:layout_marginRight="8dp"
-                                android:layout_weight=".5"
-                                android:gravity="right"
-                                android:text=">"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerInParent="true"
+                                android:background="@drawable/next_arrow"
                                 android:textColor="@color/list_item_next" />
-                        </LinearLayout>
+                        </RelativeLayout>
 
                         <View
                             android:layout_width="fill_parent"
                             android:layout_height="1dp"
                             android:background="@color/list_divider" />
 
-                        <LinearLayout
+                        <RelativeLayout
                             android:id="@+id/layout_awards"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
@@ -185,22 +183,21 @@
 
                             <TextView
                                 android:id="@+id/tv_awards"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_margin="8dp"
-                                android:layout_weight=".5"
                                 android:text="Awards"
                                 android:textColor="@color/textPrimary" />
 
                             <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_width="@dimen/next_arrow_width"
+                                android:layout_height="@dimen/next_arrow_height"
                                 android:layout_marginRight="8dp"
-                                android:layout_weight=".5"
-                                android:gravity="right"
-                                android:text=">"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerInParent="true"
+                                android:background="@drawable/next_arrow"
                                 android:textColor="@color/list_item_next" />
-                        </LinearLayout>
+                        </RelativeLayout>
 
                         <View
                             android:layout_width="fill_parent"

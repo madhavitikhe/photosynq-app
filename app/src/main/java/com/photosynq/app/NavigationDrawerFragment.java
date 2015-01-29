@@ -1,5 +1,7 @@
 package com.photosynq.app;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
 import android.support.v7.app.ActionBar;
@@ -118,7 +120,7 @@ public class NavigationDrawerFragment extends Fragment {
         ImageView profileImage = (ImageView) linearLayout.findViewById(R.id.user_profile_image);
         Picasso.with(getActivity())
                 .load(imageUrl)
-                .error(R.drawable.fall_leaves)
+                .error(R.drawable.ic_launcher)
                 .into(profileImage);
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -337,5 +339,52 @@ public class NavigationDrawerFragment extends Fragment {
          * Called when an item in the navigation drawer is selected.
          */
         void onNavigationDrawerItemSelected(int position);
+    }
+
+    private class NavigationDrawerAdapter extends ArrayAdapter<String> {
+
+        private Context mContext;
+        private int id;
+        private String[] items;
+        private int mSelectedPosition;
+
+        public NavigationDrawerAdapter(Context context, int resourceId , String[] list )
+        {
+            super(context, resourceId, list);
+            mContext = context;
+            id = resourceId;
+            items = list;
+        }
+
+        @Override
+        public View getView(int position, View v, ViewGroup parent)
+        {
+            View mView = v ;
+            if(mView == null){
+                LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                mView = vi.inflate(id, null);
+            }
+
+            TextView text = (TextView) mView.findViewById(R.id.tvNavigationItem);
+
+            if(items[position] != null )
+            {
+                text.setTextColor(Color.WHITE);
+                text.setText(items[position]);
+                text.setTypeface(CommonUtils.getInstance(mContext).getFontRobotoLight());
+
+                if(position == mSelectedPosition)
+                    ((View)text.getParent()).setBackgroundColor(mContext.getResources().getColor( R.color.green));
+                else
+                    ((View)text.getParent()).setBackgroundColor(mContext.getResources().getColor( R.color.transparent));
+
+            }
+
+            return mView;
+        }
+
+        public void setItemSelected(int position) {
+            mSelectedPosition = position;
+        }
     }
 }
