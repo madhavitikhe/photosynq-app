@@ -49,10 +49,6 @@ public class CommonUtils {
     Typeface robotoMediumFace;
     Typeface robotoRegularFace;
 
-    // App mode
-    public static final String APP_MODE = "APP_MODE";
-    public static final String APP_MODE_QUICK_MEASURE = "APP_MODE_QUICK_MEASURE";
-
     private CommonUtils(Context context) {
         mContext = context;
     }

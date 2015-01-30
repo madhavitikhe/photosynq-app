@@ -24,6 +24,7 @@ public class PrefUtils {
 
     // Store geo location
     public static final String PREFS_CURRENT_LOCATION = "CURRENT_LOCATION";
+    public static final String PREFS_PREV_SELECTED_POSITION = "PREV_SELECTED_POSITION";
 
     /**
      * Called to save supplied value in shared preferences against given key.

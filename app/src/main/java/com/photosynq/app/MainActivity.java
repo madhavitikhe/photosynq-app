@@ -22,6 +22,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.photosynq.app.utils.BluetoothService;
+import com.photosynq.app.utils.Constants;
+import com.photosynq.app.utils.PrefUtils;
 
 
 public class MainActivity extends ActionBarActivity
@@ -31,6 +33,8 @@ public class MainActivity extends ActionBarActivity
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
+
+    private int mCurrentSelectedPosition = 0;
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -45,7 +49,6 @@ public class MainActivity extends ActionBarActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_bg));
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -56,11 +59,17 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        String prevSelPos = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_PREV_SELECTED_POSITION, "0");
+        mCurrentSelectedPosition = Integer.parseInt(prevSelPos);
+        onNavigationDrawerItemSelected(mCurrentSelectedPosition);
+
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
+        mCurrentSelectedPosition = position;
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         switch (position){
@@ -100,6 +109,27 @@ public class MainActivity extends ActionBarActivity
 //        fragmentManager.beginTransaction()
 //                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
 //                .commit();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(Constants.STATE_SELECTED_POSITION, mCurrentSelectedPosition);
+        super.onSaveInstanceState(outState);
+
+        PrefUtils.saveToPrefs(this, PrefUtils.PREFS_PREV_SELECTED_POSITION, mCurrentSelectedPosition + "");
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore state members from saved instance
+        if (savedInstanceState != null) {
+            mCurrentSelectedPosition = savedInstanceState.getInt(Constants.STATE_SELECTED_POSITION);
+
+            onNavigationDrawerItemSelected(mCurrentSelectedPosition);
+        }
     }
 
     public void onSectionAttached(int number) {

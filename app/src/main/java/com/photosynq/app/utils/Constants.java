@@ -24,8 +24,17 @@ public class Constants {
     public static final int MESSAGE_DEVICE_NAME = 4;
     public static final int MESSAGE_TOAST = 5;
     public static final int MESSAGE_STOP = 6;
-    private static final boolean D = true;
+    public static final boolean D = true;
     // Key names received from the BluetoothService Handler
     public static final String DEVICE_NAME = "device_name";
     public static final String TOAST = "toast";
+
+    // App mode
+    public static final String APP_MODE = "APP_MODE";
+    public static final String APP_MODE_QUICK_MEASURE = "APP_MODE_QUICK_MEASURE";
+
+    /**
+     * Remember the position of the selected item.
+     */
+    public static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
 }
