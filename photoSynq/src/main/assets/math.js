@@ -18,10 +18,10 @@ function MathSUM(values){
 function MathROUND(value, digets){
 	digets = typeof digets !== 'undefined' ? digets : 2;
 	var val = false;
-	if(value && digets){
+	if(value && parseInt(digets) >= 0){
 		val = Math.round(value*Math.pow(10,digets))/Math.pow(10,digets);
 	}
-	return val;
+	return parseFloat(val);
 }
 
 // Calculate mean: Input-> Array with values (float or int)
@@ -50,7 +50,6 @@ function MathSTDEV(values){
 	}
 	return parseFloat(stdev);
 }
-
 
 // Calculate Standard Deviation Sample: Input-> Array with values (float or int)
 //------------------------------------------------------------------------------------------------------------------
@@ -181,11 +180,9 @@ function CalculateHistogram(values,range){
 	
 		var min = MathMIN(range);
 		var max = MathMAX(range);
-		var step = (max-min)/10;
-		if(min == max)
-			step = min*0.01;
+		var step = (max-min)/10
 		var rmin = min;
-		var rmax = min + step;
+		var rmax = min + step
 	
 		for (var i=0; i< 10; i++){
 			rmin = min + (step * i);
@@ -205,7 +202,7 @@ function CalculateHistogram(values,range){
 	return histogram;
 }
 
-// Calculate Lineweaver-Burk plot from data -> array(x,y);
+// Calculate Lineweaver–Burk plot from data -> array(x,y);
 //------------------------------------------------------------------------------------------------------------------
 function LineweaverBurk(values){
 	var LineweaverBurk = [];
@@ -224,4 +221,19 @@ function LineweaverBurk(values){
 		LineweaverBurk = {Plot:reciprocal,Regression:[[y0,0],[MathMAX(regrecival.x),(reg['m']*MathMAX(regrecival.x)+reg['b'])]],RegressionValues:reg,ReceivedValues:'Vmax: '+MathROUND((1/reg['b']),3)+' Km: '+MathROUND((1/y0),3)}
 	}
 	return LineweaverBurk;
+}
+
+// Calculate Michaelis-Menten plot from data -> array(x,y);
+//------------------------------------------------------------------------------------------------------------------
+function MichaelisMenten(values){
+	var MichaelisMenten = [];
+	var data = [];
+	if(values.length >0){
+		var regression = regressionABS('logarithmic',values);
+	
+		var vmax = regression['equation'][0] + regression['equation'][1] * MathLOG(10000000000000);
+		var km = Math.pow(Math.E,(((vmax/2)-regression['equation'][1])/regression['equation'][0]))   //regression['equation'][0] + regression['equation'][1] * (Math.log(10000000000000) / Math.LN10);
+		MichaelisMenten = {Plot:values,Regression:regression['points'],RegressionValues:regression['string'],ReceivedValues:'Vmax: '+MathROUND(vmax,3)+' Km: '+MathROUND(regression['equation'][0],3)}
+	}
+	return MichaelisMenten;
 }
