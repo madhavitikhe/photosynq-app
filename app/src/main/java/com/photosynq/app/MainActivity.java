@@ -24,6 +24,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
@@ -118,8 +120,12 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 2:
                 // Open Quick Measurement
+                String userId = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+                AppSettings appSettings = DatabaseHelper.getHelper(this).getSettings(userId);
+
                 Bundle bundle = new Bundle();
-                bundle.putString(BluetoothService.DEVICE_ADDRESS, "test device");
+                String btDevice = appSettings.getConnectionId();
+                bundle.putString(BluetoothService.DEVICE_ADDRESS, btDevice);
                 QuickModeFragment quickModeFragment = QuickModeFragment.newInstance(position);
                 quickModeFragment.setArguments(bundle);
 
@@ -141,6 +147,8 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 5:
                 // Open select device
+                SelectDeviceDialog selectDeviceDialog = new SelectDeviceDialog();
+                selectDeviceDialog.show(fragmentManager, "Select Measurement Device");
                 break;
         }
 //        fragmentManager.beginTransaction()
@@ -180,6 +188,7 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 4:
                 mTitle = getString(R.string.profile_title);
+                break;
         }
     }
 
@@ -219,4 +228,7 @@ public class MainActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
+    public void setDeviceConnected(String deviceName, String deviceAddress) {
+        mNavigationDrawerFragment.setDeviceConnected(deviceName, deviceAddress);
+    }
 }

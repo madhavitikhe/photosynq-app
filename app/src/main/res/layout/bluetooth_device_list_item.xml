@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:descendantFocusability="beforeDescendants">
+	<RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" >
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:paddingLeft="15dp"
+		android:paddingTop="15dp"
+		android:paddingBottom="15dp"
+		android:paddingRight="15dp"
+		android:background="@drawable/selector_card_background"
+		android:descendantFocusability="afterDescendants">
+
+		<TextView
+			android:id="@+id/device_name"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textStyle="bold"
+			android:text="name"
+            android:textColor="@color/textPrimary"/>
+
+		<TextView
+			android:id="@+id/device_address"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="address"
+            android:textColor="@color/textPrimaryLight"/>
+
+		<TextView
+			android:id="@+id/device_paired"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="paired"
+            android:textColor="@color/textPrimary"/>
+
+	</LinearLayout>
+
+	<TextView
+	    android:id="@+id/pair_bluetooth_device"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentRight="true"
+	    android:layout_centerVertical="true"
+	    android:layout_marginRight="50dp"
+	    android:text="pairDevice"
+	    android:textStyle="bold" />
+
+      <RadioButton
+          android:id="@+id/blue_conn_radio"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentRight="true"
+          android:layout_centerVertical="true"
+          android:layout_marginRight="18dp"
+          android:checked="true"
+          android:focusable="false"
+          android:clickable="false"
+          android:focusableInTouchMode="false"
+          android:visibility="gone" />
+
+	</RelativeLayout>
+</FrameLayout>

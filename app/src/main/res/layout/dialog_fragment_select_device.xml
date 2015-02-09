@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#D6D6D6">
+    <LinearLayout
+        android:id="@+id/btooth_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/bluetooth_status_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="busy"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="1">
+        <!--<TextView-->
+            <!--android:id="@+id/selectedConnectionText"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:layout_marginTop="5dp"-->
+            <!--android:layout_marginLeft="5dp"-->
+            <!--android:layout_marginRight="5dp"-->
+            <!--android:gravity="center"-->
+            <!--android:background="@color/green_google_play"-->
+            <!--android:text=""-->
+            <!--android:textSize="20dp"/>-->
+
+        <ListView
+            android:id="@+id/pairedDevices"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@null"
+            android:footerDividersEnabled="true"
+            android:headerDividersEnabled="true"
+            android:listSelector="@android:color/transparent" >
+        </ListView>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="60dip"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingTop="10dp" >
+
+        <Button
+            android:id="@+id/btn_Search_New_Device"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:background="@drawable/btn_layout_orange"
+            android:text="@string/searchNewDevice"
+            android:textColor="@color/white"
+            android:textAllCaps="false">
+        </Button>
+    </RelativeLayout>
+</LinearLayout>

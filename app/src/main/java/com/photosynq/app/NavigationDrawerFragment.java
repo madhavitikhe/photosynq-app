@@ -1,5 +1,7 @@
 package com.photosynq.app;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
@@ -28,6 +30,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.utils.CircularImageView;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
@@ -35,6 +39,8 @@ import com.photosynq.app.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
+
+import java.util.Set;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -67,6 +73,9 @@ public class NavigationDrawerFragment extends Fragment {
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
+
+    TextView tvDeviceName;
+    TextView tvDeviceAddress;
 
     public NavigationDrawerFragment() {
     }
@@ -125,16 +134,16 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
-        TextView tvDevicename = (TextView) linearLayout.findViewById(R.id.tvDeviceName);
-        tvDevicename.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoMedium());
-        tvDevicename.setOnClickListener(new View.OnClickListener() {
+        tvDeviceName = (TextView) linearLayout.findViewById(R.id.tvDeviceName);
+        tvDeviceName.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoMedium());
+        tvDeviceName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 selectItem(5);
             }
         });
 
-        TextView tvDeviceAddress = (TextView) linearLayout.findViewById(R.id.tvDeviceAddress);
+        tvDeviceAddress = (TextView) linearLayout.findViewById(R.id.tvDeviceAddress);
         tvDeviceAddress.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoRegular());
         tvDeviceAddress.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,6 +217,19 @@ public class NavigationDrawerFragment extends Fragment {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+
+                DatabaseHelper databaseHelper = DatabaseHelper.getHelper(getActivity());
+                BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                Set<BluetoothDevice> btDevices =  bluetoothAdapter.getBondedDevices();
+                String userId = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+                AppSettings appSettings = databaseHelper.getSettings(userId);
+                for (BluetoothDevice device : btDevices) {
+                    if(null != appSettings.getConnectionId() && appSettings.getConnectionId().equals(device.getAddress()))
+                    {
+                        setDeviceConnected(device.getName(), appSettings.getConnectionId());
+                    }
+                }
+
                 if (!isAdded()) {
                     return;
                 }
@@ -339,6 +361,11 @@ public class NavigationDrawerFragment extends Fragment {
 
     private ActionBar getActionBar() {
         return ((ActionBarActivity) getActivity()).getSupportActionBar();
+    }
+
+    public void setDeviceConnected(String deviceName, String deviceAddress) {
+        tvDeviceName.setText(deviceName);
+        tvDeviceAddress.setText(deviceAddress);
     }
 
     /**

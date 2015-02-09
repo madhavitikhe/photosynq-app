@@ -1001,29 +1001,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return macros;
 	}
 
-//	public boolean createSettings(AppSettings setting) {
-//        boolean retVal = false;
-//		try {
-//			SQLiteDatabase db = openWriteDatabase();
-//
-//			ContentValues values = new ContentValues();
-//			values.put(C_MODE_TYPE, setting.getModeType());
-//			values.put(C_USER_ID, setting.getUserId());
-//			values.put(C_CONNECTION_ID, setting.getConnectionId());
-//			values.put(C_PROJECT_ID, setting.getProjectId());
-//
-//			// Inserting Row
-//			long row_id = db.insert(TABLE_SETTINGS, null, values);
-//			if (row_id >= 0) {
-//				retVal = true;
-//			}
-//		} catch (SQLiteConstraintException contraintException) {
-//			// If data already present then handle the case here.
-//		} catch (SQLException sqliteException) {
-//		}
-//        closeWriteDatabase();
-//        return retVal;
-//	}
+	public boolean createSettings(AppSettings setting) {
+        boolean retVal = false;
+		try {
+			SQLiteDatabase db = openWriteDatabase();
+
+			ContentValues values = new ContentValues();
+			values.put(C_MODE_TYPE, setting.getModeType());
+			values.put(C_USER_ID, setting.getUserId());
+			values.put(C_CONNECTION_ID, setting.getConnectionId());
+			values.put(C_PROJECT_ID, setting.getProjectId());
+
+			// Inserting Row
+			long row_id = db.insert(TABLE_SETTINGS, null, values);
+			if (row_id >= 0) {
+				retVal = true;
+			}
+		} catch (SQLiteConstraintException contraintException) {
+			// If data already present then handle the case here.
+		} catch (SQLException sqliteException) {
+		}
+        closeWriteDatabase();
+        return retVal;
+	}
 
 	// Getting single parameters of settings
 	public AppSettings getSettings(String userID) {
@@ -1050,29 +1050,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return setting;
 	}
 
-//	// Updating single setting
-//	public boolean updateSettings(AppSettings setting) {
-//        boolean retVal = false;
-//		SQLiteDatabase db = openWriteDatabase();
-//
-//		ContentValues values = new ContentValues();
-//		values.put(C_USER_ID, setting.getUserId());
-//		values.put(C_MODE_TYPE, setting.getModeType());
-//		values.put(C_CONNECTION_ID, setting.getConnectionId());
-//		values.put(C_PROJECT_ID, setting.getProjectId());
-//
-//		// updating row
-//		int rowUpdated = db.update(TABLE_SETTINGS, values, C_USER_ID + " = ?",
-//				new String[] { String.valueOf(setting.getUserId()) });
-//
-//		if (rowUpdated <= 0) {
-//			retVal = createSettings(setting);
-//		}else{
-//            retVal = true;
-//        }
-//		closeWriteDatabase();
-//        return retVal;
-//	}
+	// Updating single setting
+	public boolean updateSettings(AppSettings setting) {
+        boolean retVal = false;
+		SQLiteDatabase db = openWriteDatabase();
+
+		ContentValues values = new ContentValues();
+		values.put(C_USER_ID, setting.getUserId());
+		values.put(C_MODE_TYPE, setting.getModeType());
+		values.put(C_CONNECTION_ID, setting.getConnectionId());
+		values.put(C_PROJECT_ID, setting.getProjectId());
+
+		// updating row
+		int rowUpdated = db.update(TABLE_SETTINGS, values, C_USER_ID + " = ?",
+				new String[] { String.valueOf(setting.getUserId()) });
+
+		if (rowUpdated <= 0) {
+			retVal = createSettings(setting);
+		}else{
+            retVal = true;
+        }
+		closeWriteDatabase();
+        return retVal;
+	}
 
 	public boolean createData(Data data) {
         boolean retVal = false;

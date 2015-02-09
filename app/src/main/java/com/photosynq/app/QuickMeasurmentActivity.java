@@ -3,6 +3,7 @@ package com.photosynq.app;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBar;
@@ -42,6 +43,8 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
     private static final int REQUEST_ENABLE_BT = 2;
 
     private DatabaseHelper dbHelper;
+
+    private Button btnTakeMeasurement;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +89,7 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
             mBluetoothService = new BluetoothService(getApplicationContext(), mHandler);
         }
 
-        final Button btnTakeMeasurement = (Button) findViewById(R.id.btn_take_measurement);
+        btnTakeMeasurement = (Button) findViewById(R.id.btn_take_measurement);
         btnTakeMeasurement.setTypeface(CommonUtils.getInstance(this).getFontRobotoMedium());
         btnTakeMeasurement.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,6 +195,13 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
                         intent.putExtra(Constants.APP_MODE, Constants.APP_MODE_QUICK_MEASURE);
                         startActivity(intent);
                     }
+
+                    if(btnTakeMeasurement != null) {
+                        if (btnTakeMeasurement.getText().equals("CANCEL MEASURE")) {
+                            btnTakeMeasurement.setText("+ Take Measurement");
+                        }
+                    }
+
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
@@ -203,6 +213,12 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
                 case Constants.MESSAGE_TOAST:
                     Toast.makeText(getApplicationContext(), msg.getData().getString(Constants.TOAST),
                             Toast.LENGTH_SHORT).show();
+
+                    if(btnTakeMeasurement != null) {
+                        if (btnTakeMeasurement.getText().equals("CANCEL MEASURE")) {
+                            btnTakeMeasurement.setText("+ Take Measurement");
+                        }
+                    }
                     break;
                 case Constants.MESSAGE_STOP:
                     Toast.makeText(getApplicationContext(), msg.getData().getString(Constants.TOAST),

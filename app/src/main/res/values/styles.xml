@@ -19,5 +19,17 @@
     </style>
 
 
+    <!--<style name="SelectDeviceDialog" parent="@android:style/Theme.Dialog">-->
+        <!--<item name="android:windowTitleStyle">@style/SelectDeviceDialogTitle</item>-->
+    <!--</style>-->
+
+    <!--<style name="SelectDeviceDialogTitle" parent="@android:style/TextAppearance.DialogWindowTitle">-->
+        <!--<item name="android:gravity">center_horizontal</item>-->
+    <!--</style>-->
+    <!--<style name="DialogWindowTitle">-->
+        <!--<item name="android:maxLines">1</item>-->
+        <!--<item name="android:scrollHorizontally">true</item>-->
+        <!--<item name="android:textAppearance">@android:style/TextAppearance.DialogWindowTitle</item>-->
+    <!--</style>-->
 
 </resources>

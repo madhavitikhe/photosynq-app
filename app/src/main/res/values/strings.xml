@@ -31,5 +31,7 @@
     <string name="title_activity_display_results">DisplayResultsActivity</string>
     <string name="title_activity_project_details">ProjectDetailsActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="searchNewDevice">Search for New Devices</string>
+    <string name="searching_devices">Searching devices...</string>
 
 </resources>
