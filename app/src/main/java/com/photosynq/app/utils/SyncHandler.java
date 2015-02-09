@@ -1,22 +1,18 @@
 package com.photosynq.app.utils;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.photosynq.app.ProjectModeFragment;
+import com.photosynq.app.QuickModeFragment;
+import com.photosynq.app.SyncFragment;
 import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.MainActivity;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ProjectResult;
-//??
-//import com.photosynq.app.navigationDrawer.FragmentProgress;
-//import com.photosynq.app.navigationDrawer.FragmentProjectList;
-//import com.photosynq.app.navigationDrawer.FragmentSelectProtocol;
-//import com.photosynq.app.navigationDrawer.FragmentSync;
-//import com.photosynq.app.navigationDrawer.NavigationDrawer;
 import com.photosynq.app.response.UpdateMacro;
 import com.photosynq.app.response.UpdateProject;
 import com.photosynq.app.response.UpdateProtocol;
@@ -226,30 +222,30 @@ public class SyncHandler {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-//??
-//            if(navigationDrawer != null) {
-//                try {
-//                    FragmentManager fragmentManager = navigationDrawer.getFragmentManager();
+
+            if(navigationDrawer != null) {
+                try {
+                    FragmentManager fragmentManager = navigationDrawer.getSupportFragmentManager();
 //                    Fragment fragment = fragmentManager.findFragmentByTag(FragmentProgress.class.getName());
 //                    if (fragment != null) {
 //                        fragmentManager.beginTransaction().remove(fragment).commit();
 //                    }
-//                    FragmentProjectList fragmentProjectList = (FragmentProjectList) fragmentManager.findFragmentByTag(FragmentProjectList.class.getName());
-//                    if (fragmentProjectList != null) {
-//                        fragmentProjectList.onResponseReceived(result);
-//                    }
-//                    FragmentSelectProtocol fragmentSelectProtocol = (FragmentSelectProtocol) fragmentManager.findFragmentByTag(FragmentSelectProtocol.class.getName());
-//                    if (fragmentSelectProtocol != null) {
-//                        fragmentSelectProtocol.onResponseReceived(result);
-//                    }
-//                    FragmentSync fragmentSync = (FragmentSync) fragmentManager.findFragmentByTag(FragmentSync.class.getName());
-//                    if (fragmentSync != null) {
-//                        fragmentSync.onResponseReceived(result);
-//                    }
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//                }
-//            }
+                    ProjectModeFragment fragmentProjectList = (ProjectModeFragment) fragmentManager.findFragmentByTag(ProjectModeFragment.class.getName());
+                    if (fragmentProjectList != null) {
+                        fragmentProjectList.onResponseReceived(result);
+                    }
+                    QuickModeFragment fragmentSelectProtocol = (QuickModeFragment) fragmentManager.findFragmentByTag(QuickModeFragment.class.getName());
+                    if (fragmentSelectProtocol != null) {
+                        fragmentSelectProtocol.onResponseReceived(result);
+                    }
+                    SyncFragment fragmentSync = (SyncFragment) fragmentManager.findFragmentByTag(SyncFragment.class.getName());
+                    if (fragmentSync != null) {
+                        fragmentSync.onResponseReceived(result);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

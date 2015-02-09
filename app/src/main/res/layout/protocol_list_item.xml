@@ -7,7 +7,7 @@
     android:descendantFocusability="afterDescendants">
 
     <TextView
-        android:id="@+id/protocol_name"
+        android:id="@+id/tv_protocol_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="20dp"
@@ -17,7 +17,8 @@
         android:textColor="@color/textPrimary"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:text="test aksdj slkdfj sdfj sd dsfj sdf klfj a lkdj adj a a a a adk dkf adkfj ad j"/>
+        android:singleLine="true"
+        android:text=""/>
 
     <TextView
         android:id="@+id/tvNext"

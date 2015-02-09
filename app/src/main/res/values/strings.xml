@@ -23,11 +23,13 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="error_sending_data">There was a problem saving your data with Photosynq server, But your data is safe and we will try to save it again in %1$s minutes.</string>
-    <string name="title_activity_quick_measurment">QuickMeasurmentActivity</string>
+    <string name="title_activity_quick_measurment">Measurment Details</string>
     <string name="start_measurement">Click to start measurement</string>
     <string name="title_connecting">Connecting...</string>
     <string name="title_connected_to">Connected: </string>
     <string name="title_not_connected">Not connected</string>
     <string name="title_activity_display_results">DisplayResultsActivity</string>
+    <string name="title_activity_project_details">ProjectDetailsActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

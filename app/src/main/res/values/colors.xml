@@ -35,6 +35,7 @@
     <color name="fragment_background">#f1f5f7</color>
     <color name="list_divider">#e4e4e4</color>
     <color name="list_item_next">#aeaeae</color>
+    <color name="gray">#d8d6d6</color>
     <!--<color name="orange_light">#FFBB33</color>		-->
     <!--<color name="red_light">#FF4444</color>		-->
     <!---->

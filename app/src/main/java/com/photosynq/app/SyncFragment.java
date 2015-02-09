@@ -21,8 +21,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.utils.AlarmReceiver;
 import com.photosynq.app.utils.CommonUtils;
+import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
 import com.photosynq.app.utils.SyncHandler;
 import com.squareup.picasso.Picasso;
@@ -30,7 +32,7 @@ import com.squareup.picasso.Picasso;
 import java.util.Calendar;
 
 
-public class SyncFragment extends Fragment {
+public class SyncFragment extends Fragment implements PhotosynqResponse{
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -169,5 +171,14 @@ public class SyncFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public void onResponseReceived(String result) {
+        if(result.equals(Constants.SERVER_NOT_ACCESSIBLE)){
+            Toast.makeText(getActivity(), R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+        }else {
+            //??
+        }
     }
 }

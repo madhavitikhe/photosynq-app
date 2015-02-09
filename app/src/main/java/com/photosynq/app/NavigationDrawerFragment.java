@@ -242,6 +242,20 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
+    public void openDrawer(){
+        // If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
+        // per the navigation drawer design guidelines.
+        if (mDrawerLayout != null) {
+            mDrawerLayout.openDrawer(mFragmentContainerView);
+        }
+    }
+
+    public void closeDrawer(){
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawer(mFragmentContainerView);
+        }
+    }
+
     private void selectItem(int position) {
         mCurrentSelectedPosition = position;
         if(position < 5) {

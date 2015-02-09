@@ -19,12 +19,15 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
+import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
 import com.photosynq.app.utils.SyncHandler;
 import com.squareup.picasso.Picasso;
@@ -35,7 +38,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 
-public class QuickModeFragment extends Fragment {
+public class QuickModeFragment extends Fragment implements PhotosynqResponse{
 
     /**
      * The fragment argument representing the section number for this
@@ -153,6 +156,17 @@ public class QuickModeFragment extends Fragment {
     }
 
     @Override
+    public void onResponseReceived(String result) {
+
+        if(result.equals(Constants.SERVER_NOT_ACCESSIBLE)){
+            Toast.makeText(getActivity(), R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+        }else {
+            showFewProtocolList();
+            Toast.makeText(getActivity(), "Protocol list up to date", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         ((MainActivity) activity).onSectionAttached(mSectionNumber);
@@ -204,7 +218,7 @@ public class QuickModeFragment extends Fragment {
             if (convertView == null)
                 convertView = mInflater.inflate(R.layout.protocol_list_item, null);
 
-            TextView tvProtocolName = (TextView) convertView.findViewById(R.id.protocol_name);
+            TextView tvProtocolName = (TextView) convertView.findViewById(R.id.tv_protocol_name);
             tvProtocolName.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoRegular());
             Protocol protocol = getItem(position);
             if (null != protocol) {

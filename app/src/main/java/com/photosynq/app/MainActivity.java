@@ -1,6 +1,8 @@
 package com.photosynq.app;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -10,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -67,6 +70,34 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //Handle the back button
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+            new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Quit")
+                    .setMessage("Do You Want to Close the Application")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //Stop the activity
+                            PrefUtils.saveToPrefs(MainActivity.this, PrefUtils.PREFS_PREV_SELECTED_POSITION, "0");
+
+                            MainActivity.this.finish();
+                        }
+
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+
+            return true;
+        }
+        else {
+            return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         mCurrentSelectedPosition = position;
@@ -75,9 +106,15 @@ public class MainActivity extends ActionBarActivity
         switch (position){
             case 0:
                 // Open Discover
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, ProjectModeFragment.newInstance(position), ProjectModeFragment.class.getName())
+                        .commit();
                 break;
             case 1:
                 // Open MyProjects
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, ProjectModeFragment.newInstance(position), ProjectModeFragment.class.getName())
+                        .commit();
                 break;
             case 2:
                 // Open Quick Measurement
@@ -120,16 +157,11 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        // Always call the superclass so it can restore the view hierarchy
-        super.onRestoreInstanceState(savedInstanceState);
+    public void onDestroy(){
+        super.onDestroy();
 
-        // Restore state members from saved instance
-        if (savedInstanceState != null) {
-            mCurrentSelectedPosition = savedInstanceState.getInt(Constants.STATE_SELECTED_POSITION);
+        PrefUtils.saveToPrefs(this, PrefUtils.PREFS_PREV_SELECTED_POSITION, "0");
 
-            onNavigationDrawerItemSelected(mCurrentSelectedPosition);
-        }
     }
 
     public void onSectionAttached(int number) {

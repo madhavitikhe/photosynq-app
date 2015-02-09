@@ -50,6 +50,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.photosynq.app.QuickMeasurmentActivity" />
         </activity>
+        <activity
+            android:name=".ProjectDetailsActivity"
+            android:label="@string/title_activity_project_details"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.photosynq.app.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
