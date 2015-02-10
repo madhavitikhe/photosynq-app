@@ -130,6 +130,32 @@ function MathLN(value){
 	return parseFloat(val);
 }
 
+// Median Input-> array (float)
+//------------------------------------------------------------------------------------------------------------------
+function MathMEDIAN(values){
+	var val = false;
+	if(values){
+		// Sort values
+		values.sort(function(a, b) {
+			if (a < b) //sort string ascending
+			return -1;
+			if (a > b) return 1;
+			return 0; //default return value (no sorting)
+		});
+		
+		var n = values.length;
+		// Even
+		if((n % 2 == 0)){
+			val = (values[(n/2)-1] + values[(n/2)])/2;
+		}
+		// Odd
+		if((Math.abs(n) % 2 == 1)){
+			val = values[Math.floor((n/2))];
+		}
+	}
+	return parseFloat(val);
+}
+
 // Calculate Standard Error: Input-> Array with values (float or int)
 //------------------------------------------------------------------------------------------------------------------
 function MathLINREG(x, y) {
@@ -166,74 +192,4 @@ function MathLINREG(x, y) {
 		regression = {'m': m, 'b': b, 'r': r, 'r2': (r*r)}
 	}
 	return regression;
-}
-
-
-// Calculate Histogram from data -> array(y);
-//------------------------------------------------------------------------------------------------------------------
-function CalculateHistogram(values,range){
-	var histogram = [];
-	if(values.length >0){
-		histogram['ranges'] = []
-		histogram['frequency'] = [0,0,0,0,0,0,0,0,0,0];
-		histogram['range_labels'] = [];
-	
-		var min = MathMIN(range);
-		var max = MathMAX(range);
-		var step = (max-min)/10
-		var rmin = min;
-		var rmax = min + step
-	
-		for (var i=0; i< 10; i++){
-			rmin = min + (step * i);
-			rmax = rmin + step;
-			histogram['ranges'].push([rmin,rmax]);
-			histogram['range_labels'].push(MathROUND(rmin)+" to "+MathROUND(rmax));
-		}
-
-		for (var i=0,len = values.length; i< len; i++){
-			for(range in histogram['ranges']){
-				if(values[i] >= histogram['ranges'][range][0] && values[i] <= histogram['ranges'][range][1]){
-					histogram['frequency'][range] += 1;
-				}
-			}
-		}
-	}
-	return histogram;
-}
-
-// Calculate Lineweaver–Burk plot from data -> array(x,y);
-//------------------------------------------------------------------------------------------------------------------
-function LineweaverBurk(values){
-	var LineweaverBurk = [];
-	var reciprocal = [];
-	var regrecival = {x:[],y:[]};
-	if(values.length >0){
-		// Calculating reciprocal values
-		for (var i=0; i< values.length; i++){
-			reciprocal.push([(1/values[i][0]),(1/values[i][1])]);
-			regrecival.x.push(1/values[i][0]);
-			regrecival.y.push(1/values[i][1]);
-		}
-		// calculating linear regression
-		var reg = MathLINREG(regrecival.x, regrecival.y);
-		var y0 = (reg['b']/reg['m']);
-		LineweaverBurk = {Plot:reciprocal,Regression:[[y0,0],[MathMAX(regrecival.x),(reg['m']*MathMAX(regrecival.x)+reg['b'])]],RegressionValues:reg,ReceivedValues:'Vmax: '+MathROUND((1/reg['b']),3)+' Km: '+MathROUND((1/y0),3)}
-	}
-	return LineweaverBurk;
-}
-
-// Calculate Michaelis-Menten plot from data -> array(x,y);
-//------------------------------------------------------------------------------------------------------------------
-function MichaelisMenten(values){
-	var MichaelisMenten = [];
-	var data = [];
-	if(values.length >0){
-		var regression = regressionABS('logarithmic',values);
-	
-		var vmax = regression['equation'][0] + regression['equation'][1] * MathLOG(10000000000000);
-		var km = Math.pow(Math.E,(((vmax/2)-regression['equation'][1])/regression['equation'][0]))   //regression['equation'][0] + regression['equation'][1] * (Math.log(10000000000000) / Math.LN10);
-		MichaelisMenten = {Plot:values,Regression:regression['points'],RegressionValues:regression['string'],ReceivedValues:'Vmax: '+MathROUND(vmax,3)+' Km: '+MathROUND(regression['equation'][0],3)}
-	}
-	return MichaelisMenten;
 }
