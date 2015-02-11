@@ -1,11 +1,21 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+<android.support.v4.widget.SlidingPaneLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.photosynq.app.DisplayResultsActivity">
+    android:id="@+id/slidingpanelayout">
 
-    <include layout="@layout/toolbar"/>
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="#CCC"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:id="@+id/fragment_firstpane"/>
 
-    <TextView android:text="hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#555"
+        android:orientation="horizontal"
+        android:layout_marginLeft="80dp"
+        android:id="@+id/fragment_secondpane"/>
 
-</RelativeLayout>
+</android.support.v4.widget.SlidingPaneLayout>

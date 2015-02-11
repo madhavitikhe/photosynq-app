@@ -43,28 +43,28 @@
                 android:layout_below="@id/tv_project_name"/>
 
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true">
+            <!--<RelativeLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentBottom="true">-->
 
-                <ImageView
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:padding="20dp"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/clock_icon"/>
+                <!--<ImageView-->
+                    <!--android:layout_width="10dp"-->
+                    <!--android:layout_height="10dp"-->
+                    <!--android:padding="20dp"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:background="@drawable/clock_icon"/>-->
 
-                <TextView
-                    android:id="@+id/tv_last_contribution"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/textPrimary"
-                    android:textSize="14sp"
-                    android:text="test"/>
-            </RelativeLayout>
+                <!--<TextView-->
+                    <!--android:id="@+id/tv_last_contribution"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginLeft="20dp"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:textColor="@color/textPrimary"-->
+                    <!--android:textSize="14sp"-->
+                    <!--android:text="test"/>-->
+            <!--</RelativeLayout>-->
         </RelativeLayout>
 
     </LinearLayout>

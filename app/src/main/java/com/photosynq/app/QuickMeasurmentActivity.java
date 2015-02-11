@@ -81,11 +81,11 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
         mtvStatusMessage.setTypeface(CommonUtils.getInstance(this).getFontRobotoRegular());
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (!mBluetoothAdapter.isEnabled()) {
+        if (null != mBluetoothAdapter && !mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         }
-        if (mBluetoothService == null) {
+        if (null == mBluetoothService) {
             mBluetoothService = new BluetoothService(getApplicationContext(), mHandler);
         }
 

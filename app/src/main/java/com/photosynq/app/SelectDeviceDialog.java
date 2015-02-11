@@ -28,6 +28,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
@@ -89,6 +90,9 @@ public class SelectDeviceDialog extends DialogFragment {
         getActivity().registerReceiver(ActionFoundReceiver, filter);
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(null == bluetoothAdapter)
+            return rootView;
+
         Set<BluetoothDevice> btDevices =  bluetoothAdapter.getBondedDevices();
         for (BluetoothDevice device : btDevices) {
             btDeviceList.add(device);
@@ -160,6 +164,7 @@ public class SelectDeviceDialog extends DialogFragment {
         // Emulator doesn't support Bluetooth and will return null
         if (bluetoothAdapter == null) {
             System.out.println("\nBluetooth NOT supported. Aborting.");
+            Toast.makeText(getActivity(), "Bluetooth NOT supported, Aborting!", Toast.LENGTH_LONG).show();
             return;
         } else {
             if (bluetoothAdapter.isEnabled()) {

@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
+import com.photosynq.app.model.ProjectLead;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.PrefUtils;
@@ -35,17 +36,24 @@ public class ProjectDetailsActivity extends ActionBarActivity {
         DatabaseHelper databaseHelper = DatabaseHelper.getHelper(this);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            String projectID = extras.getString(DatabaseHelper.C_ID);
+            String projectID = extras.getString(DatabaseHelper.C_PROJECT_ID);
             ResearchProject project = databaseHelper.getResearchProject(projectID);
 
             SimpleDateFormat outputDate = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
 
             ImageView projectImage = (ImageView) findViewById(R.id.im_projectImage);
-            Picasso.with(this).load(project.getImageUrl()).into(projectImage);
+            Picasso.with(this)
+                    .load(project.getImageUrl())
+                    .error(R.drawable.ic_launcher)
+                    .into(projectImage);
 
             ImageView profileImage = (ImageView) findViewById(R.id.user_profile_image);
-            String imageUrl = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_THUMB_URL_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-            Picasso.with(this).load(imageUrl).into(profileImage);
+            ProjectLead projectLead = databaseHelper.getProjectLead(project.getpLeadId());
+            String imageUrl = projectLead.getImageUrl();
+            Picasso.with(this)
+                    .load(imageUrl)
+                    .error(R.drawable.ic_launcher)
+                    .into(profileImage);
 
             TextView tvProjetTitle = (TextView) findViewById(R.id.tv_project_name);
             TextView tvEndsIn = (TextView) findViewById(R.id.tv_ends_in);

@@ -45,15 +45,14 @@
     <LinearLayout
         android:id="@+id/btnLL"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_height="?actionBarSize"
         android:layout_alignParentBottom="true">
         <Button
             android:id="@+id/btn_sync_data"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_layout_orange"
-            android:layout_marginRight="10dp"
+            android:layout_margin="10dp"
             android:textColor="@color/white"
             android:layout_weight="1"
             android:textSize="16sp"
@@ -64,6 +63,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_layout_gray_light"
+            android:layout_margin="10dp"
             android:textColor="@color/textPrimary"
             android:textSize="16sp"
             android:layout_weight="1"

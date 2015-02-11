@@ -7,6 +7,7 @@ import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Option;
+import com.photosynq.app.model.ProjectLead;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.Constants;
@@ -68,12 +69,28 @@ public class UpdateProject implements PhotosynqResponse {
                             jsonProject.getString("name"),
                             jsonProject.getString("description"),
                             jsonProject.getString("directions_to_collaborators"),
+                            jsonProject.getString("lead_id"),
                             jsonProject.getString("start_date"),
                             jsonProject.getString("end_date"),
                             jsonProject.getString("medium_image_url"),
                             jsonProject.getString("beta"),
                             protocol_ids.substring(1, protocol_ids.length()-1)); // remove first and last square bracket and store as a comma separated string
 
+                    try {
+                        String pleadString = jsonProject.getString("plead");
+                        JSONObject pleadJson = new JSONObject(pleadString);
+
+                        ProjectLead projectLead = new ProjectLead(
+                                pleadJson.getString("id"),
+                                pleadJson.getString("name"),
+                                pleadJson.getString("data_count"),
+                                pleadJson.getString("thumb_url"));
+
+                        db.updateProjectLead(projectLead);
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                     JSONArray customFields = jsonProject.getJSONArray("custom_fields");
                     for (int j = 0; j < customFields.length(); j++) {
                         JSONObject jsonQuestion = customFields.getJSONObject(j);

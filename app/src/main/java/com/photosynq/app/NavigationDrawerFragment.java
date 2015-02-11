@@ -220,6 +220,8 @@ public class NavigationDrawerFragment extends Fragment {
 
                 DatabaseHelper databaseHelper = DatabaseHelper.getHelper(getActivity());
                 BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                if(null == bluetoothAdapter)
+                    return;
                 Set<BluetoothDevice> btDevices =  bluetoothAdapter.getBondedDevices();
                 String userId = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
                 AppSettings appSettings = databaseHelper.getSettings(userId);

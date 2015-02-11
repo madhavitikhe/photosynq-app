@@ -15,6 +15,7 @@ import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Macro;
 import com.photosynq.app.model.Option;
+import com.photosynq.app.model.ProjectLead;
 import com.photosynq.app.model.ProjectResult;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.Question;
@@ -38,40 +39,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String TABLE_RESULTS = "results";
 	private static final String TABLE_SETTINGS = "settings";
 	private static final String TABLE_DATA = "data";
+    private static final String TABLE_PROJECT_LEAD = "project_lead";
 
-	// column names
+	// Common column names
 	public static final String C_RECORD_HASH = "record_hash";
 	public static final String C_ROW_ID = "rowid";
-	public static final String C_ID = "id";
-	private static final String C_NAME = "name";
-	private static final String C_DESCRIPTION = "description";
-	private static final String C_SLUG = "slug";
 
 	// Research Project columns
-	private static final String C_DIR_TO_COLLAB = "dir_to_collab";
-	private static final String C_START_DATE = "start_date";
-	private static final String C_END_DATE = "end_date";
-	private static final String C_IMAGE_URL = "image_url";
-	private static final String C_BETA = "beta";
+    private static final String C_PROJECT_LEAD_ID = "plead_id";
+	private static final String C_PROJECT_DIR_TO_COLLAB = "dir_to_collab";
+	private static final String C_PROJECT_START_DATE = "start_date";
+	private static final String C_PROJECT_END_DATE = "end_date";
+	private static final String C_PROJECT_IMAGE_URL = "image_url";
+	private static final String C_PROJECT_BETA = "beta";
 	public static final String C_PROJECT_ID = "project_id";
-	public static final String C_QUESTION_ID = "question_id";
-	private static final String C_PROTOCOL_IDS = "protocols_ids";
+	private static final String C_PROJECT_PROTOCOL_IDS = "protocols_ids";
+    private static final String C_PROJECT_NAME = "name";
+    private static final String C_PROJECT_DESCRIPTION = "description";
+    private static final String C_PROJECT_SLUG = "slug";
+
+    // Project lead columns
+    private static final String C_LEAD_ID = "plead_id";
+    private static final String C_LEAD_NAME = "name";
+    private static final String C_LEAD_DATA_COUNT = "data_count";
+    private static final String C_LEAD_IMAGE_URL = "image_url";
 
 	// Question and Option Table - column names
+    private static final String C_QUESTION_ID = "question_id";// Question
 	private static final String C_QUESTION_TEXT = "question_text";// Question
 	public static final String C_OPTION_TEXT = "option";// Option
     public static final String C_QUESTION_TYPE = "question_type";
 
 	// Protocol column names
-
+    private static final String C_PROTOCOL_ID = "protocol_id";
+    private static final String C_PROTOCOL_NAME = "protocol_name";
+    private static final String C_PROTOCOL_DESCRIPTION = "protocol_description";
 	public static final String C_PROTOCOL_JSON = "protocol_json";
-	private static final String C_MACRO_ID = "macro_id";
+    private static final String C_PROTOCOL_MACRO_ID = "macro_id";
+    public static final String C_PROTOCOL_MACRO_SLUG = "macro_slug";
     private static final String C_PROTOCOL_PRE_SEL = "protocol_pre_sel";
 
 	// Macro column names
-	private static final String C_DEFAULT_X_AXIS = "default_x_axis";
-	private static final String C_DEFAULT_Y_AXIS = "default_y_axis";
-	private static final String C_JAVASCRIPT_CODE = "javascript_code";
+    private static final String C_MACRO_ID = "macro_id";
+    private static final String C_MACRO_NAME = "macro_name";
+    private static final String C_MACRO_DESCRIPTION = "macro_description";
+	private static final String C_MACRO_DEFAULT_X_AXIS = "default_x_axis";
+	private static final String C_MACRO_DEFAULT_Y_AXIS = "default_y_axis";
+	private static final String C_MACRO_JAVASCRIPT_CODE = "javascript_code";
+    private static final String C_MACRO_SLUG = "macro_slug";
 
 	// Results column name
 	// private static final String C_RECORD_TIME = "record_time";
@@ -93,11 +108,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	//
 	private static final String CREATE_TABLE_RESEARCH_PROJECT = "CREATE TABLE "
 			+ TABLE_RESEARCH_PROJECT + "(" + C_RECORD_HASH
-			+ " TEXT PRIMARY KEY," + C_ID + " TEXT," + C_NAME + " TEXT,"
-			+ C_DESCRIPTION + " TEXT," + C_DIR_TO_COLLAB + " TEXT,"
-			+ C_START_DATE + " TEXT," + C_END_DATE + " TEXT," + C_BETA
-			+ " TEXT," + C_PROTOCOL_IDS + " TEXT," + C_IMAGE_URL + " TEXT"
+			+ " TEXT PRIMARY KEY," + C_PROJECT_ID + " TEXT," + C_PROJECT_NAME + " TEXT,"
+			+ C_PROJECT_DESCRIPTION + " TEXT," + C_PROJECT_DIR_TO_COLLAB + " TEXT,"
+            + C_PROJECT_LEAD_ID + " TEXT,"
+			+ C_PROJECT_START_DATE + " TEXT," + C_PROJECT_END_DATE + " TEXT," + C_PROJECT_BETA
+			+ " TEXT," + C_PROJECT_PROTOCOL_IDS + " TEXT," + C_PROJECT_IMAGE_URL + " TEXT"
 			+ ")";
+
+    // Project Lead table create statement
+    private static final String CREATE_TABLE_PROJECT_LEAD = "CREATE TABLE "
+            + TABLE_PROJECT_LEAD + "(" + C_RECORD_HASH
+            + " TEXT PRIMARY KEY," + C_LEAD_ID + " TEXT," + C_LEAD_NAME + " TEXT,"
+            + C_LEAD_DATA_COUNT + " TEXT," + C_LEAD_IMAGE_URL + " TEXT"
+            + ")";
 
 	// Question table create statement
 	private static final String CREATE_TABLE_QUESTION = "CREATE TABLE "
@@ -111,17 +134,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	// Protocol table create statement
 	private static final String CREATE_TABLE_PROTOCOL = "CREATE TABLE "
-			+ TABLE_PROTOCOL + "(" + C_RECORD_HASH + " TEXT ," + C_ID
-			+ " TEXT ," + C_NAME + " TEXT ," + C_PROTOCOL_JSON + " TEXT ,"
-			+ C_DESCRIPTION + " TEXT ," + C_MACRO_ID + " TEXT ," + C_SLUG + " TEXT ,"
+			+ TABLE_PROTOCOL + "(" + C_RECORD_HASH + " TEXT ," + C_PROTOCOL_ID
+			+ " TEXT ," + C_PROTOCOL_NAME + " TEXT ," + C_PROTOCOL_JSON + " TEXT ,"
+			+ C_PROTOCOL_DESCRIPTION + " TEXT ," + C_PROTOCOL_MACRO_ID + " TEXT ," + C_PROTOCOL_MACRO_SLUG + " TEXT ,"
             + C_PROTOCOL_PRE_SEL +" TEXT)";
 
 	// Macro table create statement
 	private static final String CREATE_TABLE_MACRO = "CREATE TABLE "
-			+ TABLE_MACRO + "(" + C_RECORD_HASH + " TEXT ," + C_ID + " TEXT ,"
-			+ C_NAME + " TEXT ," + C_DESCRIPTION + " TEXT ," + C_DEFAULT_X_AXIS
-			+ " TEXT ," + C_DEFAULT_Y_AXIS + " TEXT ," + C_JAVASCRIPT_CODE
-			+ " TEXT ," + C_SLUG + " TEXT)";
+			+ TABLE_MACRO + "(" + C_RECORD_HASH + " TEXT ," + C_MACRO_ID + " TEXT ,"
+			+ C_MACRO_NAME + " TEXT ," + C_MACRO_DESCRIPTION + " TEXT ," + C_MACRO_DEFAULT_X_AXIS
+			+ " TEXT ," + C_MACRO_DEFAULT_Y_AXIS + " TEXT ," + C_MACRO_JAVASCRIPT_CODE
+			+ " TEXT ," + C_MACRO_SLUG + " TEXT)";
 
 	private static final String CREATE_TABLE_RESULTS = "CREATE TABLE "
 			+ TABLE_RESULTS + "(" + C_RECORD_HASH + " TEXT ," + C_PROJECT_ID
@@ -203,6 +226,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(CREATE_TABLE_RESULTS);
 		db.execSQL(CREATE_TABLE_SETTINGS);
 		db.execSQL(CREATE_TABLE_DATA);
+        db.execSQL(CREATE_TABLE_PROJECT_LEAD);
 	}
 
 	@Override
@@ -216,6 +240,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESULTS);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SETTINGS);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATA);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECT_LEAD);
 		// create new tables;
 		onCreate(db);
 
@@ -345,20 +370,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			SQLiteDatabase db = openWriteDatabase();
 
 			ContentValues values = new ContentValues();
-			values.put(C_ID, null != rp.getId() ? rp.getId() : "");
-			values.put(C_NAME, null != rp.getName() ? rp.getName() : "");
-			values.put(C_DESCRIPTION,
+			values.put(C_PROJECT_ID, null != rp.getId() ? rp.getId() : "");
+			values.put(C_PROJECT_NAME, null != rp.getName() ? rp.getName() : "");
+			values.put(C_PROJECT_DESCRIPTION,
 					null != rp.getDescription() ? rp.getDescription() : "");
-			values.put(C_DIR_TO_COLLAB,
+			values.put(C_PROJECT_DIR_TO_COLLAB,
 					null != rp.getDirToCollab() ? rp.getDirToCollab() : "");
-			values.put(C_START_DATE,
+            values.put(C_PROJECT_LEAD_ID,
+                    null != rp.getpLeadId() ? rp.getpLeadId() : "");
+			values.put(C_PROJECT_START_DATE,
 					null != rp.getStartDate() ? rp.getStartDate() : "");
-			values.put(C_END_DATE, null != rp.getEndDate() ? rp.getEndDate()
+			values.put(C_PROJECT_END_DATE, null != rp.getEndDate() ? rp.getEndDate()
 					: "");
-			values.put(C_BETA, null != rp.getBeta() ? rp.getBeta() : "");
-			values.put(C_PROTOCOL_IDS,
+			values.put(C_PROJECT_BETA, null != rp.getBeta() ? rp.getBeta() : "");
+			values.put(C_PROJECT_PROTOCOL_IDS,
 					null != rp.getProtocols_ids() ? rp.getProtocols_ids() : "");
-			values.put(C_IMAGE_URL, null != rp.getImageUrl() ? rp.getImageUrl()
+			values.put(C_PROJECT_IMAGE_URL, null != rp.getImageUrl() ? rp.getImageUrl()
 					: "");
 			values.put(C_RECORD_HASH, rp.getRecordHash());
 			// insert row
@@ -384,7 +411,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = openReadDatabase();
 
 		String selectQuery = "SELECT  * FROM " + TABLE_RESEARCH_PROJECT
-				+ " WHERE " + C_ID + " = '" + id + "'";
+				+ " WHERE " + C_PROJECT_ID + " = '" + id + "'";
 
 		Log.e("DATABASE_HELPER_getResearchProject", selectQuery);
 
@@ -395,16 +422,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             if (c.getCount() > 0) {
                 rp = new ResearchProject();
-                rp.setId(c.getString(c.getColumnIndex(C_ID)));
-                rp.setName(c.getString(c.getColumnIndex(C_NAME)));
-                rp.setDescription(c.getString(c.getColumnIndex(C_DESCRIPTION)));
-                rp.setDirToCollab(c.getString(c.getColumnIndex(C_DIR_TO_COLLAB)));
-                rp.setStartDate(c.getString(c.getColumnIndex(C_START_DATE)));
-                rp.setEndDate(c.getString(c.getColumnIndex(C_END_DATE)));
-                rp.setImageUrl(c.getString(c.getColumnIndex(C_IMAGE_URL)));
+                rp.setId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
+                rp.setName(c.getString(c.getColumnIndex(C_PROJECT_NAME)));
+                rp.setDescription(c.getString(c.getColumnIndex(C_PROJECT_DESCRIPTION)));
+                rp.setDirToCollab(c.getString(c.getColumnIndex(C_PROJECT_DIR_TO_COLLAB)));
+                rp.setpLeadId(c.getString(c.getColumnIndex(C_PROJECT_LEAD_ID)));
+                rp.setStartDate(c.getString(c.getColumnIndex(C_PROJECT_START_DATE)));
+                rp.setEndDate(c.getString(c.getColumnIndex(C_PROJECT_END_DATE)));
+                rp.setImageUrl(c.getString(c.getColumnIndex(C_PROJECT_IMAGE_URL)));
                 rp.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
-                rp.setProtocols_ids(c.getString(c.getColumnIndex(C_PROTOCOL_IDS)));
-                rp.setBeta(c.getString(c.getColumnIndex(C_BETA)));
+                rp.setProtocols_ids(c.getString(c.getColumnIndex(C_PROJECT_PROTOCOL_IDS)));
+                rp.setBeta(c.getString(c.getColumnIndex(C_PROJECT_BETA)));
             }
             c.close();
         }
@@ -425,17 +453,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		if (c.moveToFirst()) {
 			do {
 				ResearchProject rp = new ResearchProject();
-				rp.setId(c.getString(c.getColumnIndex(C_ID)));
-				rp.setName(c.getString(c.getColumnIndex(C_NAME)));
-				rp.setDescription(c.getString(c.getColumnIndex(C_DESCRIPTION)));
-				rp.setDirToCollab(c.getString(c.getColumnIndex(C_DIR_TO_COLLAB)));
-				rp.setStartDate(c.getString(c.getColumnIndex(C_START_DATE)));
-				rp.setEndDate(c.getString(c.getColumnIndex(C_END_DATE)));
-				rp.setImageUrl(c.getString(c.getColumnIndex(C_IMAGE_URL)));
+				rp.setId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
+				rp.setName(c.getString(c.getColumnIndex(C_PROJECT_NAME)));
+				rp.setDescription(c.getString(c.getColumnIndex(C_PROJECT_DESCRIPTION)));
+				rp.setDirToCollab(c.getString(c.getColumnIndex(C_PROJECT_DIR_TO_COLLAB)));
+                rp.setpLeadId(c.getString(c.getColumnIndex(C_PROJECT_LEAD_ID)));
+				rp.setStartDate(c.getString(c.getColumnIndex(C_PROJECT_START_DATE)));
+				rp.setEndDate(c.getString(c.getColumnIndex(C_PROJECT_END_DATE)));
+				rp.setImageUrl(c.getString(c.getColumnIndex(C_PROJECT_IMAGE_URL)));
 				rp.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
 				rp.setProtocols_ids(c.getString(c
-						.getColumnIndex(C_PROTOCOL_IDS)));
-				rp.setBeta(c.getString(c.getColumnIndex(C_BETA)));
+						.getColumnIndex(C_PROJECT_PROTOCOL_IDS)));
+				rp.setBeta(c.getString(c.getColumnIndex(C_PROJECT_BETA)));
 
 				// adding to todo list
 				researchProjects.add(rp);
@@ -456,23 +485,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = openWriteDatabase();
 
 		ContentValues values = new ContentValues();
-		values.put(C_ID, null != rp.getId() ? rp.getId() : "");
-		values.put(C_NAME, null != rp.getName() ? rp.getName() : "");
-		values.put(C_DESCRIPTION,
+		values.put(C_PROJECT_ID, null != rp.getId() ? rp.getId() : "");
+		values.put(C_PROJECT_NAME, null != rp.getName() ? rp.getName() : "");
+		values.put(C_PROJECT_DESCRIPTION,
 				null != rp.getDescription() ? rp.getDescription() : "");
-		values.put(C_DIR_TO_COLLAB,
+		values.put(C_PROJECT_DIR_TO_COLLAB,
 				null != rp.getDirToCollab() ? rp.getDirToCollab() : "");
-		values.put(C_START_DATE, null != rp.getStartDate() ? rp.getStartDate()
+        values.put(C_PROJECT_LEAD_ID,
+                null != rp.getpLeadId() ? rp.getpLeadId() : "");
+		values.put(C_PROJECT_START_DATE, null != rp.getStartDate() ? rp.getStartDate()
 				: "");
-		values.put(C_END_DATE, null != rp.getEndDate() ? rp.getEndDate() : "");
-		values.put(C_BETA, null != rp.getBeta() ? rp.getBeta() : "");
-		values.put(C_IMAGE_URL, null != rp.getImageUrl() ? rp.getImageUrl()
+		values.put(C_PROJECT_END_DATE, null != rp.getEndDate() ? rp.getEndDate() : "");
+		values.put(C_PROJECT_BETA, null != rp.getBeta() ? rp.getBeta() : "");
+		values.put(C_PROJECT_IMAGE_URL, null != rp.getImageUrl() ? rp.getImageUrl()
 				: "");
-		values.put(C_PROTOCOL_IDS,
+		values.put(C_PROJECT_PROTOCOL_IDS,
 				null != rp.getProtocols_ids() ? rp.getProtocols_ids() : "");
 		values.put(C_RECORD_HASH, rp.getRecordHash());
 
-		int rowsaffected = db.update(TABLE_RESEARCH_PROJECT, values, C_ID
+		int rowsaffected = db.update(TABLE_RESEARCH_PROJECT, values, C_PROJECT_ID
 				+ " = ?", new String[] { String.valueOf(rp.getId()) });
 		// if update fails that indicates there is no then create new row
 		if (rowsaffected <= 0) {
@@ -494,7 +525,94 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //        closeWriteDatabase();
 //	}
 //
-	// Insert a question in database
+
+    // Insert project lead information in database
+    public boolean createProjectLead(ProjectLead projectLead) {
+        boolean retVal = false;
+        try {
+            SQLiteDatabase db = openWriteDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put(C_LEAD_ID, null != projectLead.getId() ? projectLead.getId() : "");
+            values.put(C_LEAD_NAME, null != projectLead.getName() ? projectLead.getName() : "");
+            values.put(C_LEAD_DATA_COUNT,
+                    null != projectLead.getDataCount() ? projectLead.getDataCount() : "");
+            values.put(C_LEAD_IMAGE_URL,
+                    null != projectLead.getImageUrl() ? projectLead.getImageUrl() : "");
+
+            long row_id = db.insert(TABLE_PROJECT_LEAD, null, values);
+
+            if (row_id >= 0) {
+                retVal = true;
+            }
+        } catch (SQLiteConstraintException contraintException) {
+            // If data already present then handle the case here.
+            Log.d("DATABASE_HELPER_PROJECT_LEAD",
+                    "Record already present in database for record hash ="
+                            + projectLead.getRecordHash());
+
+        } catch (SQLException sqliteException) {}
+        closeWriteDatabase();
+        return retVal;
+    }
+
+    // Get project lead information from database
+    public ProjectLead getProjectLead(String id) {
+        ProjectLead projectLead = null;
+        SQLiteDatabase db = openReadDatabase();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_PROJECT_LEAD
+                + " WHERE " + C_LEAD_ID + " = '" + id + "'";
+
+        Log.e("DATABASE_HELPER_getProjectLead", selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null) {
+            c.moveToFirst();
+
+            if (c.getCount() > 0) {
+                projectLead = new ProjectLead();
+                projectLead.setId(c.getString(c.getColumnIndex(C_LEAD_ID)));
+                projectLead.setName(c.getString(c.getColumnIndex(C_LEAD_NAME)));
+                projectLead.setDataCount(c.getString(c.getColumnIndex(C_LEAD_DATA_COUNT)));
+                projectLead.setImageUrl(c.getString(c.getColumnIndex(C_LEAD_IMAGE_URL)));
+            }
+            c.close();
+        }
+        closeReadDatabase();
+        return projectLead;
+    }
+
+    /*
+     * Updating a Project Lead
+     */
+    public boolean updateProjectLead(ProjectLead projectLead) {
+
+        boolean retVal = false;
+        SQLiteDatabase db = openWriteDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(C_LEAD_ID, null != projectLead.getId() ? projectLead.getId() : "");
+        values.put(C_LEAD_NAME, null != projectLead.getName() ? projectLead.getName() : "");
+        values.put(C_LEAD_DATA_COUNT,
+                null != projectLead.getDataCount() ? projectLead.getDataCount() : "");
+        values.put(C_LEAD_IMAGE_URL,
+                null != projectLead.getImageUrl() ? projectLead.getImageUrl() : "");
+
+        int rowsaffected = db.update(TABLE_PROJECT_LEAD, values, C_LEAD_ID
+                + " = ?", new String[] { String.valueOf(projectLead.getId()) });
+        // if update fails that indicates there is no then create new row
+        if (rowsaffected <= 0) {
+            retVal = createProjectLead(projectLead);
+        }else{ // updating row
+            retVal = true;
+        }
+        closeWriteDatabase();
+        return retVal;
+    }
+
+    // Insert a question in database
 	public boolean createQuestion(Question que) {
         boolean retVal = false;
 		try {
@@ -728,20 +846,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 			ContentValues values = new ContentValues();
 			values.put(C_RECORD_HASH, protocol.getRecordHash());
-			values.put(C_ID, null != protocol.getId() ? protocol.getId() : "");
-			values.put(C_NAME, null != protocol.getName() ? protocol.getName()
+			values.put(C_PROTOCOL_ID, null != protocol.getId() ? protocol.getId() : "");
+			values.put(C_PROTOCOL_NAME, null != protocol.getName() ? protocol.getName()
 					: "");
 			values.put(
 					C_PROTOCOL_JSON,
 					null != protocol.getProtocol_json() ? protocol
 							.getProtocol_json() : "");
 			values.put(
-					C_DESCRIPTION,
+					C_PROTOCOL_DESCRIPTION,
 					null != protocol.getDescription() ? protocol
 							.getDescription() : "");
-			values.put(C_MACRO_ID,
+			values.put(C_PROTOCOL_MACRO_ID,
 					null != protocol.getMacroId() ? protocol.getMacroId() : "");
-			values.put(C_SLUG, null != protocol.getSlug() ? protocol.getSlug()
+			values.put(C_PROTOCOL_MACRO_SLUG, null != protocol.getSlug() ? protocol.getSlug()
 					: "");
             values.put(C_PROTOCOL_PRE_SEL,
                     null != protocol.getPreSelected() ? protocol.getPreSelected() : "");
@@ -765,21 +883,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		ContentValues values = new ContentValues();
 		values.put(C_RECORD_HASH, protocol.getRecordHash());
-		values.put(C_ID, null != protocol.getId() ? protocol.getId() : "");
-		values.put(C_NAME, null != protocol.getName() ? protocol.getName() : "");
+		values.put(C_PROTOCOL_ID, null != protocol.getId() ? protocol.getId() : "");
+		values.put(C_PROTOCOL_NAME, null != protocol.getName() ? protocol.getName() : "");
 		values.put(
 				C_PROTOCOL_JSON,
 				null != protocol.getProtocol_json() ? protocol
 						.getProtocol_json() : "");
-		values.put(C_DESCRIPTION,
+		values.put(C_PROTOCOL_DESCRIPTION,
 				null != protocol.getDescription() ? protocol.getDescription()
 						: "");
-		values.put(C_MACRO_ID,
+		values.put(C_PROTOCOL_MACRO_ID,
 				null != protocol.getMacroId() ? protocol.getMacroId() : "");
-		values.put(C_SLUG, null != protocol.getSlug() ? protocol.getSlug() : "");
+		values.put(C_PROTOCOL_MACRO_SLUG, null != protocol.getSlug() ? protocol.getSlug() : "");
         values.put(C_PROTOCOL_PRE_SEL, null != protocol.getPreSelected() ? protocol.getPreSelected() : "");
 
-		int rowsaffected = db.update(TABLE_PROTOCOL, values, C_ID + " = ?",
+		int rowsaffected = db.update(TABLE_PROTOCOL, values, C_PROTOCOL_ID + " = ?",
 				new String[] { String.valueOf(protocol.getId()) });
 		// if update fails that indicates there is no then create new row
 		if (rowsaffected <= 0) {
@@ -806,13 +924,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				Protocol protocol = new Protocol();
                 protocol.setRecordHash(c.getString(c
 						.getColumnIndex(C_RECORD_HASH)));
-				protocol.setId(c.getString(c.getColumnIndex(C_ID)));
+				protocol.setId(c.getString(c.getColumnIndex(C_PROTOCOL_ID)));
 				protocol.setDescription(c.getString(c
-						.getColumnIndex(C_DESCRIPTION)));
-				protocol.setName(c.getString(c.getColumnIndex(C_NAME)));
+						.getColumnIndex(C_PROTOCOL_DESCRIPTION)));
+				protocol.setName(c.getString(c.getColumnIndex(C_PROTOCOL_NAME)));
 				protocol.setProtocol_json(c.getString(c
 						.getColumnIndex(C_PROTOCOL_JSON)));
-				protocol.setSlug(c.getString(c.getColumnIndex(C_SLUG)));
+				protocol.setSlug(c.getString(c.getColumnIndex(C_PROTOCOL_MACRO_SLUG)));
 				protocol.setMacroId(c.getString(c.getColumnIndex(C_MACRO_ID)));
                 protocol.setPreSelected(c.getString(c.getColumnIndex(C_PROTOCOL_PRE_SEL)));
 
@@ -878,20 +996,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 			ContentValues values = new ContentValues();
 			values.put(C_RECORD_HASH, macro.getRecordHash());
-			values.put(C_ID, null != macro.getId() ? macro.getId() : "");
-			values.put(C_NAME, null != macro.getName() ? macro.getName() : "");
-			values.put(C_DESCRIPTION,
+			values.put(C_MACRO_ID, null != macro.getId() ? macro.getId() : "");
+			values.put(C_MACRO_NAME, null != macro.getName() ? macro.getName() : "");
+			values.put(C_MACRO_DESCRIPTION,
 					null != macro.getDescription() ? macro.getDescription()
 							: "");
-			values.put(C_SLUG, null != macro.getSlug() ? macro.getSlug() : "");
-			values.put(C_DEFAULT_X_AXIS,
+			values.put(C_MACRO_SLUG, null != macro.getSlug() ? macro.getSlug() : "");
+			values.put(C_MACRO_DEFAULT_X_AXIS,
 					null != macro.getDefaultXAxis() ? macro.getDefaultXAxis()
 							: "");
-			values.put(C_DEFAULT_Y_AXIS,
+			values.put(C_MACRO_DEFAULT_Y_AXIS,
 					null != macro.getDefaultYAxis() ? macro.getDefaultYAxis()
 							: "");
 			values.put(
-					C_JAVASCRIPT_CODE,
+					C_MACRO_JAVASCRIPT_CODE,
 					null != macro.getJavascriptCode() ? macro
 							.getJavascriptCode() : "");
 			// insert row
@@ -914,20 +1032,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		ContentValues values = new ContentValues();
 		values.put(C_RECORD_HASH, macro.getRecordHash());
-		values.put(C_ID, null != macro.getId() ? macro.getId() : "");
-		values.put(C_NAME, null != macro.getName() ? macro.getName() : "");
-		values.put(C_DESCRIPTION,
+		values.put(C_MACRO_ID, null != macro.getId() ? macro.getId() : "");
+		values.put(C_MACRO_NAME, null != macro.getName() ? macro.getName() : "");
+		values.put(C_MACRO_DESCRIPTION,
 				null != macro.getDescription() ? macro.getDescription() : "");
-		values.put(C_SLUG, null != macro.getSlug() ? macro.getSlug() : "");
-		values.put(C_DEFAULT_X_AXIS,
+		values.put(C_MACRO_SLUG, null != macro.getSlug() ? macro.getSlug() : "");
+		values.put(C_MACRO_DEFAULT_X_AXIS,
 				null != macro.getDefaultXAxis() ? macro.getDefaultXAxis() : "");
-		values.put(C_DEFAULT_Y_AXIS,
+		values.put(C_MACRO_DEFAULT_Y_AXIS,
 				null != macro.getDefaultYAxis() ? macro.getDefaultYAxis() : "");
-		values.put(C_JAVASCRIPT_CODE,
+		values.put(C_MACRO_JAVASCRIPT_CODE,
 				null != macro.getJavascriptCode() ? macro.getJavascriptCode()
 						: "");
 
-		int rowsaffected = db.update(TABLE_MACRO, values, C_ID + " = ?",
+		int rowsaffected = db.update(TABLE_MACRO, values, C_MACRO_ID + " = ?",
 				new String[] { String.valueOf(macro.getId()) });
 		// if update fails that indicates there is no then create new row
 		if (rowsaffected <= 0) {
@@ -979,18 +1097,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		if (c.moveToFirst()) {
 			do {
 				Macro macro = new Macro();
-				macro.setId(c.getString(c.getColumnIndex(C_ID)));
-				macro.setName(c.getString(c.getColumnIndex(C_NAME)));
+				macro.setId(c.getString(c.getColumnIndex(C_MACRO_ID)));
+				macro.setName(c.getString(c.getColumnIndex(C_MACRO_NAME)));
 				macro.setDescription(c.getString(c
-						.getColumnIndex(C_DESCRIPTION)));
+						.getColumnIndex(C_MACRO_DESCRIPTION)));
 				macro.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
-				macro.setSlug(c.getString(c.getColumnIndex(C_SLUG)));
+				macro.setSlug(c.getString(c.getColumnIndex(C_MACRO_SLUG)));
 				macro.setDefaultXAxis(c.getString(c
-						.getColumnIndex(C_DEFAULT_X_AXIS)));
+						.getColumnIndex(C_MACRO_DEFAULT_X_AXIS)));
 				macro.setDefaultYAxis(c.getString(c
-						.getColumnIndex(C_DEFAULT_Y_AXIS)));
+						.getColumnIndex(C_MACRO_DEFAULT_Y_AXIS)));
 				macro.setJavascriptCode(c.getString(c
-						.getColumnIndex(C_JAVASCRIPT_CODE)));
+						.getColumnIndex(C_MACRO_JAVASCRIPT_CODE)));
 
 				// adding to todo list
 				macros.add(macro);
@@ -1158,6 +1276,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(TABLE_QUESTION,null,null);
         db.delete(TABLE_RESEARCH_PROJECT,null,null);
         db.delete(TABLE_SETTINGS,null,null);
+        db.delete(TABLE_PROJECT_LEAD,null,null);
         closeWriteDatabase();
     }
 

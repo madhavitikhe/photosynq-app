@@ -30,6 +30,8 @@ import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
 
+import org.json.JSONObject;
+
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {

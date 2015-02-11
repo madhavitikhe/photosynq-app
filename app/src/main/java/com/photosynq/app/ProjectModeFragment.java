@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.model.AppSettings;
+import com.photosynq.app.model.ProjectLead;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.BluetoothService;
@@ -103,7 +104,7 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
                 ResearchProject project = (ResearchProject) projectList.getItemAtPosition(position);
                 Intent intent = new Intent(getActivity(),ProjectDetailsActivity.class);
-                intent.putExtra(DatabaseHelper.C_ID, project.getId());
+                intent.putExtra(DatabaseHelper.C_PROJECT_ID, project.getId());
                 startActivity(intent);
             }
         });
@@ -194,16 +195,24 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
             tvProjectName.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoRegular());
             TextView tvProjectBy = (TextView) convertView.findViewById(R.id.tv_project_by);
             tvProjectBy.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoRegular());
-            TextView tvLastCont = (TextView) convertView.findViewById(R.id.tv_last_contribution);
-            tvLastCont.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoRegular());
+//            TextView tvLastCont = (TextView) convertView.findViewById(R.id.tv_last_contribution);
+//            tvLastCont.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoRegular());
 
             ResearchProject project = getItem(position);
             if (null != project) {
                 try {
                     tvProjectName.setText(project.getName());
 
+                    ProjectLead projectLead = dbHelper.getProjectLead(project.getpLeadId());
+                    if(null != projectLead)
+                        tvProjectBy.setText("by " + projectLead.getName());
+
                     ImageView imageview = (ImageView) convertView.findViewById(R.id.im_projectImage);
                     Picasso.with(getActivity()).load(project.getImageUrl()).into(imageview);
+                    Picasso.with(getActivity())
+                            .load(project.getImageUrl())
+                            .error(R.drawable.ic_launcher)
+                            .into(imageview);
 
                 } catch (Exception e) {
                     e.printStackTrace();
