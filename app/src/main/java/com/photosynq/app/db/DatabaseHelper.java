@@ -245,34 +245,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		onCreate(db);
 
 	}
-//??
-//	public long createResult(ProjectResult result) {
-//        long retVal = -1;
-//		try {
-//			SQLiteDatabase db = openWriteDatabase();
-//
-//			ContentValues values = new ContentValues();
-//			values.put(C_PROJECT_ID,
-//					null != result.getProjectId() ? result.getProjectId() : "");
-//			values.put(C_READING,
-//					null != result.getReading() ? result.getReading() : "");
-//			values.put(C_UPLOADED,
-//					null != result.getUploaded() ? result.getUploaded() : "");
-//			// insert row
-//			long row_id = db.insert(TABLE_RESULTS, null, values);
-//
-//			if (row_id >= 0) {
-//				retVal = row_id;
-//			}
-//		} catch (SQLiteConstraintException contraintException) {
-//
-//		} catch (SQLException sqliteException) {
-//
-//		}
-//        closeWriteDatabase();
-//        return retVal;
-//	}
-//
+
+	public long createResult(ProjectResult result) {
+        long retVal = -1;
+		try {
+			SQLiteDatabase db = openWriteDatabase();
+
+			ContentValues values = new ContentValues();
+			values.put(C_PROJECT_ID,
+					null != result.getProjectId() ? result.getProjectId() : "");
+			values.put(C_READING,
+					null != result.getReading() ? result.getReading() : "");
+			values.put(C_UPLOADED,
+					null != result.getUploaded() ? result.getUploaded() : "");
+			// insert row
+			long row_id = db.insert(TABLE_RESULTS, null, values);
+
+			if (row_id >= 0) {
+				retVal = row_id;
+			}
+		} catch (SQLiteConstraintException contraintException) {
+
+		} catch (SQLException sqliteException) {
+
+		}
+        closeWriteDatabase();
+        return retVal;
+	}
+
 //	public List<ProjectResult> getAllResultsForProject(String projectId) {
 //		SQLiteDatabase db = openReadDatabase();
 //		List<ProjectResult> projectsResults = new ArrayList<ProjectResult>();

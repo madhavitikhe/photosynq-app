@@ -1,21 +1,76 @@
-<android.support.v4.widget.SlidingPaneLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/slidingpanelayout">
+    android:background="@color/fragment_background"
+    tools:context=".DisplayResultsActivity" >
 
-    <LinearLayout android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:background="#CCC"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
-        android:id="@+id/fragment_firstpane"/>
+    <include layout="@layout/toolbar"/>
 
-    <LinearLayout android:layout_width="match_parent"
+    <!--<TextView-->
+        <!--android:id="@+id/results"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginBottom="10dp"-->
+        <!--android:layout_marginLeft="104dp"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:text="Result"-->
+        <!--android:textColor="#000000"-->
+        <!--android:textSize="20dp"-->
+        <!--android:textStyle="bold" />-->
+
+    <WebView
+        android:id="@+id/webView1"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#555"
-        android:orientation="horizontal"
-        android:layout_marginLeft="80dp"
-        android:id="@+id/fragment_secondpane"/>
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/linearLayout1"
+        />
 
-</android.support.v4.widget.SlidingPaneLayout>
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/linearLayout1"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/webView1"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginTop="20dp" >-->
+    <!--</RelativeLayout>-->
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="?actionBarSize"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+    <Button
+        android:id="@+id/keep_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_alignBaseline="@+id/discard_btn"
+        android:layout_alignBottom="@+id/discard_btn"
+        android:layout_alignRight="@+id/linearLayout1"
+        android:onClick="keep_click"
+        android:text="Keep"
+        android:textColor="@color/white"
+        android:background="@drawable/btn_layout_orange"
+        android:width="150dp" />
+
+    <Button
+        android:id="@+id/discard_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
+        android:layout_toRightOf="@+id/linearLayout1"
+        android:onClick="discard_click"
+        android:text="Discard"
+        android:textColor="@color/white"
+        android:background="@drawable/btn_layout_gray_light"
+        android:width="150dp" />
+    </LinearLayout>
+
+</RelativeLayout>

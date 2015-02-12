@@ -51,7 +51,7 @@
 	    android:layout_alignParentRight="true"
 	    android:layout_centerVertical="true"
 	    android:layout_marginRight="50dp"
-	    android:text="pairDevice"
+	    android:text=""
 	    android:textStyle="bold" />
 
       <RadioButton
@@ -64,8 +64,7 @@
           android:checked="true"
           android:focusable="false"
           android:clickable="false"
-          android:focusableInTouchMode="false"
-          android:visibility="gone" />
+          android:focusableInTouchMode="false"/>
 
 	</RelativeLayout>
 </FrameLayout>

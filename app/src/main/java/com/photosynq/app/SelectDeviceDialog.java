@@ -361,10 +361,21 @@ public class SelectDeviceDialog extends DialogFragment {
             userId = PrefUtils.getFromPrefs(convertView.getContext() , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
             AppSettings appSettings = db.getSettings(userId);
 
-            if (null != appSettings.getConnectionId() && appSettings.getConnectionId().equals(bluetoothDevice.getAddress()))
-            {
-                RadioButton rb = (RadioButton)convertView.findViewById(R.id.blue_conn_radio);
+            if (null != appSettings.getConnectionId() && appSettings.getConnectionId().equals(bluetoothDevice.getAddress())) {
+                RadioButton rb = (RadioButton) convertView.findViewById(R.id.blue_conn_radio);
                 rb.setChecked(true);
+
+                if (null != bluetoothDevice) {
+                    try {
+                        tvDevicePaired.setText((bluetoothDevice.getBondState() == 10) ? "Not Paired" : (bluetoothDevice.getBondState() == 12) ? "Paired" : "Pairing");
+
+                    }catch(Exception e){
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+
+                notifyDataSetChanged();
             }
             return convertView;
         }

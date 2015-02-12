@@ -104,7 +104,8 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        mCurrentSelectedPosition = position;
+        if(position != 5) // Do not keep selection of Select measurement device option
+            mCurrentSelectedPosition = position;
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         switch (position){
@@ -170,7 +171,7 @@ public class MainActivity extends ActionBarActivity
     public void onDestroy(){
         super.onDestroy();
 
-        PrefUtils.saveToPrefs(this, PrefUtils.PREFS_PREV_SELECTED_POSITION, "0");
+        //??PrefUtils.saveToPrefs(this, PrefUtils.PREFS_PREV_SELECTED_POSITION, "0");
 
     }
 

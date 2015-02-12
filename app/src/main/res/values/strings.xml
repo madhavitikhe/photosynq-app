@@ -33,5 +33,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="searchNewDevice">Search for New Devices</string>
     <string name="searching_devices">Searching devices...</string>
+    <string name="result_discarded">Results discarded.</string>
 
 </resources>
