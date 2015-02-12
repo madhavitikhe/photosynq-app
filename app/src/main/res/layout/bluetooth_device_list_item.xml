@@ -25,22 +25,19 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textStyle="bold"
-			android:text="name"
-            android:textColor="@color/textPrimary"/>
+			android:textColor="@color/textPrimary"/>
 
 		<TextView
 			android:id="@+id/device_address"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="address"
-            android:textColor="@color/textPrimaryLight"/>
+			android:textColor="@color/textPrimaryLight"/>
 
 		<TextView
 			android:id="@+id/device_paired"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="paired"
-            android:textColor="@color/textPrimary"/>
+			android:textColor="@color/textPrimary"/>
 
 	</LinearLayout>
 
@@ -51,7 +48,6 @@
 	    android:layout_alignParentRight="true"
 	    android:layout_centerVertical="true"
 	    android:layout_marginRight="50dp"
-	    android:text=""
 	    android:textStyle="bold" />
 
       <RadioButton

@@ -2,17 +2,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context="com.photosynq.app.ProjectDetailsActivity">
 
     <RelativeLayout
+        android:id="@+id/rl_header"
         android:layout_width="match_parent"
         android:layout_height="200dp">
+
         <ImageView
             android:id="@+id/im_projectImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:background="@drawable/ic_launcher"/>
+
+        <include layout="@layout/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:layout_alignParentTop="true"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -40,6 +48,7 @@
                     android:layout_height="wrap_content"
                     android:text="BETA"
                     android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
                     android:textColor="@color/gray"
                     android:padding="5dp"
                     android:background="@drawable/btn_layout_orange"/>
@@ -66,11 +75,118 @@
                 android:layout_gravity="center"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:src="@drawable/ic_launcher"/>
         </RelativeLayout>
 
     </RelativeLayout>
 
+    <ScrollView
+        android:layout_below="@id/rl_header"
+        android:layout_above="@+id/ll_btn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+
+            <!-- Overview -->
+            <TextView
+                android:id="@+id/tv_overview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Overview"
+                android:textColor="@color/textPrimary"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:id="@+id/tv_overview_text"
+                android:layout_marginTop="5dp"
+                android:layout_below="@id/tv_overview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="false"
+                android:maxLines="2"
+                android:textColor="@color/textPrimaryLight"/>
+
+            <TextView
+                android:id="@+id/show_hide_overview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_below="@id/tv_overview_text"
+                android:text="Read More"
+                android:textColor="#3094db"
+                android:clickable="true" />
 
 
+            <!-- Instructions -->
+            <TextView
+                android:id="@+id/tv_instructions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/show_hide_overview"
+                android:text="Instructions"
+                android:textColor="@color/textPrimary"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:id="@+id/tv_instructions_text"
+                android:layout_marginTop="5dp"
+                android:layout_below="@id/tv_instructions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="false"
+                android:maxLines="5"
+                android:textColor="@color/textPrimaryLight"/>
+
+            <TextView
+                android:id="@+id/show_hide_instructions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_instructions_text"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="13dp"
+                android:text="Read More"
+                android:textColor="#3094db"
+                android:clickable="true" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/ll_btn"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:layout_alignParentBottom="true"
+        android:background="@color/fragment_background"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btn_take_measurement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:onClick="take_measurement_click"
+            android:text="+ Take Measurement"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:layout_weight=".5"
+            android:background="@drawable/btn_layout_orange"/>
+
+        <Button
+            android:id="@+id/btn_join_team"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:onClick="join_team_click"
+            android:text="Join Team"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            android:background="@drawable/btn_layout_gray_light"/>
+    </LinearLayout>
 </RelativeLayout>

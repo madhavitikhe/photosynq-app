@@ -78,10 +78,11 @@ public class QuickModeFragment extends Fragment implements PhotosynqResponse{
             deviceAddress = extras.getString(BluetoothService.DEVICE_ADDRESS);
         }
 
-        if(deviceAddress == null){
+        if(null == deviceAddress){
             appSettings = dbHelper.getSettings(userName);
             String btDevice = appSettings.getConnectionId();
             deviceAddress = btDevice;
+
         }
         // Initialize ListView
         protocolList = (ListView) rootView.findViewById(R.id.lv_protocol);

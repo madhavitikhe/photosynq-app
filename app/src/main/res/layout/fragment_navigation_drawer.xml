@@ -20,7 +20,6 @@
         android:id="@+id/tvUserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="User Name"
         android:layout_gravity="center"
         android:layout_marginBottom="50dp"
         android:textSize="20sp"
@@ -61,7 +60,6 @@
                 android:id="@+id/tvDeviceAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=""
                 android:textColor="@color/textPrimary"
                 android:layout_marginLeft="10dp"
                 android:layout_marginBottom="10dp"/>

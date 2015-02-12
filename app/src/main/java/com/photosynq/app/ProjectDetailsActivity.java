@@ -1,14 +1,21 @@
 package com.photosynq.app;
 
 import android.app.FragmentManager;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,8 +37,19 @@ public class ProjectDetailsActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);//or add in style.xml
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_project_details);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        ColorDrawable newColor = new ColorDrawable(getResources().getColor(R.color.green_light));//your color from res
+        newColor.setAlpha(0);//from 0(0%) to 256(100%)
+        actionBar.setBackgroundDrawable(newColor);actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle("");
+
 
         DatabaseHelper databaseHelper = DatabaseHelper.getHelper(this);
         Bundle extras = getIntent().getExtras();
@@ -55,16 +73,18 @@ public class ProjectDetailsActivity extends ActionBarActivity {
                     .error(R.drawable.ic_launcher)
                     .into(profileImage);
 
+            Typeface tfRobotoRegular = CommonUtils.getInstance(this).getFontRobotoRegular();
+            Typeface tfRobotoMedium = CommonUtils.getInstance(this).getFontRobotoMedium();
+
             TextView tvProjetTitle = (TextView) findViewById(R.id.tv_project_name);
-            TextView tvEndsIn = (TextView) findViewById(R.id.tv_ends_in);
-            TextView tvBeta = (TextView) findViewById(R.id.tv_beta);
-
+            tvProjetTitle.setTypeface(tfRobotoRegular);
             tvProjetTitle.setText(project.getName());
-//            if(!"null".equals(rp.getEndDate()))
-//            {
-//                tvEndDate.setText(outputDate.format(CommonUtils.convertToDate(rp.getEndDate())));
-//            }else{tvEndDate.setText(getResources().getString(R.string.no_data_found));}
 
+            TextView tvEndsIn = (TextView) findViewById(R.id.tv_ends_in);
+            tvEndsIn.setTypeface(tfRobotoRegular);
+
+            TextView tvBeta = (TextView) findViewById(R.id.tv_beta);
+            tvBeta.setTypeface(tfRobotoMedium);
             String isBeta = project.getBeta();
             if(!"null".equals(isBeta))
             {
@@ -79,6 +99,60 @@ public class ProjectDetailsActivity extends ActionBarActivity {
                 tvBeta.setVisibility(View.INVISIBLE);
                 tvBeta.setText("");
             }
+
+            TextView tvOverview = (TextView) findViewById(R.id.tv_overview);
+            tvOverview.setTypeface(tfRobotoRegular);
+
+            final TextView tvOverviewText = (TextView) findViewById(R.id.tv_overview_text);
+            tvOverviewText.setTypeface(tfRobotoRegular);
+            tvOverviewText.setText(Html.fromHtml(project.getDescription()));
+
+
+            final TextView tvShowHideOverview = (TextView) findViewById(R.id.show_hide_overview);
+            tvShowHideOverview.setTypeface(tfRobotoRegular);
+            tvShowHideOverview.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if("Read More".equals(tvShowHideOverview.getText())) {
+                        tvShowHideOverview.setText("Less");
+                        tvOverviewText.setMaxLines(Integer.MAX_VALUE);
+                    }else{
+                        tvShowHideOverview.setText("Read More");
+                        tvOverviewText.setLines(2);
+                    }
+                }
+            });
+
+            TextView tvInstructions = (TextView) findViewById(R.id.tv_instructions);
+            tvInstructions.setTypeface(tfRobotoRegular);
+
+            final TextView tvInstructionsText = (TextView) findViewById(R.id.tv_instructions_text);
+            tvInstructionsText.setTypeface(tfRobotoRegular);
+            tvInstructionsText.setText(Html.fromHtml(project.getDirToCollab()));
+
+            final TextView tvShowHideInstructions = (TextView) findViewById(R.id.show_hide_instructions);
+            tvShowHideInstructions.setTypeface(tfRobotoRegular);
+            tvShowHideInstructions.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if("Read More".equals(tvShowHideInstructions.getText())) {
+                        tvShowHideInstructions.setText("Less");
+                        tvInstructionsText.setMaxLines(Integer.MAX_VALUE);
+                    }else{
+                        tvShowHideInstructions.setText("Read More");
+                        tvInstructionsText.setMaxLines(5);
+                    }
+                }
+            });
+
+
+
+//            if(!"null".equals(rp.getEndDate()))
+//            {
+//                tvEndDate.setText(outputDate.format(CommonUtils.convertToDate(rp.getEndDate())));
+//            }else{tvEndDate.setText(getResources().getString(R.string.no_data_found));}
+
+
         }
     }
 

@@ -31,7 +31,6 @@
                         android:layout_below="@id/user_profile_image"
                         android:textSize="25sp"
                         android:layout_margin="5dp"
-                        android:text="User Name"
                         android:textColor="@color/textPrimary"/>
 
                     <TextView
