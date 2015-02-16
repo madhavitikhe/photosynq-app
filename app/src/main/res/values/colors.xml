@@ -29,6 +29,7 @@
     <color name="textPrimary">#616161</color>
     <color name="textPrimaryLight">#8c8c8c</color>
     <color name="btnOrange">#fc7351</color>
+    <color name="btnRed">#ff0000</color>
     <color name="titlebar_gradient_start_color">#FFbbce72</color>
     <color name="titlebar_gradient_end_color">#FF5ec58b</color>
     <color name="navigation_drawer_background">#27292e</color>

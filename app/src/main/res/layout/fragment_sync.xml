@@ -56,8 +56,9 @@
             android:layout_margin="10dp"
             android:textColor="@color/white"
             android:layout_weight="1"
-            android:textSize="16sp"
-            android:text="Sync Data" />
+            android:textSize="14sp"
+            android:text="Sync Data"
+            android:textAllCaps="false"/>
 
         <Button
             android:id="@+id/btn_clear_cache"
@@ -66,9 +67,10 @@
             android:background="@drawable/btn_layout_gray_light"
             android:layout_margin="10dp"
             android:textColor="@color/textPrimary"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:layout_weight="1"
-            android:text="Clear Cache"/>
+            android:text="Clear Cache"
+            android:textAllCaps="false"/>
     </LinearLayout>
 
 </RelativeLayout>

@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,7 +24,10 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -37,6 +42,7 @@ import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,6 +70,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
     Button btnTakeMeasurement;
     private boolean mIsCancelMeasureBtnClicked = false;
+    private boolean mIsMeasureBtnClicked = false;
     private boolean scanMode = false;
     private int autoIncQueCount = 0;
     private int fixedValueQueCount = 0;
@@ -79,6 +86,11 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_bg));
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("");
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int screenWidth = size.x;
 
         dbHelper = DatabaseHelper.getHelper(this);
 
@@ -124,6 +136,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     viewUserSelected.setTag(question.getQuestionId());
                     TextView questionText = (TextView) viewUserSelected.findViewById(R.id.tv_question_text);
                     questionText.setText(question.getQuestionText());
+                    questionText.setTypeface(CommonUtils.getInstance(this).getFontRobotoMedium());
 
                     Button showNext = (Button) viewUserSelected.findViewById(R.id.btn_next);
                     showNext.setTag(queIndex);
@@ -142,16 +155,16 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                             }
                             else
                             {
+                                allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
                                 if(reviewFlag)
                                 {
-                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
                                     viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
                                     reviewFlag = false;
 
                                     initReviewPage();
                                 }
                                 else {
-                                    allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
+
                                     viewFlipper.showNext();
                                     if (displayedChild == childCount - 2 ) {
                                         viewFlipper.stopFlipping();
@@ -197,6 +210,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                     TextView questionText = (TextView) viewScanCode.findViewById(R.id.tv_question_text);
                     questionText.setText(question.getQuestionText());
+                    questionText.setTypeface(CommonUtils.getInstance(this).getFontRobotoMedium());
                     View btnScan = viewScanCode.findViewById(R.id.btn_barcode_scan);
                     btnScan.setTag(queIndex);
                     btnScan.setOnClickListener(new View.OnClickListener() {
@@ -215,6 +229,127 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
             }else if(Question.PROJECT_DEFINED == queType){
 
+                LinearLayout mainLinearLayout = new LinearLayout(this);
+                mainLinearLayout.setBackgroundColor(Color.WHITE);
+                mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
+                mainLinearLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+                ScrollView scrollView = new ScrollView(this);
+                scrollView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+                LinearLayout subLinearLayout = new LinearLayout(this);
+                subLinearLayout.setOrientation(LinearLayout.VERTICAL);
+                subLinearLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                TextView questionTextView = new TextView(this);
+                questionTextView.setTextColor(Color.WHITE);
+                questionTextView.setTextSize(18);
+                questionTextView.setTypeface(CommonUtils.getInstance(this).getFontRobotoMedium());
+                questionTextView.setBackgroundColor(Color.GRAY);
+                questionTextView.setText(question.getQuestionText());
+                questionTextView.setLayoutParams( new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                subLinearLayout.addView(questionTextView);
+
+                RelativeLayout.LayoutParams optionTVParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                int optionIvWidth = (screenWidth / 2) - 20;
+                RelativeLayout.LayoutParams imageVParams = new RelativeLayout.LayoutParams(optionIvWidth, optionIvWidth);
+
+                LinearLayout.LayoutParams linearlayoutweight = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1);
+
+                LinearLayout rowLinearLayout = new LinearLayout(this);
+
+                for (int i = 0; i < question.getOptions().size(); i++)
+                {
+                    String optionText = question.getOptions().get(i);
+                    TextView optionTextView = new TextView(this);
+                    optionTextView.setTextColor(Color.BLACK);
+                    optionTextView.setTextSize(16);
+                    optionTextView.setText(optionText);
+                    optionTextView.setTypeface(CommonUtils.getInstance(this).getFontRobotoRegular());
+
+                    ImageView imageView = new ImageView(this);
+                    imageView.setId(i);
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    imageView.setTag(queIndex);
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            int displayedChild = viewFlipper.getDisplayedChild();
+                            int childCount = viewFlipper.getChildCount();
+
+                            allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+                            if(reviewFlag)
+                            {
+                                viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                                reviewFlag = false;
+
+                                initReviewPage();
+                            }
+                            else {
+                                viewFlipper.showNext();
+                                if (displayedChild == childCount - 2 ) {
+                                    viewFlipper.stopFlipping();
+
+                                    initReviewPage();
+                                }
+                            }
+
+                        }
+                    });
+
+                    Picasso.with(this)
+                            .load(R.drawable.ic_launcher)
+                            .error(R.drawable.ic_launcher)
+                            .into(imageView);
+
+                    RelativeLayout cellRelativeLayout = new RelativeLayout(this);
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    cellRelativeLayout.setLayoutParams(params);
+
+                    if(i%2 == 0)
+                    {
+                        rowLinearLayout = new LinearLayout(this);
+                        rowLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+                        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                        params1.setMargins(10,10,10,10);
+                        rowLinearLayout.setLayoutParams(params1);
+
+
+                        optionTextView.setId(1);
+                        imageVParams.addRule(RelativeLayout.BELOW, optionTextView.getId());
+                        imageVParams.setMargins(0, 10, 10, 10);
+
+                        cellRelativeLayout.addView(optionTextView, optionTVParams);
+                        cellRelativeLayout.addView(imageView, imageVParams);
+
+                        rowLinearLayout.addView(cellRelativeLayout, linearlayoutweight);
+                        if(i == question.getOptions().size() - 1){
+
+                            subLinearLayout.addView(rowLinearLayout);
+                        }
+
+                    }
+                    else
+                    {
+                        optionTextView.setId(1555555);
+                        imageVParams.addRule(RelativeLayout.BELOW, optionTextView.getId());
+                        imageVParams.setMargins(10, 10, 10, 0);
+
+                        cellRelativeLayout.addView(optionTextView, optionTVParams);
+                        cellRelativeLayout.addView(imageView, imageVParams);
+
+                        rowLinearLayout.addView(cellRelativeLayout, linearlayoutweight);
+
+                        subLinearLayout.addView(rowLinearLayout);
+
+                    }
+
+                }
+                scrollView.addView(subLinearLayout);
+                mainLinearLayout.addView(scrollView);
+                mainLinearLayout.setTag(question.getQuestionId());
+                viewFlipper.addView(mainLinearLayout);
             }
         }
 
@@ -239,11 +374,11 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
             TextView tvQuestion = (TextView) reviewItem.findViewById(R.id.tv_question_text);
             TextView tvOption = (TextView) reviewItem.findViewById(R.id.tv_option_text);
-            tvQuestion.setTextSize(20);
-            tvOption.setTextSize(20);
-            //LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            //llp.setMargins(10, 10, 0, 0);
-            //tvOption.setLayoutParams(llp);
+            tvQuestion.setTextSize(18);
+            tvQuestion.setTypeface(CommonUtils.getInstance(this).getFontRobotoMedium());
+            tvOption.setTextSize(16);
+            tvOption.setTypeface(CommonUtils.getInstance(this).getFontRobotoRegular());
+
             reviewItem.setTag(question.getQuestionId());
 
             String data_value = new String("");
@@ -360,8 +495,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
                 mBluetoothService.connect(device);
             }
-        } else {
-            mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, 1).sendToTarget();
         }
 
         btnTakeMeasurement = (Button) reviewPage.findViewById(R.id.btn_take_measurement);
@@ -369,8 +502,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         btnTakeMeasurement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //??mIsMeasureBtnClicked = true;
                 if(btnTakeMeasurement.getText().equals("+ Take Measurement")){
+                    mIsMeasureBtnClicked = true;
                     if (mBluetoothService == null) {
                         mBluetoothService = new BluetoothService(ProjectMeasurmentActivity.this, mHandler);
                     }
@@ -390,13 +523,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                         mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, 1).sendToTarget();
                     }
                     btnTakeMeasurement.setText("Cancel");
-                    btnTakeMeasurement.setBackgroundColor(Color.RED);
+                    btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_red);
                 }else if(btnTakeMeasurement.getText().equals("Cancel"))
                 {
                     mIsCancelMeasureBtnClicked = true;
                     mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, 0).sendToTarget();
                     btnTakeMeasurement.setText("+ Take Measurement");
-                    btnTakeMeasurement.setBackgroundColor(Color.GRAY);
+                    btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
                 }
             }
         });
@@ -430,7 +563,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 //            clearflag = true;
         }
         scanMode = false;
-        //??mIsMeasureBtnClicked = false;
+        mIsMeasureBtnClicked = false;
         mIsCancelMeasureBtnClicked = false;
     }
 
@@ -512,6 +645,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                                     String[] projectProtocols = researchProject.getProtocols_ids().split(",");
                                     if (projectProtocols.length >= 1) {
                                         for (String protocolId : projectProtocols) {
+                                            if(protocolId.equals(""))
+                                                continue;
                                             Protocol protocol = dbHelper.getProtocol(protocolId);
                                             JSONObject detailProtocolObject = new JSONObject();
                                             detailProtocolObject.put("protocolid", protocol.getId());
@@ -526,20 +661,41 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                                         }
 
-                                        String data = "var protocols={" + dataString.substring(0, dataString.length() - 1) + "}";
+                                        if(dataString.length() > 0) {
+                                            String data = "var protocols={" + dataString.substring(0, dataString.length() - 1) + "}";
 
-                                        // Writing macros_variable.js file with protocol and macro relations
-                                        System.out.println("######Writing macros_variable.js file:" + data);
-                                        CommonUtils.writeStringToFile(ProjectMeasurmentActivity.this, "macros_variable.js", data);
+                                            // Writing macros_variable.js file with protocol and macro relations
+                                            System.out.println("######Writing macros_variable.js file:" + data);
+                                            CommonUtils.writeStringToFile(ProjectMeasurmentActivity.this, "macros_variable.js", data);
 
-                                        protocolJson = "[" + protocolJson.substring(0, protocolJson.length() - 1) + "]"; // remove last comma and add suqare brackets and start and end.
+                                            protocolJson = "[" + protocolJson.substring(0, protocolJson.length() - 1) + "]"; // remove last comma and add suqare brackets and start and end.
 
-                                        System.out.println("$$$$$$$$$$$$$$ protocol json sending to device :" + protocolJson + "length:" + protocolJson.length());
+                                            System.out.println("$$$$$$$$$$$$$$ protocol json sending to device :" + protocolJson + "length:" + protocolJson.length());
 
-                                        sendData(protocolJson);
+                                            sendData(protocolJson);
+
+                                            mtvStatusMessage.setText("Initializing measurement please wait ...");
+
+                                        }else{
+
+                                            mtvStatusMessage.setText(getResources().getString(R.string.start_measurement));
+                                            if(btnTakeMeasurement != null) {
+                                                if (btnTakeMeasurement.getText().equals("Cancel")) {
+                                                    btnTakeMeasurement.setText("+ Take Measurement");
+                                                    btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
+                                                }
+                                            }
+                                        }
                                     } else {
+
                                         mtvStatusMessage.setText("No protocol defined for this project.");
                                         Toast.makeText(ProjectMeasurmentActivity.this, "No protocol defined for this project.", Toast.LENGTH_LONG).show();
+                                        if(btnTakeMeasurement != null) {
+                                            if (btnTakeMeasurement.getText().equals("Cancel")) {
+                                                btnTakeMeasurement.setText("+ Take Measurement");
+                                                btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
+                                            }
+                                        }
                                         break;
                                     }
 
@@ -548,7 +704,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                                     e.printStackTrace();
                                 }
 
-                                mtvStatusMessage.setText("Initializing measurement please wait ...");
+                            }else{
+                                if(mIsMeasureBtnClicked) {
+                                    mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, 1).sendToTarget();
+                                }
                             }
 
                             break;
@@ -608,11 +767,12 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                             startActivity(intent);
                         }
                     }
+                    mIsMeasureBtnClicked = false;
                     mIsCancelMeasureBtnClicked = false;
                     if(btnTakeMeasurement != null) {
                         if (btnTakeMeasurement.getText().equals("Cancel")) {
                             btnTakeMeasurement.setText("+ Take Measurement");
-                            btnTakeMeasurement.setBackgroundColor(Color.GRAY);
+                            btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
                         }
                     }
                     break;
@@ -628,11 +788,12 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                         Toast.makeText(ProjectMeasurmentActivity.this, msg.getData().getString(Constants.TOAST),
                                 Toast.LENGTH_SHORT).show();
                     }
+                    mIsMeasureBtnClicked = false;
                     mIsCancelMeasureBtnClicked = false;
                     if(btnTakeMeasurement != null) {
                         if (btnTakeMeasurement.getText().equals("Cancel")) {
                             btnTakeMeasurement.setText("+ Take Measurement");
-                            btnTakeMeasurement.setBackgroundColor(Color.GRAY);
+                            btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
                         }
                     }
                     break;
