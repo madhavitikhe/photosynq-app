@@ -29,6 +29,9 @@ public class PrefUtils {
     public static final String PREFS_CURRENT_LOCATION = "CURRENT_LOCATION";
     public static final String PREFS_PREV_SELECTED_POSITION = "PREV_SELECTED_POSITION";
 
+    // Show directions screen
+    public static final String PREFS_SHOW_DIRECTIONS = "SHOW_DIRECTIONS";
+
     /**
      * Called to save supplied value in shared preferences against given key.
      */

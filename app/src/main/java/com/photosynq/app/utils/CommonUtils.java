@@ -4,8 +4,13 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.util.Log;
 
+import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.AppSettings;
+import com.photosynq.app.model.Data;
+import com.photosynq.app.model.Question;
 import com.photosynq.app.response.UpdateData;
 
 import org.apache.http.HttpResponse;
@@ -30,6 +35,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by kalpesh on 24/01/15.
@@ -222,6 +231,56 @@ public class CommonUtils {
         }catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+    public static String getDeviceAddress(Context context){
+        String userId = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        AppSettings appSettings = DatabaseHelper.getHelper(context).getSettings(userId);
+
+        return appSettings.getConnectionId();
+    }
+
+    public static String getAutoIncrementedValue(Context ctx,String question_id, String index) {
+        if(Integer.parseInt(index) == -1) {
+            return "-2";
+        }
+
+        String userId = PrefUtils.getFromPrefs(ctx , PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        DatabaseHelper db = DatabaseHelper.getHelper(ctx);
+        String projectId = db.getSettings(userId).getProjectId();
+        Question question = db.getQuestionForProject(projectId, question_id);
+        Data data = db.getData(userId, projectId, question.getQuestionId());
+        String[] items = data.getValue().split(",");
+        int from = Integer.parseInt(items[0]);
+        int to = Integer.parseInt(items[1]);
+        int repeat = Integer.parseInt(items[2]);
+        ArrayList<Integer> populatedValues = new ArrayList<Integer>();
+        for(int i=from;i<=to;i++){
+            for(int j=0;j<repeat;j++){
+                populatedValues.add(i);
+
+            }
+        }
+
+        if(Integer.parseInt(index) > populatedValues.size()-1)
+            return "-1";
+
+        return populatedValues.get(Integer.parseInt(index)).toString();
+    }
+
+    public static Date convertToDate(String rawdate)
+    {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");//new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
+        Date convertedDate = new Date();
+        try {
+            convertedDate = dateFormat.parse(rawdate);
+            System.out.println(convertedDate);
+            return convertedDate;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
 
     }
 

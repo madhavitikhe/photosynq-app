@@ -1,6 +1,7 @@
 package com.photosynq.app;
 
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
@@ -23,17 +24,23 @@ import android.widget.TextView;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
+import com.photosynq.app.model.Data;
 import com.photosynq.app.model.ProjectLead;
+import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.CommonUtils;
+import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
 
 
 public class ProjectDetailsActivity extends ActionBarActivity {
+
+    String projectID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +61,7 @@ public class ProjectDetailsActivity extends ActionBarActivity {
         DatabaseHelper databaseHelper = DatabaseHelper.getHelper(this);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            String projectID = extras.getString(DatabaseHelper.C_PROJECT_ID);
+            projectID = extras.getString(DatabaseHelper.C_PROJECT_ID);
             ResearchProject project = databaseHelper.getResearchProject(projectID);
 
             SimpleDateFormat outputDate = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
@@ -157,6 +164,39 @@ public class ProjectDetailsActivity extends ActionBarActivity {
     }
 
 
+    public void take_measurement_click(View view){
+        String userId = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        DatabaseHelper databaseHelper = DatabaseHelper.getHelper(this);
+        AppSettings appSettings = databaseHelper.getSettings(userId);
+        appSettings.setProjectId(projectID);
+        databaseHelper.updateSettings(appSettings);
+
+        List<Question> questions = databaseHelper.getAllQuestionForProject(projectID);
+        for (int i = 0; i< questions.size(); i++) {
+            Question question = questions.get(i);
+            int queType = question.getQuestionType();
+            if(queType == 2) { //question type is user selected.
+                Data data = databaseHelper.getData(userId, projectID, question.getQuestionId());
+                if(null == data.getValue() || data.getValue().isEmpty()) {
+                    data.setUser_id(userId);
+                    data.setProject_id(projectID);
+                    data.setQuestion_id(question.getQuestionId());
+                    data.setValue(Data.NO_VALUE);
+                    data.setType(Constants.QuestionType.USER_SELECTED.getStatusCode());
+                    databaseHelper.updateData(data);
+                }
+            }
+        }
+
+        Intent intent = new Intent(this, ProjectMeasurmentActivity.class);
+        intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectID);
+        startActivity(intent);
+    }
+
+    public void join_team_click(View view){
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -173,6 +213,7 @@ public class ProjectDetailsActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            
             return true;
         }
 

@@ -49,8 +49,6 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
     private DatabaseHelper dbHelper;
     private ProjectArrayAdapter arrayAdapter;
     private ListView projectList;
-    private String deviceAddress;
-
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -76,19 +74,7 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
         }
 
         dbHelper = DatabaseHelper.getHelper(getActivity());
-        String userName = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-        AppSettings appSettings = dbHelper.getSettings(userName);
 
-        Bundle extras = getArguments();
-        if (extras != null) {
-            deviceAddress = extras.getString(BluetoothService.DEVICE_ADDRESS);
-        }
-
-        if(deviceAddress == null){
-            appSettings = dbHelper.getSettings(userName);
-            String btDevice = appSettings.getConnectionId();
-            deviceAddress = btDevice;
-        }
         // Initialize ListView
         projectList = (ListView) rootView.findViewById(R.id.lv_project);
         showProjectList();

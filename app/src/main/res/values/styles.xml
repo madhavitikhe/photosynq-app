@@ -8,6 +8,7 @@
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="windowActionBar">false</item>
          <!--colorPrimary is used for the default action bar background -->
+        <item name="android:windowActionBarOverlay">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="android:textColorPrimary">@color/white</item>
         <item name="colorPrimary">#ff1d79b1</item>

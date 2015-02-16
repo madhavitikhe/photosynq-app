@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/white"
+    android:descendantFocusability="beforeDescendants"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_below="@id/toolbar"
+        android:layout_above="@+id/ll_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:padding="5dp">
+
+        <LinearLayout
+            android:id="@+id/linearlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_card_background"
+            android:descendantFocusability="afterDescendants"
+            android:orientation="vertical"
+            android:padding="5dp" >
+
+            <LinearLayout
+                android:id="@+id/ll_options"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/ll_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+            android:padding="5dp"
+            android:background="@color/fragment_background"
+            android:layout_marginTop="5dp">
+            <TextView
+                android:id="@+id/tv_status_message"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/start_measurement"
+                android:textColor="@color/textPrimaryLight"
+                android:textAlignment="center"
+                android:textSize="11sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/btn_directions"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_layout_orange"
+                    android:text="@string/btn_get_directions"
+                    android:textSize="14sp"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white">
+                </Button>
+                <Button
+                    android:id="@+id/btn_take_measurement"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_layout_orange"
+                    android:text="@string/btn_take_measurement"
+                    android:textSize="14sp"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white">
+                </Button>
+            </LinearLayout>
+        </LinearLayout>
+
+
+</RelativeLayout>

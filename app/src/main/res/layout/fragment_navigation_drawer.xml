@@ -5,7 +5,10 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:background="@color/navigation_drawer"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <com.photosynq.app.utils.CircularImageView
         android:id="@+id/user_profile_image"

@@ -63,11 +63,12 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
         String protocolDescription = "";
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            deviceAddress = extras.getString(BluetoothService.DEVICE_ADDRESS);
             protocolJson = extras.getString(DatabaseHelper.C_PROTOCOL_JSON);
             protocolName = extras.getString(Protocol.NAME);
             protocolDescription = extras.getString(Protocol.DESCRIPTION);
         }
+
+        deviceAddress = CommonUtils.getDeviceAddress(this);
 
         TextView tvProtocolName = (TextView) findViewById(R.id.tv_protocol_name);
         tvProtocolName.setTypeface(CommonUtils.getInstance(this).getFontRobotoRegular());
@@ -106,7 +107,7 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
                             mBluetoothService.connect(device);
                         }
                     } else {
-                        mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, -1).sendToTarget();
+                        mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, 1).sendToTarget();
                     }
                     btnTakeMeasurement.setText("CANCEL MEASURE");
                 }
@@ -173,21 +174,21 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
                     if(Constants.D) Log.i("PHOTOSYNC", "MESSAGE_STATE_CHANGE: " + msg.arg1);
                     switch (msg.arg1) {
                         case BluetoothService.STATE_CONNECTED:
-                            mtvStatusMessage.setText(R.string.title_connected_to);
-                            mtvStatusMessage.append(mConnectedDeviceName);
-                            if(protocolJson.length() > 0)
-                            {
-                                //change this once you get actual protocol
-                                //String obj = "[{\"measurements\":2,\"protocol_name\":\"baseline_sample\",\"averages\":1,\"wait\":0,\"cal_true\":2,\"analog_averages\":1,\"pulsesize\":10,\"pulsedistance\":3000,\"actintensity1\":1,\"actintensity2\":1,\"measintensity\":255,\"calintensity\":255,\"pulses\":[400],\"detectors\":[[34]],\"measlights\":[[14]]},{\"measurements\":2,\"protocol_name\":\"fluorescence\",\"baselines\":[1,1,1,1],\"environmental\":[[\"relative_humidity\",1],[\"temperature\",1]],\"averages\":2,\"wait\":0,\"cal_true\":0,\"analog_averages\":1,\"act_light\":20,\"pulsesize\":10,\"pulsedistance\":10000,\"actintensity1\":100,\"actintensity2\":100,\"measintensity\":3,\"calintensity\":255,\"pulses\":[50,50,50,50],\"detectors\":[[34],[34],[34],[34]],\"measlights\":[[15],[15],[15],[15]],\"act\":[2,1,2,2]}]";
-                                protocolJson = "["+protocolJson+"]";
-                                System.out.println("sending protocol to device using quick measure : "+protocolJson +"length:"+protocolJson.length());
+                            if(msg.arg2 == 1) { //Send measurement request
+                                mtvStatusMessage.setText(R.string.title_connected_to);
+                                mtvStatusMessage.append(mConnectedDeviceName);
+                                if (protocolJson.length() > 0) {
+                                    //change this once you get actual protocol
+                                    //String obj = "[{\"measurements\":2,\"protocol_name\":\"baseline_sample\",\"averages\":1,\"wait\":0,\"cal_true\":2,\"analog_averages\":1,\"pulsesize\":10,\"pulsedistance\":3000,\"actintensity1\":1,\"actintensity2\":1,\"measintensity\":255,\"calintensity\":255,\"pulses\":[400],\"detectors\":[[34]],\"measlights\":[[14]]},{\"measurements\":2,\"protocol_name\":\"fluorescence\",\"baselines\":[1,1,1,1],\"environmental\":[[\"relative_humidity\",1],[\"temperature\",1]],\"averages\":2,\"wait\":0,\"cal_true\":0,\"analog_averages\":1,\"act_light\":20,\"pulsesize\":10,\"pulsedistance\":10000,\"actintensity1\":100,\"actintensity2\":100,\"measintensity\":3,\"calintensity\":255,\"pulses\":[50,50,50,50],\"detectors\":[[34],[34],[34],[34]],\"measlights\":[[15],[15],[15],[15]],\"act\":[2,1,2,2]}]";
+                                    protocolJson = "[" + protocolJson + "]";
+                                    System.out.println("sending protocol to device using quick measure : " + protocolJson + "length:" + protocolJson.length());
 
-                                sendData(protocolJson);
+                                    sendData(protocolJson);
+                                }
+
+                                mtvStatusMessage.setText("Initializing measurement please wait ...");
+
                             }
-
-                            mtvStatusMessage.setText("Initializing measurement please wait ...");
-
-
                             break;
                         case BluetoothService.STATE_CONNECTING:
                             mtvStatusMessage.setText(R.string.title_connecting);

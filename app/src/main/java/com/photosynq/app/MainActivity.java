@@ -123,14 +123,7 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 2:
                 // Open Quick Measurement
-                String userId = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-                AppSettings appSettings = DatabaseHelper.getHelper(this).getSettings(userId);
-
-                Bundle bundle = new Bundle();
-                String btDevice = appSettings.getConnectionId();
-                bundle.putString(BluetoothService.DEVICE_ADDRESS, btDevice);
                 QuickModeFragment quickModeFragment = QuickModeFragment.newInstance(position);
-                quickModeFragment.setArguments(bundle);
 
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, quickModeFragment, QuickModeFragment.class.getName())

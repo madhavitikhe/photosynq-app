@@ -70,8 +70,8 @@
             <com.photosynq.app.utils.CircularImageView
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/user_profile_image"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="center"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
@@ -167,23 +167,25 @@
         android:orientation="horizontal">
         <Button
             android:id="@+id/btn_take_measurement"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:onClick="take_measurement_click"
-            android:text="+ Take Measurement"
+            android:text="@string/btn_take_measurement"
+            android:textSize="14sp"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:layout_weight=".5"
+            android:layout_weight="1"
             android:background="@drawable/btn_layout_orange"/>
 
         <Button
             android:id="@+id/btn_join_team"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:onClick="join_team_click"
             android:text="Join Team"
+            android:textSize="14sp"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:layout_weight="1"

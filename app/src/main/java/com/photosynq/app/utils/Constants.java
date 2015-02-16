@@ -32,9 +32,27 @@ public class Constants {
     // App mode
     public static final String APP_MODE = "APP_MODE";
     public static final String APP_MODE_QUICK_MEASURE = "APP_MODE_QUICK_MEASURE";
+    public static final String APP_MODE_PROJECT_MEASURE = "APP_MODE_PROJECT_MEASURE";
 
     /**
      * Remember the position of the selected item.
      */
     public static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
+
+    //
+    public enum QuestionType {
+        SCAN_CODE("SCAN_CODE"),
+        USER_SELECTED("USER_SELECTED"),
+        PROJECT_SELECTED("PROJECT_SELECTED"),
+        FIXED_VALUE("FIXED_VALUE"),
+        AUTO_INCREMENT("AUTO_INCREMENT");
+
+        private String statusCode;
+        private QuestionType(String s) {
+            statusCode = s;
+        }
+        public String getStatusCode() {
+            return statusCode;
+        }
+    }
 }

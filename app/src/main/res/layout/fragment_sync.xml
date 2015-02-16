@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:background="@color/fragment_background"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <LinearLayout
@@ -46,6 +46,7 @@
         android:id="@+id/btnLL"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
+        android:background="@color/fragment_background"
         android:layout_alignParentBottom="true">
         <Button
             android:id="@+id/btn_sync_data"

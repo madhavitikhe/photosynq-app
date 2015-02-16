@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button android:id="@+id/btn_next"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="Next"
+        android:textColor="@color/white"
+        android:textAllCaps="false"
+        android:background="@drawable/btn_layout_orange"
+        android:layout_alignParentBottom="true"/>
+    <LinearLayout
+        android:layout_below="@id/toolbar"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include layout="@layout/question"></include>
+
+        <EditText
+            android:id="@+id/et_user_answer"
+            android:gravity="left"
+            android:layout_marginTop="10dp"
+            android:lines="5"
+            android:hint="Tap to answer . . ."
+            android:textColor="@color/textPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</RelativeLayout>

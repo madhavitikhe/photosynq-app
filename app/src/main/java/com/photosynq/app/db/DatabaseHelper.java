@@ -732,111 +732,110 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return retVal;
 	}
 
-//	public Question getQuestionForProject(String project_id,String question_id) {
-//		SQLiteDatabase db = openReadDatabase();
-//		Question que= new Question();
-//		String selectQuery = "SELECT  * FROM " + TABLE_QUESTION + " WHERE "
-//				+ C_PROJECT_ID + " = " + project_id
-//				+ " AND " + C_QUESTION_ID + " = " + question_id;
-//
-//		System.out.println(selectQuery);
-//		Log.e("DATABASE_HELPER_getQuestion", selectQuery);
-//
-//		Cursor c = db.rawQuery(selectQuery, null);
-//
-//		if (c.moveToFirst()) {
-//
-//				String questionId = c
-//						.getString(c.getColumnIndex(C_QUESTION_ID));
-//				que.setQuestionText(c.getString(c
-//						.getColumnIndex(C_QUESTION_TEXT)));
-//				que.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
-//				que.setQuestionId(questionId);
-//                que.setQuestionType(c.getInt(c.getColumnIndex(C_QUESTION_TYPE)));
-//				que.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
-//
-//				// adding to todo list
-//				if (!que.getQuestionText().equals("")) {
-//					String selectOptionsQuery = "SELECT  * FROM "
-//							+ TABLE_OPTION + " WHERE " + C_QUESTION_ID + " = "
-//							+ questionId + " and " + C_PROJECT_ID + " = "
-//							+ project_id;
-//
-//					Cursor optionCursor = db.rawQuery(selectOptionsQuery, null);
-//					if (optionCursor.moveToFirst()) {
-//						List<String> optionlist = new ArrayList<String>();
-//						do {
-//							String option = optionCursor.getString(optionCursor
-//									.getColumnIndex(C_OPTION_TEXT));
-//							optionlist.add(option);
-//
-//						} while (optionCursor.moveToNext());
-//
-//						que.setOptions(optionlist);
-//						optionCursor.close();
-//
-//					}
-//			}
-//		}
-//		c.close();
-//        closeReadDatabase();
-//		return que;
-//	}
-//
-//	// Get list of all questions for given project.
-//	public List<Question> getAllQuestionForProject(String project_id) {
-//		SQLiteDatabase db = openReadDatabase();
-//		List<Question> questions = new ArrayList<Question>();
-//		String selectQuery = "SELECT  * FROM " + TABLE_QUESTION + " WHERE "
-//				+ C_PROJECT_ID + " = " + project_id;
-//
-//		System.out.println(selectQuery);
-//		Log.e("DATABASE_HELPER_getAllQuestion", selectQuery);
-//
-//		Cursor c = db.rawQuery(selectQuery, null);
-//
-//		if (c.moveToFirst()) {
-//			do {
-//				Question que = new Question();
-//				String questionId = c
-//						.getString(c.getColumnIndex(C_QUESTION_ID));
-//				que.setQuestionText(c.getString(c
-//						.getColumnIndex(C_QUESTION_TEXT)));
-//				que.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
-//				que.setQuestionId(questionId);
-//                que.setQuestionType(c.getInt(c.getColumnIndex(C_QUESTION_TYPE)));
-//				que.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
-//
-//				// adding to todo list
-//				if (!que.getQuestionText().equals("")) {
-//					String selectOptionsQuery = "SELECT  * FROM "
-//							+ TABLE_OPTION + " WHERE " + C_QUESTION_ID + " = "
-//							+ questionId + " and " + C_PROJECT_ID + " = "
-//							+ project_id;
-//
-//					Cursor optionCursor = db.rawQuery(selectOptionsQuery, null);
-//					if (optionCursor.moveToFirst()) {
-//						List<String> optionlist = new ArrayList<String>();
-//						do {
-//							String option = optionCursor.getString(optionCursor
-//									.getColumnIndex(C_OPTION_TEXT));
-//							optionlist.add(option);
-//
-//						} while (optionCursor.moveToNext());
-//
-//						que.setOptions(optionlist);
-//						optionCursor.close();
-//
-//					}
-//					questions.add(que);
-//				}
-//			} while (c.moveToNext());
-//
-//		}
-//		c.close();
-//        closeReadDatabase();
-//		return questions;
-//	}
+	public Question getQuestionForProject(String project_id,String question_id) {
+		SQLiteDatabase db = openReadDatabase();
+		Question que= new Question();
+		String selectQuery = "SELECT  * FROM " + TABLE_QUESTION + " WHERE "
+				+ C_PROJECT_ID + " = " + project_id
+				+ " AND " + C_QUESTION_ID + " = " + question_id;
+
+		System.out.println(selectQuery);
+		Log.e("DATABASE_HELPER_getQuestion", selectQuery);
+
+		Cursor c = db.rawQuery(selectQuery, null);
+
+		if (c.moveToFirst()) {
+
+				String questionId = c
+						.getString(c.getColumnIndex(C_QUESTION_ID));
+				que.setQuestionText(c.getString(c
+						.getColumnIndex(C_QUESTION_TEXT)));
+				que.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
+				que.setQuestionId(questionId);
+                que.setQuestionType(c.getInt(c.getColumnIndex(C_QUESTION_TYPE)));
+				que.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
+
+				// adding to todo list
+				if (!que.getQuestionText().equals("")) {
+					String selectOptionsQuery = "SELECT  * FROM "
+							+ TABLE_OPTION + " WHERE " + C_QUESTION_ID + " = "
+							+ questionId + " and " + C_PROJECT_ID + " = "
+							+ project_id;
+
+					Cursor optionCursor = db.rawQuery(selectOptionsQuery, null);
+					if (optionCursor.moveToFirst()) {
+						List<String> optionlist = new ArrayList<String>();
+						do {
+							String option = optionCursor.getString(optionCursor
+									.getColumnIndex(C_OPTION_TEXT));
+							optionlist.add(option);
+
+						} while (optionCursor.moveToNext());
+
+						que.setOptions(optionlist);
+						optionCursor.close();
+
+					}
+			}
+		}
+		c.close();
+        closeReadDatabase();
+		return que;
+	}
+
+	// Get list of all questions for given project.
+	public List<Question> getAllQuestionForProject(String project_id) {
+		SQLiteDatabase db = openReadDatabase();
+		List<Question> questions = new ArrayList<Question>();
+		String selectQuery = "SELECT  * FROM " + TABLE_QUESTION + " WHERE "
+				+ C_PROJECT_ID + " = " + project_id;
+
+		System.out.println(selectQuery);
+		Log.e("DATABASE_HELPER_getAllQuestion", selectQuery);
+
+		Cursor c = db.rawQuery(selectQuery, null);
+
+		if (c.moveToFirst()) {
+			do {
+				Question que = new Question();
+				String questionId = c
+						.getString(c.getColumnIndex(C_QUESTION_ID));
+				que.setQuestionText(c.getString(c
+						.getColumnIndex(C_QUESTION_TEXT)));
+				que.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
+				que.setQuestionId(questionId);
+                que.setQuestionType(c.getInt(c.getColumnIndex(C_QUESTION_TYPE)));
+				que.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
+
+				if (!que.getQuestionText().equals("")) {
+					String selectOptionsQuery = "SELECT  * FROM "
+							+ TABLE_OPTION + " WHERE " + C_QUESTION_ID + " = "
+							+ questionId + " and " + C_PROJECT_ID + " = "
+							+ project_id;
+
+					Cursor optionCursor = db.rawQuery(selectOptionsQuery, null);
+					if (optionCursor.moveToFirst()) {
+						List<String> optionlist = new ArrayList<String>();
+						do {
+							String option = optionCursor.getString(optionCursor
+									.getColumnIndex(C_OPTION_TEXT));
+							optionlist.add(option);
+
+						} while (optionCursor.moveToNext());
+
+						que.setOptions(optionlist);
+						optionCursor.close();
+
+					}
+					questions.add(que);
+				}
+			} while (c.moveToNext());
+
+		}
+		c.close();
+        closeReadDatabase();
+		return questions;
+	}
 
 	// Insert Option in database
 	public boolean createProtocol(Protocol protocol) {
@@ -960,33 +959,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-//	public Protocol getProtocol(String protocolId) {
-//		SQLiteDatabase db = openReadDatabase();
-//		Protocol protocol = new Protocol();
-//		String selectQuery = "SELECT  * FROM " + TABLE_PROTOCOL + " WHERE "
-//				+ C_ID + " = " + protocolId;
-//		;
-//		System.out.println(selectQuery);
-//		Log.e("DATABASE_HELPER_getProtocol", selectQuery);
-//
-//		Cursor c = db.rawQuery(selectQuery, null);
-//
-//		if (c.moveToFirst()) {
-//
-//			protocol.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
-//			protocol.setId(c.getString(c.getColumnIndex(C_ID)));
-//			protocol.setDescription(c.getString(c.getColumnIndex(C_DESCRIPTION)));
-//			protocol.setName(c.getString(c.getColumnIndex(C_NAME)));
-//			protocol.setProtocol_json(c.getString(c
-//					.getColumnIndex(C_PROTOCOL_JSON)));
-//			protocol.setSlug(c.getString(c.getColumnIndex(C_SLUG)));
-//			protocol.setMacroId(c.getString(c.getColumnIndex(C_MACRO_ID)));
-//            protocol.setPreSelected(c.getString(c.getColumnIndex(C_PROTOCOL_PRE_SEL)));
-//		}
-//		c.close();
-//        closeReadDatabase();
-//		return protocol;
-//	}
+	public Protocol getProtocol(String protocolId) {
+		SQLiteDatabase db = openReadDatabase();
+		Protocol protocol = new Protocol();
+		String selectQuery = "SELECT  * FROM " + TABLE_PROTOCOL + " WHERE "
+				+ C_PROTOCOL_ID + " = " + protocolId;
+		;
+		System.out.println(selectQuery);
+		Log.e("DATABASE_HELPER_getProtocol", selectQuery);
+
+		Cursor c = db.rawQuery(selectQuery, null);
+
+		if (c.moveToFirst()) {
+
+			protocol.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
+			protocol.setId(c.getString(c.getColumnIndex(C_PROTOCOL_ID)));
+			protocol.setDescription(c.getString(c.getColumnIndex(C_PROTOCOL_DESCRIPTION)));
+			protocol.setName(c.getString(c.getColumnIndex(C_PROTOCOL_NAME)));
+			protocol.setProtocol_json(c.getString(c
+					.getColumnIndex(C_PROTOCOL_JSON)));
+			protocol.setSlug(c.getString(c.getColumnIndex(C_PROTOCOL_MACRO_SLUG)));
+			protocol.setMacroId(c.getString(c.getColumnIndex(C_PROTOCOL_MACRO_ID)));
+            protocol.setPreSelected(c.getString(c.getColumnIndex(C_PROTOCOL_PRE_SEL)));
+		}
+		c.close();
+        closeReadDatabase();
+		return protocol;
+	}
 
 	// Insert Macro in database
 	public boolean createMacro(Macro macro) {
@@ -1217,30 +1216,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return retVal;
 	}
 
-//	// Getting single parameters of settings
-//	public Data getData(String userID, String projectID, String questionID) {
-//		SQLiteDatabase db = openReadDatabase();
-//
-//		String selectQuery = "SELECT  * FROM " + TABLE_DATA + " WHERE "
-//				+ C_USER_ID + " = '" + userID + "' and " + C_PROJECT_ID + " = '" + projectID + "' and " + C_QUESTION_ID + " = '" + questionID + "'";
-//
-//		System.out.println(selectQuery);
-//		Log.e("DATABASE_HELPER_getSettings", selectQuery);
-//		Data data = new Data();
-//		data.setUser_id(userID);
-//		Cursor c = db.rawQuery(selectQuery, null);
-//		if (c.moveToFirst()) {
-//
-//			data.setUser_id(c.getString(c.getColumnIndex(C_USER_ID)));
-//			data.setProject_id(c.getString(c.getColumnIndex(C_PROJECT_ID)));
-//			data.setQuestion_id(c.getString(c.getColumnIndex(C_QUESTION_ID)));
-//			data.setType(c.getString(c.getColumnIndex(C_TYPE)));
-//			data.setValue(c.getString(c.getColumnIndex(C_VALUES)));
-//		}
-//		c.close();
-//        closeReadDatabase();
-//		return data;
-//	}
+	// Getting single parameters of settings
+	public Data getData(String userID, String projectID, String questionID) {
+		SQLiteDatabase db = openReadDatabase();
+
+		String selectQuery = "SELECT  * FROM " + TABLE_DATA + " WHERE "
+				+ C_USER_ID + " = '" + userID + "' and " + C_PROJECT_ID + " = '" + projectID + "' and " + C_QUESTION_ID + " = '" + questionID + "'";
+
+		System.out.println(selectQuery);
+		Log.e("DATABASE_HELPER_getSettings", selectQuery);
+		Data data = new Data();
+		data.setUser_id(userID);
+		Cursor c = db.rawQuery(selectQuery, null);
+		if (c.moveToFirst()) {
+
+			data.setUser_id(c.getString(c.getColumnIndex(C_USER_ID)));
+			data.setProject_id(c.getString(c.getColumnIndex(C_PROJECT_ID)));
+			data.setQuestion_id(c.getString(c.getColumnIndex(C_QUESTION_ID)));
+			data.setType(c.getString(c.getColumnIndex(C_TYPE)));
+			data.setValue(c.getString(c.getColumnIndex(C_VALUES)));
+		}
+		c.close();
+        closeReadDatabase();
+		return data;
+	}
 
 	// Updating single setting
 	public boolean updateData(Data data) {

@@ -49,7 +49,6 @@ public class QuickModeFragment extends Fragment implements PhotosynqResponse{
     private DatabaseHelper dbHelper;
     private ProtocolArrayAdapter arrayAdapter;
     private ListView protocolList;
-    private String deviceAddress;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -70,20 +69,7 @@ public class QuickModeFragment extends Fragment implements PhotosynqResponse{
         View rootView = inflater.inflate(R.layout.fragment_quick_mode, container, false);
 
         dbHelper = DatabaseHelper.getHelper(getActivity());
-        String userName = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-        AppSettings appSettings = dbHelper.getSettings(userName);
 
-        Bundle extras = getArguments();
-        if (extras != null) {
-            deviceAddress = extras.getString(BluetoothService.DEVICE_ADDRESS);
-        }
-
-        if(null == deviceAddress){
-            appSettings = dbHelper.getSettings(userName);
-            String btDevice = appSettings.getConnectionId();
-            deviceAddress = btDevice;
-
-        }
         // Initialize ListView
         protocolList = (ListView) rootView.findViewById(R.id.lv_protocol);
         showFewProtocolList();
@@ -116,7 +102,6 @@ public class QuickModeFragment extends Fragment implements PhotosynqResponse{
                 Log.d("GEtting protocol id : ", protocol.getId());
                 Intent intent = new Intent(getActivity(),QuickMeasurmentActivity.class);
                 intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocol.getProtocol_json());
-                intent.putExtra(BluetoothService.DEVICE_ADDRESS, deviceAddress);
                 intent.putExtra(Protocol.NAME, protocol.getName());
                 intent.putExtra(Protocol.DESCRIPTION, protocol.getDescription());
                 try {
