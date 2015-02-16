@@ -41,5 +41,7 @@
     <string name="end_date_lbl">End Date:</string>
     <string name="beta_lbl">Beta:</string>
     <string name="directions_to_collab">Directions to collaborators</string>
+    <string name="title_activity_project_data">ProjectDataActivity</string>
 
+    <string name="selectFromWeb">Set of answers cannot be changed here.  If you are the project lead, you can change the set of answers by editing the project</string>
 </resources>

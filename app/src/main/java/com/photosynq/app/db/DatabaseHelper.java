@@ -65,7 +65,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String C_LEAD_IMAGE_URL = "image_url";
 
 	// Question and Option Table - column names
-    private static final String C_QUESTION_ID = "question_id";// Question
+    public static final String C_QUESTION_ID = "question_id";// Question
 	private static final String C_QUESTION_TEXT = "question_text";// Question
 	public static final String C_OPTION_TEXT = "option";// Option
     public static final String C_QUESTION_TYPE = "question_type";

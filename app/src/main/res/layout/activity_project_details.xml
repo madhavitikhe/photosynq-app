@@ -178,17 +178,17 @@
             android:layout_weight="1"
             android:background="@drawable/btn_layout_orange"/>
 
-        <Button
-            android:id="@+id/btn_join_team"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:onClick="join_team_click"
-            android:text="Join Team"
-            android:textSize="14sp"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:layout_weight="1"
-            android:background="@drawable/btn_layout_gray_light"/>
+        <!--<Button-->
+            <!--android:id="@+id/btn_join_team"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="10dp"-->
+            <!--android:onClick="join_team_click"-->
+            <!--android:text="Join Team"-->
+            <!--android:textSize="14sp"-->
+            <!--android:textAllCaps="false"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:layout_weight="1"-->
+            <!--android:background="@drawable/btn_layout_gray_light"/>-->
     </LinearLayout>
 </RelativeLayout>

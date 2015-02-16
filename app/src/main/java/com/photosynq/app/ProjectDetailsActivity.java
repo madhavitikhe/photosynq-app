@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
@@ -213,6 +214,19 @@ public class ProjectDetailsActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
+            DatabaseHelper databaseHelper = DatabaseHelper.getHelper(this);
+            List<Question> questions = databaseHelper.getAllQuestionForProject(projectID);
+            if(questions.size() <= 0)
+            {
+                Toast.makeText(this, "No Questions for project selected", Toast.LENGTH_LONG).show();
+
+            }else {
+
+                Intent intent = new Intent(this, ProjectDataActivity.class);
+                intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectID);
+                startActivity(intent);
+            }
 
             return true;
         }
