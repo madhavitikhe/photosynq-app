@@ -27,6 +27,7 @@ android:orientation="vertical">
                 android:background="@drawable/btn_layout_orange"
                 android:textColor="@color/white"
                 android:textSize="14sp"
+                android:textAllCaps="false"
                 android:text="Show All Protocols" >
             </Button>
         </LinearLayout>

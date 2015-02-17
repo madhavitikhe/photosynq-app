@@ -54,21 +54,35 @@
         </ListView>
     </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="?actionBarSize"
         android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingTop="10dp" >
+        android:orientation="horizontal">
 
         <Button
+            android:id="@+id/btn_close"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:text="@string/closebtn"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textAllCaps="false"
+            android:background="@drawable/btn_layout_orange">
+        </Button>
+        <Button
             android:id="@+id/btn_Search_New_Device"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
             android:background="@drawable/btn_layout_orange"
             android:text="@string/searchNewDevice"
             android:textColor="@color/white"
+            android:textSize="14sp"
             android:textAllCaps="false">
         </Button>
-    </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

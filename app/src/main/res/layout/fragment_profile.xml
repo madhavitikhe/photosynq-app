@@ -58,7 +58,8 @@
                 android:layout_margin="10dp"
                 android:background="@drawable/btn_layout_orange"
                 android:textColor="@color/white"
-                android:text="Sign Out" >
+                android:text="Sign Out"
+                android:textAllCaps="false">
             </Button>
         </LinearLayout>
 

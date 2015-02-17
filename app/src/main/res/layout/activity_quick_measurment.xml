@@ -75,6 +75,7 @@
                 android:textSize="14sp"
                 android:textColor="@color/white"
                 android:text="+ Take Measurement"
+                android:textAllCaps="false"
                 android:onClick="takeMeasurement" >
             </Button>
         </LinearLayout>

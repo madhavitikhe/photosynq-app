@@ -73,12 +73,21 @@ public class SelectDeviceDialog extends DialogFragment {
         bluetoothStatus = rootView.findViewById(R.id.btooth_status);
         bluetoothStatusMsg = (TextView) rootView.findViewById(R.id.bluetooth_status_msg);
         Button searchNewBtn = (Button) rootView.findViewById(R.id.btn_Search_New_Device);
-
+        searchNewBtn.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoMedium());
         searchNewBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 btDeviceList.clear();
                 searchNewBTDevice();
+            }
+        });
+
+        Button closeBtn = (Button) rootView.findViewById(R.id.btn_close);
+        closeBtn.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoMedium());
+        closeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
             }
         });
 

@@ -45,4 +45,5 @@
     <string name="title_activity_directions">Directions</string>
 
     <string name="selectFromWeb">Set of answers cannot be changed here.  If you are the project lead, you can change the set of answers by editing the project</string>
+    <string name="closebtn">Close</string>
 </resources>
