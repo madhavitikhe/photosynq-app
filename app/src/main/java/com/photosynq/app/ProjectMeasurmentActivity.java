@@ -106,6 +106,15 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
             finish();
         }
 
+        String showDirections = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_SHOW_DIRECTIONS, "YES");
+        if(showDirections.equals("YES")){
+            if(null != projectId && null != deviceAddress) {
+                Intent directionIntent = new Intent(this, DirectionsActivity.class);
+                directionIntent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+                startActivity(directionIntent);
+            }
+        }
+
         viewFlipper = (ViewFlipper) findViewById(R.id.viewflipper);
 
         allSelectedOptions = new ArrayList<String>();
@@ -239,7 +248,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                 LinearLayout subLinearLayout = new LinearLayout(this);
                 subLinearLayout.setOrientation(LinearLayout.VERTICAL);
-                subLinearLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                subLinearLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
                 TextView questionTextView = new TextView(this);
                 questionTextView.setTextColor(Color.WHITE);
@@ -250,7 +259,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 questionTextView.setLayoutParams( new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 subLinearLayout.addView(questionTextView);
 
-                RelativeLayout.LayoutParams optionTVParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                RelativeLayout.LayoutParams optionTVParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 int optionIvWidth = (screenWidth / 2) - 20;
                 RelativeLayout.LayoutParams imageVParams = new RelativeLayout.LayoutParams(optionIvWidth, optionIvWidth);
 
@@ -275,25 +284,25 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                         @Override
                         public void onClick(View v) {
 
-                            int displayedChild = viewFlipper.getDisplayedChild();
-                            int childCount = viewFlipper.getChildCount();
+                        int displayedChild = viewFlipper.getDisplayedChild();
+                        int childCount = viewFlipper.getChildCount();
 
-                            allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
-                            if(reviewFlag)
-                            {
-                                viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
-                                reviewFlag = false;
+                        allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+                        if(reviewFlag)
+                        {
+                            viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                            reviewFlag = false;
+
+                            initReviewPage();
+                        }
+                        else {
+                            viewFlipper.showNext();
+                            if (displayedChild == childCount - 2 ) {
+                                viewFlipper.stopFlipping();
 
                                 initReviewPage();
                             }
-                            else {
-                                viewFlipper.showNext();
-                                if (displayedChild == childCount - 2 ) {
-                                    viewFlipper.stopFlipping();
-
-                                    initReviewPage();
-                                }
-                            }
+                        }
 
                         }
                     });
@@ -579,6 +588,40 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent){
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        if (resultCode == Activity.RESULT_OK) {
+            String contents = intent.getStringExtra("SCAN_RESULT");
+
+            int displayedChild = viewFlipper.getDisplayedChild();
+            int childCount = viewFlipper.getChildCount();
+
+            allSelectedOptions.set(requestCode,contents);
+            if(reviewFlag)
+            {
+                viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                reviewFlag = false;
+
+                initReviewPage();
+            }
+            else {
+                viewFlipper.showNext();
+                if (displayedChild == childCount - 2 ) {
+                    viewFlipper.stopFlipping();
+
+                    initReviewPage();
+                }
+            }
+
+            Toast.makeText(this, contents, Toast.LENGTH_SHORT).show();
+        } else if (resultCode == Activity.RESULT_CANCELED) {
+            // Handle cancel
+            Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.menu_display_results, menu);
@@ -689,7 +732,9 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                                         }else{
 
-                                            mtvStatusMessage.setText(getResources().getString(R.string.start_measurement));
+                                            mtvStatusMessage.setText("No protocol defined for this project.");
+                                            Toast.makeText(ProjectMeasurmentActivity.this, "No protocol defined for this project.", Toast.LENGTH_LONG).show();
+
                                             if(btnTakeMeasurement != null) {
                                                 if (btnTakeMeasurement.getText().equals("Cancel")) {
                                                     btnTakeMeasurement.setText("+ Take Measurement");

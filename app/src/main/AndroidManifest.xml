@@ -77,6 +77,13 @@
             android:windowSoftInputMode="adjustResize"
             android:label="@string/title_activity_project_data" >
         </activity>
+        <activity
+            android:name=".DirectionsActivity"
+            android:screenOrientation="nosensor"
+            android:windowSoftInputMode="adjustResize"
+            android:label="@string/title_activity_directions">
+
+        </activity>
 
         <receiver android:name=".utils.AlarmReceiver" />
     </application>

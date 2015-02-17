@@ -79,7 +79,7 @@
                         android:id="@+id/fixed_value_editText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/textPrimary"
+                        android:textColor="@color/textPrimaryLight"
                         android:hint="Enter value"
                         android:layout_marginLeft="20dp"/>
 
@@ -109,9 +109,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
-                            android:textColor="@color/textPrimary"
+                            android:textColor="@color/textPrimaryLight"
                             android:ems="10"
-                            android:inputType="number" />
+                            android:inputType="number"
+                            android:hint="Enter start value" />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -132,9 +133,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
-                            android:textColor="@color/textPrimary"
+                            android:textColor="@color/textPrimaryLight"
                             android:ems="10"
-                            android:inputType="number" />
+                            android:inputType="number"
+                            android:hint="Enter end value" />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -155,9 +157,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
-                            android:textColor="@color/textPrimary"
+                            android:textColor="@color/textPrimaryLight"
                             android:ems="10"
-                            android:inputType="number" />
+                            android:inputType="number"
+                            android:hint="Enter nuber of repeatations" />
                     </RelativeLayout>
 
                     <RadioButton

@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="fill_parent"
+    android:layout_height="match_parent"
     android:background="@color/white"
-    android:descendantFocusability="beforeDescendants"
+    tools:context="com.photosynq.app.DirectionsActivity"
     android:orientation="vertical">
 
+    <include layout="@layout/toolbar"/>
+
     <ScrollView
+        android:layout_above="@+id/ll_btn"
+        android:layout_below="@+id/toolbar"
         android:layout_width="fill_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:padding="5dp"
         android:fillViewport="true" >
 
@@ -114,8 +118,10 @@
     </ScrollView>
 
     <LinearLayout
+        android:id="@+id/ll_btn"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:gravity="center"
         android:background="@color/fragment_background"
         android:orientation="vertical"
@@ -132,7 +138,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Close"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:background="@drawable/btn_layout_orange"
             android:onClick="onCloseBtnClicked"/>
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>
