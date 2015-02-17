@@ -15,7 +15,7 @@ var tooltips = {
 'vHplus':'Proton flux - inital rate of the decay of the ECS signal',
 'gHplus':'Proportional to the aggregat conductivity of the thylakoid membrane - inverse lifetime of the rapid decay of ECS',
 'tau':'τ - half life of the rapid decay of the ECS signal',
-'light_intensity':'Light intensity in lumen.',
+'light_intensity':'Light intensity in PAR',
 'co2_content':'CO2 concentration in ppm (parts per millions)',
 'relative_humidity':'Relative humidity in percent [%]',
 'temperature':'Temperature in degrees celcius [°C]'
@@ -25,15 +25,15 @@ var tooltips = {
 // Array for json variable replacements
 //-----------------------------------------------------------------------------------------------------------------------------------
 var replacements = {
-'light_intensity':'Light intensity [lumen]',
+'light_intensity':'Light intensity [PAR]',
 'co2_content':'CO2 content [ppm]',
 'relative_humidity':'Relative humidity [%]',
 'temperature':'Temperature [°C]',
-'fluorescence':'<i class="icon-fluorescence" title="Fluorescence"></i> Chlorophyll fluorescence',
-'810_dirk':'<i class="icon-absorbance" title="Absorbance"></i> 810 nm DIRK',
-'chlorophyll_spad':'<i class="icon-reflectance" title="Reflectance"></i> SPAD',
-'940_dirk':'<i class="icon-absorbance" title="Absorbance"></i> 940 nm DIRK',
-'dirk':'<i class="icon-absorbance" title="Absorbance"></i> 520 nm DIRK',
+'fluorescence':'Chlorophyll fluorescence',
+'810_dirk':'810 nm DIRK',
+'chlorophyll_spad':'SPAD',
+'940_dirk':'40 nm DIRK',
+'dirk':'520 nm DIRK',
 'tau':'τ',
 'Phi2':'ΦII',
 'FmP':'Fm\'',
