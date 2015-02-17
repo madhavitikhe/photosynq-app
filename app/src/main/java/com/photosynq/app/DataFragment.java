@@ -57,6 +57,7 @@ public class DataFragment extends Fragment{
         boolean next = false;
         if(null != extras)
         {
+            projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
             questionId = extras.getString(DatabaseHelper.C_QUESTION_ID);
             questionValueType = extras.getInt(DatabaseHelper.C_QUESTION_TYPE);
             prev = extras.getBoolean(Data.PREV);
@@ -70,7 +71,6 @@ public class DataFragment extends Fragment{
 
         View rootView = inflater.inflate(R.layout.fragment_data, container, false);
         userId = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-        projectId = databaseHelper.getSettings(userId).getProjectId();
 
         Button saveButton = (Button)rootView.findViewById(R.id.save_btn);
         saveButton.setTypeface(typefaceRobotoMedium);

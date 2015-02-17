@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -47,16 +48,20 @@ public class MainActivity extends ActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+    private static ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        supportRequestWindowFeature(Window.FEATURE_PROGRESS);
+        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_bg));
+        progressBar = (ProgressBar) findViewById(R.id.toolbar_progress_bar);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -71,6 +76,11 @@ public class MainActivity extends ActionBarActivity
         mCurrentSelectedPosition = Integer.parseInt(prevSelPos);
         onNavigationDrawerItemSelected(mCurrentSelectedPosition);
 
+    }
+
+    public void setProgressBarVisibility(int visibility){
+        //Make progress bar appear when you need it
+        progressBar.setVisibility(visibility);
     }
 
     @Override
@@ -196,35 +206,39 @@ public class MainActivity extends ActionBarActivity
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.main, menu);
-            restoreActionBar();
-            return true;
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+////        if (!mNavigationDrawerFragment.isDrawerOpen()) {
+////            // Only show items in the action bar relevant to this screen
+////            // if the drawer is not showing. Otherwise, let the drawer
+////            // decide what to show in the action bar.
+////            //getMenuInflater().inflate(R.menu.main, menu);
+////            restoreActionBar();
+////            return true;
+////        }
+//        return super.onCreateOptionsMenu(menu);
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
     public void setDeviceConnected(String deviceName, String deviceAddress) {
         mNavigationDrawerFragment.setDeviceConnected(deviceName, deviceAddress);
+    }
+
+    public static ProgressBar getProgressBar() {
+        return progressBar;
     }
 }

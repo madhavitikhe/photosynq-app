@@ -140,7 +140,8 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
             @Override
             public void onClick(View v) {
 
-                SyncHandler syncHandler = new SyncHandler((MainActivity)getActivity());
+                MainActivity mainActivity = (MainActivity)getActivity();
+                SyncHandler syncHandler = new SyncHandler(mainActivity, mainActivity.getProgressBar());
                 syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE);
                 //??flag = 0;
             }
@@ -153,7 +154,8 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
             public void onClick(View v) {
 
                 dbHelper.deleteAllData();
-                SyncHandler syncHandler = new SyncHandler((MainActivity)getActivity());
+                MainActivity mainActivity = (MainActivity)getActivity();
+                SyncHandler syncHandler = new SyncHandler(mainActivity, mainActivity.getProgressBar());
                 syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE);
                 //??flag = 1;
             }

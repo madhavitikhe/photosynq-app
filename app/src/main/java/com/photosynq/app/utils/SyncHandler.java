@@ -1,9 +1,12 @@
 package com.photosynq.app.utils;
 
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.photosynq.app.ProjectModeFragment;
 import com.photosynq.app.QuickModeFragment;
@@ -37,21 +40,34 @@ import java.util.List;
  */
 public class SyncHandler {
 
-    Context context = null;
-    MainActivity navigationDrawer = null;
+    private Context context = null;
+    private ProgressBar progressBar = null;
+    private MainActivity navigationDrawer;
 
     public static int ALL_SYNC_MODE = 0;
     public static int PROJECT_LIST_MODE = 1;
     public static int PROTOCOL_LIST_MODE = 2;
     public static int UPLOAD_RESULTS_MODE = 3;
 
-    public SyncHandler(Context context) {
+
+//    public SyncHandler(Context context) {
+//        this.context = context;
+//    }
+//
+//    public SyncHandler(MainActivity navigationDrawer){
+//        this.navigationDrawer = navigationDrawer;
+//        this.context = navigationDrawer;
+//    }
+
+    public SyncHandler(Context context, ProgressBar progressBar) {
         this.context = context;
+        this.progressBar = progressBar;
     }
 
-    public SyncHandler(MainActivity navigationDrawer){
-        this.navigationDrawer = navigationDrawer;
+    public SyncHandler(MainActivity navigationDrawer, ProgressBar progressBar) {
         this.context = navigationDrawer;
+        this.navigationDrawer = navigationDrawer;
+        this.progressBar = progressBar;
     }
 
     public int DoSync(int sync_mode) {
@@ -78,11 +94,10 @@ public class SyncHandler {
 
         @Override
         protected void onPreExecute() {
-//??
-//            if(navigationDrawer != null) {
-//                FragmentManager fragmentManager = navigationDrawer.getFragmentManager();
-//                fragmentManager.beginTransaction().add(R.id.content_frame, new FragmentProgress(), FragmentProgress.class.getName()).commit();
-//            }
+
+            if(progressBar != null) {
+                progressBar.setVisibility(View.VISIBLE);
+            }
 
             super.onPreExecute();
         }
@@ -223,13 +238,15 @@ public class SyncHandler {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
+            if(progressBar != null){
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+
             if(navigationDrawer != null) {
                 try {
+
                     FragmentManager fragmentManager = navigationDrawer.getSupportFragmentManager();
-//                    Fragment fragment = fragmentManager.findFragmentByTag(FragmentProgress.class.getName());
-//                    if (fragment != null) {
-//                        fragmentManager.beginTransaction().remove(fragment).commit();
-//                    }
+
                     ProjectModeFragment fragmentProjectList = (ProjectModeFragment) fragmentManager.findFragmentByTag(ProjectModeFragment.class.getName());
                     if (fragmentProjectList != null) {
                         fragmentProjectList.onResponseReceived(result);

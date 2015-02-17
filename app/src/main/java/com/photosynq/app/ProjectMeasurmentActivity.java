@@ -399,8 +399,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                     if(optionValue != -1) {
                         data_value = "" + optionValue;
-                        tvOption.setText(data_value);
+                    }else{
+                        data_value = "";
                     }
+                    tvOption.setText(data_value);
                 }
                 else if(data.getType().equals(Data.FIXED_VALUE))
                 {
@@ -462,7 +464,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         reviewPage.setId(9595);
         viewFlipper.addView(reviewPage);
 
-        refreshReviewPage(reviewPage);
+        List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
+        int queCount = questions.size();
+        if(fixedValueQueCount == queCount || autoIncQueCount == queCount || fixedValueQueCount+autoIncQueCount == queCount){
+            initReviewPage();
+        }else {
+            refreshReviewPage(reviewPage);
+        }
     }
 
     private void refreshReviewPage(View reviewPage){
@@ -551,16 +559,19 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         {
 //            if(mIsMeasureBtnClicked)
 //                viewFlipper.setDisplayedChild(0);
-//
-//            List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
-//
-//            int viewCount = viewFlipper.getChildCount();
-//            refreshReviewPage(viewFlipper.getChildAt(viewCount - 1));
-//
-//            if(fixedValueCount == questions.size() || autoIncProjecSize == questions.size() || fixedValueCount+autoIncProjecSize == questions.size()) {
-//                initReviewPage();
-//            }
-//            clearflag = true;
+
+            List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
+
+            if(fixedValueQueCount == questions.size() || autoIncQueCount == questions.size() || fixedValueQueCount+autoIncQueCount == questions.size()) {
+                initReviewPage();
+
+            }else{
+                int viewCount = viewFlipper.getChildCount();
+                if(viewCount > 1)
+                    viewFlipper.setDisplayedChild(0);
+                refreshReviewPage(viewFlipper.getChildAt(viewCount - 1));
+            }
+            //clearflag = true;
         }
         scanMode = false;
         mIsMeasureBtnClicked = false;

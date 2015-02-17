@@ -9,8 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-//??
-//import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Macro;
@@ -124,30 +122,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	// Question table create statement
 	private static final String CREATE_TABLE_QUESTION = "CREATE TABLE "
-			+ TABLE_QUESTION + "(" + C_RECORD_HASH + " TEXT ," + C_PROJECT_ID
+			+ TABLE_QUESTION + "(" + C_RECORD_HASH + " TEXT PRIMARY KEY," + C_PROJECT_ID
 			+ " TEXT," + C_QUESTION_ID + " TEXT," + C_QUESTION_TEXT + " TEXT, "+C_QUESTION_TYPE+" integer )";
 
 	// Answer table create statement
 	private static final String CREATE_TABLE_OPTION = "CREATE TABLE "
-			+ TABLE_OPTION + "(" + C_RECORD_HASH + " TEXT ," + C_OPTION_TEXT
+			+ TABLE_OPTION + "(" + C_RECORD_HASH + " TEXT PRIMARY KEY," + C_OPTION_TEXT
 			+ " TEXT ," + C_PROJECT_ID + " TEXT," + C_QUESTION_ID + " TEXT)";
 
 	// Protocol table create statement
 	private static final String CREATE_TABLE_PROTOCOL = "CREATE TABLE "
-			+ TABLE_PROTOCOL + "(" + C_RECORD_HASH + " TEXT ," + C_PROTOCOL_ID
+			+ TABLE_PROTOCOL + "(" + C_RECORD_HASH + " TEXT PRIMARY KEY," + C_PROTOCOL_ID
 			+ " TEXT ," + C_PROTOCOL_NAME + " TEXT ," + C_PROTOCOL_JSON + " TEXT ,"
 			+ C_PROTOCOL_DESCRIPTION + " TEXT ," + C_PROTOCOL_MACRO_ID + " TEXT ," + C_PROTOCOL_MACRO_SLUG + " TEXT ,"
             + C_PROTOCOL_PRE_SEL +" TEXT)";
 
 	// Macro table create statement
 	private static final String CREATE_TABLE_MACRO = "CREATE TABLE "
-			+ TABLE_MACRO + "(" + C_RECORD_HASH + " TEXT ," + C_MACRO_ID + " TEXT ,"
+			+ TABLE_MACRO + "(" + C_RECORD_HASH + " TEXT PRIMARY KEY," + C_MACRO_ID + " TEXT ,"
 			+ C_MACRO_NAME + " TEXT ," + C_MACRO_DESCRIPTION + " TEXT ," + C_MACRO_DEFAULT_X_AXIS
 			+ " TEXT ," + C_MACRO_DEFAULT_Y_AXIS + " TEXT ," + C_MACRO_JAVASCRIPT_CODE
 			+ " TEXT ," + C_MACRO_SLUG + " TEXT)";
 
 	private static final String CREATE_TABLE_RESULTS = "CREATE TABLE "
-			+ TABLE_RESULTS + "(" + C_RECORD_HASH + " TEXT ," + C_PROJECT_ID
+			+ TABLE_RESULTS + "(" + C_RECORD_HASH + " TEXT PRIMARY KEY," + C_PROJECT_ID
 			+ " TEXT ," + C_UPLOADED + " TEXT ," + C_READING + " TEXT)";
 
 	private static final String CREATE_TABLE_SETTINGS = "CREATE TABLE "

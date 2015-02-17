@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.photosynq.app.MainActivity;
 import com.photosynq.app.utils.SyncHandler;
 
 public class AlarmReceiver extends BroadcastReceiver
@@ -12,7 +13,7 @@ public class AlarmReceiver extends BroadcastReceiver
     @Override
     public void onReceive(Context context, Intent intent)
     {
-       SyncHandler syncHandler = new SyncHandler(context);
+       SyncHandler syncHandler = new SyncHandler(context, MainActivity.getProgressBar());
        syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE);
 
        System.out.println("----------------------sync data onReceive complete-----------------");

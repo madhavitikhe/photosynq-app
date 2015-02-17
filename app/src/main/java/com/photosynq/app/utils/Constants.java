@@ -7,8 +7,8 @@ public class Constants {
 
     public static final String SUCCESS = "SUCCESS";
     public static final String SERVER_NOT_ACCESSIBLE = "SERVER_NOT_ACCESSIBLE";
-    public static final String SERVER_URL = "http://photosynq.org/";
-    //public static final String SERVER_URL = "http://photosynq.venturit.org/";
+    //public static final String SERVER_URL = "http://photosynq.org/";
+    public static final String SERVER_URL = "http://photosynq.venturit.org/";
     public static final String API_VER = "api/v1/";
 
     public static final String PHOTOSYNQ_LOGIN_URL = SERVER_URL+API_VER+"sign_in.json";

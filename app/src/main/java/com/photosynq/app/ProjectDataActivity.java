@@ -151,6 +151,7 @@ public class ProjectDataActivity extends ActionBarActivity {
                 bundle.putBoolean(Data.PREV,true);
                 bundle.putBoolean(Data.NEXT,true);
             }
+            bundle.putString(DatabaseHelper.C_PROJECT_ID, projectId);
             bundle.putString(DatabaseHelper.C_QUESTION_ID, questions.get(i).getQuestionId());
             bundle.putInt(DatabaseHelper.C_QUESTION_TYPE, questions.get(i).getQuestionType());
             DataFragment dataFragment = new DataFragment();

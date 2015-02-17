@@ -7,8 +7,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
@@ -32,14 +34,19 @@ public class DisplayResultsActivity extends ActionBarActivity {
 
     Button keep;
     Button discard;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        supportRequestWindowFeature(Window.FEATURE_PROGRESS);
+        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_display_results);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        progressBar = (ProgressBar) findViewById(R.id.toolbar_progress_bar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_bg));
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -89,7 +96,7 @@ public class DisplayResultsActivity extends ActionBarActivity {
             ProjectResult result = new ProjectResult(projectId, reading, "N");
             databaseHelper.createResult(result);
 
-            SyncHandler syncHandler = new SyncHandler(getApplicationContext());
+            SyncHandler syncHandler = new SyncHandler(getApplicationContext(), progressBar);
             syncHandler.DoSync(SyncHandler.UPLOAD_RESULTS_MODE);
 
             view.setVisibility(View.INVISIBLE);

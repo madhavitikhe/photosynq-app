@@ -38,6 +38,7 @@
         <activity
             android:name=".QuickMeasurmentActivity"
             android:label="@string/title_activity_quick_measurment"
+            android:screenOrientation="nosensor"
             android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -46,6 +47,7 @@
         <activity
             android:name=".DisplayResultsActivity"
             android:label="@string/title_activity_display_results"
+            android:screenOrientation="nosensor"
             android:parentActivityName=".QuickMeasurmentActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -54,6 +56,7 @@
         <activity
             android:name=".ProjectDetailsActivity"
             android:label="@string/title_activity_project_details"
+            android:screenOrientation="nosensor"
             android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -61,6 +64,8 @@
         </activity>
         <activity
             android:name=".ProjectMeasurmentActivity"
+            android:screenOrientation="nosensor"
+            android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".ProjectDetailsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -68,8 +73,12 @@
         </activity>
         <activity
             android:name=".ProjectDataActivity"
+            android:screenOrientation="nosensor"
+            android:windowSoftInputMode="adjustResize"
             android:label="@string/title_activity_project_data" >
         </activity>
+
+        <receiver android:name=".utils.AlarmReceiver" />
     </application>
 
 </manifest>
