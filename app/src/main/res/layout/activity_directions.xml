@@ -5,25 +5,20 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context="com.photosynq.app.DirectionsActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:keepScreenOn="true">
 
     <include layout="@layout/toolbar"/>
 
-    <ScrollView
-        android:layout_above="@+id/ll_btn"
-        android:layout_below="@+id/toolbar"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:padding="5dp"
-        android:fillViewport="true" >
-
         <LinearLayout
+            android:id="@+id/ll_directions_details"
+            android:layout_below="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/selector_card_background"
             android:descendantFocusability="afterDescendants"
             android:orientation="vertical"
-            android:padding="5dp" >
+            android:padding="10dp" >
 
             <TextView
                 android:id="@+id/tv_project_name"
@@ -36,6 +31,7 @@
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
                 android:gravity="center"
                 android:orientation="horizontal" >
 
@@ -99,6 +95,7 @@
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal" >
 
                 <TextView
@@ -107,14 +104,25 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:text="@string/directions_to_collab"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/tv_project_directions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+
         </LinearLayout>
+
+
+    <ScrollView
+        android:layout_above="@+id/ll_btn"
+        android:layout_below="@+id/ll_directions_details"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true" >
+        <TextView
+            android:id="@+id/tv_project_directions"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </ScrollView>
 
     <LinearLayout
@@ -131,6 +139,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Got it! Please don't show this any more"
+            android:textColor="@color/textPrimary"
             android:id="@+id/cb_show_directions"
             android:onClick="onCheckBoxClicked"/>
 

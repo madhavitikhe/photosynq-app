@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -86,7 +87,7 @@ public class DirectionsActivity extends ActionBarActivity {
 			tvProjetTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX,(int)(screenWidth*0.06));
 			if(!"null".equals(researchProject.getDirToCollab()))
 			{
-				tvProjetDirections.setText(researchProject.getDirToCollab());
+				tvProjetDirections.setText(Html.fromHtml(researchProject.getDirToCollab()));
 			}else{
                 tvProjetDirections.setText("");
             }
@@ -95,21 +96,21 @@ public class DirectionsActivity extends ActionBarActivity {
 			{
 				tvStartDate.setText(outputDate.format(CommonUtils.convertToDate(researchProject.getStartDate())));
 			}else{
-                tvStartDate.setText("");
+                tvStartDate.setText("null");
             }
 			
 			if(!"null".equals(researchProject.getEndDate()))
 			{
 				tvEndDate.setText(outputDate.format(CommonUtils.convertToDate(researchProject.getEndDate())));
 			}else{
-                tvEndDate.setText("");
+                tvEndDate.setText("null");
             }
 			
-			if(!	"null".equals(researchProject.getBeta()))
+			if(!"null".equals(researchProject.getBeta()))
 			{
 				tvBeta.setText(researchProject.getBeta());
 			}else{
-                tvBeta.setText("");
+                tvBeta.setText("null");
             }
 
 		}

@@ -1,6 +1,7 @@
 package com.photosynq.app;
 
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -37,6 +38,9 @@ public class ProjectDataActivity extends ActionBarActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
+        ColorDrawable newColor = new ColorDrawable(getResources().getColor(R.color.green_light));//your color from res
+        newColor.setAlpha(0);//from 0(0%) to 256(100%)
+        //actionBar.setBackgroundDrawable(newColor);
         actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_bg));
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("");

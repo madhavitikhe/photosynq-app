@@ -16,12 +16,14 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -145,16 +147,28 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     viewUserSelected.setTag(question.getQuestionId());
                     TextView questionText = (TextView) viewUserSelected.findViewById(R.id.tv_question_text);
                     questionText.setText(question.getQuestionText());
+                    questionText.setTextColor(Color.WHITE);
                     questionText.setTypeface(CommonUtils.getInstance(this).getFontRobotoMedium());
+                    questionText.setBackgroundResource(R.drawable.actionbar_bg);
+                    questionText.setPadding(30, 0, 30, 30);
 
                     Button showNext = (Button) viewUserSelected.findViewById(R.id.btn_next);
                     showNext.setTag(queIndex);
                     showNext.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+
                             EditText userEnteredAnswer = (EditText) ((View)v.getParent()).findViewById(R.id.et_user_answer);
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
+
+                            if (displayedChild == childCount - 2 ) {
+                                InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                                View view = getCurrentFocus();
+                                if( null != view)
+                                    inputManager.hideSoftInputFromWindow(view.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                            }
+
                             String str = userEnteredAnswer.getText().toString().trim();
                             if(true == str.matches(".*['{}!].*") ||
                                     true == str.contains("\\n") ||
@@ -167,6 +181,11 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                                 allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
                                 if(reviewFlag)
                                 {
+                                    InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                                    View view = getCurrentFocus();
+                                    if( null != view)
+                                        inputManager.hideSoftInputFromWindow(view.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+
                                     viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
                                     reviewFlag = false;
 
@@ -219,7 +238,11 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                     TextView questionText = (TextView) viewScanCode.findViewById(R.id.tv_question_text);
                     questionText.setText(question.getQuestionText());
+                    questionText.setTextColor(Color.WHITE);
                     questionText.setTypeface(CommonUtils.getInstance(this).getFontRobotoMedium());
+                    questionText.setBackgroundResource(R.drawable.actionbar_bg);
+                    questionText.setPadding(30, 0, 30, 30);
+
                     View btnScan = viewScanCode.findViewById(R.id.btn_barcode_scan);
                     btnScan.setTag(queIndex);
                     btnScan.setOnClickListener(new View.OnClickListener() {
@@ -241,22 +264,25 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 LinearLayout mainLinearLayout = new LinearLayout(this);
                 mainLinearLayout.setBackgroundColor(Color.WHITE);
                 mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
-                mainLinearLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                mainLinearLayout.setLayoutParams(layoutParams);
 
                 ScrollView scrollView = new ScrollView(this);
                 scrollView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
                 LinearLayout subLinearLayout = new LinearLayout(this);
                 subLinearLayout.setOrientation(LinearLayout.VERTICAL);
-                subLinearLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                subLinearLayout.setLayoutParams(layoutParams);
 
                 TextView questionTextView = new TextView(this);
                 questionTextView.setTextColor(Color.WHITE);
                 questionTextView.setTextSize(18);
                 questionTextView.setTypeface(CommonUtils.getInstance(this).getFontRobotoMedium());
-                questionTextView.setBackgroundColor(Color.GRAY);
+                questionTextView.setBackgroundResource(R.drawable.actionbar_bg);
                 questionTextView.setText(question.getQuestionText());
-                questionTextView.setLayoutParams( new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                questionTextView.setPadding(10, 0, 10, 10);
+                questionTextView.setGravity(Gravity.CENTER);
+                questionTextView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 subLinearLayout.addView(questionTextView);
 
                 RelativeLayout.LayoutParams optionTVParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -575,10 +601,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 initReviewPage();
 
             }else{
-                int viewCount = viewFlipper.getChildCount();
-                if(viewCount > 1)
-                    viewFlipper.setDisplayedChild(0);
-                refreshReviewPage(viewFlipper.getChildAt(viewCount - 1));
+                if(mIsMeasureBtnClicked) {
+                    int viewCount = viewFlipper.getChildCount();
+                    if (viewCount > 1) {
+                        viewFlipper.setDisplayedChild(0);
+                    }
+                    refreshReviewPage(viewFlipper.getChildAt(viewCount - 1));
+                }
             }
             //clearflag = true;
         }
@@ -823,7 +852,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                             startActivity(intent);
                         }
                     }
-                    mIsMeasureBtnClicked = false;
+                    //mIsMeasureBtnClicked = false;
                     mIsCancelMeasureBtnClicked = false;
                     if(btnTakeMeasurement != null) {
                         if (btnTakeMeasurement.getText().equals("Cancel")) {

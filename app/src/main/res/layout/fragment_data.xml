@@ -7,21 +7,25 @@
     android:focusable="true"
     android:focusableInTouchMode="true">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="@drawable/actionbar_bg">
 
         <LinearLayout
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
 
-            <include layout="@layout/question"></include>
+            <include layout="@layout/question"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="20dp"/>
         </LinearLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <ScrollView
         android:id="@+id/scrollview"
@@ -30,7 +34,9 @@
         android:layout_weight="1"
         android:layout_marginTop="5dp"
         android:layout_below="@+id/tv_question_text"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -80,7 +86,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/textPrimaryLight"
-                        android:hint="Enter value"
+                        android:textSize="14sp"
                         android:layout_marginLeft="20dp"/>
 
                     <RadioButton
@@ -112,7 +118,7 @@
                             android:textColor="@color/textPrimaryLight"
                             android:ems="10"
                             android:inputType="number"
-                            android:hint="Enter start value" />
+                            android:textSize="14sp"/>
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -136,7 +142,7 @@
                             android:textColor="@color/textPrimaryLight"
                             android:ems="10"
                             android:inputType="number"
-                            android:hint="Enter end value" />
+                            android:textSize="14sp"/>
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -160,7 +166,7 @@
                             android:textColor="@color/textPrimaryLight"
                             android:ems="10"
                             android:inputType="number"
-                            android:hint="Enter nuber of repeatations" />
+                            android:textSize="14sp"/>
                     </RelativeLayout>
 
                     <RadioButton

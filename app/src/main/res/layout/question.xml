@@ -11,10 +11,10 @@
         android:layout_alignParentTop="true"
         android:textColor="@color/textPrimary"
         android:textStyle="bold"
-        android:textSize="15dp" />
+        android:textSize="18sp"/>
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@color/gray" />
+    <!--<View-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:background="@color/gray" />-->
 </LinearLayout>

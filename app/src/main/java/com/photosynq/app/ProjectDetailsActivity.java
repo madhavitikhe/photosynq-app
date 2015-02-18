@@ -55,7 +55,8 @@ public class ProjectDetailsActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         ColorDrawable newColor = new ColorDrawable(getResources().getColor(R.color.green_light));//your color from res
         newColor.setAlpha(0);//from 0(0%) to 256(100%)
-        actionBar.setBackgroundDrawable(newColor);actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setBackgroundDrawable(newColor);
+        actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("");
 
 
@@ -88,8 +89,8 @@ public class ProjectDetailsActivity extends ActionBarActivity {
             tvProjetTitle.setTypeface(tfRobotoRegular);
             tvProjetTitle.setText(project.getName());
 
-            TextView tvEndsIn = (TextView) findViewById(R.id.tv_ends_in);
-            tvEndsIn.setTypeface(tfRobotoRegular);
+//            TextView tvEndsIn = (TextView) findViewById(R.id.tv_ends_in);
+//            tvEndsIn.setTypeface(tfRobotoRegular);
 
             TextView tvBeta = (TextView) findViewById(R.id.tv_beta);
             tvBeta.setTypeface(tfRobotoMedium);

@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context="com.photosynq.app.ProjectDetailsActivity">
+    tools:context="com.photosynq.app.ProjectDetailsActivity"
+    android:keepScreenOn="true">
 
     <RelativeLayout
         android:id="@+id/rl_header"
@@ -15,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:background="@drawable/ic_launcher"/>
+            android:background="@drawable/loading_thmb" />
 
         <include layout="@layout/toolbar"
             android:layout_width="match_parent"
@@ -26,6 +27,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
+            android:layout_toLeftOf="@+id/user_profile_image"
+            android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
             android:orientation="vertical">
             <TextView
@@ -35,7 +38,11 @@
                 android:text="No Data Found"
                 android:textSize="20sp"
                 android:maxLines="2"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"
+                android:shadowColor="@android:color/black"
+                android:shadowDx="3"
+                android:shadowDy="-3"
+                android:shadowRadius="1"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -49,35 +56,41 @@
                     android:text="BETA"
                     android:layout_marginRight="10dp"
                     android:layout_marginEnd="10dp"
-                    android:textColor="@color/gray"
+                    android:textColor="@color/white"
                     android:padding="5dp"
                     android:background="@drawable/btn_layout_orange"/>
 
-                <TextView
-                    android:id="@+id/tv_ends_in"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="No Data Found"
-                    android:textColor="@color/gray"/>
+                <!--<TextView-->
+                    <!--android:id="@+id/tv_ends_in"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="No Data Found"-->
+                    <!--android:textColor="@color/gray"-->
+                    <!--android:shadowColor="@android:color/black"-->
+                    <!--android:shadowDx="3"-->
+                    <!--android:shadowDy="-3"-->
+                    <!--android:shadowRadius="1"/>-->
             </LinearLayout>
 
         </LinearLayout>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="15dp">
+        <!--<RelativeLayout-->
+            <!--android:id="@+id/rl_profile_image"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="15dp">-->
             <com.photosynq.app.utils.CircularImageView
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/user_profile_image"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_gravity="center"
+                android:layout_margin="15dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/ic_launcher"/>
-        </RelativeLayout>
+        <!--</RelativeLayout>-->
 
     </RelativeLayout>
 

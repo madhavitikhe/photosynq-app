@@ -90,7 +90,7 @@ public class MainActivity extends ActionBarActivity
             new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("Quit")
-                    .setMessage("Do You Want to Close the Application")
+                    .setMessage("Do you want to close the application")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

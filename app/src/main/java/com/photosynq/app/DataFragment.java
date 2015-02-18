@@ -1,5 +1,6 @@
 package com.photosynq.app;
 
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -179,6 +180,7 @@ public class DataFragment extends Fragment{
         questionTextView.setTypeface(typefaceRobotoMedium);
         Question question = databaseHelper.getQuestionForProject(projectId, questionId);
         questionTextView.setText(question.getQuestionText());
+        questionTextView.setTextColor(Color.WHITE);
 
         /**
          * If QuestionValueType is 1 then question type is project selected,

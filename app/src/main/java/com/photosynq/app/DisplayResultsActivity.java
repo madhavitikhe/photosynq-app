@@ -49,7 +49,7 @@ public class DisplayResultsActivity extends ActionBarActivity {
         progressBar = (ProgressBar) findViewById(R.id.toolbar_progress_bar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_bg));
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setTitle("Result");
 
         Bundle extras = getIntent().getExtras();

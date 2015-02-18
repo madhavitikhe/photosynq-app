@@ -21,6 +21,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -58,13 +59,12 @@ public class SelectDeviceDialog extends DialogFragment {
         View rootView = inflater.inflate(R.layout.dialog_fragment_select_device, container, false);
 
         Dialog dialog = getDialog();
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-        TextView tvTitle = (TextView) dialog.findViewById(android.R.id.title);
+        TextView tvTitle = (TextView) dialog.findViewById(R.id.tv_dialog_title);
         if(tvTitle != null){
-            tvTitle.setText("Select Measurement Device");
             tvTitle.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoRegular());
-            tvTitle.setTextSize(16f);
-            tvTitle.setGravity(Gravity.CENTER);
+            //tvTitle.setTextSize(16);
         }
 
         final DatabaseHelper databaseHelper = DatabaseHelper.getHelper(getActivity());
