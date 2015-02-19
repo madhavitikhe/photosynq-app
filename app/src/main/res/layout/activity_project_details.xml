@@ -16,7 +16,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:background="@drawable/loading_thmb" />
+            android:src="@drawable/loading_thmb"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/gradient_image"/>
+
+
 
         <include layout="@layout/toolbar"
             android:layout_width="match_parent"
@@ -41,8 +48,8 @@
                 android:textColor="@color/white"
                 android:shadowColor="@android:color/black"
                 android:shadowDx="3"
-                android:shadowDy="-3"
-                android:shadowRadius="1"/>
+                android:shadowDy="3"
+                android:shadowRadius="5"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"

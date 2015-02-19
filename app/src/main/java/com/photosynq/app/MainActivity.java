@@ -39,6 +39,7 @@ public class MainActivity extends ActionBarActivity
      */
     private CharSequence mTitle;
     private static ProgressBar progressBar;
+    //private boolean mIsSearchView = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +79,8 @@ public class MainActivity extends ActionBarActivity
     private void handleIntent(Intent intent) {
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            //mIsSearchView = true;
+
             String query = intent.getStringExtra(SearchManager.QUERY);
 
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -241,6 +244,19 @@ public class MainActivity extends ActionBarActivity
             searchView.setSearchableInfo(
                     searchManager.getSearchableInfo(getComponentName()));
 
+            MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
+                @Override
+                public boolean onMenuItemActionExpand(MenuItem item) {
+                    return true;
+                }
+
+                @Override
+                public boolean onMenuItemActionCollapse(MenuItem item) {
+                    closeSearchView();
+                    return true;
+                }
+            });
+
         }
 
         restoreActionBar();
@@ -268,17 +284,6 @@ public class MainActivity extends ActionBarActivity
 
     private void closeSearchView(){
         //mIsSearchView = false;
-
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
-
-        // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
-
-        onNavigationDrawerItemSelected(mCurrentSelectedPosition);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         if(mCurrentSelectedPosition == 0) {//Discover
