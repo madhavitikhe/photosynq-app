@@ -14,6 +14,7 @@ import android.os.Message;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -23,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -283,11 +285,11 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 questionTextView.setPadding(10, 0, 10, 10);
                 questionTextView.setGravity(Gravity.CENTER);
                 questionTextView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                subLinearLayout.addView(questionTextView);
+                mainLinearLayout.addView(questionTextView);
 
-                RelativeLayout.LayoutParams optionTVParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams optionTVParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
                 int optionIvWidth = (screenWidth / 2) - 20;
-                RelativeLayout.LayoutParams imageVParams = new RelativeLayout.LayoutParams(optionIvWidth, optionIvWidth);
+                LinearLayout.LayoutParams imageVParams = new LinearLayout.LayoutParams(optionIvWidth, optionIvWidth);
 
                 LinearLayout.LayoutParams linearlayoutweight = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1);
 
@@ -297,9 +299,11 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 {
                     String optionText = question.getOptions().get(i);
                     TextView optionTextView = new TextView(this);
-                    optionTextView.setTextColor(Color.BLACK);
-                    optionTextView.setTextSize(16);
                     optionTextView.setText(optionText);
+                    optionTextView.setTextColor(Color.BLACK);
+                    optionTextView.setTextSize(14);
+                    optionTextView.setSingleLine(false);
+                    optionTextView.setMaxLines(Integer.MAX_VALUE);
                     optionTextView.setTypeface(CommonUtils.getInstance(this).getFontRobotoRegular());
 
                     ImageView imageView = new ImageView(this);
@@ -338,9 +342,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                             .error(R.drawable.ic_launcher)
                             .into(imageView);
 
-                    RelativeLayout cellRelativeLayout = new RelativeLayout(this);
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    LinearLayout cellRelativeLayout = new LinearLayout(this);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
                     cellRelativeLayout.setLayoutParams(params);
+                    cellRelativeLayout.setOrientation(LinearLayout.VERTICAL);
 
                     if(i%2 == 0)
                     {
@@ -352,7 +357,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
 
                         optionTextView.setId(1);
-                        imageVParams.addRule(RelativeLayout.BELOW, optionTextView.getId());
+                        //??imageVParams.addRule(RelativeLayout.BELOW, optionTextView.getId());
                         imageVParams.setMargins(0, 10, 10, 10);
 
                         cellRelativeLayout.addView(optionTextView, optionTVParams);
@@ -368,7 +373,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     else
                     {
                         optionTextView.setId(1555555);
-                        imageVParams.addRule(RelativeLayout.BELOW, optionTextView.getId());
+                        //??imageVParams.addRule(RelativeLayout.BELOW, optionTextView.getId());
                         imageVParams.setMargins(10, 10, 10, 0);
 
                         cellRelativeLayout.addView(optionTextView, optionTVParams);
