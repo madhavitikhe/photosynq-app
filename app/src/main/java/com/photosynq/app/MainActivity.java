@@ -1,37 +1,26 @@
 package com.photosynq.app;
 
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
-import android.view.Window;
-import android.widget.ArrayAdapter;
+import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Switch;
-import android.widget.TextView;
-
-import com.photosynq.app.db.DatabaseHelper;
-import com.photosynq.app.model.AppSettings;
-import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
-
-import org.json.JSONObject;
 
 
 public class MainActivity extends ActionBarActivity
@@ -44,6 +33,7 @@ public class MainActivity extends ActionBarActivity
 
     private int mCurrentSelectedPosition = 0;
 
+    //private boolean mIsSearchView = false;
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
@@ -54,14 +44,16 @@ public class MainActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        supportRequestWindowFeature(Window.FEATURE_PROGRESS);
-        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_bg));
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_bg));
         progressBar = (ProgressBar) findViewById(R.id.toolbar_progress_bar);
+
+        String prevSelPos = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_PREV_SELECTED_POSITION, "0");
+        mCurrentSelectedPosition = Integer.parseInt(prevSelPos);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -72,15 +64,34 @@ public class MainActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        String prevSelPos = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_PREV_SELECTED_POSITION, "0");
-        mCurrentSelectedPosition = Integer.parseInt(prevSelPos);
         onNavigationDrawerItemSelected(mCurrentSelectedPosition);
 
     }
 
-    public void setProgressBarVisibility(int visibility){
-        //Make progress bar appear when you need it
-        progressBar.setVisibility(visibility);
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            //use the query to search your data somehow
+            if(mCurrentSelectedPosition == 0) {//Discover
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, ProjectModeFragment.newInstance(mCurrentSelectedPosition, query), ProjectModeFragment.class.getName())
+                        .commit();
+            }else if(mCurrentSelectedPosition == 1) { //My Projects
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, ProjectModeFragment.newInstance(mCurrentSelectedPosition, query), ProjectModeFragment.class.getName())
+                        .commit();
+            }
+        }
     }
 
     @Override
@@ -208,15 +219,32 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-//        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-//            // Only show items in the action bar relevant to this screen
-//            // if the drawer is not showing. Otherwise, let the drawer
-//            // decide what to show in the action bar.
-//            //getMenuInflater().inflate(R.menu.main, menu);
-//            restoreActionBar();
-//            return true;
-//        }
+        MenuInflater inflater = getMenuInflater();
+
+        boolean isSearchableView = false;
+        if (mTitle.equals(getString(R.string.discover_title))) {
+            inflater.inflate(R.menu.menu_discover, menu);
+            isSearchableView = true;
+        } else if (mTitle.equals(getString(R.string.my_projects_title))) {
+            inflater.inflate(R.menu.menu_my_projects, menu);
+            isSearchableView = true;
+        }
+
+        if(isSearchableView) {
+
+            MenuItem searchItem = menu.findItem(R.id.action_search);
+            SearchView searchView = (SearchView) searchItem.getActionView();
+
+            // Associate searchable configuration with the SearchView
+            SearchManager searchManager =
+                    (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+            searchView.setSearchableInfo(
+                    searchManager.getSearchableInfo(getComponentName()));
+
+        }
+
         restoreActionBar();
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -225,14 +253,43 @@ public class MainActivity extends ActionBarActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+//        if(mIsSearchView){
+//            if (id == android.R.id.home) {
+//                closeSearchView();
+//                return true;
+//            }
 //        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void closeSearchView(){
+        //mIsSearchView = false;
+
+        mNavigationDrawerFragment = (NavigationDrawerFragment)
+                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mTitle = getTitle();
+
+        // Set up the drawer.
+        mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        onNavigationDrawerItemSelected(mCurrentSelectedPosition);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if(mCurrentSelectedPosition == 0) {//Discover
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, ProjectModeFragment.newInstance(mCurrentSelectedPosition), ProjectModeFragment.class.getName())
+                    .commit();
+        }else if(mCurrentSelectedPosition == 1) { //My Projects
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, ProjectModeFragment.newInstance(mCurrentSelectedPosition), ProjectModeFragment.class.getName())
+                    .commit();
+        }
     }
 
     public void setDeviceConnected(String deviceName, String deviceAddress) {

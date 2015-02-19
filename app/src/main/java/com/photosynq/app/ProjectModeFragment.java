@@ -49,6 +49,7 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
     private DatabaseHelper dbHelper;
     private ProjectArrayAdapter arrayAdapter;
     private ListView projectList;
+    private static String mSearchString;
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -56,6 +57,14 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
     public static ProjectModeFragment newInstance(int sectionNumber) {
         ProjectModeFragment fragment = new ProjectModeFragment();
         mSectionNumber = sectionNumber;
+        mSearchString = "";
+        return fragment;
+    }
+
+    public static ProjectModeFragment newInstance(int sectionNumber, String searchString) {
+        ProjectModeFragment fragment = new ProjectModeFragment();
+        mSectionNumber = sectionNumber;
+        mSearchString = searchString;
         return fragment;
     }
 
@@ -81,9 +90,11 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
 
         if(arrayAdapter.isEmpty())
         {
-            MainActivity mainActivity = (MainActivity)getActivity();
-            SyncHandler syncHandler = new SyncHandler(mainActivity, mainActivity.getProgressBar());
-            syncHandler.DoSync(SyncHandler.PROJECT_LIST_MODE);
+            if(mSearchString.length() == 0) {
+                MainActivity mainActivity = (MainActivity) getActivity();
+                SyncHandler syncHandler = new SyncHandler(mainActivity, mainActivity.getProgressBar());
+                syncHandler.DoSync(SyncHandler.PROJECT_LIST_MODE);
+            }
         }
 
         projectList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -100,7 +111,13 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
     }
 
     private void showProjectList() {
-        List<ResearchProject> projects = dbHelper.getAllResearchProjects();
+        List<ResearchProject> projects;
+        if(mSearchString.length() > 0) {
+            projects = dbHelper.getAllResearchProjects(mSearchString);
+        }else{
+            projects = dbHelper.getAllResearchProjects();
+        }
+
         arrayAdapter = new ProjectArrayAdapter(getActivity(), projects);
         projectList.setAdapter(arrayAdapter);
     }
@@ -110,7 +127,12 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
      */
     private void refreshProjectList() {
         dbHelper = DatabaseHelper.getHelper(getActivity());
-        List<ResearchProject> projects = dbHelper.getAllResearchProjects();
+        List<ResearchProject> projects;
+        if(mSearchString.length() > 0) {
+            projects = dbHelper.getAllResearchProjects(mSearchString);
+        }else{
+            projects = dbHelper.getAllResearchProjects();
+        }
         arrayAdapter = new ProjectArrayAdapter(getActivity(), projects);
         projectList.setAdapter(arrayAdapter);
     }

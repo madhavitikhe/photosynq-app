@@ -175,7 +175,7 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
                     if(Constants.D) Log.i("PHOTOSYNC", "MESSAGE_STATE_CHANGE: " + msg.arg1);
                     switch (msg.arg1) {
                         case BluetoothService.STATE_CONNECTED:
-                            if(msg.arg2 == 1) { //Send measurement request
+                            //if(msg.arg2 == 1) { //Send measurement request
                                 mtvStatusMessage.setText(R.string.title_connected_to);
                                 mtvStatusMessage.append(mConnectedDeviceName);
                                 if (protocolJson.length() > 0) {
@@ -189,7 +189,7 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
 
                                 mtvStatusMessage.setText("Initializing measurement please wait ...");
 
-                            }
+                            //}
                             break;
                         case BluetoothService.STATE_CONNECTING:
                             mtvStatusMessage.setText(R.string.title_connecting);

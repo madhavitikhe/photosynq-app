@@ -26,19 +26,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
-import com.photosynq.app.utils.CircularImageView;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.util.Set;
 
@@ -192,8 +188,10 @@ public class NavigationDrawerFragment extends Fragment {
         // set up the drawer's list view with items and click listener
 
         ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
+        if(null != actionBar) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+        }
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the navigation drawer and the action bar app icon.
@@ -329,10 +327,10 @@ public class NavigationDrawerFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // If the drawer is open, show the global app actions in the action bar. See also
         // showGlobalContextActionBar, which controls the top-left area of the action bar.
-        if (mDrawerLayout != null && isDrawerOpen()) {
-            inflater.inflate(R.menu.global, menu);
-            showGlobalContextActionBar();
-        }
+//        if (mDrawerLayout != null && isDrawerOpen()) {
+//            inflater.inflate(R.menu.menu_discover, menu);
+//            showGlobalContextActionBar();
+//        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -342,10 +340,6 @@ public class NavigationDrawerFragment extends Fragment {
             return true;
         }
 
-        if (item.getItemId() == R.id.action_example) {
-            Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }

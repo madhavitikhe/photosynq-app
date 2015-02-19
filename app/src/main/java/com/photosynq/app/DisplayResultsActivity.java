@@ -40,8 +40,6 @@ public class DisplayResultsActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        supportRequestWindowFeature(Window.FEATURE_PROGRESS);
-        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_display_results);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
