@@ -114,6 +114,9 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
         List<ResearchProject> projects;
         if(mSearchString.length() > 0) {
             projects = dbHelper.getAllResearchProjects(mSearchString);
+            if(projects.isEmpty()){
+                Toast.makeText(getActivity(), "No project found", Toast.LENGTH_LONG).show();
+            }
         }else{
             projects = dbHelper.getAllResearchProjects();
         }
@@ -130,6 +133,9 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
         List<ResearchProject> projects;
         if(mSearchString.length() > 0) {
             projects = dbHelper.getAllResearchProjects(mSearchString);
+            if(projects.isEmpty()){
+                Toast.makeText(getActivity(), "No project found", Toast.LENGTH_LONG).show();
+            }
         }else{
             projects = dbHelper.getAllResearchProjects();
         }

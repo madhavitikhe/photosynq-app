@@ -109,10 +109,10 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
                     } else {
                         mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, 1).sendToTarget();
                     }
-                    btnTakeMeasurement.setText("CANCEL MEASURE");
+                    btnTakeMeasurement.setText("Cancel Measure");
                     btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_red);
                 }
-                else if(btnTakeMeasurement.getText().equals("CANCEL MEASURE"))
+                else if(btnTakeMeasurement.getText().equals("Cancel Measure"))
                 {
                     sendData("-1+-1+");
                     finish();
@@ -229,7 +229,7 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
                     }
 
                     if(btnTakeMeasurement != null) {
-                        if (btnTakeMeasurement.getText().equals("CANCEL MEASURE")) {
+                        if (btnTakeMeasurement.getText().equals("Cancel Measure")) {
                             btnTakeMeasurement.setText("+ Take Measurement");
                             btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
                         }
@@ -248,7 +248,7 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
                             Toast.LENGTH_SHORT).show();
 
                     if(btnTakeMeasurement != null) {
-                        if (btnTakeMeasurement.getText().equals("CANCEL MEASURE")) {
+                        if (btnTakeMeasurement.getText().equals("Cancel Measure")) {
                             btnTakeMeasurement.setText("+ Take Measurement");
                             btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
                         }
