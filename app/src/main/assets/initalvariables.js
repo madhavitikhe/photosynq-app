@@ -15,7 +15,7 @@ var tooltips = {
 'vHplus':'Proton flux - inital rate of the decay of the ECS signal',
 'gHplus':'Proportional to the aggregat conductivity of the thylakoid membrane - inverse lifetime of the rapid decay of ECS',
 'tau':'τ - half life of the rapid decay of the ECS signal',
-'light_intensity':'Light intensity in lumen.',
+'light_intensity':'Light intensity in PAR',
 'co2_content':'CO2 concentration in ppm (parts per millions)',
 'relative_humidity':'Relative humidity in percent [%]',
 'temperature':'Temperature in degrees celcius [°C]'
@@ -25,15 +25,15 @@ var tooltips = {
 // Array for json variable replacements
 //-----------------------------------------------------------------------------------------------------------------------------------
 var replacements = {
-'light_intensity':'Light intensity [lumen]',
+'light_intensity':'Light intensity [PAR]',
 'co2_content':'CO2 content [ppm]',
 'relative_humidity':'Relative humidity [%]',
 'temperature':'Temperature [°C]',
-'fluorescence':'<i class="icon-fluorescence" title="Fluorescence"></i> Chlorophyll fluorescence',
-'810_dirk':'<i class="icon-absorbance" title="Absorbance"></i> 810 nm DIRK',
-'chlorophyll_spad':'<i class="icon-reflectance" title="Reflectance"></i> SPAD',
-'940_dirk':'<i class="icon-absorbance" title="Absorbance"></i> 940 nm DIRK',
-'dirk':'<i class="icon-absorbance" title="Absorbance"></i> 520 nm DIRK',
+'fluorescence':'Chlorophyll fluorescence',
+'810_dirk':'810 nm DIRK',
+'chlorophyll_spad':'SPAD',
+'940_dirk':'40 nm DIRK',
+'dirk':'520 nm DIRK',
 'tau':'τ',
 'Phi2':'ΦII',
 'FmP':'Fm\'',
@@ -43,97 +43,28 @@ var replacements = {
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------
-// Array with Highchart colors
-//-----------------------------------------------------------------------------------------------------------------------------------
-
-// First five bootstrap
-var HighchartColors = [
-   '#428bca', 
-   '#5cb85c', 
-   '#f0ad4e', 
-   '#5bc0de', 
-   '#d9534f', 
-   '#492970',
-   '#f28f43', 
-   '#77a1e5', 
-   '#c42525', 
-   '#a6c96a'
-];
-
-//-----------------------------------------------------------------------------------------------------------------------------------
 // Array with variables to hide from user in cellphone app
 //-----------------------------------------------------------------------------------------------------------------------------------
-var variablehidephone = [ 'userinput_1_question',
+var variablehidephone = [
+	'userinput_1_question',
 	'userinput_1_answer',
 	'userinput_2_question',
 	'userinput_2_answer',
 	'device_id',
 	'firmware_version',
-	"time",
+	'time',
+	'protocol_id',
 	'protocol_number',
 	'protocol_name',
 	'baseline_sample',
 	'baseline_values',
 	'chlorophyll_spad_calibration',
-	//'light_intensity',
 	'red',
 	'green',
 	'blue',
-	//'relative_humidity',
-	//'temperature',
-	//'co2_content',
 	'board_temperature',
 	'averages',
 	'repeats',
 	'data_raw',
 	'end'
 ];
-
-//-----------------------------------------------------------------------------------------------------------------------------------
-// Initial data for plot on phone
-//-----------------------------------------------------------------------------------------------------------------------------------
-var plotoptionsphone = {
-	chart: {
-		//zoomType: 'xy',
-		pinchType : 'none',
-		type: 'line',
-		animation: false,
-		height:200
-	},
-	title: {
-		text: false
-	},
-	subtitle: {
-		text: false
-	},
-	xAxis: {
-		title: {
-			text: 'Measuring pulses'
-		}
-	},
-	yAxis: {
-		title: {
-			text: 'Intensitity'
-		},
-		plotLines: [{
-			value: 0,
-			width: 1,
-			color: '#808080'
-		}]
-	},
-	plotOptions: {
-		series: {
-			animation: false
-		}
-	},
-	tooltip: false,
-	legend: false,
-	credits: false,
-	series: [{
-		marker: {
-			enabled: false
-		},
-		lineWidth: 6,
-		data: []
-	}]
-};

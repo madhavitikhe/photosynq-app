@@ -1,1 +1,1 @@
-var protocols={"38":{"protocol_id":"38","protocol_name":"Name","macro_id":"8"},"37":{"protocol_id":"37","protocol_name":"Name","macro_id":"7"},"39":{"protocol_id":"39","protocol_name":"Name","macro_id":"9"}}
+var protocols={"82":{"protocolid":"82","protocol_name":"82","macro_id":"47"},"67":{"protocolid":"67","protocol_name":"67","macro_id":"12"}}
