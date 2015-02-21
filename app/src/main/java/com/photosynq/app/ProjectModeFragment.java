@@ -92,7 +92,7 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
         {
             if(mSearchString.length() == 0) {
                 MainActivity mainActivity = (MainActivity) getActivity();
-                SyncHandler syncHandler = new SyncHandler(mainActivity, mainActivity.getProgressBar());
+                SyncHandler syncHandler = new SyncHandler(mainActivity);
                 syncHandler.DoSync(SyncHandler.PROJECT_LIST_MODE);
             }
         }

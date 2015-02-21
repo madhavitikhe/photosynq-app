@@ -90,11 +90,11 @@ public class DisplayResultsActivity extends ActionBarActivity {
             int index = Integer.parseInt(PrefUtils.getFromPrefs(this, PrefUtils.PREFS_QUESTION_INDEX, "1"));
             PrefUtils.saveToPrefs(this, PrefUtils.PREFS_QUESTION_INDEX, ""+ (index+1));
 
-            DatabaseHelper databaseHelper = DatabaseHelper.getHelper(getApplicationContext());
+            DatabaseHelper databaseHelper = DatabaseHelper.getHelper(this);
             ProjectResult result = new ProjectResult(projectId, reading, "N");
             databaseHelper.createResult(result);
 
-            SyncHandler syncHandler = new SyncHandler(getApplicationContext(), progressBar);
+            SyncHandler syncHandler = new SyncHandler(this, MainActivity.getProgressBar());
             syncHandler.DoSync(SyncHandler.UPLOAD_RESULTS_MODE);
 
             view.setVisibility(View.INVISIBLE);

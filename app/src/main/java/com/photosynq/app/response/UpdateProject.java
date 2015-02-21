@@ -1,8 +1,13 @@
 package com.photosynq.app.response;
 
 import android.content.Context;
+import android.support.v4.app.FragmentManager;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.photosynq.app.MainActivity;
+import com.photosynq.app.ProjectModeFragment;
 import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
@@ -21,10 +26,11 @@ import java.util.Date;
  * Created by shekhar on 9/19/14.
  */
 public class UpdateProject implements PhotosynqResponse {
-    private Context context;
-    public UpdateProject(Context context)
+    private MainActivity navigationDrawer;
+
+    public UpdateProject(MainActivity navigationDrawer)
     {
-        this.context = context;
+        this.navigationDrawer = navigationDrawer;
     }
     @Override
     public void onResponseReceived(final String result) {
@@ -40,10 +46,20 @@ public class UpdateProject implements PhotosynqResponse {
     }
 
     private void processResult(String result) {
+
+        if(null != navigationDrawer) {
+            navigationDrawer.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    navigationDrawer.setProgressBarVisibility(View.VISIBLE);
+                }
+            });
+        }
+
         Date date = new Date();
         System.out.println("UpdateProject Start onResponseReceived: " + date.getTime());
 
-        DatabaseHelper db = DatabaseHelper.getHelper(context);
+        DatabaseHelper db = DatabaseHelper.getHelper(navigationDrawer);
         db.openWriteDatabase();
         db.openReadDatabase();
         JSONArray jArray;
@@ -52,7 +68,7 @@ public class UpdateProject implements PhotosynqResponse {
         {
             if(result.equals(Constants.SERVER_NOT_ACCESSIBLE))
             {
-                Toast.makeText(context, R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+                Toast.makeText(navigationDrawer, R.string.server_not_reachable, Toast.LENGTH_LONG).show();
                 db.closeWriteDatabase();
                 db.closeReadDatabase();
                 return;
@@ -118,6 +134,29 @@ public class UpdateProject implements PhotosynqResponse {
         db.closeWriteDatabase();
         db.closeReadDatabase();
         Date date1 = new Date();
+
+        if(null != navigationDrawer) {
+            navigationDrawer.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    try {
+                        FragmentManager fragmentManager = navigationDrawer.getSupportFragmentManager();
+
+                        ProjectModeFragment fragmentProjectList = (ProjectModeFragment) fragmentManager.findFragmentByTag(ProjectModeFragment.class.getName());
+                        if (fragmentProjectList != null) {
+                            fragmentProjectList.onResponseReceived(Constants.SUCCESS);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    navigationDrawer.setProgressBarVisibility(View.INVISIBLE);
+                }
+
+            });
+        }
+
         System.out.println("UpdateProject End onResponseReceived: " + date1.getTime());
     }
 }
