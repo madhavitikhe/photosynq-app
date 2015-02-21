@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +52,7 @@ public class SelectDeviceDialog extends DialogFragment {
     View bluetoothStatus;
     TextView bluetoothStatusMsg;
     private ArrayList<BluetoothDevice> btDeviceList = new ArrayList<BluetoothDevice>();
+    private Button searchNewBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,13 +74,16 @@ public class SelectDeviceDialog extends DialogFragment {
         pairedDeviceList = (ListView) rootView.findViewById(R.id.pairedDevices);
         bluetoothStatus = rootView.findViewById(R.id.btooth_status);
         bluetoothStatusMsg = (TextView) rootView.findViewById(R.id.bluetooth_status_msg);
-        Button searchNewBtn = (Button) rootView.findViewById(R.id.btn_Search_New_Device);
+        searchNewBtn = (Button) rootView.findViewById(R.id.btn_Search_New_Device);
         searchNewBtn.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoMedium());
         searchNewBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 btDeviceList.clear();
-                searchNewBTDevice();
+
+                    searchNewBtn.setEnabled(false);
+                    searchNewBtn.setBackgroundColor(R.drawable.btn_layout_gray_light);
+                    searchNewBTDevice();
             }
         });
 
@@ -152,6 +157,18 @@ public class SelectDeviceDialog extends DialogFragment {
                 }
             }
         });
+
+        //If bluetooth is off then it ask to allow turn on bluetooth device.
+        if(bluetoothAdapter.getState()==BluetoothAdapter.STATE_OFF) {
+            searchNewBTDevice();
+        }
+
+        //set height and width of dialog by getting screen height and width parameters.
+        Display display = (getActivity()).getWindowManager().getDefaultDisplay();
+        int width = display.getWidth() - 20;
+        int height = display.getHeight() - 40;
+        getDialog().getWindow().setLayout(width, height);
+
         return rootView;
     }
 
@@ -210,6 +227,8 @@ public class SelectDeviceDialog extends DialogFragment {
                             if(!btDeviceList.contains(device))
                                 btDeviceList.add(device);
                         }
+                        searchNewBtn.setEnabled(true);
+                        searchNewBtn.setBackgroundResource(R.drawable.btn_layout_orange);
                     }
                 }
             }

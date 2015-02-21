@@ -139,6 +139,10 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         mEmailView.setTypeface(robotoRegularFace);
+        mEmailView.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(mEmailView, InputMethodManager.SHOW_IMPLICIT);
+
         if(!mStrEmail.equals(PrefUtils.PREFS_DEFAULT_VAL))
             mEmailView.setText(mStrEmail);
 

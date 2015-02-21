@@ -17,19 +17,9 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_centerInParent="true"
-            android:layout_toLeftOf="@+id/btn_close"
             android:text="Select Measurement Device"
             android:textSize="16sp"
             android:textAllCaps="false"/>
-
-        <Button
-            android:id="@+id/btn_close"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_margin="10dp"
-            android:layout_alignParentRight="true"
-            android:background="@android:drawable/ic_menu_close_clear_cancel">
-        </Button>
 
     </RelativeLayout>
 
@@ -90,18 +80,18 @@
         android:background="@color/fragment_background"
         android:orientation="horizontal">
 
-        <!--<Button-->
-            <!--android:id="@+id/btn_close"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:layout_margin="10dp"-->
-            <!--android:text="@string/closebtn"-->
-            <!--android:textColor="@color/white"-->
-            <!--android:textSize="14sp"-->
-            <!--android:textAllCaps="false"-->
-            <!--android:background="@drawable/btn_layout_orange">-->
-        <!--</Button>-->
+        <Button
+            android:id="@+id/btn_close"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:text="@string/closebtn"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textAllCaps="false"
+            android:background="@drawable/btn_layout_orange">
+        </Button>
         <Button
             android:id="@+id/btn_Search_New_Device"
             android:layout_width="0dp"

@@ -31,7 +31,7 @@
     <string name="title_activity_display_results">DisplayResultsActivity</string>
     <string name="title_activity_project_details">ProjectDetailsActivity</string>
     <string name="hello_world">Hello world!</string>
-    <string name="searchNewDevice">Search for new devices</string>
+    <string name="searchNewDevice">Search devices</string>
     <string name="searching_devices">Searching devices...</string>
     <string name="result_discarded">Results discarded.</string>
     <string name="btn_get_directions">Get directions</string>
@@ -45,5 +45,5 @@
     <string name="title_activity_directions">Directions</string>
 
     <string name="selectFromWeb">Set of answers cannot be changed here.  If you are the project lead, you can change the set of answers by editing the project</string>
-    <string name="closebtn">Close</string>
+    <string name="closebtn">Ok</string>
 </resources>

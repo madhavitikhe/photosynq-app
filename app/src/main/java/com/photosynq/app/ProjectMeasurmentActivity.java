@@ -160,16 +160,12 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                         @Override
                         public void onClick(View v) {
 
+                            InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            inputManager.hideSoftInputFromWindow(getWindow().getDecorView().getRootView().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+
                             EditText userEnteredAnswer = (EditText) ((View)v.getParent()).findViewById(R.id.et_user_answer);
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
-
-                            if (displayedChild == childCount - 2 ) {
-                                InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                                View view = getCurrentFocus();
-                                if( null != view)
-                                    inputManager.hideSoftInputFromWindow(view.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-                            }
 
                             String str = userEnteredAnswer.getText().toString().trim();
                             if(true == str.matches(".*['{}!].*") ||
@@ -183,11 +179,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                                 allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
                                 if(reviewFlag)
                                 {
-                                    InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                                    View view = getCurrentFocus();
-                                    if( null != view)
-                                        inputManager.hideSoftInputFromWindow(view.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-
+//
                                     viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
                                     reviewFlag = false;
 
