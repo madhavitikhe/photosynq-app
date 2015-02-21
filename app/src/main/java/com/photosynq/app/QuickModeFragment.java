@@ -77,7 +77,7 @@ public class QuickModeFragment extends Fragment implements PhotosynqResponse{
         if(arrayAdapter.isEmpty())
         {
             MainActivity mainActivity = (MainActivity)getActivity();
-            SyncHandler syncHandler = new SyncHandler(mainActivity, mainActivity.getProgressBar());
+            SyncHandler syncHandler = new SyncHandler(mainActivity);
             syncHandler.DoSync(SyncHandler.PROTOCOL_LIST_MODE);
         }
 

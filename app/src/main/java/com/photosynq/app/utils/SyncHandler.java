@@ -41,8 +41,8 @@ import java.util.List;
 public class SyncHandler {
 
     private Context context = null;
-    private ProgressBar progressBar = null;
     private MainActivity navigationDrawer;
+    private ProgressBar progressBar;
 
     public static int ALL_SYNC_MODE = 0;
     public static int PROJECT_LIST_MODE = 1;
@@ -64,10 +64,9 @@ public class SyncHandler {
         this.progressBar = progressBar;
     }
 
-    public SyncHandler(MainActivity navigationDrawer, ProgressBar progressBar) {
+    public SyncHandler(MainActivity navigationDrawer) {
         this.context = navigationDrawer;
         this.navigationDrawer = navigationDrawer;
-        this.progressBar = progressBar;
     }
 
     public int DoSync(int sync_mode) {
@@ -94,9 +93,12 @@ public class SyncHandler {
 
         @Override
         protected void onPreExecute() {
-
-            if(progressBar != null) {
+            if(null != progressBar){
                 progressBar.setVisibility(View.VISIBLE);
+            }
+
+            if(null != navigationDrawer) {
+                navigationDrawer.setProgressBarVisibility(View.VISIBLE);
             }
 
             super.onPreExecute();
@@ -142,7 +144,7 @@ public class SyncHandler {
                                 throw new IOException(statusLine.getReasonPhrase());
                             }
                         }
-                        publishProgress(new Object[]{new UpdateProject(context), responseString});
+                        publishProgress(new Object[]{new UpdateProject(navigationDrawer), responseString});
                     }
                     // Download Protocols
                     if(syncMode == ALL_SYNC_MODE || syncMode == PROTOCOL_LIST_MODE) {
@@ -167,7 +169,7 @@ public class SyncHandler {
                                 throw new IOException(statusLine.getReasonPhrase());
                             }
                         }
-                        publishProgress(new Object[]{new UpdateProtocol(context), responseString});
+                        publishProgress(new Object[]{new UpdateProtocol(navigationDrawer), responseString});
 
                         // Download Macros
                         String strMacroURI = Constants.PHOTOSYNQ_MACROS_LIST_URL
@@ -191,7 +193,7 @@ public class SyncHandler {
                                 throw new IOException(statusLine.getReasonPhrase());
                             }
                         }
-                        publishProgress(new Object[]{new UpdateMacro(context), responseString});
+                        publishProgress(new Object[]{new UpdateMacro(navigationDrawer), responseString});
                     }
 
                     // Upload all unuploaded results
@@ -199,7 +201,7 @@ public class SyncHandler {
                         DatabaseHelper db = DatabaseHelper.getHelper(context);
                         List<ProjectResult> listRecords = db.getAllUnUploadedResults();
                         for (ProjectResult projectResult : listRecords) {
-                            CommonUtils.uploadResults(context, projectResult.getProjectId(), projectResult.getId(), projectResult.getReading());
+                            CommonUtils.uploadResults(navigationDrawer, projectResult.getProjectId(), projectResult.getId(), projectResult.getReading());
                         }
                     }
 
@@ -238,30 +240,34 @@ public class SyncHandler {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            if(progressBar != null){
+//            if(navigationDrawer != null) {
+//                try {
+//
+//                    FragmentManager fragmentManager = navigationDrawer.getSupportFragmentManager();
+//
+//                    ProjectModeFragment fragmentProjectList = (ProjectModeFragment) fragmentManager.findFragmentByTag(ProjectModeFragment.class.getName());
+//                    if (fragmentProjectList != null) {
+//                        fragmentProjectList.onResponseReceived(result);
+//                    }
+//                    QuickModeFragment fragmentSelectProtocol = (QuickModeFragment) fragmentManager.findFragmentByTag(QuickModeFragment.class.getName());
+//                    if (fragmentSelectProtocol != null) {
+//                        fragmentSelectProtocol.onResponseReceived(result);
+//                    }
+//                    SyncFragment fragmentSync = (SyncFragment) fragmentManager.findFragmentByTag(SyncFragment.class.getName());
+//                    if (fragmentSync != null) {
+//                        fragmentSync.onResponseReceived(result);
+//                    }
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//            }
+
+            if(null != progressBar){
                 progressBar.setVisibility(View.INVISIBLE);
             }
 
-            if(navigationDrawer != null) {
-                try {
-
-                    FragmentManager fragmentManager = navigationDrawer.getSupportFragmentManager();
-
-                    ProjectModeFragment fragmentProjectList = (ProjectModeFragment) fragmentManager.findFragmentByTag(ProjectModeFragment.class.getName());
-                    if (fragmentProjectList != null) {
-                        fragmentProjectList.onResponseReceived(result);
-                    }
-                    QuickModeFragment fragmentSelectProtocol = (QuickModeFragment) fragmentManager.findFragmentByTag(QuickModeFragment.class.getName());
-                    if (fragmentSelectProtocol != null) {
-                        fragmentSelectProtocol.onResponseReceived(result);
-                    }
-                    SyncFragment fragmentSync = (SyncFragment) fragmentManager.findFragmentByTag(SyncFragment.class.getName());
-                    if (fragmentSync != null) {
-                        fragmentSync.onResponseReceived(result);
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+            if(null != navigationDrawer){
+                navigationDrawer.setProgressBarVisibility(View.INVISIBLE);
             }
         }
     }

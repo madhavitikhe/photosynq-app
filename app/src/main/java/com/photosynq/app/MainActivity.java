@@ -26,6 +26,7 @@ import com.photosynq.app.utils.PrefUtils;
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
+    static int progressRefCount = 0;
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -303,5 +304,25 @@ public class MainActivity extends ActionBarActivity
 
     public static ProgressBar getProgressBar() {
         return progressBar;
+    }
+
+    public void setProgressBarVisibility(int visible) {
+
+        if(View.VISIBLE == visible){
+            progressRefCount++;
+
+            if(null != progressBar){
+                progressBar.setVisibility(visible);
+            }
+        }else if(View.INVISIBLE == visible){
+            progressRefCount--;
+
+            if(progressRefCount == 0){
+                if(null != progressBar){
+                    progressBar.setVisibility(visible);
+                }
+            }
+        }
+
     }
 }
