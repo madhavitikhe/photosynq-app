@@ -618,29 +618,29 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         super.onActivityResult(requestCode, resultCode, intent);
 
         if (resultCode == Activity.RESULT_OK) {
-            String contents = intent.getStringExtra("SCAN_RESULT");
+            if(null != intent) {
+                String contents = intent.getStringExtra("SCAN_RESULT");
 
-            int displayedChild = viewFlipper.getDisplayedChild();
-            int childCount = viewFlipper.getChildCount();
+                int displayedChild = viewFlipper.getDisplayedChild();
+                int childCount = viewFlipper.getChildCount();
 
-            allSelectedOptions.set(requestCode,contents);
-            if(reviewFlag)
-            {
-                viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
-                reviewFlag = false;
-
-                initReviewPage();
-            }
-            else {
-                viewFlipper.showNext();
-                if (displayedChild == childCount - 2 ) {
-                    viewFlipper.stopFlipping();
+                allSelectedOptions.set(requestCode, contents);
+                if (reviewFlag) {
+                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount() - 1);
+                    reviewFlag = false;
 
                     initReviewPage();
-                }
-            }
+                } else {
+                    viewFlipper.showNext();
+                    if (displayedChild == childCount - 2) {
+                        viewFlipper.stopFlipping();
 
-            Toast.makeText(this, contents, Toast.LENGTH_SHORT).show();
+                        initReviewPage();
+                    }
+                }
+
+                Toast.makeText(this, contents, Toast.LENGTH_SHORT).show();
+            }
         } else if (resultCode == Activity.RESULT_CANCELED) {
             // Handle cancel
             Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show();
@@ -817,10 +817,12 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                             StringBuffer options = new StringBuffer();
                             options.append("\"user_answers\": [");
                             //loop
-                            for (int i = 0; i < allOptions.size(); i++) {
-                                options.append("\"" + allOptions.get(i) + "\"");
-                                if (i < allOptions.size() - 1)
-                                    options.append(",");
+                            if(null != allOptions) {
+                                for (int i = 0; i < allOptions.size(); i++) {
+                                    options.append("\"" + allOptions.get(i) + "\"");
+                                    if (i < allOptions.size() - 1)
+                                        options.append(",");
+                                }
                             }
                             options.append(" ],");
                             long time = System.currentTimeMillis();

@@ -5,7 +5,10 @@ import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.photosynq.app.MainActivity;
 import com.photosynq.app.db.DatabaseHelper;
@@ -103,7 +106,7 @@ public class CommonUtils {
     }
 
     // Invoke this method only on Async task. Do not invoke on UI thread. it will throw exceptions anyway ;)
-    public static boolean isConnected(Context context) {
+    public static boolean isConnected(final Context context) {
         if (isNetworkAvailable(context)) {
             try {
                 HttpURLConnection urlc = (HttpURLConnection) (new URL(Constants.SERVER_URL).openConnection());
@@ -117,6 +120,17 @@ public class CommonUtils {
             }
         } else {
             Log.d("Connectivity", "No network available!");
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(
+                    new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            Toast.makeText(context, "No network available! ", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            );
         }
         return false;
     }
