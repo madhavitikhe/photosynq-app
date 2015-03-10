@@ -177,7 +177,7 @@ public class ProjectDetailsActivity extends ActionBarActivity {
         for (int i = 0; i< questions.size(); i++) {
             Question question = questions.get(i);
             int queType = question.getQuestionType();
-            if(queType == 2) { //question type is user selected.
+            if(queType == Question.USER_DEFINED) { //question type is user selected.
                 Data data = databaseHelper.getData(userId, projectID, question.getQuestionId());
                 if(null == data.getValue() || data.getValue().isEmpty()) {
                     data.setUser_id(userId);

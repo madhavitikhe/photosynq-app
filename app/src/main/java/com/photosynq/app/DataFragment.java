@@ -186,7 +186,7 @@ public class DataFragment extends Fragment{
          * If QuestionValueType is 1 then question type is project selected,
          * else QuestionValueType is 2 then question type is user selected.
          */
-        if(questionValueType == 1 ) {
+        if(questionValueType == Question.PROJECT_DEFINED ) {
             TextView lbl = (TextView)rootView.findViewById(R.id.select_from_web_lbl);
             lbl.setTypeface(typefaceRobotoMedium);
             lbl.setVisibility(View.VISIBLE);
@@ -210,8 +210,16 @@ public class DataFragment extends Fragment{
                 View child = subRelativeRadio2.getChildAt(i);
                 child.setEnabled(false);
             }
-        }else if(questionValueType == 2 ) {
+        }else if(questionValueType == Question.USER_DEFINED ) {
             Data retrieveData = databaseHelper.getData(userId, projectId, questionId);
+            if (null == retrieveData.getValue() || retrieveData.getValue().isEmpty()) {
+                retrieveData.setUser_id(userId);
+                retrieveData.setProject_id(projectId);
+                retrieveData.setQuestion_id(question.getQuestionId());
+                retrieveData.setValue(Data.NO_VALUE);
+                retrieveData.setType(Constants.QuestionType.USER_SELECTED.getStatusCode());
+                databaseHelper.updateData(retrieveData);
+            }
             if (null != retrieveData.getType()) {
                 switch (Constants.QuestionType.valueOf(retrieveData.getType())) {
                     case AUTO_INCREMENT:
