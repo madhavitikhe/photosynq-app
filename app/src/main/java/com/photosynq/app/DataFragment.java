@@ -29,7 +29,7 @@ import com.photosynq.app.utils.PrefUtils;
 public class DataFragment extends Fragment{
 
     private DatabaseHelper databaseHelper;
-    private ViewPager viewPager;
+    private NonSwipeableViewPager viewPager;
     private String questionId;
     private String userId;
     private String projectId;
@@ -85,7 +85,7 @@ public class DataFragment extends Fragment{
                 @Override
                 public void onClick(View view) {
                     if(saveData(false)) {
-                        viewPager = (ViewPager) getActivity().findViewById(R.id.viewPager);
+                        viewPager = (NonSwipeableViewPager) getActivity().findViewById(R.id.viewPager);
                         viewPager.setCurrentItem(getItem(-1), true);
                     }
                 }
@@ -140,7 +140,7 @@ public class DataFragment extends Fragment{
             @Override
             public void onClick(View view) {
                 if(saveData(false)) {
-                    viewPager = (ViewPager) getActivity().findViewById(R.id.viewPager);
+                    viewPager = (NonSwipeableViewPager) getActivity().findViewById(R.id.viewPager);
                     viewPager.setCurrentItem(getItem(+1), true);
                 }
             }

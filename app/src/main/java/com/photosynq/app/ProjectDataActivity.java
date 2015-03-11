@@ -27,7 +27,7 @@ public class ProjectDataActivity extends ActionBarActivity {
 
     DatabaseHelper dbHelper;
     String projectId;
-    private ViewPager viewPager;
+    private NonSwipeableViewPager viewPager;
     private List<Fragment> fragments;
 
     @Override
@@ -57,7 +57,7 @@ public class ProjectDataActivity extends ActionBarActivity {
             projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
         }
 
-        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPager = (NonSwipeableViewPager) findViewById(R.id.viewPager);
 
         List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
         fragments = getFragments(questions);
