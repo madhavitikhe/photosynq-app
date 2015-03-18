@@ -293,16 +293,25 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     TextView optionTextView = new TextView(this);
                     optionTextView.setText(optionText);
                     optionTextView.setTextColor(Color.BLACK);
-                    optionTextView.setTextSize(14);
+                    optionTextView.setTextSize(40);
                     optionTextView.setSingleLine(false);
                     optionTextView.setMaxLines(Integer.MAX_VALUE);
+                    optionTextView.setGravity(Gravity.CENTER);
+                    optionTextView.setBackgroundResource(R.drawable.actionbar_bg);
+                    optionTextView.setTextColor(getResources().getColor(R.color.white));
                     optionTextView.setTypeface(CommonUtils.getInstance(this).getFontRobotoRegular());
 
-                    ImageView imageView = new ImageView(this);
-                    imageView.setId(i);
-                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    imageView.setTag(queIndex);
-                    imageView.setOnClickListener(new View.OnClickListener() {
+                    if(optionText.length() < 3){
+                        optionTextView.setTextSize(100);
+                    }
+
+//                    ImageView imageView = new ImageView(this);
+//                    imageView.setId(i);
+//                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+//                    imageView.setTag(queIndex);
+                    optionTextView.setId(i);
+                    optionTextView.setTag(queIndex);
+                    optionTextView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 
@@ -329,10 +338,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                         }
                     });
 
-                    Picasso.with(this)
-                            .load(R.drawable.ic_launcher)
-                            .error(R.drawable.ic_launcher)
-                            .into(imageView);
+//                    Picasso.with(this)
+//                            .load(R.drawable.ic_launcher)
+//                            .error(R.drawable.ic_launcher)
+//                            .into(imageView);
 
                     LinearLayout cellRelativeLayout = new LinearLayout(this);
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -348,12 +357,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                         rowLinearLayout.setLayoutParams(params1);
 
 
-                        optionTextView.setId(1);
+//                        optionTextView.setId(1);
                         //??imageVParams.addRule(RelativeLayout.BELOW, optionTextView.getId());
                         imageVParams.setMargins(0, 10, 10, 10);
 
-                        cellRelativeLayout.addView(optionTextView, optionTVParams);
-                        cellRelativeLayout.addView(imageView, imageVParams);
+
+                        cellRelativeLayout.addView(optionTextView, imageVParams);
+//                        cellRelativeLayout.addView(imageView, imageVParams);
 
                         rowLinearLayout.addView(cellRelativeLayout, linearlayoutweight);
                         if(i == question.getOptions().size() - 1){
@@ -364,12 +374,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     }
                     else
                     {
-                        optionTextView.setId(1555555);
+//                        optionTextView.setId(1555555);
                         //??imageVParams.addRule(RelativeLayout.BELOW, optionTextView.getId());
                         imageVParams.setMargins(10, 10, 10, 0);
 
-                        cellRelativeLayout.addView(optionTextView, optionTVParams);
-                        cellRelativeLayout.addView(imageView, imageVParams);
+
+                        cellRelativeLayout.addView(optionTextView, imageVParams);
+//                        cellRelativeLayout.addView(imageView, imageVParams);
 
                         rowLinearLayout.addView(cellRelativeLayout, linearlayoutweight);
 
