@@ -119,7 +119,7 @@ public class CommonUtils {
                 Log.e("Connectivity", "Error checking internet connection", e);
             }
         } else {
-            Log.d("Connectivity", "No network available!");
+            Log.d("Connectivity", "You are not connect to a network.");
             Handler handler = new Handler(Looper.getMainLooper());
             handler.post(
                     new Runnable()
@@ -127,7 +127,10 @@ public class CommonUtils {
                         @Override
                         public void run()
                         {
-                            Toast.makeText(context, "No network available! ", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "You are not connect to a network.\n" +
+                                    "\n" +
+                                    "Check if wifi is turned on \n" +
+                                    "and if networks are available in your system settings screen. ", Toast.LENGTH_LONG).show();
                         }
                     }
             );
