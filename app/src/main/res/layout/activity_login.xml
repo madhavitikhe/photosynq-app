@@ -18,26 +18,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:layout_marginTop="50dp"
+        android:layout_margin="15dp"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/txtAppIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="ethernet"
-            android:textColor="@color/white"
-            android:textSize="@dimen/activity_welcome_app_icon_size" />
-
-        <TextView
+        <ImageView
             android:id="@+id/txtAppName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="PHOTOSYNQ"
-            android:textColor="@color/white"
-            android:textSize="@dimen/activity_welcome_app_name_size" />
+            android:src="@drawable/logotexticon"/>
 
     </LinearLayout>
 

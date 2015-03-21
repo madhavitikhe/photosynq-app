@@ -180,10 +180,10 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
         Typeface uifontFace = CommonUtils.getInstance(this).getFontUiFontSolid();
         Typeface openSansLightFace = CommonUtils.getInstance(this).getFontOpenSansLight();
 
-        TextView tvIcon = (TextView) findViewById(R.id.txtAppIcon);
-        tvIcon.setTypeface(uifontFace);
-        TextView tvAppName = (TextView) findViewById(R.id.txtAppName);
-        tvAppName.setTypeface(openSansLightFace);
+//        TextView tvIcon = (TextView) findViewById(R.id.txtAppIcon);
+//        tvIcon.setTypeface(uifontFace);
+//        TextView tvAppName = (TextView) findViewById(R.id.txtAppName);
+//        tvAppName.setTypeface(openSansLightFace);
     }
 
 
