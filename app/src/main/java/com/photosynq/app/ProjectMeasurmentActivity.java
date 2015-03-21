@@ -875,13 +875,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     // save the connected device's name
                     mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
                     Toast.makeText(getApplicationContext(), "Connected to "
-                            + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                            + mConnectedDeviceName, Toast.LENGTH_LONG).show();
 
                     break;
                 case Constants.MESSAGE_TOAST:
                     if(mIsCancelMeasureBtnClicked == false){
                         Toast.makeText(ProjectMeasurmentActivity.this, msg.getData().getString(Constants.TOAST),
-                                Toast.LENGTH_SHORT).show();
+                                Toast.LENGTH_LONG).show();
                     }
                     mIsMeasureBtnClicked = false;
                     mIsCancelMeasureBtnClicked = false;
@@ -894,7 +894,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     break;
                 case Constants.MESSAGE_STOP:
                     Toast.makeText(getApplicationContext(), msg.getData().getString(Constants.TOAST),
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_LONG).show();
                     mBluetoothService.stop();
                     break;
             }
