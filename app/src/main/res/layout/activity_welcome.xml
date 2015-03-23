@@ -14,7 +14,7 @@
     <LinearLayout
         android:id="@+id/logolayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:gravity="center_horizontal"
         android:layout_margin="15dp"
         android:orientation="horizontal">
