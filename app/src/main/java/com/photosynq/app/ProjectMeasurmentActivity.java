@@ -293,17 +293,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     TextView optionTextView = new TextView(this);
                     optionTextView.setText(optionText);
                     optionTextView.setTextColor(Color.BLACK);
-                    optionTextView.setTextSize(40);
+                    optionTextView.setTextSize(30);
                     optionTextView.setSingleLine(false);
                     optionTextView.setMaxLines(Integer.MAX_VALUE);
                     optionTextView.setGravity(Gravity.CENTER);
                     optionTextView.setBackgroundResource(R.drawable.actionbar_bg);
                     optionTextView.setTextColor(getResources().getColor(R.color.white));
                     optionTextView.setTypeface(CommonUtils.getInstance(this).getFontRobotoRegular());
-
-                    if(optionText.length() < 3){
-                        optionTextView.setTextSize(100);
-                    }
 
 //                    ImageView imageView = new ImageView(this);
 //                    imageView.setId(i);
