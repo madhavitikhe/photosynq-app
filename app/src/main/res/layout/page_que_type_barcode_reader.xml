@@ -14,6 +14,23 @@
 
     </LinearLayout>
 
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_barcode_scan"
+        android:gravity="center" >
+
+        <CheckBox
+            android:id="@+id/rememberAnswerCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Remember this answer"
+            android:textColor="#000000"
+            android:textSize="17sp"/>
+    </RelativeLayout>
+
     <Button
         android:id="@+id/btn_barcode_scan"
         android:layout_alignParentBottom="true"

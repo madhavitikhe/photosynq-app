@@ -1,13 +1,14 @@
 package com.photosynq.app;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,12 +24,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -41,12 +40,12 @@ import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.Question;
+import com.photosynq.app.model.RememberAnswers;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -78,6 +77,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
     private boolean scanMode = false;
     private int autoIncQueCount = 0;
     private int fixedValueQueCount = 0;
+    private int rememberQuestionCount = 0;
+    private String userId;
+    private int screenWidth;
+    private int settingBtnFlag = 0;
+    public static String IS_NOT_REMEMBER = "0";
+    public static String IS_REMEMBER = "1";
+    int noOfRememberedQuestion = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +100,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        int screenWidth = size.x;
+        screenWidth = size.x;
 
         dbHelper = DatabaseHelper.getHelper(this);
 
@@ -123,8 +129,49 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
         allSelectedOptions = new ArrayList<String>();
 
-        String userId = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        createDynamicViewForQuestions();
+        addReviewPage();
+
+    }
+
+    public void viewFlipperShowNext(int queIndex){
+        int childCount = viewFlipper.getChildCount();
+        final String userId = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
         List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
+        if(queIndex == -1){
+            viewFlipper.setDisplayedChild(0);
+
+        }else {
+            viewFlipper.showNext();
+        }
+        for(int i=queIndex+1; i<questions.size(); i++) {
+
+            final Question question = questions.get(i);
+            RememberAnswers rememberedAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
+            if (rememberedAnswers.getIs_remember() !=null && rememberedAnswers.getIs_remember().equals(IS_REMEMBER)) {
+                if(reviewFlag == false) {
+
+                    int displayedChild = viewFlipper.getDisplayedChild();
+                    if (displayedChild == childCount - 1) {
+//                        viewFlipper.stopFlipping();
+//                        initReviewPage();
+                        break;
+                    }
+
+                    viewFlipper.showNext();
+                }
+            }else{
+                break;
+            }
+        }
+    }
+
+    public void createDynamicViewForQuestions(){
+
+        viewFlipper.removeAllViews();
+        final String userId = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
+
         for(int queIndex = 0; queIndex < questions.size(); queIndex++){
             scanMode = false;
             final Question question = questions.get(queIndex);
@@ -132,7 +179,17 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
             int queType = question.getQuestionType();
             String queId = question.getQuestionId();
+
+
+            RememberAnswers rememberedAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
+            if(rememberedAnswers.getIs_remember() != null && rememberedAnswers.getIs_remember().equals(IS_REMEMBER))
+            {
+                noOfRememberedQuestion = noOfRememberedQuestion + 1;
+            }
+
             if(Question.USER_DEFINED == queType){ //If question is user defined, then show the screen as per data type
+                settingBtnFlag = 1;
+                invalidateOptionsMenu();
                 Data data = dbHelper.getData(userId, projectId, queId);
                 String dataType = data.getType();
                 String dataValue = data.getValue();
@@ -154,6 +211,21 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     questionText.setBackgroundResource(R.drawable.actionbar_bg);
                     questionText.setPadding(30, 0, 30, 30);
 
+                    EditText userEnteredAnswer = (EditText) viewUserSelected.findViewById(R.id.et_user_answer);
+                    final CheckBox userDefinedRememberCB = (CheckBox) viewUserSelected.findViewById(R.id.rememberAnswerCheckBox);
+
+                    RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
+                    if(rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(IS_REMEMBER))
+                    {
+                        userDefinedRememberCB.setChecked(true);
+                        userEnteredAnswer.setText(rememberAnswers.getSelected_option_text().toString());
+                    }
+                    else
+                    {
+                        userDefinedRememberCB.setChecked(false);
+                    }
+
+                    final int queIndexFinal = queIndex;
                     Button showNext = (Button) viewUserSelected.findViewById(R.id.btn_next);
                     showNext.setTag(queIndex);
                     showNext.setOnClickListener(new View.OnClickListener() {
@@ -177,26 +249,52 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                             else
                             {
                                 allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
+
+                                List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
+                                final Question question = questions.get(Integer.parseInt(v.getTag().toString()));
+                                RememberAnswers rememberAnswers = new RememberAnswers();
+                                rememberAnswers.setUser_id(userId);
+                                rememberAnswers.setProject_id(projectId);
+                                rememberAnswers.setQuestion_id(question.getQuestionId());
+
                                 if(reviewFlag)
                                 {
-//
                                     viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
                                     reviewFlag = false;
 
+                                    if(userDefinedRememberCB.isChecked()){
+                                        rememberAnswers.setSelected_option_text(str);
+                                        rememberAnswers.setIs_remember(IS_REMEMBER);
+                                    }else{
+                                        rememberAnswers.setSelected_option_text(str);
+                                        rememberAnswers.setIs_remember(IS_NOT_REMEMBER);
+                                    }
+                                    dbHelper.updateRememberAnswers(rememberAnswers);
+
                                     initReviewPage();
                                 }
-                                else {
-
-                                    viewFlipper.showNext();
+                                else
+                                {
+                                    if(userDefinedRememberCB.isChecked()){
+                                        rememberAnswers.setSelected_option_text(str);
+                                        rememberAnswers.setIs_remember(IS_REMEMBER);
+                                        rememberQuestionCount++;
+                                    }else{
+                                        rememberAnswers.setSelected_option_text(str);
+                                        rememberAnswers.setIs_remember(IS_NOT_REMEMBER);
+                                    }
+                                    dbHelper.updateRememberAnswers(rememberAnswers);
+                                    viewFlipperShowNext(queIndexFinal);
+//                                    viewFlipper.showNext();
                                     if (displayedChild == childCount - 2 ) {
                                         viewFlipper.stopFlipping();
-
                                         initReviewPage();
                                     }
                                 }
 
                                 userEnteredAnswer.setText("");
                             }
+
                         }
                     });
 
@@ -219,7 +317,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                             viewFlipper.setDisplayedChild(viewFlipper.getChildCount() - 1);
                             reviewFlag = false;
                         } else {
-                            viewFlipper.showNext();
+                            viewFlipperShowNext(queIndex);
+//                            viewFlipper.showNext();
                         }
                     }
                     PrefUtils.saveToPrefs(this, PrefUtils.PREFS_QUESTION_INDEX, "0");
@@ -237,10 +336,38 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     questionText.setBackgroundResource(R.drawable.actionbar_bg);
                     questionText.setPadding(30, 0, 30, 30);
 
+                    final CheckBox scanCodeRememberCB = (CheckBox) viewScanCode.findViewById(R.id.rememberAnswerCheckBox);
+
+                    RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
+                    if(rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(IS_REMEMBER))
+                    {
+                        scanCodeRememberCB.setChecked(true);
+                    }
+                    else
+                    {
+                        scanCodeRememberCB.setChecked(false);
+                    }
+
                     View btnScan = viewScanCode.findViewById(R.id.btn_barcode_scan);
                     btnScan.setTag(queIndex);
                     btnScan.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
+                            List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
+                            final Question question = questions.get(Integer.parseInt(v.getTag().toString()));
+                            RememberAnswers rememberAnswers = new RememberAnswers();
+                            rememberAnswers.setUser_id(userId);
+                            rememberAnswers.setProject_id(projectId);
+                            rememberAnswers.setQuestion_id(question.getQuestionId());
+
+                            if(scanCodeRememberCB.isChecked()){
+                                rememberAnswers.setSelected_option_text("");
+                                rememberAnswers.setIs_remember(IS_REMEMBER);
+                                rememberQuestionCount++;
+                            }else{
+                                rememberAnswers.setSelected_option_text("");
+                                rememberAnswers.setIs_remember(IS_NOT_REMEMBER);
+                            }
+                            dbHelper.updateRememberAnswers(rememberAnswers);
                             scanMode = true;
                             Intent intent = new Intent(ProjectMeasurmentActivity.this, CaptureActivity.class);
                             intent.setAction("com.google.zxing.client.android.SCAN");
@@ -254,6 +381,9 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 }
 
             }else if(Question.PROJECT_DEFINED == queType){
+
+                settingBtnFlag = 2;
+                invalidateOptionsMenu();
 
                 LinearLayout mainLinearLayout = new LinearLayout(this);
                 mainLinearLayout.setBackgroundColor(Color.WHITE);
@@ -287,6 +417,26 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                 LinearLayout rowLinearLayout = new LinearLayout(this);
 
+                RelativeLayout rememberCBLayout = new RelativeLayout(this);
+                LinearLayout.LayoutParams paramsCB = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                paramsCB.gravity = Gravity.BOTTOM;
+                rememberCBLayout.setLayoutParams(paramsCB);
+
+                final CheckBox rememberAnswersCB = new CheckBox(this);
+                rememberAnswersCB.setText("Remember this option");
+                rememberCBLayout.addView(rememberAnswersCB);
+                mainLinearLayout.addView(rememberCBLayout);
+
+                RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
+                if(rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(IS_REMEMBER))
+                {
+                    rememberAnswersCB.setChecked(true);
+                }
+                else
+                {
+                    rememberAnswersCB.setChecked(false);
+                }
+
                 for (int i = 0; i < question.getOptions().size(); i++)
                 {
                     String optionText = question.getOptions().get(i);
@@ -305,6 +455,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                         optionTextView.setTextSize(100);
                     }
 
+                    final int queIndexfinal = queIndex;
 //                    ImageView imageView = new ImageView(this);
 //                    imageView.setId(i);
 //                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -315,25 +466,51 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                         @Override
                         public void onClick(View v) {
 
-                        int displayedChild = viewFlipper.getDisplayedChild();
-                        int childCount = viewFlipper.getChildCount();
+                            int displayedChild = viewFlipper.getDisplayedChild();
+                            int childCount = viewFlipper.getChildCount();
 
-                        allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
-                        if(reviewFlag)
-                        {
-                            viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
-                            reviewFlag = false;
+                            allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+                            List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
+                            final Question question = questions.get(Integer.parseInt(v.getTag().toString()));
+                            RememberAnswers rememberAnswers = new RememberAnswers();
+                            rememberAnswers.setUser_id(userId);
+                            rememberAnswers.setProject_id(projectId);
+                            rememberAnswers.setQuestion_id(question.getQuestionId());
+                            if(reviewFlag)
+                            {
+                                viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                                reviewFlag = false;
 
-                            initReviewPage();
-                        }
-                        else {
-                            viewFlipper.showNext();
-                            if (displayedChild == childCount - 2 ) {
-                                viewFlipper.stopFlipping();
+                                if(rememberAnswersCB.isChecked()){
+                                    rememberAnswers.setSelected_option_text(question.getOptions().get(v.getId()));
+                                    rememberAnswers.setIs_remember(IS_REMEMBER);
+                                }else{
+                                    rememberAnswers.setSelected_option_text(question.getOptions().get(v.getId()));
+                                    rememberAnswers.setIs_remember(IS_NOT_REMEMBER);
+                                }
+                                dbHelper.updateRememberAnswers(rememberAnswers);
 
                                 initReviewPage();
                             }
-                        }
+                            else
+                            {
+                                if(rememberAnswersCB.isChecked()){
+                                    rememberAnswers.setSelected_option_text(question.getOptions().get(v.getId()));
+                                    rememberAnswers.setIs_remember(IS_REMEMBER);
+                                    rememberQuestionCount++;
+                                }else{
+                                    rememberAnswers.setSelected_option_text(question.getOptions().get(v.getId()));
+                                    rememberAnswers.setIs_remember(IS_NOT_REMEMBER);
+                                }
+                                dbHelper.updateRememberAnswers(rememberAnswers);
+                                viewFlipperShowNext(queIndexfinal);
+//                                viewFlipper.showNext();
+                                if (displayedChild == childCount - 2 ) {
+                                    viewFlipper.stopFlipping();
+
+                                    initReviewPage();
+                                }
+                            }
 
                         }
                     });
@@ -396,11 +573,22 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
             }
         }
 
-        addReviewPage();
+        if (questions.size() == noOfRememberedQuestion){
 
+            viewFlipperShowNext(0);
+
+        }else{
+
+            viewFlipperShowNext(-1);
+        }
     }
 
     private void initReviewPage() {
+
+        if(findViewById(9595) == null){
+            //addReviewPage();
+            return;
+        }
         View measurementView = findViewById(9595);
         LinearLayout liLayout = (LinearLayout) measurementView.findViewById(R.id.ll_options);
         liLayout.removeAllViews();
@@ -415,8 +603,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
             View reviewItem = getLayoutInflater().inflate(R.layout.review_list_item, null);
             liLayout.addView(reviewItem);
 
+            LinearLayout reviewLL = (LinearLayout) reviewItem.findViewById(R.id.reviewLL);
             TextView tvQuestion = (TextView) reviewItem.findViewById(R.id.tv_question_text);
             TextView tvOption = (TextView) reviewItem.findViewById(R.id.tv_option_text);
+            TextView tvRemembered = (TextView) reviewItem.findViewById(R.id.remembered_text);
             tvQuestion.setTextSize(18);
             tvQuestion.setTypeface(CommonUtils.getInstance(this).getFontRobotoMedium());
             tvOption.setTextSize(16);
@@ -427,11 +617,30 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
             String data_value = new String("");
 
             tvQuestion.setText(question.getQuestionText());
+            String userId = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+
+            Data reviewData = dbHelper.getData(userId, projectId, question.getQuestionId());
+            RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
+            if(rememberAnswers.getIs_remember().equals(IS_REMEMBER)){
+                tvRemembered.setText("remembered");
+                if(reviewData.getType().equals(Data.USER_SELECTED)){
+                    reviewLL.setBackgroundColor(getResources().getColor(R.color.orange));
+                }else if(reviewData.getType().equals(Data.SCAN_CODE)){
+                    reviewLL.setBackgroundColor(getResources().getColor(R.color.yellow));
+                }else
+                    reviewLL.setBackgroundColor(getResources().getColor(R.color.gray));
+            }else{
+                if(reviewData.getType().equals(Data.AUTO_INCREMENT)){
+                    reviewLL.setBackgroundColor(getResources().getColor(R.color.blue_light));
+                }else {
+                    tvRemembered.setText("");
+                    reviewLL.setBackgroundColor(getResources().getColor(R.color.white));
+                }
+            }
 
             //if selected option type is User_Selected, Fixed_Value, Auto_Increment, Scan_Code
             if(Question.USER_DEFINED == question.getQuestionType()){ //If question is user defined, then show the screen as per data type
 
-                String userId = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
                 Data data = dbHelper.getData(userId, projectId, question.getQuestionId());
 
                 //Question and Option shown only if selected option type is 'Auto_Increment'
@@ -455,6 +664,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 }
                 else  //Question and Option shown except 'Auto_Increment' option type.(for User_Selected, Scan_Code)
                 {
+                    RememberAnswers rememberedAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
                     data_value = allSelectedOptions.get(queIndex);
                     tvOption.setText(data_value);
 
@@ -469,7 +679,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                             addReviewPage();
                         }
                     });
-//
                 }
 
             }
@@ -484,7 +693,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                         reviewFlag = true;
                         View child = viewFlipper.findViewWithTag(view.getTag());
                         viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(child));
-
                         viewFlipper.removeViewAt(viewFlipper.getChildCount()-1); //0 based index
                         addReviewPage();
                     }
@@ -509,7 +717,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
         List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
         int queCount = questions.size();
-        if(fixedValueQueCount == queCount || autoIncQueCount == queCount || fixedValueQueCount+autoIncQueCount == queCount){
+        if(fixedValueQueCount == queCount || autoIncQueCount == queCount || fixedValueQueCount+autoIncQueCount == queCount || noOfRememberedQuestion == queCount){
             initReviewPage();
         }else {
             refreshReviewPage(reviewPage);
@@ -642,12 +850,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                     initReviewPage();
                 } else {
-                    viewFlipper.showNext();
-                    if (displayedChild == childCount - 2) {
-                        viewFlipper.stopFlipping();
-
-                        initReviewPage();
-                    }
+                    viewFlipperShowNext(requestCode);
+//                    viewFlipper.showNext();
+//                    if (displayedChild == childCount - 2) {
+//                        viewFlipper.stopFlipping();
+//
+//                        initReviewPage();
+//                    }
                 }
 
                 Toast.makeText(this, contents, Toast.LENGTH_SHORT).show();
@@ -661,7 +870,9 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_display_results, menu);
+        if(settingBtnFlag == 1) {
+            getMenuInflater().inflate(R.menu.menu_project_measurment, menu);
+        }
         return true;
     }
 
@@ -671,6 +882,92 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+        List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
+            final Question question = questions.get(viewFlipper.getDisplayedChild());
+
+            int queType = question.getQuestionType();
+            String queId = question.getQuestionId();
+            userId = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+            final Data retrieveData = dbHelper.getData(userId, projectId, queId);
+            retrieveData.setUser_id(userId);
+            retrieveData.setProject_id(projectId);
+            retrieveData.setQuestion_id(question.getQuestionId());
+            retrieveData.setValue(Data.NO_VALUE);
+
+            switch (item.getItemId()) {
+                case R.id.defaultTextMenuItem:
+                    retrieveData.setType(Constants.QuestionType.USER_SELECTED.getStatusCode());
+                    dbHelper.updateData(retrieveData);
+
+                    int currentViewIndex = viewFlipper.getDisplayedChild();
+                    createDynamicViewForQuestions();
+                    viewFlipper.setDisplayedChild(currentViewIndex);
+                    return true;
+                case R.id.autoIncMenuItem:
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                    alertDialog.setTitle("Enter Auto Increment Values");
+                    alertDialog.setMessage("");
+                    final EditText from = new EditText(this);
+                    final EditText to = new EditText(this);
+                    final EditText repeat = new EditText(this);
+                    from.setHint("From");
+                    to.setHint("To");
+                    repeat.setHint("Repeat");
+
+                    from.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                    to.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                    repeat.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+
+                    LinearLayout ll = new LinearLayout(this);
+                    ll.setOrientation(LinearLayout.VERTICAL);
+                    ll.addView(from);
+                    ll.addView(to);
+                    ll.addView(repeat);
+                    alertDialog.setView(ll);
+
+                    alertDialog.setCancelable(false);
+                    alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            if (from.getText().toString().isEmpty()) {
+                                from.setError("Please enter value");
+//                                retVal = false;
+                            } else if (to.getText().toString().isEmpty()) {
+                                to.setError("Please enter value");
+//                                retVal = false;
+                            } else if (repeat.getText().toString().isEmpty()) {
+                                repeat.setError("Please enter value");
+//                                retVal = false;
+                            }else
+                            {
+                                retrieveData.setType(Constants.QuestionType.AUTO_INCREMENT.getStatusCode());
+                                retrieveData.setValue(from.getText().toString() + "," + to.getText().toString() + "," + repeat.getText().toString());
+                                dbHelper.updateData(retrieveData);
+                            }
+                        }
+                    });
+
+                    alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // Canceled.
+                        }
+                    });
+
+                    AlertDialog alertd = alertDialog.create();
+                    alertd.show();
+                    return true;
+                case R.id.barCodeOptionMenuItem:
+                    retrieveData.setType(Constants.QuestionType.SCAN_CODE.getStatusCode());
+                    dbHelper.updateData(retrieveData);
+
+                    int currentViewIndexBarcode = viewFlipper.getDisplayedChild();
+                    createDynamicViewForQuestions();
+                    viewFlipper.setDisplayedChild(currentViewIndexBarcode);
+                    return true;
+                default:
+            }
 
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
@@ -875,13 +1172,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     // save the connected device's name
                     mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
                     Toast.makeText(getApplicationContext(), "Connected to "
-                            + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                            + mConnectedDeviceName, Toast.LENGTH_LONG).show();
 
                     break;
                 case Constants.MESSAGE_TOAST:
                     if(mIsCancelMeasureBtnClicked == false){
                         Toast.makeText(ProjectMeasurmentActivity.this, msg.getData().getString(Constants.TOAST),
-                                Toast.LENGTH_SHORT).show();
+                                Toast.LENGTH_LONG).show();
                     }
                     mIsMeasureBtnClicked = false;
                     mIsCancelMeasureBtnClicked = false;
@@ -894,7 +1191,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     break;
                 case Constants.MESSAGE_STOP:
                     Toast.makeText(getApplicationContext(), msg.getData().getString(Constants.TOAST),
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_LONG).show();
                     mBluetoothService.stop();
                     break;
             }

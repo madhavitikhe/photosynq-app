@@ -10,7 +10,7 @@
     <color name="white">#ffffff</color>
     <color name="gray_light">#cacecf</color>
     <!--<color name="gray_line">#CCC</color>	-->
-    <!--<color name="black">#000000</color>-->
+    <color name="black">#000000</color>
     <!--<color name="background">#EEEEEE</color>	-->
     <!---->
     <!--<color name="backgroud_user">#161F29</color>	-->
@@ -22,7 +22,7 @@
     <!--<color name="navigation_items">#ffffff</color>		-->
     <!--<color name="gray_navegation">#ffffff</color>		-->
 
-    <color name="blue_light">#33B5E5</color>
+    <color name="blue_light">#ADDFFF</color>
     <!--<color name="purple_light">#AA66CC</color>		-->
     <color name="green">#5ec58b</color>
     <color name="green_light">#99CC00</color>
@@ -37,6 +37,8 @@
     <color name="list_divider">#e4e4e4</color>
     <color name="list_item_next">#aeaeae</color>
     <color name="gray">#d8d6d6</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="orange">#F3E5AB</color>
     <!--<color name="orange_light">#FFBB33</color>		-->
     <!--<color name="red_light">#FF4444</color>		-->
     <!---->

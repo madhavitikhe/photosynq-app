@@ -17,6 +17,7 @@ import com.photosynq.app.model.ProjectLead;
 import com.photosynq.app.model.ProjectResult;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.Question;
+import com.photosynq.app.model.RememberAnswers;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.PrefUtils;
 
@@ -38,6 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String TABLE_SETTINGS = "settings";
 	private static final String TABLE_DATA = "data";
     private static final String TABLE_PROJECT_LEAD = "project_lead";
+    private static final String TABLE_REMEMBER_ANSWERS = "remember_answers";
 
 	// Common column names
 	public static final String C_RECORD_HASH = "record_hash";
@@ -100,6 +102,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String C_TYPE = "type";
 	private static final String C_VALUES = "value";
 
+    // Remember_Answers table colimn names.
+    private static final String C_IS_REMEMBER = "is_remember";
+    private static final String C_SELECTED_OPTION_TEXT = "selected_option_text";
+
+
     private Context context;
 
 	// Reaserch Project table create statement
@@ -156,6 +163,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String CREATE_TABLE_DATA = "CREATE TABLE "
 			+ TABLE_DATA + "(" + C_USER_ID + " TEXT," + C_PROJECT_ID + " TEXT,"
 			+ C_QUESTION_ID + " TEXT," + C_TYPE + " TEXT," + C_VALUES + " TEXT )";
+
+    // Remember_Answer table create statement
+    private static final String CREATE_TABLE_REMEMBER_ANSWERS = "CREATE TABLE "
+            + TABLE_REMEMBER_ANSWERS + "(" + C_USER_ID + " TEXT," + C_PROJECT_ID + " TEXT,"
+            + C_QUESTION_ID + " TEXT," + C_SELECTED_OPTION_TEXT + " TEXT," + C_IS_REMEMBER + " TEXT )";
 
 	private DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION); this.context =context;}
@@ -225,6 +237,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(CREATE_TABLE_SETTINGS);
 		db.execSQL(CREATE_TABLE_DATA);
         db.execSQL(CREATE_TABLE_PROJECT_LEAD);
+        db.execSQL(CREATE_TABLE_REMEMBER_ANSWERS);
 	}
 
 	@Override
@@ -239,6 +252,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SETTINGS);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATA);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECT_LEAD);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REMEMBER_ANSWERS);
 		// create new tables;
 		onCreate(db);
 
@@ -1301,6 +1315,82 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return retVal;
 	}
 
+    public boolean createRememberAnswers(RememberAnswers rememberAnswers) {
+        boolean retVal = false;
+        try {
+            SQLiteDatabase db = openWriteDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put(C_USER_ID, rememberAnswers.getUser_id());
+            values.put(C_PROJECT_ID, rememberAnswers.getProject_id());
+            values.put(C_QUESTION_ID, rememberAnswers.getQuestion_id());
+            values.put(C_SELECTED_OPTION_TEXT, rememberAnswers.getSelected_option_text());
+            values.put(C_IS_REMEMBER, rememberAnswers.getIs_remember());
+
+            // Inserting Row
+            long row_id = db.insert(TABLE_REMEMBER_ANSWERS, null, values);
+            if (row_id >= 0) {
+                retVal = true;
+            }
+        } catch (SQLiteConstraintException contraintException) {
+            // If data already present then handle the case here.
+        } catch (SQLException sqliteException) {
+        }
+        closeWriteDatabase();
+        return retVal;
+    }
+
+    // Getting single parameters of remember answer
+    public RememberAnswers getRememberAnswers(String userID, String projectID, String questionID ) {
+        SQLiteDatabase db = openReadDatabase();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_REMEMBER_ANSWERS + " WHERE "
+                + C_USER_ID + " = '" + userID + "' and " + C_PROJECT_ID + " = '" + projectID + "' and " + C_QUESTION_ID + " = '" + questionID + "'";
+
+        System.out.println(selectQuery);
+        Log.e("DATABASE_HELPER_getRememberAnswers", selectQuery);
+        RememberAnswers rememberAnswers = new RememberAnswers();
+        rememberAnswers.setUser_id(userID);
+        Cursor c = db.rawQuery(selectQuery, null);
+        System.out.println("############"+c.getCount());
+        if (c.moveToFirst()) {
+
+            rememberAnswers.setUser_id(c.getString(c.getColumnIndex(C_USER_ID)));
+            rememberAnswers.setProject_id(c.getString(c.getColumnIndex(C_PROJECT_ID)));
+            rememberAnswers.setQuestion_id(c.getString(c.getColumnIndex(C_QUESTION_ID)));
+            rememberAnswers.setSelected_option_text(c.getString(c.getColumnIndex(C_SELECTED_OPTION_TEXT)));
+            rememberAnswers.setIs_remember(c.getString(c.getColumnIndex(C_IS_REMEMBER)));
+        }
+        c.close();
+        closeReadDatabase();
+        return rememberAnswers;
+    }
+
+    // Updating single remember answer
+    public boolean updateRememberAnswers(RememberAnswers rememberAnswers) {
+        boolean retVal = false;
+        SQLiteDatabase db = openWriteDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(C_USER_ID, rememberAnswers.getUser_id());
+        values.put(C_PROJECT_ID, rememberAnswers.getProject_id());
+        values.put(C_QUESTION_ID, rememberAnswers.getQuestion_id());
+        values.put(C_SELECTED_OPTION_TEXT, rememberAnswers.getSelected_option_text());
+        values.put(C_IS_REMEMBER, rememberAnswers.getIs_remember());
+
+        // updating row
+        int rowUpdated = db.update(TABLE_REMEMBER_ANSWERS, values, C_USER_ID + " = ? and " + C_PROJECT_ID + " = ? and " + C_QUESTION_ID + " = ?",
+                new String[] { String.valueOf(rememberAnswers.getUser_id()),String.valueOf(rememberAnswers.getProject_id()),String.valueOf(rememberAnswers.getQuestion_id()) });
+
+        if (rowUpdated <= 0) {
+            retVal = createRememberAnswers(rememberAnswers);
+        }else{
+            retVal = true;
+        }
+        closeWriteDatabase();
+        return retVal;
+    }
+
     public void deleteAllData(){
         SQLiteDatabase db = openWriteDatabase();
         db.delete(TABLE_OPTION,null,null);
@@ -1311,6 +1401,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(TABLE_RESEARCH_PROJECT,null,null);
         db.delete(TABLE_SETTINGS,null,null);
         db.delete(TABLE_PROJECT_LEAD,null,null);
+        db.delete(TABLE_REMEMBER_ANSWERS,null,null);
         closeWriteDatabase();
     }
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/reviewLL"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
@@ -8,10 +9,17 @@
     android:descendantFocusability="afterDescendants">
 
     <TextView
+        android:id="@+id/remembered_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_gravity="right"/>
+
+    <TextView
         android:id="@+id/tv_question_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="15dp"
         android:textColor="@color/textPrimary"
         android:textSize="16sp"
