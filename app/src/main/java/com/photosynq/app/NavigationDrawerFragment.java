@@ -231,7 +231,7 @@ public class NavigationDrawerFragment extends Fragment {
                 }
 
                 if(appSettings.getConnectionId() == null){
-                    ((MainActivity) getActivity()).setDeviceConnected("Device not connected", "");
+                    ((MainActivity) getActivity()).setDeviceConnected("Click here to connect device", "");
                 }
 
 
