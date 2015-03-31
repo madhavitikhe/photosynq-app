@@ -52,7 +52,8 @@ jQuery(document).ready(function(){
 
 				var simpleHTML ='';
 				var tabledata = '<tr><td colspan="2"><em>'+protocolname+'</em></td></tr>';
-			
+
+			    var macro = false;
 				if(macrcoID){
 					var fn = window['macro_'+macrcoID];
 					if (typeof fn === "function"){
