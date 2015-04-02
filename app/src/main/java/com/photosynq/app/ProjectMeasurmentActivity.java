@@ -65,10 +65,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
     private static final int REQUEST_ENABLE_BT = 2;
 
     private DatabaseHelper dbHelper;
-    private ViewFlipper viewFlipper;
-    private ArrayList<String> allSelectedOptions;
+    private QuestionViewFlipper viewFlipper;
+
     private ArrayList<String> allOptions;
-    private boolean reviewFlag = false;
+    public boolean reviewFlag = false;
     private TextView mtvStatusMessage;
 
     Button btnTakeMeasurement;
@@ -123,9 +123,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
             }
         }
 
-        viewFlipper = (ViewFlipper) findViewById(R.id.viewflipper);
-
-        allSelectedOptions = new ArrayList<String>();
+        viewFlipper = (QuestionViewFlipper) findViewById(R.id.viewflipper);
+        viewFlipper.setTag(projectId);
 
         createDynamicViewForQuestions();
         addReviewPage();
@@ -140,7 +139,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         for(int queIndex = 0; queIndex < questions.size(); queIndex++){
             scanMode = false;
             final Question question = questions.get(queIndex);
-            allSelectedOptions.add(queIndex, "");
 
             int queType = question.getQuestionType();
             String queId = question.getQuestionId();
@@ -156,6 +154,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 Data data = dbHelper.getData(userId, projectId, queId);
                 String dataType = data.getType();
                 String dataValue = data.getValue();
+
+                //TODO validate if following block is necessary - Shekhar
                 if( null == dataType || null == dataValue)
                 {
                     //if datatype or datavalue is not set in data
@@ -177,6 +177,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     final CheckBox userDefinedRememberCB = (CheckBox) viewUserSelected.findViewById(R.id.rememberAnswerCheckBox);
 
                     RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
+                    //TODO  Should use boolean check instead of String, wrong convention for method name - Shekhar
+                    //TODO  Move constant declaration in Constants class. Declare at one place use it everywhere - Shekhar
                     if(rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(IS_REMEMBER))
                     {
                         userDefinedRememberCB.setChecked(true);
@@ -208,7 +210,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                             }
                             else
                             {
-                                allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
                                 if(reviewFlag)
                                 {
                                     viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
@@ -263,9 +264,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                     viewFlipper.addView(viewUserSelected);
 
-                }else if( dataType.equals(Data.FIXED_VALUE)) { //If data has set fixed value
+                }
+                //TODO Remove fixed value code.- Shekhar
+                else if( dataType.equals(Data.FIXED_VALUE)) { //If data has set fixed value
 
-                    allSelectedOptions.set(queIndex,dataValue);
                     fixedValueQueCount++;
 
                 }else if( dataType.equals(Data.AUTO_INCREMENT)) { //If data is auto increment
@@ -276,10 +278,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                         Toast.makeText(this,"Incomplete information, please define answer types in data tab.",Toast.LENGTH_SHORT).show();
                     }
                     if(questions.size() == autoIncQueCount) {
+
+                        //TODO need calrification on this flow, looks problematic code to me, it will crash if all questions are auto inc.
                         if (reviewFlag) {
                             viewFlipper.setDisplayedChild(viewFlipper.getChildCount() - 1);
                             reviewFlag = false;
                         } else {
+
                             viewFlipper.showNext();
                         }
                     }
@@ -289,6 +294,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     View viewScanCode = layoutInflater.inflate(R.layout.page_que_type_barcode_reader, null,true);
                     viewScanCode.setId(Integer.parseInt(queId));
+
                     viewScanCode.setTag(queId);
 
                     TextView questionText = (TextView) viewScanCode.findViewById(R.id.tv_question_text);
@@ -431,8 +437,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
 
-                            allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
-                            if(reviewFlag)
+                           if(reviewFlag)
                             {
                                 viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
                                 reviewFlag = false;
@@ -541,7 +546,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         }
     }
 
-    private void initReviewPage() {
+    public void initReviewPage() {
         View measurementView = findViewById(9595);
         LinearLayout liLayout = (LinearLayout) measurementView.findViewById(R.id.ll_options);
         liLayout.removeAllViews();
@@ -574,7 +579,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
             Data reviewData = dbHelper.getData(userId, projectId, question.getQuestionId());
             RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
-            if(rememberAnswers.getIs_remember().equals(IS_REMEMBER)){
+            if(null != rememberAnswers.getIs_remember() && rememberAnswers.getIs_remember().equals(IS_REMEMBER)){
                 tvRemembered.setText("remembered");
                 if(reviewData.getType().equals(Data.USER_SELECTED)){
                     reviewLL.setBackgroundColor(getResources().getColor(R.color.orange));
@@ -615,7 +620,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 }
                 else  //Question and Option shown except 'Auto_Increment' option type.(for User_Selected, Scan_Code)
                 {
-                    data_value = allSelectedOptions.get(queIndex);
+                    data_value = rememberAnswers.getSelected_option_text();
                     tvOption.setText(data_value);
 
                     reviewItem.setOnClickListener(new View.OnClickListener() {
@@ -634,7 +639,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
             }
             else  //Project mode Question and Option is display.
             {
-                data_value = allSelectedOptions.get(queIndex);
+                data_value = rememberAnswers.getSelected_option_text();
                 tvOption.setText(data_value);
 
                 reviewItem.setOnClickListener(new View.OnClickListener() {
@@ -793,7 +798,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 int displayedChild = viewFlipper.getDisplayedChild();
                 int childCount = viewFlipper.getChildCount();
 
-                allSelectedOptions.set(requestCode, contents);
                 if (reviewFlag) {
                     viewFlipper.setDisplayedChild(viewFlipper.getChildCount() - 1);
                     reviewFlag = false;
@@ -830,10 +834,11 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        int id = item.getItemId(); //TODO crashing on first question - Shekhar
 
         List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
-        final Question question = questions.get(viewFlipper.getDisplayedChild());
+        //Actual children in viewflipper are # of questions + 1 (review page) so need to calculate index by substracting 1
+        final Question question = questions.get(viewFlipper.getDisplayedChild()-1);
 
         int queType = question.getQuestionType();
         String queId = question.getQuestionId();
@@ -893,6 +898,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                         {
                             retrieveData.setType(Constants.QuestionType.AUTO_INCREMENT.getStatusCode());
                             retrieveData.setValue(from.getText().toString() + "," + to.getText().toString() + "," + repeat.getText().toString());
+                            dbHelper.updateData(retrieveData);
                         }
                     }
                 });
