@@ -7,6 +7,7 @@ import android.widget.ViewFlipper;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.RememberAnswers;
+import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
 
 /**
@@ -48,7 +49,7 @@ public class QuestionViewFlipper extends ViewFlipper {
     {
         final String userId = PrefUtils.getFromPrefs(getContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
         RememberAnswers rememberedAnswers = dbHelper.getRememberAnswers(userId, getTag().toString(), getCurrentView().getTag().toString());
-        if(rememberedAnswers.getIs_remember() != null && rememberedAnswers.getIs_remember().equals("1"))
+        if(rememberedAnswers.getIs_remember() != null && rememberedAnswers.getIs_remember().equals(Constants.IS_REMEMBER))
         {
             if(!projectMeasurmentActivity.reviewFlag) {
                 showNext();

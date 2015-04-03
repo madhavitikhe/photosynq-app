@@ -8,7 +8,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar">
+        android:layout_below="@id/toolbar"
+        android:id="@+id/linearLayout">
 
         <include layout="@layout/question" />
 
@@ -18,8 +19,10 @@
         android:id="@+id/footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btn_barcode_scan"
-        android:gravity="center" >
+        android:gravity="left"
+        android:layout_below="@+id/linearLayout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <CheckBox
             android:id="@+id/rememberAnswerCheckBox"

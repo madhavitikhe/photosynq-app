@@ -66,7 +66,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
     private DatabaseHelper dbHelper;
     private QuestionViewFlipper viewFlipper;
-
+    private ArrayList<String> allSelectedOptions;
     private ArrayList<String> allOptions;
     public boolean reviewFlag = false;
     private TextView mtvStatusMessage;
@@ -76,12 +76,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
     private boolean mIsMeasureBtnClicked = false;
     private boolean scanMode = false;
     private int autoIncQueCount = 0;
-    private int fixedValueQueCount = 0;
     private String userId;
     private int screenWidth;
     private int flag = 0;
-    public static String IS_NOT_REMEMBER = "0";
-    public static String IS_REMEMBER = "1";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +123,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
         viewFlipper = (QuestionViewFlipper) findViewById(R.id.viewflipper);
         viewFlipper.setTag(projectId);
+        allSelectedOptions = new ArrayList<String>();
 
         createDynamicViewForQuestions();
         addReviewPage();
@@ -139,18 +138,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         for(int queIndex = 0; queIndex < questions.size(); queIndex++){
             scanMode = false;
             final Question question = questions.get(queIndex);
+            allSelectedOptions.add(queIndex, "");
 
             int queType = question.getQuestionType();
             String queId = question.getQuestionId();
 
-//            RememberAnswers rememberedAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
-//            if(rememberedAnswers.getIs_remember() != null && rememberedAnswers.getIs_remember().equals(IS_REMEMBER))
-//            {
-//                continue;
-//            }
             if(Question.USER_DEFINED == queType){ //If question is user defined, then show the screen as per data type
                 flag = 1;
-                invalidateOptionsMenu();
                 Data data = dbHelper.getData(userId, projectId, queId);
                 String dataType = data.getType();
                 String dataValue = data.getValue();
@@ -174,14 +168,15 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     questionText.setBackgroundResource(R.drawable.actionbar_bg);
                     questionText.setPadding(30, 0, 30, 30);
 
+                    EditText userEnteredAnswer = (EditText) viewUserSelected.findViewById(R.id.et_user_answer);
                     final CheckBox userDefinedRememberCB = (CheckBox) viewUserSelected.findViewById(R.id.rememberAnswerCheckBox);
 
                     RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
                     //TODO  Should use boolean check instead of String, wrong convention for method name - Shekhar
-                    //TODO  Move constant declaration in Constants class. Declare at one place use it everywhere - Shekhar
-                    if(rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(IS_REMEMBER))
+                    if(rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER))
                     {
                         userDefinedRememberCB.setChecked(true);
+                        userEnteredAnswer.setText(rememberAnswers.getSelected_option_text().toString());
                     }
                     else
                     {
@@ -210,43 +205,38 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                             }
                             else
                             {
+                                allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
+                                List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
+                                final Question question = questions.get(Integer.parseInt(v.getTag().toString()));
+                                RememberAnswers rememberAnswers = new RememberAnswers();
+                                rememberAnswers.setUser_id(userId);
+                                rememberAnswers.setProject_id(projectId);
+                                rememberAnswers.setQuestion_id(question.getQuestionId());
+
                                 if(reviewFlag)
                                 {
                                     viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
                                     reviewFlag = false;
 
-                                    List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
-                                    final Question question = questions.get(Integer.parseInt(v.getTag().toString()));
-                                    RememberAnswers rememberAnswers = new RememberAnswers();
-                                    rememberAnswers.setUser_id(userId);
-                                    rememberAnswers.setProject_id(projectId);
-                                    rememberAnswers.setQuestion_id(question.getQuestionId());
-
                                     if(userDefinedRememberCB.isChecked()){
                                         rememberAnswers.setSelected_option_text(str);
-                                        rememberAnswers.setIs_remember(IS_REMEMBER);
+                                        rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
                                     }else{
                                         rememberAnswers.setSelected_option_text(str);
-                                        rememberAnswers.setIs_remember(IS_NOT_REMEMBER);
+                                        rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                     }
                                     dbHelper.updateRememberAnswers(rememberAnswers);
 
                                     initReviewPage();
                                 }
-                                else {
-                                    List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
-                                    final Question question = questions.get(Integer.parseInt(v.getTag().toString()));
-                                    RememberAnswers rememberAnswers = new RememberAnswers();
-                                    rememberAnswers.setUser_id(userId);
-                                    rememberAnswers.setProject_id(projectId);
-                                    rememberAnswers.setQuestion_id(question.getQuestionId());
-
+                                else
+                                {
                                     if(userDefinedRememberCB.isChecked()){
                                         rememberAnswers.setSelected_option_text(str);
-                                        rememberAnswers.setIs_remember(IS_REMEMBER);
+                                        rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
                                     }else{
                                         rememberAnswers.setSelected_option_text(str);
-                                        rememberAnswers.setIs_remember(IS_NOT_REMEMBER);
+                                        rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                     }
                                     dbHelper.updateRememberAnswers(rememberAnswers);
                                     viewFlipper.showNext();
@@ -263,12 +253,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     });
 
                     viewFlipper.addView(viewUserSelected);
-
-                }
-                //TODO Remove fixed value code.- Shekhar
-                else if( dataType.equals(Data.FIXED_VALUE)) { //If data has set fixed value
-
-                    fixedValueQueCount++;
 
                 }else if( dataType.equals(Data.AUTO_INCREMENT)) { //If data is auto increment
 
@@ -307,7 +291,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     final CheckBox scanCodeRememberCB = (CheckBox) viewScanCode.findViewById(R.id.rememberAnswerCheckBox);
 
                     RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
-                    if(rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(IS_REMEMBER))
+                    if(rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER))
                     {
                         scanCodeRememberCB.setChecked(true);
                     }
@@ -321,21 +305,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     btnScan.setTag(queIndex);
                     btnScan.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
-                            List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
-                            final Question question = questions.get(Integer.parseInt(v.getTag().toString()));
-                            RememberAnswers rememberAnswers = new RememberAnswers();
-                            rememberAnswers.setUser_id(userId);
-                            rememberAnswers.setProject_id(projectId);
-                            rememberAnswers.setQuestion_id(question.getQuestionId());
 
-                            if(scanCodeRememberCB.isChecked()){
-                                rememberAnswers.setSelected_option_text("");
-                                rememberAnswers.setIs_remember(IS_REMEMBER);
-                            }else{
-                                rememberAnswers.setSelected_option_text("");
-                                rememberAnswers.setIs_remember(IS_NOT_REMEMBER);
-                            }
-                            dbHelper.updateRememberAnswers(rememberAnswers);
                             scanMode = true;
                             Intent intent = new Intent(ProjectMeasurmentActivity.this, CaptureActivity.class);
                             intent.setAction("com.google.zxing.client.android.SCAN");
@@ -351,8 +321,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
             }else if(Question.PROJECT_DEFINED == queType){
 
                 flag = 2;
-                invalidateOptionsMenu();
-
                 LinearLayout mainLinearLayout = new LinearLayout(this);
                 mainLinearLayout.setBackgroundColor(Color.WHITE);
                 mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -397,7 +365,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 mainLinearLayout.addView(rememberCBLayout);
 
                 RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
-                if(rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(IS_REMEMBER))
+                if(rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER))
                 {
                     rememberAnswersCB.setChecked(true);
                 }
@@ -437,43 +405,39 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
 
-                           if(reviewFlag)
+                            allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+
+                            List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
+                            final Question question = questions.get(Integer.parseInt(v.getTag().toString()));
+                            RememberAnswers rememberAnswers = new RememberAnswers();
+                            rememberAnswers.setUser_id(userId);
+                            rememberAnswers.setProject_id(projectId);
+                            rememberAnswers.setQuestion_id(question.getQuestionId());
+
+                            if(reviewFlag)
                             {
                                 viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
                                 reviewFlag = false;
 
-                                List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
-                                final Question question = questions.get(Integer.parseInt(v.getTag().toString()));
-                                RememberAnswers rememberAnswers = new RememberAnswers();
-                                rememberAnswers.setUser_id(userId);
-                                rememberAnswers.setProject_id(projectId);
-                                rememberAnswers.setQuestion_id(question.getQuestionId());
-
                                 if(rememberAnswersCB.isChecked()){
                                     rememberAnswers.setSelected_option_text(question.getOptions().get(v.getId()));
-                                    rememberAnswers.setIs_remember(IS_REMEMBER);
+                                    rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
                                 }else{
                                     rememberAnswers.setSelected_option_text(question.getOptions().get(v.getId()));
-                                    rememberAnswers.setIs_remember(IS_NOT_REMEMBER);
+                                    rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                 }
                                 dbHelper.updateRememberAnswers(rememberAnswers);
 
                                 initReviewPage();
                             }
-                            else {
-                                List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
-                                final Question question = questions.get(Integer.parseInt(v.getTag().toString()));
-                                RememberAnswers rememberAnswers = new RememberAnswers();
-                                rememberAnswers.setUser_id(userId);
-                                rememberAnswers.setProject_id(projectId);
-                                rememberAnswers.setQuestion_id(question.getQuestionId());
-
+                            else
+                            {
                                 if(rememberAnswersCB.isChecked()){
                                     rememberAnswers.setSelected_option_text(question.getOptions().get(v.getId()));
-                                    rememberAnswers.setIs_remember(IS_REMEMBER);
+                                    rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
                                 }else{
                                     rememberAnswers.setSelected_option_text(question.getOptions().get(v.getId()));
-                                    rememberAnswers.setIs_remember(IS_NOT_REMEMBER);
+                                    rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                 }
                                 dbHelper.updateRememberAnswers(rememberAnswers);
                                 viewFlipper.showNext();
@@ -579,7 +543,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
             Data reviewData = dbHelper.getData(userId, projectId, question.getQuestionId());
             RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
-            if(null != rememberAnswers.getIs_remember() && rememberAnswers.getIs_remember().equals(IS_REMEMBER)){
+            if(null != rememberAnswers.getIs_remember() && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER)){
                 tvRemembered.setText("remembered");
                 if(reviewData.getType().equals(Data.USER_SELECTED)){
                     reviewLL.setBackgroundColor(getResources().getColor(R.color.orange));
@@ -612,15 +576,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     }
                     tvOption.setText(data_value);
                 }
-                else if(data.getType().equals(Data.FIXED_VALUE))
-                {
-                    data_value = data.getValue();
-                    tvOption.setText(data_value);
-
-                }
                 else  //Question and Option shown except 'Auto_Increment' option type.(for User_Selected, Scan_Code)
                 {
                     data_value = rememberAnswers.getSelected_option_text();
+//                    data_value = allSelectedOptions.get(queIndex);
                     tvOption.setText(data_value);
 
                     reviewItem.setOnClickListener(new View.OnClickListener() {
@@ -640,6 +599,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
             else  //Project mode Question and Option is display.
             {
                 data_value = rememberAnswers.getSelected_option_text();
+//                data_value = allSelectedOptions.get(queIndex);
                 tvOption.setText(data_value);
 
                 reviewItem.setOnClickListener(new View.OnClickListener() {
@@ -672,7 +632,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
         List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
         int queCount = questions.size();
-        if(fixedValueQueCount == queCount || autoIncQueCount == queCount || fixedValueQueCount+autoIncQueCount == queCount){
+        if(autoIncQueCount == queCount){
             initReviewPage();
         }else {
             refreshReviewPage(reviewPage);
@@ -768,7 +728,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
             List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
 
-            if(fixedValueQueCount == questions.size() || autoIncQueCount == questions.size() || fixedValueQueCount+autoIncQueCount == questions.size()) {
+            if(autoIncQueCount == questions.size()) {
                 initReviewPage();
 
             }else{
@@ -798,6 +758,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 int displayedChild = viewFlipper.getDisplayedChild();
                 int childCount = viewFlipper.getChildCount();
 
+                allSelectedOptions.set(requestCode, contents);
                 if (reviewFlag) {
                     viewFlipper.setDisplayedChild(viewFlipper.getChildCount() - 1);
                     reviewFlag = false;
@@ -865,10 +826,14 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 final EditText from = new EditText(this);
                 final EditText to = new EditText(this);
                 final EditText repeat = new EditText(this);
+                from.setTextColor(getResources().getColor(R.color.black));
+                to.setTextColor(getResources().getColor(R.color.black));
+                repeat.setTextColor(getResources().getColor(R.color.black));
                 from.setHint("From");
                 to.setHint("To");
                 repeat.setHint("Repeat");
 
+                //Only numeric keyboard is open after edit text click (from, to , repeat ).
                 from.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                 to.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                 repeat.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -887,13 +852,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                         if (from.getText().toString().isEmpty()) {
                             from.setError("Please enter value");
-//                                retVal = false;
                         } else if (to.getText().toString().isEmpty()) {
                             to.setError("Please enter value");
-//                                retVal = false;
                         } else if (repeat.getText().toString().isEmpty()) {
                             repeat.setError("Please enter value");
-//                                retVal = false;
                         }else
                         {
                             retrieveData.setType(Constants.QuestionType.AUTO_INCREMENT.getStatusCode());

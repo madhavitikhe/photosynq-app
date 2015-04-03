@@ -3,7 +3,6 @@ package com.photosynq.app.model;
 public class Data {
 	
 	public static final String NO_VALUE = "NO_VALUE";
-    public static final String FIXED_VALUE = "FIXED_VALUE";
     public static final String USER_SELECTED = "USER_SELECTED";
     public static final String AUTO_INCREMENT = "AUTO_INCREMENT";
     public static final String SCAN_CODE = "SCAN_CODE";
