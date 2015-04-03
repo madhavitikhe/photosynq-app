@@ -99,6 +99,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         screenWidth = size.x;
 
         dbHelper = DatabaseHelper.getHelper(this);
+        userId = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -598,8 +600,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
             }
             else  //Project mode Question and Option is display.
             {
-                data_value = rememberAnswers.getSelected_option_text();
-//                data_value = allSelectedOptions.get(queIndex);
+//                data_value = rememberAnswers.getSelected_option_text();
+                data_value = allSelectedOptions.get(queIndex);
                 tvOption.setText(data_value);
 
                 reviewItem.setOnClickListener(new View.OnClickListener() {
@@ -797,9 +799,27 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId(); //TODO crashing on first question - Shekhar
 
+        switch (item.getItemId()) {
+            case R.id.defaultTextMenuItem:
+            case R.id.autoIncMenuItem:
+            case R.id.barCodeOptionMenuItem:
+                return changeQuestionType(item);
+            default:
+        }
+
+        //noinspection SimplifiableIfStatement
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private boolean changeQuestionType(MenuItem item){
         List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
-        //Actual children in viewflipper are # of questions + 1 (review page) so need to calculate index by substracting 1
-        final Question question = questions.get(viewFlipper.getDisplayedChild()-1);
+        final Question question = questions.get(viewFlipper.getDisplayedChild());
 
         int queType = question.getQuestionType();
         String queId = question.getQuestionId();
@@ -817,6 +837,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                 int currentViewIndex = viewFlipper.getDisplayedChild();
                 createDynamicViewForQuestions();
+                addReviewPage();
                 viewFlipper.setDisplayedChild(currentViewIndex);
                 return true;
             case R.id.autoIncMenuItem:
@@ -880,18 +901,12 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                 int currentViewIndexBarcode = viewFlipper.getDisplayedChild();
                 createDynamicViewForQuestions();
+                addReviewPage();
                 viewFlipper.setDisplayedChild(currentViewIndexBarcode);
                 return true;
             default:
         }
-
-        //noinspection SimplifiableIfStatement
-        if (id == android.R.id.home) {
-            finish();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     private void sendData(String data) {
