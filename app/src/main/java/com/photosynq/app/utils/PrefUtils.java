@@ -32,6 +32,9 @@ public class PrefUtils {
     // Show directions screen
     public static final String PREFS_SHOW_DIRECTIONS = "SHOW_DIRECTIONS";
 
+    // Store checkbox value (Checked or Not)
+    public static final String PREFS_CHECK_IS_REMEMBER = "CHECK_IS_REMEMBER";
+
     /**
      * Called to save supplied value in shared preferences against given key.
      */

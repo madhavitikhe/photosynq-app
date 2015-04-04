@@ -10,7 +10,7 @@
 
         <menu>
             <item
-                android:id="@+id/defaultTextMenuItem"
+                android:id="@+id/userSelectedMenuItem"
                 android:title="Enter text (default)" />
             <item
                 android:id="@+id/autoIncMenuItem"

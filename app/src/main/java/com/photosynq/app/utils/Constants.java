@@ -7,8 +7,8 @@ public class Constants {
 
     public static final String SUCCESS = "SUCCESS";
     public static final String SERVER_NOT_ACCESSIBLE = "SERVER_NOT_ACCESSIBLE";
-    public static final String SERVER_URL = "http://photosynq.org/";
-    //public static final String SERVER_URL = "http://photosynq.venturit.org/";
+//    public static final String SERVER_URL = "http://photosynq.org/";
+    public static final String SERVER_URL = "http://staging.photosynq.venturit.net/";
 
 
     public static final String API_VER = "api/v1/";
@@ -35,6 +35,10 @@ public class Constants {
     public static final String APP_MODE = "APP_MODE";
     public static final String APP_MODE_QUICK_MEASURE = "APP_MODE_QUICK_MEASURE";
     public static final String APP_MODE_PROJECT_MEASURE = "APP_MODE_PROJECT_MEASURE";
+
+    //For remember option.
+    public static final String IS_NOT_REMEMBER = "0";
+    public static final String IS_REMEMBER = "1";
 
     /**
      * Remember the position of the selected item.

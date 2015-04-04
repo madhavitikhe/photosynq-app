@@ -1,11 +1,9 @@
 package com.photosynq.app;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -15,7 +13,6 @@ import android.os.Message;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -27,13 +24,14 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
+
 import com.google.zxing.client.android.CaptureActivity;
 
 import com.photosynq.app.db.DatabaseHelper;
@@ -66,7 +64,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
     private DatabaseHelper dbHelper;
     private QuestionViewFlipper viewFlipper;
-    private ArrayList<String> allSelectedOptions;
     private ArrayList<String> allOptions;
     public boolean reviewFlag = false;
     private TextView mtvStatusMessage;
@@ -78,7 +75,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
     private int autoIncQueCount = 0;
     private String userId;
     private int screenWidth;
-    private int flag = 0;
 
 
     @Override
@@ -108,15 +104,14 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         }
 
         deviceAddress = CommonUtils.getDeviceAddress(this);
-        if(null == deviceAddress)
-        {
-            Toast.makeText(this,"Measurement device not configured, Please configure measurement device (bluetooth).",Toast.LENGTH_SHORT).show();
+        if (null == deviceAddress) {
+            Toast.makeText(this, "Measurement device not configured, Please configure measurement device (bluetooth).", Toast.LENGTH_SHORT).show();
             finish();
         }
 
         String showDirections = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_SHOW_DIRECTIONS, "YES");
-        if(showDirections.equals("YES")){
-            if(null != projectId && null != deviceAddress) {
+        if (showDirections.equals("YES")) {
+            if (null != projectId && null != deviceAddress) {
                 Intent directionIntent = new Intent(this, DirectionsActivity.class);
                 directionIntent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
                 startActivity(directionIntent);
@@ -125,40 +120,37 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
         viewFlipper = (QuestionViewFlipper) findViewById(R.id.viewflipper);
         viewFlipper.setTag(projectId);
-        allSelectedOptions = new ArrayList<String>();
 
         createDynamicViewForQuestions();
         addReviewPage();
 
     }
 
-    public void createDynamicViewForQuestions(){
+    public void createDynamicViewForQuestions() {
 
         viewFlipper.removeAllViews();
         final String userId = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
         List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
-        for(int queIndex = 0; queIndex < questions.size(); queIndex++){
+        for (int queIndex = 0; queIndex < questions.size(); queIndex++) {
             scanMode = false;
             final Question question = questions.get(queIndex);
-            allSelectedOptions.add(queIndex, "");
 
             int queType = question.getQuestionType();
             String queId = question.getQuestionId();
 
-            if(Question.USER_DEFINED == queType){ //If question is user defined, then show the screen as per data type
-                flag = 1;
+            if (Question.USER_DEFINED == queType) { //If question is user defined, then show the screen as per data type
+
                 Data data = dbHelper.getData(userId, projectId, queId);
                 String dataType = data.getType();
                 String dataValue = data.getValue();
 
                 //TODO validate if following block is necessary - Shekhar
-                if( null == dataType || null == dataValue)
-                {
+                if (null == dataType || null == dataValue) {
                     //if datatype or datavalue is not set in data
                     continue;
                 }
 
-                if( dataType.equals(Data.USER_SELECTED)) { //If data is user selected
+                if (dataType.equals(Data.USER_SELECTED)) { //If data is user selected
 
                     LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     View viewUserSelected = layoutInflater.inflate(R.layout.page_que_type_user_selected, null, false);
@@ -175,13 +167,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                     RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
                     //TODO  Should use boolean check instead of String, wrong convention for method name - Shekhar
-                    if(rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER))
-                    {
+                    if (rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER)) {
                         userDefinedRememberCB.setChecked(true);
                         userEnteredAnswer.setText(rememberAnswers.getSelected_option_text().toString());
-                    }
-                    else
-                    {
+                    } else {
                         userDefinedRememberCB.setChecked(false);
                     }
 
@@ -191,23 +180,20 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                         @Override
                         public void onClick(View v) {
 
-                            InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                            inputManager.hideSoftInputFromWindow(getWindow().getDecorView().getRootView().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                            InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            inputManager.hideSoftInputFromWindow(getWindow().getDecorView().getRootView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
-                            EditText userEnteredAnswer = (EditText) ((View)v.getParent()).findViewById(R.id.et_user_answer);
+                            EditText userEnteredAnswer = (EditText) ((View) v.getParent()).findViewById(R.id.et_user_answer);
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
 
                             String str = userEnteredAnswer.getText().toString().trim();
-                            if(true == str.matches(".*['{}!].*") ||
+                            if (true == str.matches(".*['{}!].*") ||
                                     true == str.contains("\\n") ||
-                                    true == str.contains("[")||
-                                    true == str.contains("]")){
-                                Toast.makeText(ProjectMeasurmentActivity.this,"Re-Enter Answer... special character is not allowed",Toast.LENGTH_LONG).show();
-                            }
-                            else
-                            {
-                                allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),userEnteredAnswer.getText().toString());
+                                    true == str.contains("[") ||
+                                    true == str.contains("]")) {
+                                Toast.makeText(ProjectMeasurmentActivity.this, "Re-Enter Answer... special character is not allowed", Toast.LENGTH_LONG).show();
+                            } else {
                                 List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
                                 final Question question = questions.get(Integer.parseInt(v.getTag().toString()));
                                 RememberAnswers rememberAnswers = new RememberAnswers();
@@ -215,34 +201,31 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                                 rememberAnswers.setProject_id(projectId);
                                 rememberAnswers.setQuestion_id(question.getQuestionId());
 
-                                if(reviewFlag)
-                                {
-                                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                                if (reviewFlag) {
+                                    viewFlipper.setDisplayedChild(viewFlipper.getChildCount() - 1);
                                     reviewFlag = false;
 
-                                    if(userDefinedRememberCB.isChecked()){
+                                    if (userDefinedRememberCB.isChecked()) {
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
-                                    }else{
+                                    } else {
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                     }
                                     dbHelper.updateRememberAnswers(rememberAnswers);
 
                                     initReviewPage();
-                                }
-                                else
-                                {
-                                    if(userDefinedRememberCB.isChecked()){
+                                } else {
+                                    if (userDefinedRememberCB.isChecked()) {
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
-                                    }else{
+                                    } else {
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                     }
                                     dbHelper.updateRememberAnswers(rememberAnswers);
                                     viewFlipper.showNext();
-                                    if (displayedChild == childCount - 2 ) {
+                                    if (displayedChild == childCount - 2) {
                                         viewFlipper.stopFlipping();
                                         initReviewPage();
                                     }
@@ -256,14 +239,122 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                     viewFlipper.addView(viewUserSelected);
 
-                }else if( dataType.equals(Data.AUTO_INCREMENT)) { //If data is auto increment
+                } else if (dataType.equals(Data.AUTO_INCREMENT)) { //If data is auto increment
+
+                    LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    View viewAutoIncrement = layoutInflater.inflate(R.layout.page_que_type_auto_increment, null, false);
+                    viewAutoIncrement.setTag(question.getQuestionId());
+                    TextView questionText = (TextView) viewAutoIncrement.findViewById(R.id.tv_question_text);
+                    questionText.setText(question.getQuestionText());
+                    questionText.setTextColor(Color.WHITE);
+                    questionText.setTypeface(CommonUtils.getInstance(this).getFontRobotoMedium());
+                    questionText.setBackgroundResource(R.drawable.actionbar_bg);
+                    questionText.setPadding(30, 0, 30, 30);
+
+                    final EditText fromEditText = (EditText) viewAutoIncrement.findViewById(R.id.from_editText);
+                    final EditText toEditText = (EditText) viewAutoIncrement.findViewById(R.id.to_editText);
+                    final EditText repeatEditText = (EditText) viewAutoIncrement.findViewById(R.id.repeat_editText);
+                    final Data retrieveData = dbHelper.getData(userId, projectId, question.getQuestionId());
+
+                    RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
+                    if (rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER)) {
+                        String[] values = retrieveData.getValue().split(",");
+                        fromEditText.setText(values[0]);
+                        toEditText.setText(values[1]);
+                        repeatEditText.setText(values[2]);
+                        fromEditText.setFocusable(false);
+                        toEditText.setFocusable(false);
+                        repeatEditText.setFocusable(false);
+                        fromEditText.setBackgroundColor(getResources().getColor(R.color.gray));
+                        toEditText.setBackgroundColor(getResources().getColor(R.color.gray));
+                        repeatEditText.setBackgroundColor(getResources().getColor(R.color.gray));
+                    }
+
+                    final Button editAutoIncrementValuesBtn = (Button) viewAutoIncrement.findViewById(R.id.autoInc_edit_button);
+                    editAutoIncrementValuesBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (editAutoIncrementValuesBtn.getText().equals("Edit")) {
+                                fromEditText.setFocusableInTouchMode(true);
+                                toEditText.setFocusableInTouchMode(true);
+                                repeatEditText.setFocusableInTouchMode(true);
+                                fromEditText.setBackgroundColor(getResources().getColor(R.color.white));
+                                toEditText.setBackgroundColor(getResources().getColor(R.color.white));
+                                repeatEditText.setBackgroundColor(getResources().getColor(R.color.white));
+                                editAutoIncrementValuesBtn.setText("Cancel");
+                            } else if (editAutoIncrementValuesBtn.getText().equals("Cancel")) {
+                                String[] values = retrieveData.getValue().split(",");
+                                fromEditText.setText(values[0]);
+                                toEditText.setText(values[1]);
+                                repeatEditText.setText(values[2]);
+                                fromEditText.setFocusable(false);
+                                toEditText.setFocusable(false);
+                                repeatEditText.setFocusable(false);
+                                fromEditText.setBackgroundColor(getResources().getColor(R.color.gray));
+                                toEditText.setBackgroundColor(getResources().getColor(R.color.gray));
+                                repeatEditText.setBackgroundColor(getResources().getColor(R.color.gray));
+                                editAutoIncrementValuesBtn.setText("Edit");
+                            }
+
+                        }
+                    });
+
+                    Button showNext = (Button) viewAutoIncrement.findViewById(R.id.btn_next);
+                    showNext.setTag(queIndex);
+                    showNext.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            editAutoIncrementValuesBtn.setText("Edit");
+
+                            Data saveAutoIncData = dbHelper.getData(userId, projectId, question.getQuestionId());
+                            saveAutoIncData.setUser_id(userId);
+                            saveAutoIncData.setProject_id(projectId);
+                            saveAutoIncData.setQuestion_id(question.getQuestionId());
+
+//                            EditText fromEditText = (EditText) ((View) v.getParent()).findViewById(R.id.from_editText);
+//                            EditText toEditText = (EditText) ((View) v.getParent()).findViewById(R.id.to_editText);
+//                            EditText repeatEditText = (EditText) ((View) v.getParent()).findViewById(R.id.repeat_editText);
+
+                            if (fromEditText.getText().toString().isEmpty()) {
+                                fromEditText.setError("Please enter value");
+                            } else if (toEditText.getText().toString().isEmpty()) {
+                                toEditText.setError("Please enter value");
+                            } else if (repeatEditText.getText().toString().isEmpty()) {
+                                repeatEditText.setError("Please enter value");
+                            } else {
+                                if (fromEditText.isFocusable() && toEditText.isFocusable() && repeatEditText.isFocusable()) {
+                                    fromEditText.setFocusable(false);
+                                    toEditText.setFocusable(false);
+                                    repeatEditText.setFocusable(false);
+
+                                    saveAutoIncData.setType(Constants.QuestionType.AUTO_INCREMENT.getStatusCode());
+                                    saveAutoIncData.setValue(fromEditText.getText().toString() + "," + toEditText.getText().toString() + "," + repeatEditText.getText().toString());
+                                    dbHelper.updateData(saveAutoIncData);
+
+                                    List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
+                                    final Question question = questions.get(Integer.parseInt(v.getTag().toString()));
+                                    RememberAnswers rememberAnswers = new RememberAnswers();
+                                    rememberAnswers.setUser_id(userId);
+                                    rememberAnswers.setProject_id(projectId);
+                                    rememberAnswers.setQuestion_id(question.getQuestionId());
+                                    rememberAnswers.setSelected_option_text(fromEditText.getText().toString() + "," + toEditText.getText().toString() + "," + repeatEditText.getText().toString());
+                                    rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
+                                    dbHelper.updateRememberAnswers(rememberAnswers);
+
+                                    viewFlipper.showNext();
+                                }else{
+                                    viewFlipper.showNext();
+                                }
+                            }
+
+                        }
+                    });
 
                     autoIncQueCount = autoIncQueCount + 1;
-                    if(dataValue.equals(Data.NO_VALUE))
-                    {
-                        Toast.makeText(this,"Incomplete information, please define answer types in data tab.",Toast.LENGTH_SHORT).show();
+                    if (dataValue.equals(Data.NO_VALUE)) {
+                        Toast.makeText(this, "Incomplete information, please define answer types in data tab.", Toast.LENGTH_SHORT).show();
                     }
-                    if(questions.size() == autoIncQueCount) {
+                    if (questions.size() == autoIncQueCount) {
 
                         //TODO need calrification on this flow, looks problematic code to me, it will crash if all questions are auto inc.
                         if (reviewFlag) {
@@ -275,10 +366,11 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                         }
                     }
                     PrefUtils.saveToPrefs(this, PrefUtils.PREFS_QUESTION_INDEX, "0");
+                    viewFlipper.addView(viewAutoIncrement);
 
-                }else if( dataType.equals(Data.SCAN_CODE)) { //If data is scan code
+                } else if (dataType.equals(Data.SCAN_CODE)) { //If data is scan code
                     LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    View viewScanCode = layoutInflater.inflate(R.layout.page_que_type_barcode_reader, null,true);
+                    View viewScanCode = layoutInflater.inflate(R.layout.page_que_type_barcode_reader, null, true);
                     viewScanCode.setId(Integer.parseInt(queId));
 
                     viewScanCode.setTag(queId);
@@ -293,15 +385,22 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     final CheckBox scanCodeRememberCB = (CheckBox) viewScanCode.findViewById(R.id.rememberAnswerCheckBox);
 
                     RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
-                    if(rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER))
-                    {
+                    if (rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER)) {
                         scanCodeRememberCB.setChecked(true);
-                    }
-                    else
-                    {
+                    } else {
                         scanCodeRememberCB.setChecked(false);
                     }
 
+                    scanCodeRememberCB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            if (scanCodeRememberCB.isChecked()) {
+                                PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_CHECK_IS_REMEMBER, Constants.IS_REMEMBER);
+                            } else {
+                                PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_CHECK_IS_REMEMBER, Constants.IS_NOT_REMEMBER);
+                            }
+                        }
+                    });
 
                     View btnScan = viewScanCode.findViewById(R.id.btn_barcode_scan);
                     btnScan.setTag(queIndex);
@@ -320,9 +419,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     viewFlipper.addView(viewScanCode);
                 }
 
-            }else if(Question.PROJECT_DEFINED == queType){
+            } else if (Question.PROJECT_DEFINED == queType) {
 
-                flag = 2;
                 LinearLayout mainLinearLayout = new LinearLayout(this);
                 mainLinearLayout.setBackgroundColor(Color.WHITE);
                 mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -367,32 +465,24 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 mainLinearLayout.addView(rememberCBLayout);
 
                 RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
-                if(rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER))
-                {
+                if (rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER)) {
                     rememberAnswersCB.setChecked(true);
-                }
-                else
-                {
+                } else {
                     rememberAnswersCB.setChecked(false);
                 }
 
-                for (int i = 0; i < question.getOptions().size(); i++)
-                {
+                for (int i = 0; i < question.getOptions().size(); i++) {
                     String optionText = question.getOptions().get(i);
                     TextView optionTextView = new TextView(this);
                     optionTextView.setText(optionText);
                     optionTextView.setTextColor(Color.BLACK);
-                    optionTextView.setTextSize(40);
+                    optionTextView.setTextSize(30);
                     optionTextView.setSingleLine(false);
                     optionTextView.setMaxLines(Integer.MAX_VALUE);
                     optionTextView.setGravity(Gravity.CENTER);
                     optionTextView.setBackgroundResource(R.drawable.actionbar_bg);
                     optionTextView.setTextColor(getResources().getColor(R.color.white));
                     optionTextView.setTypeface(CommonUtils.getInstance(this).getFontRobotoRegular());
-
-                    if(optionText.length() < 3){
-                        optionTextView.setTextSize(100);
-                    }
 
 //                    ImageView imageView = new ImageView(this);
 //                    imageView.setId(i);
@@ -407,8 +497,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
 
-                            allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
-
                             List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
                             final Question question = questions.get(Integer.parseInt(v.getTag().toString()));
                             RememberAnswers rememberAnswers = new RememberAnswers();
@@ -416,34 +504,31 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                             rememberAnswers.setProject_id(projectId);
                             rememberAnswers.setQuestion_id(question.getQuestionId());
 
-                            if(reviewFlag)
-                            {
-                                viewFlipper.setDisplayedChild(viewFlipper.getChildCount()-1);
+                            if (reviewFlag) {
+                                viewFlipper.setDisplayedChild(viewFlipper.getChildCount() - 1);
                                 reviewFlag = false;
 
-                                if(rememberAnswersCB.isChecked()){
+                                if (rememberAnswersCB.isChecked()) {
                                     rememberAnswers.setSelected_option_text(question.getOptions().get(v.getId()));
                                     rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
-                                }else{
+                                } else {
                                     rememberAnswers.setSelected_option_text(question.getOptions().get(v.getId()));
                                     rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                 }
                                 dbHelper.updateRememberAnswers(rememberAnswers);
 
                                 initReviewPage();
-                            }
-                            else
-                            {
-                                if(rememberAnswersCB.isChecked()){
+                            } else {
+                                if (rememberAnswersCB.isChecked()) {
                                     rememberAnswers.setSelected_option_text(question.getOptions().get(v.getId()));
                                     rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
-                                }else{
+                                } else {
                                     rememberAnswers.setSelected_option_text(question.getOptions().get(v.getId()));
                                     rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                 }
                                 dbHelper.updateRememberAnswers(rememberAnswers);
                                 viewFlipper.showNext();
-                                if (displayedChild == childCount - 2 ) {
+                                if (displayedChild == childCount - 2) {
                                     viewFlipper.stopFlipping();
 
                                     initReviewPage();
@@ -463,12 +548,11 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     cellRelativeLayout.setLayoutParams(params);
                     cellRelativeLayout.setOrientation(LinearLayout.VERTICAL);
 
-                    if(i%2 == 0)
-                    {
+                    if (i % 2 == 0) {
                         rowLinearLayout = new LinearLayout(this);
                         rowLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
                         LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                        params1.setMargins(10,10,10,10);
+                        params1.setMargins(10, 10, 10, 10);
                         rowLinearLayout.setLayoutParams(params1);
 
 
@@ -481,14 +565,12 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 //                        cellRelativeLayout.addView(imageView, imageVParams);
 
                         rowLinearLayout.addView(cellRelativeLayout, linearlayoutweight);
-                        if(i == question.getOptions().size() - 1){
+                        if (i == question.getOptions().size() - 1) {
 
                             subLinearLayout.addView(rowLinearLayout);
                         }
 
-                    }
-                    else
-                    {
+                    } else {
 //                        optionTextView.setId(1555555);
                         //??imageVParams.addRule(RelativeLayout.BELOW, optionTextView.getId());
                         imageVParams.setMargins(10, 10, 10, 0);
@@ -545,43 +627,50 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
             Data reviewData = dbHelper.getData(userId, projectId, question.getQuestionId());
             RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
-            if(null != rememberAnswers.getIs_remember() && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER)){
-                tvRemembered.setText("remembered");
-                if(reviewData.getType().equals(Data.USER_SELECTED)){
-                    reviewLL.setBackgroundColor(getResources().getColor(R.color.orange));
-                }else if(reviewData.getType().equals(Data.AUTO_INCREMENT)){
-                    reviewLL.setBackgroundColor(getResources().getColor(R.color.blue_light));
-                }else if(reviewData.getType().equals(Data.SCAN_CODE)){
-                    reviewLL.setBackgroundColor(getResources().getColor(R.color.yellow));
-                }else
-                    reviewLL.setBackgroundColor(getResources().getColor(R.color.gray));
-            }else{
+            if (null != rememberAnswers.getIs_remember() && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER)) {
+                if (reviewData.getType().equals(Data.USER_SELECTED)) {
+                    tvRemembered.setText("remembered");
+                } else if (reviewData.getType().equals(Data.AUTO_INCREMENT)) {
+                    tvRemembered.setText("auto increment");
+                } else if (reviewData.getType().equals(Data.SCAN_CODE)) {
+                    tvRemembered.setText("remembered");
+                } else {
+                    tvRemembered.setText("remembered");
+                }
+            } else {
                 tvRemembered.setText("");
-                reviewLL.setBackgroundColor(getResources().getColor(R.color.white));
             }
 
             //if selected option type is User_Selected, Fixed_Value, Auto_Increment, Scan_Code
-            if(Question.USER_DEFINED == question.getQuestionType()){ //If question is user defined, then show the screen as per data type
+            if (Question.USER_DEFINED == question.getQuestionType()) { //If question is user defined, then show the screen as per data type
 
                 Data data = dbHelper.getData(userId, projectId, question.getQuestionId());
 
                 //Question and Option shown only if selected option type is 'Auto_Increment'
-                if(data.getType().equals(Data.AUTO_INCREMENT))
-                {
+                if (data.getType().equals(Data.AUTO_INCREMENT)) {
                     int index = Integer.parseInt(PrefUtils.getFromPrefs(this, PrefUtils.PREFS_QUESTION_INDEX, "-1"));
                     int optionValue = Integer.parseInt(CommonUtils.getAutoIncrementedValue(this, question.getQuestionId(), "" + index));
 
-                    if(optionValue != -1) {
+                    if (optionValue != -1) {
                         data_value = "" + optionValue;
-                    }else{
+                    } else {
                         data_value = "";
                     }
                     tvOption.setText(data_value);
-                }
-                else  //Question and Option shown except 'Auto_Increment' option type.(for User_Selected, Scan_Code)
+                    reviewItem.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            reviewFlag = true;
+                            View child = viewFlipper.findViewWithTag(view.getTag());
+                            viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(child));
+
+                            viewFlipper.removeViewAt(viewFlipper.getChildCount() - 1); //0 based index
+                            addReviewPage();
+                        }
+                    });
+                } else  //Question and Option shown except 'Auto_Increment' option type.(for User_Selected, Scan_Code)
                 {
                     data_value = rememberAnswers.getSelected_option_text();
-//                    data_value = allSelectedOptions.get(queIndex);
                     tvOption.setText(data_value);
 
                     reviewItem.setOnClickListener(new View.OnClickListener() {
@@ -591,17 +680,15 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                             View child = viewFlipper.findViewWithTag(view.getTag());
                             viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(child));
 
-                            viewFlipper.removeViewAt(viewFlipper.getChildCount()-1); //0 based index
+                            viewFlipper.removeViewAt(viewFlipper.getChildCount() - 1); //0 based index
                             addReviewPage();
                         }
                     });
                 }
 
-            }
-            else  //Project mode Question and Option is display.
+            } else  //Project mode Question and Option is display.
             {
-//                data_value = rememberAnswers.getSelected_option_text();
-                data_value = allSelectedOptions.get(queIndex);
+                data_value = rememberAnswers.getSelected_option_text();
                 tvOption.setText(data_value);
 
                 reviewItem.setOnClickListener(new View.OnClickListener() {
@@ -610,7 +697,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                         reviewFlag = true;
                         View child = viewFlipper.findViewWithTag(view.getTag());
                         viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(child));
-                        viewFlipper.removeViewAt(viewFlipper.getChildCount()-1); //0 based index
+                        viewFlipper.removeViewAt(viewFlipper.getChildCount() - 1); //0 based index
                         addReviewPage();
                     }
                 });
@@ -628,80 +715,76 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
     private void addReviewPage() {
 
         LayoutInflater infltr = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View reviewPage = infltr.inflate(R.layout.page_question_answer_review, null,false);
+        View reviewPage = infltr.inflate(R.layout.page_question_answer_review, null, false);
         reviewPage.setId(9595);
         viewFlipper.addView(reviewPage);
 
         List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
         int queCount = questions.size();
-        if(autoIncQueCount == queCount){
+        if (autoIncQueCount == queCount) {
             initReviewPage();
-        }else {
+        } else {
             refreshReviewPage(reviewPage);
         }
     }
 
-    private void refreshReviewPage(View reviewPage){
+    private void refreshReviewPage(View reviewPage) {
 
         int displayedChild = viewFlipper.getDisplayedChild();
         int childCount = viewFlipper.getChildCount();
-        if(displayedChild == childCount - 1){
+        if (displayedChild == childCount - 1) {
             getSupportActionBar().setTitle("Review");
-        }else{
+        } else {
             getSupportActionBar().setTitle("");
         }
 
         mtvStatusMessage = (TextView) reviewPage.findViewById(R.id.tv_status_message);
 
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (null != mBluetoothAdapter && !mBluetoothAdapter.isEnabled()) {
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-        }
-        if (null == mBluetoothService) {
-            mBluetoothService = new BluetoothService(this, mHandler);
-        }
-
-        if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
-            // Get the BLuetoothDevice object
-            if(null == deviceAddress)
-            {
-                Toast.makeText(ProjectMeasurmentActivity.this, "Measurement device not configured, Please configure measurement device (bluetooth).", Toast.LENGTH_SHORT).show();
-            }else {
-                BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
-                mBluetoothService.connect(device);
-            }
-        }
+//        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//        if (null != mBluetoothAdapter && !mBluetoothAdapter.isEnabled()) {
+//            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+//        }
+//        if (null == mBluetoothService) {
+//            mBluetoothService = new BluetoothService(this, mHandler);
+//        }
+//
+//        if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
+//            // Get the BLuetoothDevice object
+//            if (null == deviceAddress) {
+//                Toast.makeText(ProjectMeasurmentActivity.this, "Measurement device not configured, Please configure measurement device (bluetooth).", Toast.LENGTH_SHORT).show();
+//            } else {
+//                BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
+//                mBluetoothService.connect(device);
+//            }
+//        }
 
         btnTakeMeasurement = (Button) reviewPage.findViewById(R.id.btn_take_measurement);
 
         btnTakeMeasurement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(btnTakeMeasurement.getText().equals("+ Take Measurement")){
+                if (btnTakeMeasurement.getText().equals("+ Take Measurement")) {
                     mIsMeasureBtnClicked = true;
                     if (mBluetoothService == null) {
                         mBluetoothService = new BluetoothService(ProjectMeasurmentActivity.this, mHandler);
                     }
-                    if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED)
-                    {
+                    if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
                         // Get the BLuetoothDevice object
-                        if(mBluetoothAdapter == null)
+                        if (mBluetoothAdapter == null)
                             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-                        if(null == deviceAddress)
-                        {
-                            Toast.makeText(ProjectMeasurmentActivity.this,"Measurement device not configured, Please configure measurement device (bluetooth).",Toast.LENGTH_SHORT).show();
-                        }else {
+                        if (null == deviceAddress) {
+                            Toast.makeText(ProjectMeasurmentActivity.this, "Measurement device not configured, Please configure measurement device (bluetooth).", Toast.LENGTH_SHORT).show();
+                        } else {
                             BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
                             mBluetoothService.connect(device);
                         }
-                    }else {
+                    } else {
                         mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, 1).sendToTarget();
                     }
                     btnTakeMeasurement.setText("Cancel");
                     btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_red);
-                }else if(btnTakeMeasurement.getText().equals("Cancel"))
-                {
+                } else if (btnTakeMeasurement.getText().equals("Cancel")) {
                     mIsCancelMeasureBtnClicked = true;
                     mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, 0).sendToTarget();
                     btnTakeMeasurement.setText("+ Take Measurement");
@@ -713,7 +796,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         directionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent openMainActivity= new Intent(ProjectMeasurmentActivity.this, DirectionsActivity.class);
+                Intent openMainActivity = new Intent(ProjectMeasurmentActivity.this, DirectionsActivity.class);
                 openMainActivity.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
                 startActivity(openMainActivity);
             }
@@ -723,18 +806,17 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (!scanMode )
-        {
+        if (!scanMode) {
 //            if(mIsMeasureBtnClicked)
 //                viewFlipper.setDisplayedChild(0);
 
             List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
 
-            if(autoIncQueCount == questions.size()) {
+            if (autoIncQueCount == questions.size()) {
                 initReviewPage();
 
-            }else{
-                if(mIsMeasureBtnClicked) {
+            } else {
+                if (mIsMeasureBtnClicked) {
                     int viewCount = viewFlipper.getChildCount();
                     if (viewCount > 1) {
                         viewFlipper.setDisplayedChild(0);
@@ -750,23 +832,46 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent){
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
         if (resultCode == Activity.RESULT_OK) {
-            if(null != intent) {
+            if (null != intent) {
                 String contents = intent.getStringExtra("SCAN_RESULT");
 
                 int displayedChild = viewFlipper.getDisplayedChild();
                 int childCount = viewFlipper.getChildCount();
 
-                allSelectedOptions.set(requestCode, contents);
+                String checkboxState = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_CHECK_IS_REMEMBER, PrefUtils.PREFS_DEFAULT_VAL);
+                List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
+                final Question question = questions.get(requestCode);
+                RememberAnswers rememberAnswers = new RememberAnswers();
+                rememberAnswers.setUser_id(userId);
+                rememberAnswers.setProject_id(projectId);
+                rememberAnswers.setQuestion_id(question.getQuestionId());
                 if (reviewFlag) {
                     viewFlipper.setDisplayedChild(viewFlipper.getChildCount() - 1);
                     reviewFlag = false;
+                    if (checkboxState.equals("1")) {
+                        rememberAnswers.setSelected_option_text(contents);
+                        rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
+                    } else {
+                        rememberAnswers.setSelected_option_text(contents);
+                        rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
+                    }
+                    dbHelper.updateRememberAnswers(rememberAnswers);
 
                     initReviewPage();
                 } else {
+
+                    if (checkboxState.equals("1")) {
+                        rememberAnswers.setSelected_option_text(contents);
+                        rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
+                    } else {
+                        rememberAnswers.setSelected_option_text(contents);
+                        rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
+                    }
+                    dbHelper.updateRememberAnswers(rememberAnswers);
                     viewFlipper.showNext();
                     if (displayedChild == childCount - 2) {
                         viewFlipper.stopFlipping();
@@ -774,7 +879,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                         initReviewPage();
                     }
                 }
-
+                PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_CHECK_IS_REMEMBER, Constants.IS_NOT_REMEMBER);
                 Toast.makeText(this, contents, Toast.LENGTH_SHORT).show();
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
@@ -786,8 +891,14 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        if(flag == 1) {
+        List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
+        final Question question = questions.get(viewFlipper.getDisplayedChild());
+
+        int queType = question.getQuestionType();
+        if(Question.USER_DEFINED == queType) {
             getMenuInflater().inflate(R.menu.menu_project_measurment, menu);
+        }else{
+            getMenuInflater().inflate(R.menu.menu_quick_measurment, menu);
         }
         return true;
     }
@@ -800,7 +911,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         int id = item.getItemId(); //TODO crashing on first question - Shekhar
 
         switch (item.getItemId()) {
-            case R.id.defaultTextMenuItem:
+            case R.id.userSelectedMenuItem:
             case R.id.autoIncMenuItem:
             case R.id.barCodeOptionMenuItem:
                 return changeQuestionType(item);
@@ -817,7 +928,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
     }
 
 
-    private boolean changeQuestionType(MenuItem item){
+    private boolean changeQuestionType(MenuItem item) {
         List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
         final Question question = questions.get(viewFlipper.getDisplayedChild());
 
@@ -831,7 +942,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         retrieveData.setValue(Data.NO_VALUE);
 
         switch (item.getItemId()) {
-            case R.id.defaultTextMenuItem:
+            case R.id.userSelectedMenuItem:
                 retrieveData.setType(Constants.QuestionType.USER_SELECTED.getStatusCode());
                 dbHelper.updateData(retrieveData);
 
@@ -840,61 +951,18 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 addReviewPage();
                 viewFlipper.setDisplayedChild(currentViewIndex);
                 return true;
+
             case R.id.autoIncMenuItem:
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                alertDialog.setTitle("Enter Auto Increment Values");
-                alertDialog.setMessage("");
-                final EditText from = new EditText(this);
-                final EditText to = new EditText(this);
-                final EditText repeat = new EditText(this);
-                from.setTextColor(getResources().getColor(R.color.black));
-                to.setTextColor(getResources().getColor(R.color.black));
-                repeat.setTextColor(getResources().getColor(R.color.black));
-                from.setHint("From");
-                to.setHint("To");
-                repeat.setHint("Repeat");
+                retrieveData.setType(Constants.QuestionType.AUTO_INCREMENT.getStatusCode());
+                retrieveData.setValue(0 + "," + 0 + "," + 0);
+                dbHelper.updateData(retrieveData);
 
-                //Only numeric keyboard is open after edit text click (from, to , repeat ).
-                from.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                to.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                repeat.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-
-                LinearLayout ll = new LinearLayout(this);
-                ll.setOrientation(LinearLayout.VERTICAL);
-                ll.addView(from);
-                ll.addView(to);
-                ll.addView(repeat);
-                alertDialog.setView(ll);
-
-                alertDialog.setCancelable(false);
-                alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        if (from.getText().toString().isEmpty()) {
-                            from.setError("Please enter value");
-                        } else if (to.getText().toString().isEmpty()) {
-                            to.setError("Please enter value");
-                        } else if (repeat.getText().toString().isEmpty()) {
-                            repeat.setError("Please enter value");
-                        }else
-                        {
-                            retrieveData.setType(Constants.QuestionType.AUTO_INCREMENT.getStatusCode());
-                            retrieveData.setValue(from.getText().toString() + "," + to.getText().toString() + "," + repeat.getText().toString());
-                            dbHelper.updateData(retrieveData);
-                        }
-                    }
-                });
-
-                alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // Canceled.
-                    }
-                });
-
-                AlertDialog alertd = alertDialog.create();
-                alertd.show();
+                int currentAutoIncViewIndex = viewFlipper.getDisplayedChild();
+                createDynamicViewForQuestions();
+                addReviewPage();
+                viewFlipper.setDisplayedChild(currentAutoIncViewIndex);
                 return true;
+
             case R.id.barCodeOptionMenuItem:
                 retrieveData.setType(Constants.QuestionType.SCAN_CODE.getStatusCode());
                 dbHelper.updateData(retrieveData);
@@ -912,7 +980,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
     private void sendData(String data) {
         // Check that we're actually connected before trying anything
         if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
-            Toast.makeText(getApplicationContext(),"Not Connected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Not Connected", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -937,18 +1005,18 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
-                    if(Constants.D) Log.i("PHOTOSYNC", "MESSAGE_STATE_CHANGE: " + msg.arg1);
+                    if (Constants.D) Log.i("PHOTOSYNC", "MESSAGE_STATE_CHANGE: " + msg.arg1);
                     switch (msg.arg1) {
                         case BluetoothService.STATE_CONNECTED:
-                            if(msg.arg2 == 0){//Sending cancel request to the device
+                            if (msg.arg2 == 0) {//Sending cancel request to the device
                                 sendData("-1+-1+");
                                 if (mBluetoothService != null) {
-                                    if(mBluetoothService.getState() == BluetoothService.STATE_CONNECTED){
+                                    if (mBluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
                                         mBluetoothService.stop();
                                     }
                                 }
                                 mtvStatusMessage.setText("Measurement cancel");
-                            }else if(msg.arg2 == 1){ //Send measurement request
+                            } else if (msg.arg2 == 1) { //Send measurement request
                                 mtvStatusMessage.setText(R.string.title_connected_to);
                                 mtvStatusMessage.append(mConnectedDeviceName);
 
@@ -959,12 +1027,12 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                                 }
 
                                 try {
-                                    String protocolJson= "";
+                                    String protocolJson = "";
                                     StringBuffer dataString = new StringBuffer();
                                     String[] projectProtocols = researchProject.getProtocols_ids().split(",");
                                     if (projectProtocols.length >= 1) {
                                         for (String protocolId : projectProtocols) {
-                                            if(protocolId.equals(""))
+                                            if (protocolId.equals(""))
                                                 continue;
                                             Protocol protocol = dbHelper.getProtocol(protocolId);
                                             JSONObject detailProtocolObject = new JSONObject();
@@ -980,7 +1048,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                                         }
 
-                                        if(dataString.length() > 0) {
+                                        if (dataString.length() > 0) {
                                             String data = "var protocols={" + dataString.substring(0, dataString.length() - 1) + "}";
 
                                             // Writing macros_variable.js file with protocol and macro relations
@@ -995,12 +1063,12 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                                             mtvStatusMessage.setText("Initializing measurement please wait ...");
 
-                                        }else{
+                                        } else {
 
                                             mtvStatusMessage.setText("No protocol defined for this project.");
                                             Toast.makeText(ProjectMeasurmentActivity.this, "No protocol defined for this project.", Toast.LENGTH_LONG).show();
 
-                                            if(btnTakeMeasurement != null) {
+                                            if (btnTakeMeasurement != null) {
                                                 if (btnTakeMeasurement.getText().equals("Cancel")) {
                                                     btnTakeMeasurement.setText("+ Take Measurement");
                                                     btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
@@ -1011,7 +1079,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                                         mtvStatusMessage.setText("No protocol defined for this project.");
                                         Toast.makeText(ProjectMeasurmentActivity.this, "No protocol defined for this project.", Toast.LENGTH_LONG).show();
-                                        if(btnTakeMeasurement != null) {
+                                        if (btnTakeMeasurement != null) {
                                             if (btnTakeMeasurement.getText().equals("Cancel")) {
                                                 btnTakeMeasurement.setText("+ Take Measurement");
                                                 btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
@@ -1025,8 +1093,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                                     e.printStackTrace();
                                 }
 
-                            }else{
-                                if(mIsMeasureBtnClicked) {
+                            } else {
+                                if (mIsMeasureBtnClicked) {
                                     mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, 1).sendToTarget();
                                 }
                             }
@@ -1044,7 +1112,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 case Constants.MESSAGE_WRITE:
                     break;
                 case Constants.MESSAGE_READ:
-                    if(mIsCancelMeasureBtnClicked == false) {
+                    if (mIsCancelMeasureBtnClicked == false) {
                         StringBuffer measurement = (StringBuffer) msg.obj;
                         // Do not process the message if contain pwr_off from device
                         if (!measurement.toString().contains("pwr_off")) {
@@ -1056,7 +1124,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                             StringBuffer options = new StringBuffer();
                             options.append("\"user_answers\": [");
                             //loop
-                            if(null != allOptions) {
+                            if (null != allOptions) {
                                 for (int i = 0; i < allOptions.size(); i++) {
                                     options.append("\"" + allOptions.get(i) + "\"");
                                     if (i < allOptions.size() - 1)
@@ -1092,7 +1160,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     }
                     //mIsMeasureBtnClicked = false;
                     mIsCancelMeasureBtnClicked = false;
-                    if(btnTakeMeasurement != null) {
+                    if (btnTakeMeasurement != null) {
                         if (btnTakeMeasurement.getText().equals("Cancel")) {
                             btnTakeMeasurement.setText("+ Take Measurement");
                             btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
@@ -1107,13 +1175,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
                     break;
                 case Constants.MESSAGE_TOAST:
-                    if(mIsCancelMeasureBtnClicked == false){
+                    if (mIsCancelMeasureBtnClicked == false) {
                         Toast.makeText(ProjectMeasurmentActivity.this, msg.getData().getString(Constants.TOAST),
                                 Toast.LENGTH_LONG).show();
                     }
                     mIsMeasureBtnClicked = false;
                     mIsCancelMeasureBtnClicked = false;
-                    if(btnTakeMeasurement != null) {
+                    if (btnTakeMeasurement != null) {
                         if (btnTakeMeasurement.getText().equals("Cancel")) {
                             btnTakeMeasurement.setText("+ Take Measurement");
                             btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
