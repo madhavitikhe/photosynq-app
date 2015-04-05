@@ -788,9 +788,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ C_PROJECT_ID + " = " + project_id
 				+ " AND " + C_QUESTION_ID + " = " + question_id;
 
-		System.out.println(selectQuery);
-		Log.e("DATABASE_HELPER_getQuestion", selectQuery);
-
 		Cursor c = db.rawQuery(selectQuery, null);
 
 		if (c.moveToFirst()) {
@@ -838,9 +835,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		List<Question> questions = new ArrayList<Question>();
 		String selectQuery = "SELECT  * FROM " + TABLE_QUESTION + " WHERE "
 				+ C_PROJECT_ID + " = " + project_id;
-
-		System.out.println(selectQuery);
-		Log.e("DATABASE_HELPER_getAllQuestion", selectQuery);
 
 		Cursor c = db.rawQuery(selectQuery, null);
 
@@ -962,8 +956,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = openReadDatabase();
 		List<Protocol> protocols = new ArrayList<Protocol>();
 		String selectQuery = "SELECT  * FROM " + TABLE_PROTOCOL;
-		System.out.println(selectQuery);
-		Log.e("DATABASE_HELPER_getAllProtocol", selectQuery);
 
 		Cursor c = db.rawQuery(selectQuery, null);
 
@@ -1014,8 +1006,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		String selectQuery = "SELECT  * FROM " + TABLE_PROTOCOL + " WHERE "
 				+ C_PROTOCOL_ID + " = " + protocolId;
 		;
-		System.out.println(selectQuery);
-		Log.e("DATABASE_HELPER_getProtocol", selectQuery);
 
 		Cursor c = db.rawQuery(selectQuery, null);
 
@@ -1137,8 +1127,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = openReadDatabase();
 		List<Macro> macros = new ArrayList<Macro>();
 		String selectQuery = "SELECT  * FROM " + TABLE_MACRO;
-		System.out.println(selectQuery);
-		Log.e("DATABASE_HELPER_getAllMacros", selectQuery);
 
 		Cursor c = db.rawQuery(selectQuery, null);
 
@@ -1198,8 +1186,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		String selectQuery = "SELECT  * FROM " + TABLE_SETTINGS + " WHERE "
 				+ C_USER_ID + " = '" + userID + "'";
 
-		//System.out.println(selectQuery);
-		//Log.e("DATABASE_HELPER_getSettings", selectQuery);
 		AppSettings setting = new AppSettings();
 		setting.setUserId(userID);
 		Cursor c = db.rawQuery(selectQuery, null);
@@ -1272,8 +1258,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		String selectQuery = "SELECT  * FROM " + TABLE_DATA + " WHERE "
 				+ C_USER_ID + " = '" + userID + "' and " + C_PROJECT_ID + " = '" + projectID + "' and " + C_QUESTION_ID + " = '" + questionID + "'";
 
-		System.out.println(selectQuery);
-		Log.e("DATABASE_HELPER_getSettings", selectQuery);
 		Data data = new Data();
 		data.setUser_id(userID);
 		Cursor c = db.rawQuery(selectQuery, null);
@@ -1347,12 +1331,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String selectQuery = "SELECT  * FROM " + TABLE_REMEMBER_ANSWERS + " WHERE "
                 + C_USER_ID + " = '" + userID + "' and " + C_PROJECT_ID + " = '" + projectID + "' and " + C_QUESTION_ID + " = '" + questionID + "'";
 
-        System.out.println(selectQuery);
-        Log.e("DATABASE_HELPER_getRememberAnswers", selectQuery);
         RememberAnswers rememberAnswers = new RememberAnswers();
         rememberAnswers.setUser_id(userID);
         Cursor c = db.rawQuery(selectQuery, null);
-        System.out.println("############"+c.getCount());
         if (c.moveToFirst()) {
 
             rememberAnswers.setUser_id(c.getString(c.getColumnIndex(C_USER_ID)));
@@ -1365,6 +1346,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         closeReadDatabase();
         return rememberAnswers;
     }
+
+    public int getRememberAnswersCount(String userID, String projectID) {
+        SQLiteDatabase db = openReadDatabase();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_REMEMBER_ANSWERS + " WHERE "
+                + C_USER_ID + " = '" + userID + "' and " + C_PROJECT_ID + " = '" + projectID + "' and " + C_IS_REMEMBER + " = '1'";
+
+        Cursor c = db.rawQuery(selectQuery, null);
+        int count = c.getCount();
+        c.close();
+        closeReadDatabase();
+        return count;
+    }
+
 
     // Updating single remember answer
     public boolean updateRememberAnswers(RememberAnswers rememberAnswers) {

@@ -52,6 +52,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 public class ProjectMeasurmentActivity extends ActionBarActivity {
 
     private String deviceAddress;
@@ -75,6 +76,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
     private int autoIncQueCount = 0;
     private String userId;
     private int screenWidth;
+    private Menu optionsMenu;
 
 
     @Override
@@ -712,6 +714,22 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
     }
 
+    public void userDefinedOptions() {
+        if(null != optionsMenu) {
+            if (null != viewFlipper.getTag() && null != viewFlipper.getCurrentView().getTag()) {
+                Question question = dbHelper.getQuestionForProject(viewFlipper.getTag().toString(), viewFlipper.getCurrentView().getTag().toString());
+                if (question.getQuestionType() == Question.USER_DEFINED) {
+                    optionsMenu.getItem(0).setEnabled(true);
+                } else {
+                    optionsMenu.getItem(0).setEnabled(false);
+                }
+            } else {
+                optionsMenu.getItem(0).setEnabled(false);
+            }
+        }
+
+    }
+
     private void addReviewPage() {
 
         LayoutInflater infltr = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -891,15 +909,9 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
-        final Question question = questions.get(viewFlipper.getDisplayedChild());
-
-        int queType = question.getQuestionType();
-        if(Question.USER_DEFINED == queType) {
-            getMenuInflater().inflate(R.menu.menu_project_measurment, menu);
-        }else{
-            getMenuInflater().inflate(R.menu.menu_quick_measurment, menu);
-        }
+        getMenuInflater().inflate(R.menu.menu_project_measurment, menu);
+        optionsMenu = menu;
+        userDefinedOptions();
         return true;
     }
 

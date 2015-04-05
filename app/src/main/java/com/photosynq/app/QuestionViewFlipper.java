@@ -5,7 +5,9 @@ import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 import android.widget.ViewFlipper;
 
+import com.google.android.gms.games.quest.Quest;
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.Question;
 import com.photosynq.app.model.RememberAnswers;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
@@ -17,6 +19,7 @@ public class QuestionViewFlipper extends ViewFlipper {
 
     private DatabaseHelper dbHelper = DatabaseHelper.getHelper(getContext());
     private ProjectMeasurmentActivity projectMeasurmentActivity;
+    final String userId = PrefUtils.getFromPrefs(getContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 
     public QuestionViewFlipper(Context context) {
         super(context);
@@ -33,6 +36,7 @@ public class QuestionViewFlipper extends ViewFlipper {
         if(null != getTag() && null != getCurrentView().getTag()) {
             showNextIfRemembered();
         }
+        projectMeasurmentActivity.userDefinedOptions();
     }
 
     @Override
@@ -43,11 +47,12 @@ public class QuestionViewFlipper extends ViewFlipper {
             projectMeasurmentActivity.initReviewPage();
             showNextIfRemembered();
         }
+        projectMeasurmentActivity.userDefinedOptions();
     }
 
     private void showNextIfRemembered()
     {
-        final String userId = PrefUtils.getFromPrefs(getContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+
         RememberAnswers rememberedAnswers = dbHelper.getRememberAnswers(userId, getTag().toString(), getCurrentView().getTag().toString());
         if(rememberedAnswers.getIs_remember() != null && rememberedAnswers.getIs_remember().equals(Constants.IS_REMEMBER))
         {
@@ -61,5 +66,7 @@ public class QuestionViewFlipper extends ViewFlipper {
     public void showNext() {
         super.showNext();
         projectMeasurmentActivity.initReviewPage();
+        projectMeasurmentActivity.userDefinedOptions();
+
     }
 }
