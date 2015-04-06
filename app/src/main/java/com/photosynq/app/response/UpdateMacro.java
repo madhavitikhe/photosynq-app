@@ -60,16 +60,16 @@ public class UpdateMacro implements PhotosynqResponse {
         System.out.println("UpdateMacro Start onResponseReceived: " + date.getTime());
 
         DatabaseHelper db = DatabaseHelper.getHelper(navigationDrawer);
-        db.openWriteDatabase();
-        db.openReadDatabase();
+//        db.openWriteDatabase();
+//        db.openReadDatabase();
         JSONArray jArray;
 
         if (null != result) {
             if(result.equals(Constants.SERVER_NOT_ACCESSIBLE))
             {
                 Toast.makeText(navigationDrawer, R.string.server_not_reachable, Toast.LENGTH_LONG).show();
-                db.closeWriteDatabase();
-                db.closeReadDatabase();
+//                db.closeWriteDatabase();
+//                db.closeReadDatabase();
                 return;
             }
 
@@ -106,8 +106,8 @@ public class UpdateMacro implements PhotosynqResponse {
         }
         System.out.println("###### writing macros :......");
         CommonUtils.writeStringToFile(navigationDrawer, "macros.js", dataString.toString());
-        db.closeWriteDatabase();
-        db.closeReadDatabase();
+//        db.closeWriteDatabase();
+//        db.closeReadDatabase();
         Date date1 = new Date();
 
         if(null != navigationDrawer) {

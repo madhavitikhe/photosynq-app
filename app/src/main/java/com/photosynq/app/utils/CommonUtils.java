@@ -163,9 +163,9 @@ public class CommonUtils {
         return md5;
     }
 
-    public synchronized static String uploadResults(MainActivity navigationDrawer, String project_id, String row_id, String result){
-        String authToken = PrefUtils.getFromPrefs(navigationDrawer, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-        String email = PrefUtils.getFromPrefs(navigationDrawer, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+    public synchronized static String uploadResults(Context context, String project_id, String row_id, String result){
+        String authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        String email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
         StringEntity input = null;
         String responseString = null;
         JSONObject request_data = new JSONObject();
@@ -213,7 +213,7 @@ public class CommonUtils {
                 }
             }
 
-            UpdateData updateData = new UpdateData(navigationDrawer, row_id);
+            UpdateData updateData = new UpdateData(context, row_id);
             updateData.onResponseReceived(responseString);
 
         } catch (ClientProtocolException e) {

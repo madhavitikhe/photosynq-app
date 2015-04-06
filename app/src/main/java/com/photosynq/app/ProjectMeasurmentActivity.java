@@ -340,7 +340,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                                     saveAutoIncData.setType(Constants.QuestionType.AUTO_INCREMENT.getStatusCode());
                                     saveAutoIncData.setValue(fromEditText.getText().toString() + "," + toEditText.getText().toString() + "," + repeatEditText.getText().toString());
                                     dbHelper.updateData(saveAutoIncData);
-
+                                    PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_QUESTION_INDEX, "" + "0");
                                     List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
                                     final Question question = questions.get(Integer.parseInt(v.getTag().toString()));
                                     RememberAnswers rememberAnswers = new RememberAnswers();

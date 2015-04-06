@@ -201,7 +201,7 @@ public class SyncHandler {
                         DatabaseHelper db = DatabaseHelper.getHelper(context);
                         List<ProjectResult> listRecords = db.getAllUnUploadedResults();
                         for (ProjectResult projectResult : listRecords) {
-                            CommonUtils.uploadResults(navigationDrawer, projectResult.getProjectId(), projectResult.getId(), projectResult.getReading());
+                            CommonUtils.uploadResults(context, projectResult.getProjectId(), projectResult.getId(), projectResult.getReading());
                         }
                     }
 

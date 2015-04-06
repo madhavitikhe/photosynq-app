@@ -185,45 +185,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return instance;
 	}
 
-    public synchronized SQLiteDatabase openWriteDatabase() {
-        mWriteOpenCounter++;
-        if(mWriteOpenCounter == 1) {
-            // Opening new database
-            mWriteDatabase = this.getWritableDatabase();
-        }
-        return mWriteDatabase;
-    }
 
-    public synchronized void closeWriteDatabase() {
-        mWriteOpenCounter--;
-        if(mWriteOpenCounter == 0) {
-            // Closing database
-            if(mWriteDatabase.isOpen())
-                mWriteDatabase.close();
-        }
-        if(mWriteOpenCounter < 0)
-            mWriteOpenCounter = 0;
-    }
+//    public synchronized SQLiteDatabase openWriteDatabase() {
+//        mWriteOpenCounter++;
+//        if(mWriteOpenCounter == 1) {
+//            // Opening new database
+//            mWriteDatabase = this.getWritableDatabase();
+//        }
+//        return mWriteDatabase;
+//    }
 
-    public synchronized SQLiteDatabase openReadDatabase() {
-        mReadOpenCounter++;
-        if(mReadOpenCounter == 1) {
-            // Opening new database
-            mReadDatabase = this.getReadableDatabase();
-        }
-        return mReadDatabase;
-    }
 
-    public synchronized void closeReadDatabase() {
-        mReadOpenCounter--;
-        if(mReadOpenCounter == 0) {
-            // Closing database
-            if(mReadDatabase.isOpen())
-                mReadDatabase.close();
-        }
-        if(mReadOpenCounter < 0)
-            mReadOpenCounter = 0;
-    }
+//    public synchronized void closeWriteDatabase() {
+//        mWriteOpenCounter--;
+//        if(mWriteOpenCounter == 0) {
+//            // Closing database
+//            if(mWriteDatabase.isOpen())
+//                mWriteDatabase.close();
+//        }
+//        if(mWriteOpenCounter < 0)
+//            mWriteOpenCounter = 0;
+//    }
+//
+//    public synchronized SQLiteDatabase openReadDatabase() {
+//        mReadOpenCounter++;
+//        if(mReadOpenCounter == 1) {
+//            // Opening new database
+//            mReadDatabase = this.getReadableDatabase();
+//        }
+//        return mReadDatabase;
+//    }
+
+//    public synchronized void closeReadDatabase() {
+//        mReadOpenCounter--;
+//        if(mReadOpenCounter == 0) {
+//            // Closing database
+//            if(mReadDatabase.isOpen())
+//                mReadDatabase.close();
+//        }
+//        if(mReadOpenCounter < 0)
+//            mReadOpenCounter = 0;
+//    }
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
@@ -261,7 +263,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public long createResult(ProjectResult result) {
         long retVal = -1;
 		try {
-			SQLiteDatabase db = openWriteDatabase();
+			SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_PROJECT_ID,
@@ -281,7 +283,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		} catch (SQLException sqliteException) {
 
 		}
-        closeWriteDatabase();
+        //closeWriteDatabase();
         return retVal;
 	}
 
@@ -314,8 +316,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //	}
 //
 	public List<ProjectResult> getAllUnUploadedResults() {
-		SQLiteDatabase db = openReadDatabase();
-		List<ProjectResult> projectsResults = new ArrayList<ProjectResult>();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
+        List<ProjectResult> projectsResults = new ArrayList<ProjectResult>();
 		String selectQuery = "SELECT rowid,* FROM " + TABLE_RESULTS + " WHERE "
 				+ C_UPLOADED + " = 'N'";
 
@@ -337,7 +339,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}
 
 		c.close();
-        closeReadDatabase();
+        //closeReadDatabase();
 		return projectsResults;
 	}
 //
@@ -369,17 +371,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //	}
 
 	public void deleteResult(String rowid) {
-		SQLiteDatabase db = openWriteDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 		db.delete(TABLE_RESULTS, C_ROW_ID + " = ?",
 				new String[] { String.valueOf(rowid) });
-        closeWriteDatabase();
+        //closeWriteDatabase();
 	}
 
 	// Insert research project information in database
 	public boolean createResearchProject(ResearchProject rp) {
         boolean retVal = false;
 		try {
-			SQLiteDatabase db = openWriteDatabase();
+            SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_PROJECT_ID, null != rp.getId() ? rp.getId() : "");
@@ -413,14 +415,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 							+ rp.getRecordHash());
 
 		} catch (SQLException sqliteException) {}
-        closeWriteDatabase();
+        //closeWriteDatabase();
         return retVal;
 	}
 
 	// Get research project information from database
 	public ResearchProject getResearchProject(String id) {
         ResearchProject rp = null;
-		SQLiteDatabase db = openReadDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 		String selectQuery = "SELECT  * FROM " + TABLE_RESEARCH_PROJECT
 				+ " WHERE " + C_PROJECT_ID + " = '" + id + "'";
@@ -448,13 +450,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
             c.close();
         }
-        closeReadDatabase();
+        //closeReadDatabase();
         return rp;
 	}
 
 	// Get all research project information from database.
 	public List<ResearchProject> getAllResearchProjects() {
-		SQLiteDatabase db = openReadDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 		List<ResearchProject> researchProjects = new ArrayList<ResearchProject>();
 		String selectQuery = "SELECT  * FROM " + TABLE_RESEARCH_PROJECT;
 
@@ -484,13 +486,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}
 
 		c.close();
-        closeReadDatabase();
+        //closeReadDatabase();
 		return researchProjects;
 	}
 
     // Get all research project information from database where name contains search string.
     public List<ResearchProject> getAllResearchProjects(String searchString) {
-        SQLiteDatabase db = openReadDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
         List<ResearchProject> researchProjects = new ArrayList<ResearchProject>();
         String selectQuery = "SELECT  * FROM " + TABLE_RESEARCH_PROJECT
                 + " WHERE " + C_PROJECT_NAME + " LIKE '%" + searchString + "%'";
@@ -521,7 +523,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         c.close();
-        closeReadDatabase();
+        //closeReadDatabase();
         return researchProjects;
     }
 
@@ -531,7 +533,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public boolean updateResearchProject(ResearchProject rp) {
 
         boolean retVal = false;
-		SQLiteDatabase db = openWriteDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 		ContentValues values = new ContentValues();
 		values.put(C_PROJECT_ID, null != rp.getId() ? rp.getId() : "");
@@ -560,7 +562,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}else{ // updating row
             retVal = true;
         }
-		closeWriteDatabase();
+		//closeWriteDatabase();
 		return retVal;
 	}
 
@@ -579,7 +581,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean createProjectLead(ProjectLead projectLead) {
         boolean retVal = false;
         try {
-            SQLiteDatabase db = openWriteDatabase();
+            SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
             ContentValues values = new ContentValues();
             values.put(C_LEAD_ID, null != projectLead.getId() ? projectLead.getId() : "");
@@ -601,14 +603,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             + projectLead.getRecordHash());
 
         } catch (SQLException sqliteException) {}
-        closeWriteDatabase();
+        //closeWriteDatabase();
         return retVal;
     }
 
     // Get project lead information from database
     public ProjectLead getProjectLead(String id) {
         ProjectLead projectLead = null;
-        SQLiteDatabase db = openReadDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
         String selectQuery = "SELECT  * FROM " + TABLE_PROJECT_LEAD
                 + " WHERE " + C_LEAD_ID + " = '" + id + "'";
@@ -629,7 +631,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
             c.close();
         }
-        closeReadDatabase();
+        //closeReadDatabase();
         return projectLead;
     }
 
@@ -639,7 +641,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean updateProjectLead(ProjectLead projectLead) {
 
         boolean retVal = false;
-        SQLiteDatabase db = openWriteDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(C_LEAD_ID, null != projectLead.getId() ? projectLead.getId() : "");
@@ -657,7 +659,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }else{ // updating row
             retVal = true;
         }
-        closeWriteDatabase();
+        //closeWriteDatabase();
         return retVal;
     }
 
@@ -665,7 +667,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public boolean createQuestion(Question que) {
         boolean retVal = false;
 		try {
-			SQLiteDatabase db = openWriteDatabase();
+            SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_RECORD_HASH,
@@ -684,14 +686,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			// If data already present then handle the case here.
 		} catch (SQLException sqliteException) {
 		}
-        closeWriteDatabase();
+        //closeWriteDatabase();
         return retVal;
 	}
 
 	public boolean updateQuestion(Question question) {
         boolean retVal = false;
 
-		SQLiteDatabase db = openWriteDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 		ContentValues values = new ContentValues();
 		values.put(C_RECORD_HASH,
@@ -724,7 +726,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // updating row
             retVal = true;
         }
-        closeWriteDatabase();
+        //closeWriteDatabase();
         return retVal;
 	}
 
@@ -732,7 +734,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public boolean createOption(Option op) {
         boolean retVal = false;
 		try {
-			SQLiteDatabase db = openWriteDatabase();
+            SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_RECORD_HASH, op.getRecordHash());
@@ -751,13 +753,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			// If data already present then handle the case here.
 		} catch (SQLException sqliteException) {
 		}
-        closeWriteDatabase();
+        //closeWriteDatabase();
         return retVal;
 	}
 
 	public boolean updateOption(Option option) {
         boolean retVal = false;
-		SQLiteDatabase db = openWriteDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 		ContentValues values = new ContentValues();
 		values.put(C_RECORD_HASH, option.getRecordHash());
@@ -777,12 +779,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}else {
             retVal = true;
         }
-        closeWriteDatabase();
+        //closeWriteDatabase();
         return retVal;
 	}
 
 	public Question getQuestionForProject(String project_id,String question_id) {
-		SQLiteDatabase db = openReadDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 		Question que= new Question();
 		String selectQuery = "SELECT  * FROM " + TABLE_QUESTION + " WHERE "
 				+ C_PROJECT_ID + " = " + project_id
@@ -825,13 +827,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			}
 		}
 		c.close();
-        closeReadDatabase();
+        //closeReadDatabase();
 		return que;
 	}
 
 	// Get list of all questions for given project.
 	public List<Question> getAllQuestionForProject(String project_id) {
-		SQLiteDatabase db = openReadDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 		List<Question> questions = new ArrayList<Question>();
 		String selectQuery = "SELECT  * FROM " + TABLE_QUESTION + " WHERE "
 				+ C_PROJECT_ID + " = " + project_id;
@@ -876,7 +878,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		}
 		c.close();
-        closeReadDatabase();
+        //closeReadDatabase();
 		return questions;
 	}
 
@@ -884,7 +886,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public boolean createProtocol(Protocol protocol) {
         boolean retVal = false;
 		try {
-			SQLiteDatabase db = openWriteDatabase();
+            SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_RECORD_HASH, protocol.getRecordHash());
@@ -914,14 +916,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			// If data already present then handle the case here.
 		} catch (SQLException sqliteException) {
 		}
-        closeWriteDatabase();
+//        closeWriteDatabase();
         return retVal;
 	}
 
 	public boolean updateProtocol(Protocol protocol) {
         boolean retVal = false;
 
-		SQLiteDatabase db = openWriteDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 		ContentValues values = new ContentValues();
 		values.put(C_RECORD_HASH, protocol.getRecordHash());
@@ -947,13 +949,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}else {
             retVal = true;
         }
-        closeWriteDatabase();
+        //closeWriteDatabase();
         return retVal;
 	}
 
 	// Get all protocols
 	public List<Protocol> getAllProtocolsList() {
-		SQLiteDatabase db = openReadDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 		List<Protocol> protocols = new ArrayList<Protocol>();
 		String selectQuery = "SELECT  * FROM " + TABLE_PROTOCOL;
 
@@ -979,7 +981,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			} while (c.moveToNext());
 		}
 		c.close();
-        closeReadDatabase();
+        //closeReadDatabase();
 		return protocols;
 	}
 
@@ -1001,7 +1003,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
 	public Protocol getProtocol(String protocolId) {
-		SQLiteDatabase db = openReadDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 		Protocol protocol = new Protocol();
 		String selectQuery = "SELECT  * FROM " + TABLE_PROTOCOL + " WHERE "
 				+ C_PROTOCOL_ID + " = " + protocolId;
@@ -1022,7 +1024,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             protocol.setPreSelected(c.getString(c.getColumnIndex(C_PROTOCOL_PRE_SEL)));
 		}
 		c.close();
-        closeReadDatabase();
+        //closeReadDatabase();
 		return protocol;
 	}
 
@@ -1030,7 +1032,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public boolean createMacro(Macro macro) {
         boolean retVal = false;
 		try {
-			SQLiteDatabase db = openWriteDatabase();
+            SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_RECORD_HASH, macro.getRecordHash());
@@ -1060,13 +1062,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		} catch (SQLException sqliteException) {
 		}
 
-        closeWriteDatabase();
+        //closeWriteDatabase();
         return retVal;
 	}
 
 	public boolean updateMacro(Macro macro) {
         boolean retVal = false;
-		SQLiteDatabase db = openWriteDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 		ContentValues values = new ContentValues();
 		values.put(C_RECORD_HASH, macro.getRecordHash());
@@ -1091,7 +1093,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}else{
             retVal = true;
         }
-		closeWriteDatabase();
+		//closeWriteDatabase();
         return retVal;
 	}
 
@@ -1124,7 +1126,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //	}
 
 	public List<Macro> getAllMacros() {
-		SQLiteDatabase db = openReadDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 		List<Macro> macros = new ArrayList<Macro>();
 		String selectQuery = "SELECT  * FROM " + TABLE_MACRO;
 
@@ -1151,14 +1153,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			} while (c.moveToNext());
 		}
 		c.close();
-        closeReadDatabase();
+        //closeReadDatabase();
 		return macros;
 	}
 
 	public boolean createSettings(AppSettings setting) {
         boolean retVal = false;
 		try {
-			SQLiteDatabase db = openWriteDatabase();
+            SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_MODE_TYPE, setting.getModeType());
@@ -1175,13 +1177,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			// If data already present then handle the case here.
 		} catch (SQLException sqliteException) {
 		}
-        closeWriteDatabase();
+        //closeWriteDatabase();
         return retVal;
 	}
 
 	// Getting single parameters of settings
 	public AppSettings getSettings(String userID) {
-		SQLiteDatabase db = openReadDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 		String selectQuery = "SELECT  * FROM " + TABLE_SETTINGS + " WHERE "
 				+ C_USER_ID + " = '" + userID + "'";
@@ -1198,14 +1200,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			setting.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
 		}
 		c.close();
-        closeReadDatabase();
+        //closeReadDatabase();
 		return setting;
 	}
 
 	// Updating single setting
 	public boolean updateSettings(AppSettings setting) {
         boolean retVal = false;
-		SQLiteDatabase db = openWriteDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 		ContentValues values = new ContentValues();
 		values.put(C_USER_ID, setting.getUserId());
@@ -1222,14 +1224,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}else{
             retVal = true;
         }
-		closeWriteDatabase();
+		//closeWriteDatabase();
         return retVal;
 	}
 
 	public boolean createData(Data data) {
         boolean retVal = false;
 		try {
-			SQLiteDatabase db = openWriteDatabase();
+            SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_USER_ID, data.getUser_id());
@@ -1247,13 +1249,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			// If data already present then handle the case here.
 		} catch (SQLException sqliteException) {
 		}
-        closeWriteDatabase();
+        //closeWriteDatabase();
         return retVal;
 	}
 
 	// Getting single parameters of settings
 	public Data getData(String userID, String projectID, String questionID) {
-		SQLiteDatabase db = openReadDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 		String selectQuery = "SELECT  * FROM " + TABLE_DATA + " WHERE "
 				+ C_USER_ID + " = '" + userID + "' and " + C_PROJECT_ID + " = '" + projectID + "' and " + C_QUESTION_ID + " = '" + questionID + "'";
@@ -1270,14 +1272,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			data.setValue(c.getString(c.getColumnIndex(C_VALUES)));
 		}
 		c.close();
-        closeReadDatabase();
+        //closeReadDatabase();
 		return data;
 	}
 
 	// Updating single setting
 	public boolean updateData(Data data) {
         boolean retVal = false;
-		SQLiteDatabase db = openWriteDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 		ContentValues values = new ContentValues();
 		values.put(C_USER_ID, data.getUser_id());
@@ -1295,14 +1297,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}else{
             retVal = true;
         }
-        closeWriteDatabase();
+        //closeWriteDatabase();
 		return retVal;
 	}
 
     public boolean createRememberAnswers(RememberAnswers rememberAnswers) {
         boolean retVal = false;
         try {
-            SQLiteDatabase db = openWriteDatabase();
+            SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
             ContentValues values = new ContentValues();
             values.put(C_USER_ID, rememberAnswers.getUser_id());
@@ -1320,13 +1322,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // If data already present then handle the case here.
         } catch (SQLException sqliteException) {
         }
-        closeWriteDatabase();
+        //closeWriteDatabase();
         return retVal;
     }
 
     // Getting single parameters of remember answer
     public RememberAnswers getRememberAnswers(String userID, String projectID, String questionID ) {
-        SQLiteDatabase db = openReadDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
         String selectQuery = "SELECT  * FROM " + TABLE_REMEMBER_ANSWERS + " WHERE "
                 + C_USER_ID + " = '" + userID + "' and " + C_PROJECT_ID + " = '" + projectID + "' and " + C_QUESTION_ID + " = '" + questionID + "'";
@@ -1343,12 +1345,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             rememberAnswers.setIs_remember(c.getString(c.getColumnIndex(C_IS_REMEMBER)));
         }
         c.close();
-        closeReadDatabase();
+        //closeReadDatabase();
         return rememberAnswers;
     }
 
     public int getRememberAnswersCount(String userID, String projectID) {
-        SQLiteDatabase db = openReadDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
         String selectQuery = "SELECT  * FROM " + TABLE_REMEMBER_ANSWERS + " WHERE "
                 + C_USER_ID + " = '" + userID + "' and " + C_PROJECT_ID + " = '" + projectID + "' and " + C_IS_REMEMBER + " = '1'";
@@ -1356,7 +1358,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(selectQuery, null);
         int count = c.getCount();
         c.close();
-        closeReadDatabase();
+        //closeReadDatabase();
         return count;
     }
 
@@ -1364,7 +1366,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Updating single remember answer
     public boolean updateRememberAnswers(RememberAnswers rememberAnswers) {
         boolean retVal = false;
-        SQLiteDatabase db = openWriteDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(C_USER_ID, rememberAnswers.getUser_id());
@@ -1382,12 +1384,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }else{
             retVal = true;
         }
-        closeWriteDatabase();
+        //closeWriteDatabase();
         return retVal;
     }
 
     public void deleteAllData(){
-        SQLiteDatabase db = openWriteDatabase();
+        SQLiteDatabase db = getHelper(context).getWritableDatabase();
         db.delete(TABLE_OPTION,null,null);
         db.delete(TABLE_DATA,null,null);
         db.delete(TABLE_MACRO,null,null);
@@ -1397,7 +1399,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(TABLE_SETTINGS,null,null);
         db.delete(TABLE_PROJECT_LEAD,null,null);
         db.delete(TABLE_REMEMBER_ANSWERS,null,null);
-        closeWriteDatabase();
+        //closeWriteDatabase();
     }
 
 }

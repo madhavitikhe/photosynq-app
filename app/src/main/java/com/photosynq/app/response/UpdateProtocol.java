@@ -59,14 +59,14 @@ public class UpdateProtocol implements PhotosynqResponse {
 
         JSONArray jArray;
         DatabaseHelper db = DatabaseHelper.getHelper(navigationDrawer);
-        db.openWriteDatabase();
-        db.openReadDatabase();
+//        db.openWriteDatabase();
+//        db.openReadDatabase();
         if (null != result) {
             if(result.equals(Constants.SERVER_NOT_ACCESSIBLE))
             {
                 Toast.makeText(navigationDrawer, R.string.server_not_reachable, Toast.LENGTH_LONG).show();
-                db.closeWriteDatabase();
-                db.closeReadDatabase();
+//                db.closeWriteDatabase();
+//                db.closeReadDatabase();
                 return;
             }
 
@@ -90,8 +90,8 @@ public class UpdateProtocol implements PhotosynqResponse {
             }
         }
 
-        db.closeWriteDatabase();
-        db.closeReadDatabase();
+//        db.closeWriteDatabase();
+//        db.closeReadDatabase();
         Date date1 = new Date();
 
         if(null != navigationDrawer) {
