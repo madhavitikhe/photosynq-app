@@ -77,6 +77,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
     private String userId;
     private int screenWidth;
     private Menu optionsMenu;
+    int optionMenuClickFlag = 0;
 
 
     @Override
@@ -176,14 +177,19 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                         userDefinedRememberCB.setChecked(false);
                     }
 
+                    //set checked false when user change menu (if not remember).
+                    if(optionMenuClickFlag == 1){
+                        userDefinedRememberCB.setChecked(false);
+                        userEnteredAnswer.setText("");
+                    }
+
                     Button showNext = (Button) viewUserSelected.findViewById(R.id.btn_next);
                     showNext.setTag(queIndex);
                     showNext.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 
-                            InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                            inputManager.hideSoftInputFromWindow(getWindow().getDecorView().getRootView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                            hideKeyboard();
 
                             EditText userEnteredAnswer = (EditText) ((View) v.getParent()).findViewById(R.id.et_user_answer);
                             int displayedChild = viewFlipper.getDisplayedChild();
@@ -211,6 +217,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
                                     } else {
+                                        userEnteredAnswer.setText("");
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                     }
@@ -222,6 +229,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
                                     } else {
+                                        userEnteredAnswer.setText("");
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                     }
@@ -233,7 +241,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                                     }
                                 }
 
-                                userEnteredAnswer.setText("");
                             }
 
                         }
@@ -306,7 +313,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     showNext.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            editAutoIncrementValuesBtn.setText("Edit");
+                            hideKeyboard();
 
                             Data saveAutoIncData = dbHelper.getData(userId, projectId, question.getQuestionId());
                             saveAutoIncData.setUser_id(userId);
@@ -324,6 +331,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                             } else if (repeatEditText.getText().toString().isEmpty()) {
                                 repeatEditText.setError("Please enter value");
                             } else {
+                                editAutoIncrementValuesBtn.setText("Edit");
                                 if (fromEditText.isFocusable() && toEditText.isFocusable() && repeatEditText.isFocusable()) {
                                     fromEditText.setFocusable(false);
                                     toEditText.setFocusable(false);
@@ -343,9 +351,24 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                                     rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
                                     dbHelper.updateRememberAnswers(rememberAnswers);
 
-                                    viewFlipper.showNext();
+                                    if (reviewFlag) {
+                                        initReviewPage();
+                                        viewFlipper.setDisplayedChild(viewFlipper.getChildCount() - 1);
+                                        reviewFlag = false;
+                                    } else {
+
+                                        viewFlipper.showNext();
+                                    }
                                 }else{
-                                    viewFlipper.showNext();
+
+                                    if (reviewFlag) {
+                                        initReviewPage();
+                                        viewFlipper.setDisplayedChild(viewFlipper.getChildCount() - 1);
+                                        reviewFlag = false;
+                                    } else {
+
+                                        viewFlipper.showNext();
+                                    }
                                 }
                             }
 
@@ -390,6 +413,11 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     if (rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER)) {
                         scanCodeRememberCB.setChecked(true);
                     } else {
+                        scanCodeRememberCB.setChecked(false);
+                    }
+
+                    //set checked false when user change menu (if not remember).
+                    if(optionMenuClickFlag == 2){
                         scanCodeRememberCB.setChecked(false);
                     }
 
@@ -727,7 +755,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 optionsMenu.getItem(0).setEnabled(false);
             }
         }
+    }
 
+
+    public void hideKeyboard() {
+
+        InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.hideSoftInputFromWindow(getWindow().getDecorView().getRootView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     private void addReviewPage() {
@@ -757,25 +791,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
         }
 
         mtvStatusMessage = (TextView) reviewPage.findViewById(R.id.tv_status_message);
-
-//        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-//        if (null != mBluetoothAdapter && !mBluetoothAdapter.isEnabled()) {
-//            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-//        }
-//        if (null == mBluetoothService) {
-//            mBluetoothService = new BluetoothService(this, mHandler);
-//        }
-//
-//        if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
-//            // Get the BLuetoothDevice object
-//            if (null == deviceAddress) {
-//                Toast.makeText(ProjectMeasurmentActivity.this, "Measurement device not configured, Please configure measurement device (bluetooth).", Toast.LENGTH_SHORT).show();
-//            } else {
-//                BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
-//                mBluetoothService.connect(device);
-//            }
-//        }
 
         btnTakeMeasurement = (Button) reviewPage.findViewById(R.id.btn_take_measurement);
 
@@ -870,7 +885,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 if (reviewFlag) {
                     viewFlipper.setDisplayedChild(viewFlipper.getChildCount() - 1);
                     reviewFlag = false;
-                    if (checkboxState.equals("1")) {
+                    if (checkboxState.equals(Constants.IS_REMEMBER)) {
                         rememberAnswers.setSelected_option_text(contents);
                         rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
                     } else {
@@ -882,7 +897,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                     initReviewPage();
                 } else {
 
-                    if (checkboxState.equals("1")) {
+                    if (checkboxState.equals(Constants.IS_REMEMBER)) {
                         rememberAnswers.setSelected_option_text(contents);
                         rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
                     } else {
@@ -955,6 +970,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
 
         switch (item.getItemId()) {
             case R.id.userSelectedMenuItem:
+                optionMenuClickFlag = 1;//set flag 1 if user selected menu is clicked.
+                hideKeyboard();
                 retrieveData.setType(Constants.QuestionType.USER_SELECTED.getStatusCode());
                 dbHelper.updateData(retrieveData);
 
@@ -965,6 +982,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 return true;
 
             case R.id.autoIncMenuItem:
+                hideKeyboard();
                 retrieveData.setType(Constants.QuestionType.AUTO_INCREMENT.getStatusCode());
                 retrieveData.setValue(0 + "," + 0 + "," + 0);
                 dbHelper.updateData(retrieveData);
@@ -976,6 +994,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity {
                 return true;
 
             case R.id.barCodeOptionMenuItem:
+                optionMenuClickFlag = 2;//set flag 2 if user selected menu is clicked.
+                hideKeyboard();
                 retrieveData.setType(Constants.QuestionType.SCAN_CODE.getStatusCode());
                 dbHelper.updateData(retrieveData);
 

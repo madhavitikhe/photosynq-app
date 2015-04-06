@@ -15,6 +15,9 @@
         android:background="@drawable/btn_layout_orange"
         android:layout_alignParentBottom="true"/>
 
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_below="@id/toolbar"
@@ -80,7 +83,8 @@
                     android:inputType="number"
                     android:textSize="14sp"
                     android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerHorizontal="true"
+                    android:focusable="true"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -106,7 +110,8 @@
                     android:inputType="number"
                     android:textSize="14sp"
                     android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerHorizontal="true"
+                    android:focusable="true"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -132,7 +137,8 @@
                     android:inputType="number"
                     android:textSize="14sp"
                     android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerHorizontal="true"
+                    android:focusable="true"/>
             </RelativeLayout>
         </LinearLayout>
 
@@ -144,4 +150,5 @@
             android:textSize="17sp"
             android:text="Editing this value will reset the counter"/>
   </LinearLayout>
+</ScrollView>
 </RelativeLayout>

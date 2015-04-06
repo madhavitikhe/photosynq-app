@@ -5,7 +5,8 @@
     android:layout_height="match_parent">
 
 
-    <Button android:id="@+id/btn_next"
+    <Button
+        android:id="@+id/btn_next"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_margin="10dp"
@@ -13,40 +14,46 @@
         android:textColor="@color/white"
         android:textAllCaps="false"
         android:background="@drawable/btn_layout_orange"
-        android:layout_alignParentBottom="true"/>
-    <LinearLayout
-        android:layout_below="@id/toolbar"
+        android:layout_alignParentBottom="true" />
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <include layout="@layout/question"/>
-
-        <RelativeLayout
-            android:id="@+id/footer"
+        <LinearLayout
+            android:layout_below="@id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="left" >
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <CheckBox
-                android:id="@+id/rememberAnswerCheckBox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="Remember this answer"
-                android:textColor="#000000"
-                android:textSize="17sp"/>
-        </RelativeLayout>
+            <include layout="@layout/question" />
 
-        <EditText
-            android:id="@+id/et_user_answer"
-            android:gravity="left"
-            android:layout_margin="10dp"
-            android:layout_marginTop="10dp"
-            android:lines="5"
-            android:hint="Tap to answer . . ."
-            android:textColor="@color/textPrimary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+            <RelativeLayout
+                android:id="@+id/footer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="left">
+
+                <CheckBox
+                    android:id="@+id/rememberAnswerCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="Remember this answer"
+                    android:textColor="#000000"
+                    android:textSize="17sp" />
+            </RelativeLayout>
+
+            <EditText
+                android:id="@+id/et_user_answer"
+                android:gravity="left"
+                android:layout_margin="10dp"
+                android:layout_marginTop="10dp"
+                android:lines="5"
+                android:hint="Tap to answer . . ."
+                android:textColor="@color/textPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </ScrollView>
 </RelativeLayout>
