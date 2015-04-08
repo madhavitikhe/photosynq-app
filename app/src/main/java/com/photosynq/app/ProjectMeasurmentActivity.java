@@ -216,7 +216,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     //set checked false when user change menu (if not remember).
                     if(optionMenuClickFlag == 1){
                         userDefinedRememberCB.setChecked(false);
-                        userEnteredAnswer.setText("");
+                        userEnteredAnswer.setText("");//reseting text while user change menu.
                     }
 
                     Button showNext = (Button) viewUserSelected.findViewById(R.id.btn_next);
@@ -245,6 +245,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                 rememberAnswers.setProject_id(projectId);
                                 rememberAnswers.setQuestion_id(question.getQuestionId());
 
+                                //Save values into database either user comes from first question or comes from review page.
                                 if (reviewFlag) {
                                     viewFlipper.setDisplayedChild(viewFlipper.getChildCount() - 1);
                                     reviewFlag = false;
@@ -356,10 +357,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                             saveAutoIncData.setProject_id(projectId);
                             saveAutoIncData.setQuestion_id(question.getQuestionId());
 
-//                            EditText fromEditText = (EditText) ((View) v.getParent()).findViewById(R.id.from_editText);
-//                            EditText toEditText = (EditText) ((View) v.getParent()).findViewById(R.id.to_editText);
-//                            EditText repeatEditText = (EditText) ((View) v.getParent()).findViewById(R.id.repeat_editText);
-
                             if (fromEditText.getText().toString().isEmpty()) {
                                 fromEditText.setError("Please enter value");
                             } else if (toEditText.getText().toString().isEmpty()) {
@@ -384,7 +381,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                     rememberAnswers.setProject_id(projectId);
                                     rememberAnswers.setQuestion_id(question.getQuestionId());
                                     rememberAnswers.setSelected_option_text(fromEditText.getText().toString() + "," + toEditText.getText().toString() + "," + repeatEditText.getText().toString());
-                                    rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
+                                    rememberAnswers.setIs_remember(Constants.IS_REMEMBER);//Set auto increment question is always remember.
                                     dbHelper.updateRememberAnswers(rememberAnswers);
 
                                     if (reviewFlag) {
@@ -392,7 +389,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                         viewFlipper.setDisplayedChild(viewFlipper.getChildCount() - 1);
                                         reviewFlag = false;
                                     } else {
-
+                                        autoIncQueCount = autoIncQueCount + 1;
                                         viewFlipper.showNext();
                                     }
                                 }else{
@@ -411,7 +408,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                         }
                     });
 
-                    autoIncQueCount = autoIncQueCount + 1;
+//                    autoIncQueCount = autoIncQueCount + 1;
                     if (dataValue.equals(Data.NO_VALUE)) {
                         Toast.makeText(this, "Incomplete information, please define answer types in data tab.", Toast.LENGTH_SHORT).show();
                     }
@@ -445,6 +442,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
                     final CheckBox scanCodeRememberCB = (CheckBox) viewScanCode.findViewById(R.id.rememberAnswerCheckBox);
 
+                    //Retrieve data from database and set question is remembered or not by showing checkbox checked/Unchecked.
                     RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
                     if (rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER)) {
                         scanCodeRememberCB.setChecked(true);
@@ -452,7 +450,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                         scanCodeRememberCB.setChecked(false);
                     }
 
-                    //set checked false when user change menu (if not remember).
+                    //set checked false when user change menu (if question is not remember).
                     if(optionMenuClickFlag == 2){
                         scanCodeRememberCB.setChecked(false);
                     }
@@ -521,7 +519,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
                 RelativeLayout rememberCBLayout = new RelativeLayout(this);
                 RelativeLayout.LayoutParams paramsCB = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//                paramsCB.gravity = Gravity.BOTTOM;
                 paramsCB.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                 rememberCBLayout.setLayoutParams(paramsCB);
 
@@ -530,6 +527,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                 rememberCBLayout.addView(rememberAnswersCB);
                 mainLinearLayout.addView(rememberCBLayout);
 
+                //Retrieve data from database and set question is remembered or not by showing checkbox checked/Unchecked.
                 RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
                 if (rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER)) {
                     rememberAnswersCB.setChecked(true);
@@ -570,6 +568,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                             rememberAnswers.setProject_id(projectId);
                             rememberAnswers.setQuestion_id(question.getQuestionId());
 
+                            //Update and Save values into database either user comes from first question or comes from review page.
                             if (reviewFlag) {
                                 viewFlipper.setDisplayedChild(viewFlipper.getChildCount() - 1);
                                 reviewFlag = false;
