@@ -148,7 +148,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="60dp"
             android:textSize="17sp"
-            android:text="Editing this value will reset the counter"/>
+            android:text="Changing these values while taking measurement will reset all auto increment counters."/>
   </LinearLayout>
 </ScrollView>
 </RelativeLayout>
