@@ -18,6 +18,9 @@ public class PrefUtils {
     public static final String PREFS_NAME_KEY = "NAME";
     public static final String PREFS_INSTITUTE_KEY = "INSTITUTE";
     public static final String PREFS_THUMB_URL_KEY = "THUMB_URL";
+    public static final String PREFS_PROJECTS = "PROJECTS";
+    public static final String PREFS_CONTRIBUTIONS = "CONTRIBUTIONS";
+    public static final String PREFS_AWARDS = "AWARDS";
 
     //
     public static final String PREFS_QUESTION_INDEX = "FREQ_OF_QUESTION";

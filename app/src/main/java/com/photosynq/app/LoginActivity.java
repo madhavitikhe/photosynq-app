@@ -304,13 +304,15 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
                 jsonResult = new JSONObject(result);
                 JSONObject userJsonObject = new JSONObject(jsonResult.get("user").toString());
 
-                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_LOGIN_USERNAME_KEY,jsonResult.get("email").toString());
+                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_LOGIN_USERNAME_KEY,userJsonObject.get("email").toString());
                 PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_LOGIN_PASSWORD_KEY, mStrPassword);
-                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_AUTH_TOKEN_KEY,jsonResult.get("auth_token").toString());
+                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_AUTH_TOKEN_KEY,userJsonObject.get("auth_token").toString());
                 PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_BIO_KEY,userJsonObject.get("bio").toString());
                 PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_NAME_KEY,userJsonObject.get("name").toString());
                 PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_INSTITUTE_KEY,userJsonObject.get("institute").toString());
-                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_THUMB_URL_KEY,userJsonObject.get("thumb_url").toString());
+                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_THUMB_URL_KEY,userJsonObject.get("profile_url").toString());
+                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_PROJECTS,userJsonObject.get("projects").toString());
+                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_CONTRIBUTIONS,userJsonObject.get("contributions").toString());
             } catch (JSONException e) {
                 // TODO Log error
                 e.printStackTrace();
