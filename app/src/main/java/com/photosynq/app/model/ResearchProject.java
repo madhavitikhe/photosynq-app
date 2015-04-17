@@ -9,21 +9,21 @@ public class ResearchProject {
     public String name;
     public String description;
     public String dirToCollab;
-    public String pLeadId;
+	public String creatorId;
     public String startDate;
     public String endDate;
     public String imageUrl;
     public String beta;
     public String protocols_ids;
     
-    public ResearchProject(String id, String name, String description, String dirToCollab, String pLeadId,
+    public ResearchProject(String id, String name, String description, String dirToCollab, String creatorId,
     		String startDate, String endDate, String imageUrl, String beta, String protocols_ids)
     {
     	this.id = id;
     	this.name = name;
     	this.description= description;
     	this.dirToCollab = dirToCollab;
-        this.pLeadId = pLeadId;
+		this.creatorId = creatorId;
     	this.startDate =startDate;
     	this.endDate = endDate;
     	this.imageUrl = imageUrl;
@@ -42,8 +42,8 @@ public class ResearchProject {
 				+ (null != getName() ? getName() : "" )
 				+ (null != getDescription() ? getDescription() : "" )
 				+ (null != getDirToCollab() ? getDirToCollab() : "")
-                + (null != getpLeadId() ? getpLeadId() : "")
-				+ (null != getStartDate() ? getStartDate() : "") 
+				+ (null != getCreatorId() ? getCreatorId() : "")
+				+ (null != getStartDate() ? getStartDate() : "")
 				+ (null != getEndDate() ? getEndDate() : "") 
 				+ (null != getBeta() ? getBeta() : "")
 				+ (null != getProtocols_ids() ? getProtocols_ids() : "")
@@ -77,14 +77,14 @@ public class ResearchProject {
 	public String getDirToCollab() {
 		return dirToCollab;
 	}
-    public String getpLeadId() {
-        return pLeadId;
-    }
-    public void setpLeadId(String pLeadId) {
-        this.pLeadId = pLeadId;
-    }
 	public void setDirToCollab(String dirToCollab) {
 		this.dirToCollab = dirToCollab;
+	}
+	public String getCreatorId() {
+		return creatorId;
+	}
+	public void setCreatorId(String creator) {
+		this.creatorId = creator;
 	}
 	public String getStartDate() {
 		return startDate;

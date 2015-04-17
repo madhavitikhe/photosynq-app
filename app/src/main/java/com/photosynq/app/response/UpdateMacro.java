@@ -74,18 +74,22 @@ public class UpdateMacro implements PhotosynqResponse {
             }
 
             try {
-                jArray = new JSONArray(result);
-                for (int i = 0; i < jArray.length(); i++) {
+                JSONObject resultJsonObject = new JSONObject(result);
+                if (resultJsonObject.has("macros")) {
+                    String newobj = resultJsonObject.getString("macros");
+                    jArray = new JSONArray(newobj);
+                    for (int i = 0; i < jArray.length(); i++) {
 
-                    JSONObject obj = jArray.getJSONObject(i);
-                    Macro macro = new Macro(obj.getString("id"),
-                            obj.getString("name"),
-                            obj.getString("description"),
-                            obj.getString("default_x_axis"),
-                            obj.getString("default_y_axis"),
-                            obj.getString("javascript_code"),
-                            "slug");
-                    db.updateMacro(macro);
+                        JSONObject obj = jArray.getJSONObject(i);
+                        Macro macro = new Macro(obj.getString("id"),
+                                obj.getString("name"),
+                                obj.getString("description"),
+                                obj.getString("default_x_axis"),
+                                obj.getString("default_y_axis"),
+                                obj.getString("javascript_code"),
+                                "slug");
+                        db.updateMacro(macro);
+                    }
                 }
 
             } catch (Exception e) {

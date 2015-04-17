@@ -1,20 +1,14 @@
 package com.photosynq.app.utils;
 
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import com.photosynq.app.ProjectModeFragment;
-import com.photosynq.app.QuickModeFragment;
-import com.photosynq.app.SyncFragment;
-import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.MainActivity;
-import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.model.ProjectResult;
 import com.photosynq.app.response.UpdateMacro;
 import com.photosynq.app.response.UpdateProject;
@@ -27,6 +21,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -123,28 +118,16 @@ public class SyncHandler {
                 try {
                     // Download ProjectList
                     if(syncMode == ALL_SYNC_MODE || syncMode == PROJECT_LIST_MODE) {
-                        String strProjectListURI = Constants.PHOTOSYNQ_PROJECTS_LIST_URL
-                                + "user_email=" + email + "&user_token=" + authToken;
+                            String strProjectListURI = Constants.PHOTOSYNQ_PROJECTS_LIST_URL
+                                    + "all=%d&page=%d&user_email=%s&user_token=%s";
 
-                        Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ URI" + strProjectListURI);
-                        getRequest = new HttpGet(strProjectListURI);
-                        Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing GET request");
-                        response = httpclient.execute(getRequest);
 
-                        if (null != response) {
-                            StatusLine statusLine = response.getStatusLine();
-                            if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                                response.getEntity().writeTo(out);
-                                out.close();
-                                responseString = out.toString();
-                            } else {
-                                //Closes the connection.
-                                response.getEntity().getContent().close();
-                                throw new IOException(statusLine.getReasonPhrase());
-                            }
-                        }
-                        publishProgress(new Object[]{new UpdateProject(navigationDrawer), responseString});
+                            Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ URI" + strProjectListURI);
+                            getRequest = new HttpGet(String.format(strProjectListURI, 1, 1, email, authToken));
+                            Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing GET request");
+                            response = httpclient.execute(getRequest);
+                            getResponse(response);
+
                     }
                     // Download Protocols
                     if(syncMode == ALL_SYNC_MODE || syncMode == PROTOCOL_LIST_MODE) {
@@ -227,11 +210,11 @@ public class SyncHandler {
             PhotosynqResponse delegate = (PhotosynqResponse)result[0];
             if(null!=delegate)
             {
-                delegate.onResponseReceived((String)result[1]);
+                delegate.onResponseReceived((String) result[1]);
             }
             if (null == result)
             {
-                Log.d("PHOTOSYNQ-HTTPConnection","No results returned");
+                Log.d("PHOTOSYNQ-HTTPConnection", "No results returned");
             }
             super.onProgressUpdate(result);
         }
@@ -269,6 +252,56 @@ public class SyncHandler {
             if(null != navigationDrawer){
                 navigationDrawer.setProgressBarVisibility(View.INVISIBLE);
             }
+        }
+
+    }
+
+    private void getResponse(HttpResponse response){
+        HttpClient httpclient = new DefaultHttpClient();
+        String responseString = null;
+        String authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        String email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+        String strProjectListURI = Constants.PHOTOSYNQ_PROJECTS_LIST_URL
+                + "all=%d&page=%d&user_email=%s&user_token=%s";
+
+        if (null != response) {
+            try {
+                StatusLine statusLine = response.getStatusLine();
+                if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    response.getEntity().writeTo(out);
+                    out.close();
+                    responseString = out.toString();
+                    JSONObject resultJsonObject = new JSONObject(responseString);
+                    handleProgress(new UpdateProject(navigationDrawer), responseString);
+                    String status = resultJsonObject.getString("status");
+                    if (status.equals("success")) {
+                        int currentPage = Integer.parseInt(resultJsonObject.getString("page"));
+                        int totalPages = Integer.parseInt(resultJsonObject.getString("total_pages"));
+                            HttpResponse secondResponse = httpclient.execute(new HttpGet(String.format(strProjectListURI, 1, currentPage + 1, email, authToken)));
+                            getResponse(secondResponse);
+                    }
+                } else {
+                    //Closes the connection.
+                    response.getEntity().getContent().close();
+                    throw new IOException(statusLine.getReasonPhrase());
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        }
+
+    //publishProgress method is not accesible here, then need to write custom method.
+    private void handleProgress(PhotosynqResponse delegate, String responseString){
+        //Do anything with response..
+        if(null!=delegate)
+        {
+            delegate.onResponseReceived(responseString);
+        }
+        if (null == delegate)
+        {
+            Log.d("PHOTOSYNQ-HTTPConnection", "No results returned");
         }
     }
 }

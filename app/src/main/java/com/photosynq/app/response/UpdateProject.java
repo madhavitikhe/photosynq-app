@@ -1,18 +1,16 @@
 package com.photosynq.app.response;
 
-import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.photosynq.app.MainActivity;
 import com.photosynq.app.ProjectModeFragment;
-import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.model.Option;
-import com.photosynq.app.model.ProjectLead;
+import com.photosynq.app.model.ProjectCreator;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.Constants;
@@ -28,10 +26,10 @@ import java.util.Date;
 public class UpdateProject implements PhotosynqResponse {
     private MainActivity navigationDrawer;
 
-    public UpdateProject(MainActivity navigationDrawer)
-    {
+    public UpdateProject(MainActivity navigationDrawer) {
         this.navigationDrawer = navigationDrawer;
     }
+
     @Override
     public void onResponseReceived(final String result) {
 
@@ -47,7 +45,7 @@ public class UpdateProject implements PhotosynqResponse {
 
     private void processResult(String result) {
 
-        if(null != navigationDrawer) {
+        if (null != navigationDrawer) {
             navigationDrawer.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -64,10 +62,8 @@ public class UpdateProject implements PhotosynqResponse {
 //        db.openReadDatabase();
         JSONArray jArray;
 
-        if(null!= result)
-        {
-            if(result.equals(Constants.SERVER_NOT_ACCESSIBLE))
-            {
+        if (null != result) {
+            if (result.equals(Constants.SERVER_NOT_ACCESSIBLE)) {
                 Toast.makeText(navigationDrawer, R.string.server_not_reachable, Toast.LENGTH_LONG).show();
 //                db.closeWriteDatabase();
 //                db.closeReadDatabase();
@@ -75,56 +71,77 @@ public class UpdateProject implements PhotosynqResponse {
             }
 
             try {
-                jArray = new JSONArray(result);
-                for (int i = 0; i < jArray.length(); i++) {
-                    JSONObject jsonProject = jArray.getJSONObject(i);
-                    String protocol_ids = jsonProject.getJSONArray("protocols_ids").toString().trim();
+                JSONObject resultJsonObject = new JSONObject(result);
+                if (resultJsonObject.has("projects")) {
+                    jArray = resultJsonObject.getJSONArray("projects");
 
-                    ResearchProject rp = new ResearchProject(
-                            jsonProject.getString("id"),
-                            jsonProject.getString("name"),
-                            jsonProject.getString("description"),
-                            jsonProject.getString("directions_to_collaborators"),
-                            jsonProject.getString("lead_id"),
-                            jsonProject.getString("start_date"),
-                            jsonProject.getString("end_date"),
-                            jsonProject.getString("medium_image_url"),
-                            jsonProject.getString("beta"),
-                            protocol_ids.substring(1, protocol_ids.length()-1)); // remove first and last square bracket and store as a comma separated string
+                    for (int i = 0; i < jArray.length(); i++) {
+                        JSONObject jsonProject = jArray.getJSONObject(i);
+                        String protocol_ids = jsonProject.getJSONArray("protocols_ids").toString().trim();
 
-                    try {
-                        String pleadString = jsonProject.getString("plead");
-                        JSONObject pleadJson = new JSONObject(pleadString);
+                        JSONObject creatorJsonObj = jsonProject.getJSONObject("creator");
+                        ProjectCreator pCreator = new ProjectCreator();
+                        pCreator.setId(creatorJsonObj.getString("id"));
+                        pCreator.setName(creatorJsonObj.getString("name"));
+                        pCreator.setImageUrl(creatorJsonObj.getString("profile_url"));
 
-                        ProjectLead projectLead = new ProjectLead(
-                                pleadJson.getString("id"),
-                                pleadJson.getString("name"),
-                                pleadJson.getString("data_count"),
-                                pleadJson.getString("thumb_url"));
-
-                        db.updateProjectLead(projectLead);
-
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                    JSONArray customFields = jsonProject.getJSONArray("custom_fields");
-                    for (int j = 0; j < customFields.length(); j++) {
-                        JSONObject jsonQuestion = customFields.getJSONObject(j);
-                        int questionType = Integer.parseInt(jsonQuestion.getString("value_type"));
-                        Question question = new Question(
-                                jsonQuestion.getString("id"),
+                        ResearchProject rp = new ResearchProject(
                                 jsonProject.getString("id"),
-                                jsonQuestion.getString("label"),
-                                questionType);
-                        db.updateQuestion(question);
-                        String[] options = jsonQuestion.getString("value").split(",");
-                        for (String opt : options) {
-                            Option option = new Option(jsonQuestion.getString("id"), opt, jsonProject.getString("id"));
-                            db.updateOption(option);
-                        }
+                                jsonProject.getString("name"),
+                                jsonProject.getString("description"),
+                                jsonProject.getString("directions_to_collaborators"),
+                                creatorJsonObj.getString("id"),
+                                jsonProject.getString("start_date"),
+                                jsonProject.getString("end_date"),
+                                jsonProject.getString("project_url"),
+                                jsonProject.getString("beta"),
+                                protocol_ids.substring(1, protocol_ids.length() - 1)); // remove first and last square bracket and store as a comma separated string
 
+                        try {
+                            //get project creator information like id, name, profile_image.
+                            ProjectCreator projectCreator = new ProjectCreator(
+                                    creatorJsonObj.getString("id"),
+                                    creatorJsonObj.getString("name"),
+                                    creatorJsonObj.getString("profile_url"));
+
+                            db.updateProjectLead(projectCreator);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        JSONArray customFields = jsonProject.getJSONArray("filters");
+                        for (int j = 0; j < customFields.length(); j++) {
+                            JSONObject jsonQuestion = customFields.getJSONObject(j);
+                            int questionType = Integer.parseInt(jsonQuestion.getString("value_type"));
+                            JSONArray optionValuesJArray = jsonQuestion.getJSONArray("value");
+                            //Sometime option value is empty i.e we need to set "" parameter.
+                            if (optionValuesJArray.length() == 0) {
+                                Option option = new Option(jsonQuestion.getString("id"), "", jsonProject.getString("id"));
+                                db.updateOption(option);
+                            }
+                            for (int k = 0; k < optionValuesJArray.length(); k++) {
+                                if (Question.PROJECT_DEFINED == questionType) { //If question type is project_defined then save options.
+                                    String getSingleOption = optionValuesJArray.getString(k);
+                                    Option option = new Option(jsonQuestion.getString("id"), getSingleOption, jsonProject.getString("id"));
+                                    db.updateOption(option);
+                                } else if (Question.PHOTO_TYPE_DEFINED == questionType) { //If question type is photo_type then save options and option image.
+                                    JSONObject options = optionValuesJArray.getJSONObject(k);
+                                    String optionString = options.getString("answer");
+                                    String optionImage = options.getString("image");
+                                    Option option = new Option(jsonQuestion.getString("id"), optionString + "," + optionImage, jsonProject.getString("id"));
+                                    db.updateOption(option);
+                                }
+                            }
+
+                            Question question = new Question(
+                                    jsonQuestion.getString("id"),
+                                    jsonProject.getString("id"),
+                                    jsonQuestion.getString("label"),
+                                    questionType);
+                            db.updateQuestion(question);
+                        }
+                        db.updateResearchProject(rp);
                     }
-                    db.updateResearchProject(rp);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -135,7 +152,7 @@ public class UpdateProject implements PhotosynqResponse {
 //        db.closeReadDatabase();
         Date date1 = new Date();
 
-        if(null != navigationDrawer) {
+        if (null != navigationDrawer) {
             navigationDrawer.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

@@ -30,6 +30,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -43,7 +44,6 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.zxing.client.android.CaptureActivity;
-
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Protocol;
@@ -55,13 +55,13 @@ import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.LocationUtils;
 import com.photosynq.app.utils.PrefUtils;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 public class ProjectMeasurmentActivity extends ActionBarActivity implements
@@ -92,11 +92,11 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
     private int screenWidth;
     private Menu optionsMenu;
     int optionMenuClickFlag = 0;
-// A request to connect to Location Services
+    // A request to connect to Location Services
     private LocationRequest mLocationRequest;
 
     // Stores the current instantiation of the location client in this object
-    private GoogleApiClient mLocationClient=null;
+    private GoogleApiClient mLocationClient = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,10 +158,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
          * handle callbacks.
          */
         mLocationClient = new GoogleApiClient.Builder(this)
-                 .addApi(LocationServices.API)
-                 .addConnectionCallbacks(this)
-                 .addOnConnectionFailedListener(this)
-                 .build();
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
 
     }
 
@@ -214,7 +214,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     }
 
                     //set checked false when user change menu (if not remember).
-                    if(optionMenuClickFlag == 1){
+                    if (optionMenuClickFlag == 1) {
                         userDefinedRememberCB.setChecked(false);
                         userEnteredAnswer.setText("");//reseting text while user change menu.
                     }
@@ -392,7 +392,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                         autoIncQueCount = autoIncQueCount + 1;
                                         viewFlipper.showNext();
                                     }
-                                }else{
+                                } else {
 
                                     if (reviewFlag) {
                                         initReviewPage();
@@ -451,7 +451,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     }
 
                     //set checked false when user change menu (if question is not remember).
-                    if(optionMenuClickFlag == 2){
+                    if (optionMenuClickFlag == 2) {
                         scanCodeRememberCB.setChecked(false);
                     }
 
@@ -483,7 +483,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     viewFlipper.addView(viewScanCode);
                 }
 
-            } else if (Question.PROJECT_DEFINED == queType) {
+            } else if (Question.PROJECT_DEFINED == queType) { //If type is project defined
 
                 LinearLayout mainLinearLayout = new LinearLayout(this);
                 mainLinearLayout.setBackgroundColor(Color.WHITE);
@@ -548,10 +548,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     optionTextView.setTextColor(getResources().getColor(R.color.white));
                     optionTextView.setTypeface(CommonUtils.getInstance(this).getFontRobotoRegular());
 
-//                    ImageView imageView = new ImageView(this);
-//                    imageView.setId(i);
-//                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//                    imageView.setTag(queIndex);
                     optionTextView.setId(i);
                     optionTextView.setTag(queIndex);
                     optionTextView.setOnClickListener(new View.OnClickListener() {
@@ -603,10 +599,164 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                         }
                     });
 
-//                    Picasso.with(this)
-//                            .load(R.drawable.ic_launcher)
-//                            .error(R.drawable.ic_launcher)
-//                            .into(imageView);
+                    LinearLayout cellRelativeLayout = new LinearLayout(this);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    cellRelativeLayout.setLayoutParams(params);
+                    cellRelativeLayout.setOrientation(LinearLayout.VERTICAL);
+
+                    if (i % 2 == 0) {
+                        rowLinearLayout = new LinearLayout(this);
+                        rowLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+                        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                        params1.setMargins(10, 10, 10, 10);
+                        rowLinearLayout.setLayoutParams(params1);
+
+                        imageVParams.setMargins(0, 10, 10, 10);
+
+
+                        cellRelativeLayout.addView(optionTextView, imageVParams);
+
+                        rowLinearLayout.addView(cellRelativeLayout, linearlayoutweight);
+                        if (i == question.getOptions().size() - 1) {
+
+                            subLinearLayout.addView(rowLinearLayout);
+                        }
+
+                    } else {
+                        imageVParams.setMargins(10, 10, 10, 0);
+
+                        cellRelativeLayout.addView(optionTextView, imageVParams);
+                        rowLinearLayout.addView(cellRelativeLayout, linearlayoutweight);
+                        subLinearLayout.addView(rowLinearLayout);
+                    }
+
+                }
+                scrollView.addView(subLinearLayout);
+                mainLinearLayout.addView(scrollView);
+                mainLinearLayout.setTag(question.getQuestionId());
+                viewFlipper.addView(mainLinearLayout);
+            } else if (Question.PHOTO_TYPE_DEFINED == queType) { //If type is photo_type_defined
+
+                LinearLayout mainLinearLayout = new LinearLayout(this);
+                mainLinearLayout.setBackgroundColor(Color.WHITE);
+                mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                mainLinearLayout.setLayoutParams(layoutParams);
+
+                ScrollView scrollView = new ScrollView(this);
+                scrollView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+                LinearLayout subLinearLayout = new LinearLayout(this);
+                subLinearLayout.setOrientation(LinearLayout.VERTICAL);
+                subLinearLayout.setLayoutParams(layoutParams);
+
+                TextView questionTextView = new TextView(this);
+                questionTextView.setTextColor(Color.WHITE);
+                questionTextView.setTextSize(18);
+                questionTextView.setTypeface(CommonUtils.getInstance(this).getFontRobotoMedium());
+                questionTextView.setBackgroundResource(R.drawable.actionbar_bg);
+                questionTextView.setText(question.getQuestionText());
+                questionTextView.setPadding(10, 0, 10, 10);
+                questionTextView.setGravity(Gravity.CENTER);
+                questionTextView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                mainLinearLayout.addView(questionTextView);
+
+                LinearLayout.LayoutParams optionTVParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+                int optionIvWidth = (screenWidth / 2) - 20;
+                LinearLayout.LayoutParams imageVParams = new LinearLayout.LayoutParams(optionIvWidth, optionIvWidth);
+
+                LinearLayout.LayoutParams linearlayoutweight = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1);
+
+                LinearLayout rowLinearLayout = new LinearLayout(this);
+
+                RelativeLayout rememberCBLayout = new RelativeLayout(this);
+                RelativeLayout.LayoutParams paramsCB = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                paramsCB.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                rememberCBLayout.setLayoutParams(paramsCB);
+
+                final CheckBox rememberAnswersCB = new CheckBox(this);
+                rememberAnswersCB.setText("Remember this option");
+                rememberCBLayout.addView(rememberAnswersCB);
+                mainLinearLayout.addView(rememberCBLayout);
+
+                //Retrieve data from database and set question is remembered or not by showing checkbox checked/Unchecked.
+                RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
+                if (rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER)) {
+                    rememberAnswersCB.setChecked(true);
+                } else {
+                    rememberAnswersCB.setChecked(false);
+                }
+
+                for (int i = 0; i < question.getOptions().size(); i++) {
+                    String optionText = question.getOptions().get(i);
+                    final String[] splitOptionText = optionText.split(",");
+                    TextView optionTextView = new TextView(this);
+                    optionTextView.setText(splitOptionText[0]);
+                    optionTextView.setTextColor(Color.BLACK);
+                    optionTextView.setTextSize(14);
+                    optionTextView.setSingleLine(false);
+                    optionTextView.setMaxLines(Integer.MAX_VALUE);
+                    optionTextView.setTypeface(CommonUtils.getInstance(this).getFontRobotoRegular());
+
+                    ImageView imageView = new ImageView(this);
+                    imageView.setId(i);
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    imageView.setTag(queIndex);
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            int displayedChild = viewFlipper.getDisplayedChild();
+                            int childCount = viewFlipper.getChildCount();
+
+                            // allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+                            List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
+                            final Question question = questions.get(Integer.parseInt(v.getTag().toString()));
+                            RememberAnswers rememberAnswers = new RememberAnswers();
+                            rememberAnswers.setUser_id(userId);
+                            rememberAnswers.setProject_id(projectId);
+                            rememberAnswers.setQuestion_id(question.getQuestionId());
+
+                            //Update and Save values into database either user comes from first question or comes from review page.
+                            if (reviewFlag) {
+                                viewFlipper.setDisplayedChild(viewFlipper.getChildCount() - 1);
+                                reviewFlag = false;
+
+                                if (rememberAnswersCB.isChecked()) {
+                                    rememberAnswers.setSelected_option_text(splitOptionText[0]);
+                                    rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
+                                } else {
+                                    rememberAnswers.setSelected_option_text(splitOptionText[0]);
+                                    rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
+                                }
+                                dbHelper.updateRememberAnswers(rememberAnswers);
+
+                                initReviewPage();
+                            } else {
+                                if (rememberAnswersCB.isChecked()) {
+                                    rememberAnswers.setSelected_option_text(splitOptionText[0]);
+                                    rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
+                                } else {
+                                    rememberAnswers.setSelected_option_text(splitOptionText[0]);
+                                    rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
+                                }
+                                dbHelper.updateRememberAnswers(rememberAnswers);
+                                viewFlipper.showNext();
+                                if (displayedChild == childCount - 2) {
+                                    viewFlipper.stopFlipping();
+
+                                    initReviewPage();
+                                }
+                            }
+
+                        }
+                    });
+
+                    Picasso.with(this)
+                            .load(splitOptionText[1])
+                            .error(R.drawable.ic_launcher)
+                            .into(imageView);
+//                    }
 
                     LinearLayout cellRelativeLayout = new LinearLayout(this);
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -621,13 +771,12 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                         rowLinearLayout.setLayoutParams(params1);
 
 
-//                        optionTextView.setId(1);
+                        optionTextView.setId(1);
                         //??imageVParams.addRule(RelativeLayout.BELOW, optionTextView.getId());
                         imageVParams.setMargins(0, 10, 10, 10);
 
-
-                        cellRelativeLayout.addView(optionTextView, imageVParams);
-//                        cellRelativeLayout.addView(imageView, imageVParams);
+                        cellRelativeLayout.addView(optionTextView, optionTVParams);
+                        cellRelativeLayout.addView(imageView, imageVParams);
 
                         rowLinearLayout.addView(cellRelativeLayout, linearlayoutweight);
                         if (i == question.getOptions().size() - 1) {
@@ -636,13 +785,12 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                         }
 
                     } else {
-//                        optionTextView.setId(1555555);
+                        optionTextView.setId(1555555);
                         //??imageVParams.addRule(RelativeLayout.BELOW, optionTextView.getId());
                         imageVParams.setMargins(10, 10, 10, 0);
 
-
-                        cellRelativeLayout.addView(optionTextView, imageVParams);
-//                        cellRelativeLayout.addView(imageView, imageVParams);
+                        cellRelativeLayout.addView(optionTextView, optionTVParams);
+                        cellRelativeLayout.addView(imageView, imageVParams);
 
                         rowLinearLayout.addView(cellRelativeLayout, linearlayoutweight);
 
@@ -778,7 +926,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
     }
 
     public void userDefinedOptions() {
-        if(null != optionsMenu) {
+        if (null != optionsMenu) {
             if (null != viewFlipper.getTag() && null != viewFlipper.getCurrentView().getTag()) {
                 Question question = dbHelper.getQuestionForProject(viewFlipper.getTag().toString(), viewFlipper.getCurrentView().getTag().toString());
                 if (question.getQuestionType() == Question.USER_DEFINED) {
@@ -1280,6 +1428,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
         mLocationClient.connect();
 
     }
+
     /**
      * Verify that Google Play services is available before making a request.
      *
@@ -1316,7 +1465,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
         if (servicesConnected()) {
 
             // Get the current location
-            Location currentLocation=LocationServices.FusedLocationApi
+            Location currentLocation = LocationServices.FusedLocationApi
                     .getLastLocation(mLocationClient);
 
             PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, LocationUtils.getLatLng(this, currentLocation));
@@ -1342,6 +1491,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
     public void onConnectionSuspended(int i) {
 
     }
+
     /*
      * Called by Location Services if the attempt to
      * Location Services fails.
@@ -1382,7 +1532,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d("PHOTOSYNQ", "Location changed:"+ LocationUtils.getLatLng(this, location));
+        Log.d("PHOTOSYNQ", "Location changed:" + LocationUtils.getLatLng(this, location));
         PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, LocationUtils.getLatLng(this, location));
     }
 

@@ -71,18 +71,22 @@ public class UpdateProtocol implements PhotosynqResponse {
             }
 
             try {
-                jArray = new JSONArray(result);
-                for (int i = 0; i < jArray.length(); i++) {
+                JSONObject resultJsonObject = new JSONObject(result);
+                if (resultJsonObject.has("protocols")) {
+                    String newobj = resultJsonObject.getString("protocols");
+                    jArray = new JSONArray(newobj);
+                    for (int i = 0; i < jArray.length(); i++) {
 
-                    JSONObject obj = jArray.getJSONObject(i);
-                    String id = obj.getString("id");
-                    Protocol protocol = new Protocol(id,
-                            obj.getString("name"),
-                            obj.getString("protocol_json2"),
-                            obj.getString("description"),
-                            obj.getString("macro_id"), "slug",
-                            obj.getString("pre_selected"));
-                    db.updateProtocol(protocol);
+                        JSONObject obj = jArray.getJSONObject(i);
+                        String id = obj.getString("id");
+                        Protocol protocol = new Protocol(id,
+                                obj.getString("name"),
+                                obj.getString("protocol_json"),
+                                obj.getString("description"),
+                                obj.getString("macro_id"), "slug",
+                                obj.getString("pre_selected"));
+                        db.updateProtocol(protocol);
+                    }
                 }
 
             } catch (Exception e) {

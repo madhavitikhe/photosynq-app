@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.photosynq.app.ProjectMeasurmentActivity">
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_settings"
+        app:showAsAction="always" >
+
+        <menu>
+            <item
+                android:id="@+id/userSelectedMenuItem"
+                android:title="Enter text (default)" />
+            <item
+                android:id="@+id/autoIncMenuItem"
+                android:title="Auto increment" />
+            <item
+                android:id="@+id/barCodeOptionMenuItem"
+                android:title="QR/Bar code scan" />
+        </menu>
+    </item>
+</menu>

@@ -1,6 +1,5 @@
 package com.photosynq.app;
 
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -9,24 +8,18 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.Data;
-import com.photosynq.app.model.ProjectLead;
+import com.photosynq.app.model.ProjectCreator;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.CommonUtils;
@@ -75,7 +68,7 @@ public class ProjectDetailsActivity extends ActionBarActivity {
                     .into(projectImage);
 
             ImageView profileImage = (ImageView) findViewById(R.id.user_profile_image);
-            ProjectLead projectLead = databaseHelper.getProjectLead(project.getpLeadId());
+            ProjectCreator projectLead = databaseHelper.getProjectLead(project.getCreatorId());
             String imageUrl = projectLead.getImageUrl();
             Picasso.with(this)
                     .load(imageUrl)

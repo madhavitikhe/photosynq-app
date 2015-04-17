@@ -200,11 +200,12 @@
 
                             <TextView
                                 android:id="@+id/tv_awards"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="@dimen/next_arrow_width"
+                                android:layout_height="@dimen/next_arrow_height"
                                 android:layout_marginRight="8dp"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerInParent="true"
+                                android:background="@drawable/next_arrow"
                                 android:textColor="@color/list_item_next" />
                         </RelativeLayout>
 
