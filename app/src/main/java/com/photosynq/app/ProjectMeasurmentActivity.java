@@ -635,6 +635,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                 mainLinearLayout.addView(scrollView);
                 mainLinearLayout.setTag(question.getQuestionId());
                 viewFlipper.addView(mainLinearLayout);
+
             } else if (Question.PHOTO_TYPE_DEFINED == queType) { //If type is photo_type_defined
 
                 LinearLayout mainLinearLayout = new LinearLayout(this);
@@ -754,6 +755,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
                     Picasso.with(this)
                             .load(splitOptionText[1])
+                            .placeholder(R.drawable.ic_launcher)
                             .error(R.drawable.ic_launcher)
                             .into(imageView);
 //                    }

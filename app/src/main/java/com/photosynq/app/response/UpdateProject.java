@@ -79,11 +79,13 @@ public class UpdateProject implements PhotosynqResponse {
                         JSONObject jsonProject = jArray.getJSONObject(i);
                         String protocol_ids = jsonProject.getJSONArray("protocols_ids").toString().trim();
 
-                        JSONObject creatorJsonObj = jsonProject.getJSONObject("creator");
+                        JSONObject projectImageUrl = jsonProject.getJSONObject("project_photo");//get project image url.
+                        JSONObject creatorJsonObj = jsonProject.getJSONObject("creator");//get project creator infos.
+                        JSONObject creatorAvatar = creatorJsonObj.getJSONObject("avatar");//get project creator profile image.
                         ProjectCreator pCreator = new ProjectCreator();
                         pCreator.setId(creatorJsonObj.getString("id"));
                         pCreator.setName(creatorJsonObj.getString("name"));
-                        pCreator.setImageUrl(creatorJsonObj.getString("profile_url"));
+                        pCreator.setImageUrl(creatorAvatar.getString("thumb"));
 
                         ResearchProject rp = new ResearchProject(
                                 jsonProject.getString("id"),
@@ -93,7 +95,7 @@ public class UpdateProject implements PhotosynqResponse {
                                 creatorJsonObj.getString("id"),
                                 jsonProject.getString("start_date"),
                                 jsonProject.getString("end_date"),
-                                jsonProject.getString("project_url"),
+                                projectImageUrl.getString("medium"),//project image url
                                 jsonProject.getString("beta"),
                                 protocol_ids.substring(1, protocol_ids.length() - 1)); // remove first and last square bracket and store as a comma separated string
 
@@ -102,7 +104,7 @@ public class UpdateProject implements PhotosynqResponse {
                             ProjectCreator projectCreator = new ProjectCreator(
                                     creatorJsonObj.getString("id"),
                                     creatorJsonObj.getString("name"),
-                                    creatorJsonObj.getString("profile_url"));
+                                    creatorAvatar.getString("thumb"));
 
                             db.updateProjectLead(projectCreator);
 
