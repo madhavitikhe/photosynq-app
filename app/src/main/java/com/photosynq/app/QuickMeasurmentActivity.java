@@ -34,6 +34,7 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
 
     private String deviceAddress;
     private String mConnectedDeviceName;
+    private String protocolId;
     private String protocolJson;
 
     private TextView mtvStatusMessage;
@@ -63,6 +64,7 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
         String protocolDescription = "";
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
+            protocolId = extras.getString(Protocol.ID);
             protocolJson = extras.getString(DatabaseHelper.C_PROTOCOL_JSON);
             protocolName = extras.getString(Protocol.NAME);
             protocolDescription = extras.getString(Protocol.DESCRIPTION);
@@ -181,7 +183,10 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
                                 if (protocolJson.length() > 0) {
                                     //change this once you get actual protocol
                                     //String obj = "[{\"measurements\":2,\"protocol_name\":\"baseline_sample\",\"averages\":1,\"wait\":0,\"cal_true\":2,\"analog_averages\":1,\"pulsesize\":10,\"pulsedistance\":3000,\"actintensity1\":1,\"actintensity2\":1,\"measintensity\":255,\"calintensity\":255,\"pulses\":[400],\"detectors\":[[34]],\"measlights\":[[14]]},{\"measurements\":2,\"protocol_name\":\"fluorescence\",\"baselines\":[1,1,1,1],\"environmental\":[[\"relative_humidity\",1],[\"temperature\",1]],\"averages\":2,\"wait\":0,\"cal_true\":0,\"analog_averages\":1,\"act_light\":20,\"pulsesize\":10,\"pulsedistance\":10000,\"actintensity1\":100,\"actintensity2\":100,\"measintensity\":3,\"calintensity\":255,\"pulses\":[50,50,50,50],\"detectors\":[[34],[34],[34],[34]],\"measlights\":[[15],[15],[15],[15]],\"act\":[2,1,2,2]}]";
-                                    protocolJson = "[" + protocolJson + "]";
+
+                                    String tempProtocolJson = protocolJson.substring(0, protocolJson.lastIndexOf("}")) + ",";
+                                    tempProtocolJson += "protocol_id:" + protocolId + "}";
+                                    protocolJson = tempProtocolJson;
                                     System.out.println("sending protocol to device using quick measure : " + protocolJson + "length:" + protocolJson.length());
 
                                     sendData(protocolJson);

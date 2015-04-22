@@ -4,6 +4,7 @@ import com.photosynq.app.utils.CommonUtils;
 
 public class Protocol {
 
+	public static final String ID = "PROTOCOL_ID";
     public static final String NAME = "PROTOCOL_NAME";
     public static final String DESCRIPTION = "PROTOCOL_DESCRIPTION";
 
