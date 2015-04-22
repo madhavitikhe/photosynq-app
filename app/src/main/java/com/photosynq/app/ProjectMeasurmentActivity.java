@@ -1260,7 +1260,11 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
                                             String tempProtocolJson = protocol.getProtocol_json().trim();
                                             if (tempProtocolJson.length() > 1) {
-                                                protocolJson += "{" + tempProtocolJson.substring(1, tempProtocolJson.length() - 1) + "},";
+
+                                                tempProtocolJson = tempProtocolJson.substring(1, tempProtocolJson.lastIndexOf("}")) + ",";
+
+                                                protocolJson += tempProtocolJson;
+                                                protocolJson += "protocol_id:" + protocol.getId() + "},";
                                             }
 
                                         }
