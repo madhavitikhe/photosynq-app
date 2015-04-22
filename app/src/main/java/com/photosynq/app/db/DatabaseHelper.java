@@ -122,8 +122,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Project Lead table create statement
     private static final String CREATE_TABLE_PROJECT_LEAD = "CREATE TABLE "
-            + TABLE_PROJECT_LEAD + "(" + C_RECORD_HASH
-            + " TEXT PRIMARY KEY," + C_LEAD_ID + " TEXT," + C_LEAD_NAME + " TEXT,"
+            + TABLE_PROJECT_LEAD + "(" + C_LEAD_ID
+            + " TEXT PRIMARY KEY," + C_LEAD_NAME + " TEXT,"
             + C_LEAD_DATA_COUNT + " TEXT," + C_LEAD_IMAGE_URL + " TEXT"
             + ")";
 
@@ -535,6 +535,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         boolean retVal = false;
         SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
+		String name = rp.getName();
 		ContentValues values = new ContentValues();
 		values.put(C_PROJECT_ID, null != rp.getId() ? rp.getId() : "");
 		values.put(C_PROJECT_NAME, null != rp.getName() ? rp.getName() : "");

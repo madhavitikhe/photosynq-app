@@ -8,12 +8,14 @@ import com.photosynq.app.MainActivity;
 import com.photosynq.app.ProjectModeFragment;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.http.HTTPConnection;
 import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.model.Option;
 import com.photosynq.app.model.ProjectCreator;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.Constants;
+import com.photosynq.app.utils.PrefUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -72,6 +74,25 @@ public class UpdateProject implements PhotosynqResponse {
 
             try {
                 JSONObject resultJsonObject = new JSONObject(result);
+
+                if (resultJsonObject.has("projects")) {
+                    int currentPage = Integer.parseInt(resultJsonObject.getString("page"));
+                    int totalPages = Integer.parseInt(resultJsonObject.getString("total_pages"));
+
+                    String authToken = PrefUtils.getFromPrefs(navigationDrawer, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+                    String email = PrefUtils.getFromPrefs(navigationDrawer, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+
+                    if (currentPage < totalPages) {
+                        String strProjectListURI = Constants.PHOTOSYNQ_PROJECTS_LIST_URL
+                                + "all=%d&page=%d&user_email=%s&user_token=%s";
+                        //UpdateProject updateProject = new UpdateProject((MainActivity) this);
+                        HTTPConnection httpConnection = new HTTPConnection();
+                        httpConnection.delegate = this;
+                        httpConnection.execute(navigationDrawer, String.format(strProjectListURI, 1, currentPage + 1, email, authToken), "GET");
+                    }
+                }
+
+
                 if (resultJsonObject.has("projects")) {
                     jArray = resultJsonObject.getJSONArray("projects");
 

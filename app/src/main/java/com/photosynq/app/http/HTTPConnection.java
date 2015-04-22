@@ -112,23 +112,23 @@ public class HTTPConnection extends AsyncTask<Object, Object, String>{
                         response.getEntity().writeTo(out);
                         out.close();
                         responseString = out.toString();
-                        JSONObject resultJsonObject = new JSONObject(responseString);
-                        if (resultJsonObject.has("projects")) {
-                            int currentPage = Integer.parseInt(resultJsonObject.getString("page"));
-                            int totalPages = Integer.parseInt(resultJsonObject.getString("total_pages"));
-
-                            authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-                            email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-
-                            if (currentPage <= totalPages) {
-                                String strProjectListURI = Constants.PHOTOSYNQ_PROJECTS_LIST_URL
-                                        + "all=%d&page=%d&user_email=%s&user_token=%s";
-                                UpdateProject updateProject = new UpdateProject((MainActivity) context);
-                                HTTPConnection httpConnection = new HTTPConnection();
-                                httpConnection.delegate = updateProject;
-                                httpConnection.execute(context, String.format(strProjectListURI, 1, currentPage + 1, email, authToken), "GET");
-                            }
-                        }
+//                        JSONObject resultJsonObject = new JSONObject(responseString);
+//                        if (resultJsonObject.has("projects")) {
+//                            int currentPage = Integer.parseInt(resultJsonObject.getString("page"));
+//                            int totalPages = Integer.parseInt(resultJsonObject.getString("total_pages"));
+//
+//                            authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+//                            email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+//
+//                            if (currentPage <= totalPages) {
+//                                String strProjectListURI = Constants.PHOTOSYNQ_PROJECTS_LIST_URL
+//                                        + "all=%d&page=%d&user_email=%s&user_token=%s";
+//                                UpdateProject updateProject = new UpdateProject((MainActivity) context);
+//                                HTTPConnection httpConnection = new HTTPConnection();
+//                                httpConnection.delegate = updateProject;
+//                                httpConnection.execute(context, String.format(strProjectListURI, 1, currentPage + 1, email, authToken), "GET");
+//                            }
+//                        }
                     } else {
                         //Closes the connection.
                         response.getEntity().getContent().close();
