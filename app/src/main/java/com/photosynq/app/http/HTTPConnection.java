@@ -3,10 +3,14 @@ package com.photosynq.app.http;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.photosynq.app.MainActivity;
 import com.photosynq.app.http.PhotosynqResponse;
+import com.photosynq.app.response.UpdateProject;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
+import com.photosynq.app.utils.PrefUtils;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -75,6 +79,8 @@ public class HTTPConnection extends AsyncTask<Object, Object, String>{
         HttpPost postRequest = null;
         HttpGet getRequest = null;
         String responseString = null;
+        String email;
+        String authToken;
         if(!CommonUtils.isConnected(context))
         {
             return Constants.SERVER_NOT_ACCESSIBLE;
@@ -99,16 +105,37 @@ public class HTTPConnection extends AsyncTask<Object, Object, String>{
             Log.d("PHOTOSYNQ-HTTPConnection", "in async task");
 
             if (null != response) {
-                StatusLine statusLine = response.getStatusLine();
-                if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    response.getEntity().writeTo(out);
-                    out.close();
-                    responseString = out.toString();
-                } else {
-                    //Closes the connection.
-                    response.getEntity().getContent().close();
-                    throw new IOException(statusLine.getReasonPhrase());
+                try {
+                    StatusLine statusLine = response.getStatusLine();
+                    if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        response.getEntity().writeTo(out);
+                        out.close();
+                        responseString = out.toString();
+                        JSONObject resultJsonObject = new JSONObject(responseString);
+                        if (resultJsonObject.has("projects")) {
+                            int currentPage = Integer.parseInt(resultJsonObject.getString("page"));
+                            int totalPages = Integer.parseInt(resultJsonObject.getString("total_pages"));
+
+                            authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+                            email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+
+                            if (currentPage <= totalPages) {
+                                String strProjectListURI = Constants.PHOTOSYNQ_PROJECTS_LIST_URL
+                                        + "all=%d&page=%d&user_email=%s&user_token=%s";
+                                UpdateProject updateProject = new UpdateProject((MainActivity) context);
+                                HTTPConnection httpConnection = new HTTPConnection();
+                                httpConnection.delegate = updateProject;
+                                httpConnection.execute(context, String.format(strProjectListURI, 1, currentPage + 1, email, authToken), "GET");
+                            }
+                        }
+                    } else {
+                        //Closes the connection.
+                        response.getEntity().getContent().close();
+                        throw new IOException(statusLine.getReasonPhrase());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 

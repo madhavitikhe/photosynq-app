@@ -81,7 +81,7 @@ public class UpdateProject implements PhotosynqResponse {
 
                         JSONObject projectImageUrl = jsonProject.getJSONObject("project_photo");//get project image url.
                         JSONObject creatorJsonObj = jsonProject.getJSONObject("creator");//get project creator infos.
-                        JSONObject creatorAvatar = creatorJsonObj.getJSONObject("avatar");//get project creator profile image.
+                        JSONObject creatorAvatar = creatorJsonObj.getJSONObject("avatar");//
                         ProjectCreator pCreator = new ProjectCreator();
                         pCreator.setId(creatorJsonObj.getString("id"));
                         pCreator.setName(creatorJsonObj.getString("name"));
@@ -95,7 +95,7 @@ public class UpdateProject implements PhotosynqResponse {
                                 creatorJsonObj.getString("id"),
                                 jsonProject.getString("start_date"),
                                 jsonProject.getString("end_date"),
-                                projectImageUrl.getString("medium"),//project image url
+                                projectImageUrl.getString("original"),
                                 jsonProject.getString("beta"),
                                 protocol_ids.substring(1, protocol_ids.length() - 1)); // remove first and last square bracket and store as a comma separated string
 

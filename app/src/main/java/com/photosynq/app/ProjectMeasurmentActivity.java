@@ -635,7 +635,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                 mainLinearLayout.addView(scrollView);
                 mainLinearLayout.setTag(question.getQuestionId());
                 viewFlipper.addView(mainLinearLayout);
-
             } else if (Question.PHOTO_TYPE_DEFINED == queType) { //If type is photo_type_defined
 
                 LinearLayout mainLinearLayout = new LinearLayout(this);

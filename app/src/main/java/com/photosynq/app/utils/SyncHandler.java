@@ -8,6 +8,7 @@ import android.widget.ProgressBar;
 
 import com.photosynq.app.MainActivity;
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.http.HTTPConnection;
 import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.model.ProjectResult;
 import com.photosynq.app.response.UpdateMacro;
@@ -111,72 +112,39 @@ public class SyncHandler {
                 HttpResponse response = null;
                 HttpGet getRequest = null;
                 String responseString = null;
+                HTTPConnection mProtocolListTask = null;
+                HTTPConnection mMacroListTask = null;
                 if (!CommonUtils.isConnected(context)) {
                     return Constants.SERVER_NOT_ACCESSIBLE;
                 }
                 Log.d("PHOTOSYNQ-HTTPConnection", "in async task");
-                try {
                     // Download ProjectList
-                    if(syncMode == ALL_SYNC_MODE || syncMode == PROJECT_LIST_MODE) {
-                            String strProjectListURI = Constants.PHOTOSYNQ_PROJECTS_LIST_URL
-                                    + "all=%d&page=%d&user_email=%s&user_token=%s";
+                    if(syncMode == ALL_SYNC_MODE || syncMode == PROJECT_LIST_MODE || syncMode == PROTOCOL_LIST_MODE) {
+                        UpdateProject updateProject = new UpdateProject((MainActivity) context);
+                        HTTPConnection mProjListTask = new HTTPConnection();
+                        mProjListTask.delegate = updateProject;
+                        mProjListTask
+                                .execute(context,Constants.PHOTOSYNQ_PROJECTS_LIST_URL
+                                        + "all=1"+"&page=1"
+                                        + "&user_email=" + email + "&user_token="
+                                        + authToken, "GET");
+
+                        UpdateProtocol updateProtocol = new UpdateProtocol((MainActivity) context);
+                        mProtocolListTask = new HTTPConnection();
+                        mProtocolListTask.delegate = updateProtocol;
+                        mProtocolListTask.execute(context,
+                                Constants.PHOTOSYNQ_PROTOCOLS_LIST_URL + "user_email="
+                                        + email + "&user_token=" + authToken, "GET");
 
 
-                            Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ URI" + strProjectListURI);
-                            getRequest = new HttpGet(String.format(strProjectListURI, 1, 1, email, authToken));
-                            Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing GET request");
-                            response = httpclient.execute(getRequest);
-                            getResponse(response);
+                        UpdateMacro updateMacro = new UpdateMacro((MainActivity) context);
+                        mMacroListTask = new HTTPConnection();
+                        mMacroListTask.delegate = updateMacro;
+                        mMacroListTask
+                                .execute(context, Constants.PHOTOSYNQ_MACROS_LIST_URL
+                                        + "user_email=" + email + "&user_token="
+                                        + authToken, "GET");
 
-                    }
-                    // Download Protocols
-                    if(syncMode == ALL_SYNC_MODE || syncMode == PROTOCOL_LIST_MODE) {
-                        String strProtocolURI = Constants.PHOTOSYNQ_PROTOCOLS_LIST_URL
-                                + "user_email=" + email + "&user_token=" + authToken;
-
-                        Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ URI" + strProtocolURI);
-                        getRequest = new HttpGet(strProtocolURI);
-                        Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing GET request");
-                        response = httpclient.execute(getRequest);
-
-                        if (null != response) {
-                            StatusLine statusLine = response.getStatusLine();
-                            if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                                response.getEntity().writeTo(out);
-                                out.close();
-                                responseString = out.toString();
-                            } else {
-                                //Closes the connection.
-                                response.getEntity().getContent().close();
-                                throw new IOException(statusLine.getReasonPhrase());
-                            }
-                        }
-                        publishProgress(new Object[]{new UpdateProtocol(navigationDrawer), responseString});
-
-                        // Download Macros
-                        String strMacroURI = Constants.PHOTOSYNQ_MACROS_LIST_URL
-                                + "user_email=" + email + "&user_token=" + authToken;
-
-                        Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ URI" + strMacroURI);
-                        getRequest = new HttpGet(strMacroURI);
-                        Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing GET request");
-                        response = httpclient.execute(getRequest);
-
-                        if (null != response) {
-                            StatusLine statusLine = response.getStatusLine();
-                            if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                                response.getEntity().writeTo(out);
-                                out.close();
-                                responseString = out.toString();
-                            } else {
-                                //Closes the connection.
-                                response.getEntity().getContent().close();
-                                throw new IOException(statusLine.getReasonPhrase());
-                            }
-                        }
-                        publishProgress(new Object[]{new UpdateMacro(navigationDrawer), responseString});
                     }
 
                     // Upload all unuploaded results
@@ -188,12 +156,6 @@ public class SyncHandler {
                         }
                     }
 
-
-                } catch (ClientProtocolException e) {
-                    return Constants.SERVER_NOT_ACCESSIBLE;
-                } catch (IOException e) {
-                    return Constants.SERVER_NOT_ACCESSIBLE;
-                }
                 return Constants.SUCCESS;
 
             } catch (Exception e) {

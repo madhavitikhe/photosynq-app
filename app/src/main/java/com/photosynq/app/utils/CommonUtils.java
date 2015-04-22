@@ -12,10 +12,15 @@ import android.widget.Toast;
 
 import com.photosynq.app.MainActivity;
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.http.HTTPConnection;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.Data;
+import com.photosynq.app.model.ProjectResult;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.response.UpdateData;
+import com.photosynq.app.response.UpdateMacro;
+import com.photosynq.app.response.UpdateProject;
+import com.photosynq.app.response.UpdateProtocol;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -43,6 +48,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 
 /**
  * Created by kalpesh on 24/01/15.
@@ -301,5 +308,88 @@ public class CommonUtils {
         return null;
 
     }
+
+
+    /**
+     * Download data from photosynq website, it return projects, protocols and macros list.
+     */
+//    public static void downloadData(Context context)
+//    {
+//        System.out.println("Downloading data..............");
+//        //if (CommonUtils.isConnected(context))
+//        //{
+//        DatabaseHelper db;
+//        String authToken;
+//        String email;
+//        HTTPConnection mProtocolListTask = null;
+//        HTTPConnection mMacroListTask = null;
+//        HTTPConnection mUpdateDataTask = null;
+//
+//        PrefUtils.saveToPrefs(context, PrefUtils.PREFS_CURRENT_LOCATION,
+//                null);
+//        authToken = PrefUtils
+//                .getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY,
+//                        PrefUtils.PREFS_DEFAULT_VAL);
+//        email = PrefUtils.getFromPrefs(context,
+//                PrefUtils.PREFS_LOGIN_USERNAME_KEY,
+//                PrefUtils.PREFS_DEFAULT_VAL);
+//
+//        UpdateProject updateProject = new UpdateProject((MainActivity) context);
+//        HTTPConnection mProjListTask = new HTTPConnection();
+//        mProjListTask.delegate = updateProject;
+//        mProjListTask
+//                .execute(context,Constants.PHOTOSYNQ_PROJECTS_LIST_URL
+//                        + "all=1"+"&page=1"
+//                        + "&user_email=" + email + "&user_token="
+//                        + authToken, "GET");
+//
+//
+//        UpdateProtocol updateProtocol = new UpdateProtocol((MainActivity) context);
+//        mProtocolListTask = new HTTPConnection();
+//        mProtocolListTask.delegate = updateProtocol;
+//        mProtocolListTask.execute(context,
+//                Constants.PHOTOSYNQ_PROTOCOLS_LIST_URL + "user_email="
+//                        + email + "&user_token=" + authToken, "GET");
+//
+//
+//        UpdateMacro updateMacro = new UpdateMacro((MainActivity) context);
+//        mMacroListTask = new HTTPConnection();
+//        mMacroListTask.delegate = updateMacro;
+//        mMacroListTask
+//                .execute(context,Constants.PHOTOSYNQ_MACROS_LIST_URL
+//                        + "user_email=" + email + "&user_token="
+//                        + authToken, "GET");
+//
+//        //db = new DatabaseHelper(context);
+//        db = DatabaseHelper.getHelper(context);
+//        List<ProjectResult> listRecords = db.getAllUnUploadedResults();
+//        //db.closeDB();
+//        for (ProjectResult projectResult : listRecords) {
+//            StringEntity input = null;
+//            JSONObject request_data = new JSONObject();
+//
+//            try {
+//                JSONObject jo = new JSONObject(projectResult.getReading());
+//                request_data.put("user_email", email);
+//                request_data.put("user_token", authToken);
+//                request_data.put("data", jo);
+//                input = new StringEntity(request_data.toString());
+//                input.setContentType("application/json");
+//            } catch (JSONException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            } catch (UnsupportedEncodingException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//
+//            UpdateData updateData = new UpdateData(context,projectResult.getId());
+//            mUpdateDataTask = new HTTPConnection(input);
+//            mUpdateDataTask.delegate = updateData;
+//            mUpdateDataTask.execute(context,Constants.PHOTOSYNQ_DATA_URL
+//                    + projectResult.getProjectId() + "/data.json", "POST");
+//        }
+//        //}
+//    }
 
 }

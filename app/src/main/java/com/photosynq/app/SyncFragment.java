@@ -3,9 +3,11 @@ package com.photosynq.app;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -40,6 +42,7 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
     private static int mSectionNumber;
 
     private DatabaseHelper dbHelper;
+    private ProgressDialog pDialog;
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -143,7 +146,6 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
                 MainActivity mainActivity = (MainActivity)getActivity();
                 SyncHandler syncHandler = new SyncHandler(mainActivity);
                 syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE);
-                //??flag = 0;
             }
         });
 
@@ -157,12 +159,12 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
                 MainActivity mainActivity = (MainActivity)getActivity();
                 SyncHandler syncHandler = new SyncHandler(mainActivity);
                 syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE);
-                //??flag = 1;
             }
         });
 
         return rootView;
     }
+
 
     @Override
     public void onAttach(Activity activity) {
