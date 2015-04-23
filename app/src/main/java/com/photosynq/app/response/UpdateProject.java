@@ -150,7 +150,7 @@ public class UpdateProject implements PhotosynqResponse {
                                 } else if (Question.PHOTO_TYPE_DEFINED == questionType) { //If question type is photo_type then save options and option image.
                                     JSONObject options = optionValuesJArray.getJSONObject(k);
                                     String optionString = options.getString("answer");
-                                    String optionImage = options.getString("image");
+                                    String optionImage = options.getString("medium");//get option image if question type is Photo_Type
                                     Option option = new Option(jsonQuestion.getString("id"), optionString + "," + optionImage, jsonProject.getString("id"));
                                     db.updateOption(option);
                                 }
