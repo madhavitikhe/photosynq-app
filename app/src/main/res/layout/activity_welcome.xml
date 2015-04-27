@@ -23,7 +23,7 @@
             android:id="@+id/txtAppName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/logotexticon"/>
+            android:src="@drawable/photosynqlogobg"/>
 
     </LinearLayout>
     <LinearLayout
