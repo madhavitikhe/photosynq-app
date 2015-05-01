@@ -26,6 +26,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -50,6 +52,7 @@ import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.RememberAnswers;
 import com.photosynq.app.model.ResearchProject;
+import com.photosynq.app.model.UserAnswer;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
@@ -201,7 +204,11 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     questionText.setBackgroundResource(R.drawable.actionbar_bg);
                     questionText.setPadding(30, 0, 30, 30);
 
-                    EditText userEnteredAnswer = (EditText) viewUserSelected.findViewById(R.id.et_user_answer);
+                    AutoCompleteTextView userEnteredAnswer = (AutoCompleteTextView) viewUserSelected.findViewById(R.id.et_user_answer);
+                    List<String> answers = dbHelper.getAllUserAnswers();
+                    final ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, answers);
+                    userEnteredAnswer.setAdapter(dataAdapter);
+
                     final CheckBox userDefinedRememberCB = (CheckBox) viewUserSelected.findViewById(R.id.rememberAnswerCheckBox);
 
                     RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
@@ -227,7 +234,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
                             hideKeyboard();
 
-                            EditText userEnteredAnswer = (EditText) ((View) v.getParent()).findViewById(R.id.et_user_answer);
+                            AutoCompleteTextView userEnteredAnswer = (AutoCompleteTextView) ((View) v.getParent()).findViewById(R.id.et_user_answer);
+                            userEnteredAnswer.setAdapter(dataAdapter);
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
 
@@ -244,6 +252,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                 rememberAnswers.setUser_id(userId);
                                 rememberAnswers.setProject_id(projectId);
                                 rememberAnswers.setQuestion_id(question.getQuestionId());
+
+                                UserAnswer userAnswer = new UserAnswer();
+                                userAnswer.setOptionText(str);
+                                dbHelper.createUserAnswers(userAnswer);
 
                                 //Save values into database either user comes from first question or comes from review page.
                                 if (reviewFlag) {

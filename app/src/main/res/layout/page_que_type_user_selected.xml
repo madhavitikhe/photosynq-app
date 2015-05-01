@@ -44,7 +44,7 @@
                     android:textSize="17sp" />
             </RelativeLayout>
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/et_user_answer"
                 android:gravity="left"
                 android:layout_margin="10dp"

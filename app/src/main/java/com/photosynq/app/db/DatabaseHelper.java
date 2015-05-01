@@ -19,6 +19,7 @@ import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.RememberAnswers;
 import com.photosynq.app.model.ResearchProject;
+import com.photosynq.app.model.UserAnswer;
 import com.photosynq.app.utils.PrefUtils;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	// Database Version
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 	// Database Name
 	private static final String DATABASE_NAME = "PhotoSynqDB";
 	// Table Names
@@ -40,6 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String TABLE_DATA = "data";
     private static final String TABLE_PROJECT_LEAD = "project_lead";
     private static final String TABLE_REMEMBER_ANSWERS = "remember_answers";
+	private static final String TABLE_USER_ANSWERS = "user_answers";
 
 	// Common column names
 	public static final String C_RECORD_HASH = "record_hash";
@@ -106,6 +108,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String C_IS_REMEMBER = "is_remember";
     private static final String C_SELECTED_OPTION_TEXT = "selected_option_text";
 
+	// User Entered Answers.
+	private static final String C_USER_ENTERED_ANSWERS = "user_entered_answers";
 
     private Context context;
 
@@ -168,6 +172,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_REMEMBER_ANSWERS = "CREATE TABLE "
             + TABLE_REMEMBER_ANSWERS + "(" + C_USER_ID + " TEXT," + C_PROJECT_ID + " TEXT,"
             + C_QUESTION_ID + " TEXT," + C_SELECTED_OPTION_TEXT + " TEXT," + C_IS_REMEMBER + " TEXT )";
+
+	// User Entered Answers create statement.
+	private static final String CREATE_TABLE_USER_ANSWERS = "CREATE TABLE "
+			+ TABLE_USER_ANSWERS + "(" + C_USER_ENTERED_ANSWERS + " TEXT PRIMARY KEY )";
+
 
 	private DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION); this.context =context;}
@@ -240,6 +249,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(CREATE_TABLE_DATA);
         db.execSQL(CREATE_TABLE_PROJECT_LEAD);
         db.execSQL(CREATE_TABLE_REMEMBER_ANSWERS);
+		db.execSQL(CREATE_TABLE_USER_ANSWERS);
 	}
 
 	@Override
@@ -255,6 +265,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATA);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECT_LEAD);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_REMEMBER_ANSWERS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER_ANSWERS);
 		// create new tables;
 		onCreate(db);
 
@@ -1211,7 +1222,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		// updating row
 		int rowUpdated = db.update(TABLE_SETTINGS, values, C_USER_ID + " = ?",
-				new String[] { String.valueOf(setting.getUserId()) });
+				new String[]{String.valueOf(setting.getUserId())});
 
 		if (rowUpdated <= 0) {
 			retVal = createSettings(setting);
@@ -1283,8 +1294,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		values.put(C_VALUES, data.getValue());
 
 		// updating row
-		int rowUpdated = db.update(TABLE_DATA, values, C_USER_ID + " = ? and " + C_QUESTION_ID + " = ? and " + C_PROJECT_ID + " = ?" ,
-				new String[] { String.valueOf(data.getUser_id()),String.valueOf(data.getQuestion_id()),String.valueOf(data.getProject_id()) });
+		int rowUpdated = db.update(TABLE_DATA, values, C_USER_ID + " = ? and " + C_QUESTION_ID + " = ? and " + C_PROJECT_ID + " = ?",
+				new String[]{String.valueOf(data.getUser_id()), String.valueOf(data.getQuestion_id()), String.valueOf(data.getProject_id())});
 
 		if (rowUpdated <= 0) {
 			retVal = createData(data);
@@ -1367,11 +1378,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(C_PROJECT_ID, rememberAnswers.getProject_id());
         values.put(C_QUESTION_ID, rememberAnswers.getQuestion_id());
         values.put(C_SELECTED_OPTION_TEXT, rememberAnswers.getSelected_option_text());
-        values.put(C_IS_REMEMBER, rememberAnswers.getIs_remember());
+		values.put(C_IS_REMEMBER, rememberAnswers.getIs_remember());
 
-        // updating row
-        int rowUpdated = db.update(TABLE_REMEMBER_ANSWERS, values, C_USER_ID + " = ? and " + C_PROJECT_ID + " = ? and " + C_QUESTION_ID + " = ?",
-                new String[] { String.valueOf(rememberAnswers.getUser_id()),String.valueOf(rememberAnswers.getProject_id()),String.valueOf(rememberAnswers.getQuestion_id()) });
+		// updating row
+		int rowUpdated = db.update(TABLE_REMEMBER_ANSWERS, values, C_USER_ID + " = ? and " + C_PROJECT_ID + " = ? and " + C_QUESTION_ID + " = ?",
+				new String[]{String.valueOf(rememberAnswers.getUser_id()), String.valueOf(rememberAnswers.getProject_id()), String.valueOf(rememberAnswers.getQuestion_id())});
 
         if (rowUpdated <= 0) {
             retVal = createRememberAnswers(rememberAnswers);
@@ -1381,6 +1392,50 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //closeWriteDatabase();
         return retVal;
     }
+
+	public boolean createUserAnswers(UserAnswer userAnswer) {
+		boolean retVal = false;
+		try {
+			SQLiteDatabase db = getHelper(context).getWritableDatabase();
+
+			ContentValues values = new ContentValues();
+			values.put(C_USER_ENTERED_ANSWERS, userAnswer.getOptionText());
+
+			// Inserting Row
+			long row_id = db.insert(TABLE_USER_ANSWERS, null, values);
+			if (row_id >= 0) {
+				retVal = true;
+			}
+		} catch (SQLiteConstraintException contraintException) {
+			// If data already present then handle the case here.
+		} catch (SQLException sqliteException) {
+		}
+		//closeWriteDatabase();
+		return retVal;
+	}
+
+	public List<String> getAllUserAnswers() {
+		SQLiteDatabase db = getHelper(context).getWritableDatabase();
+		List<String> userAnswers = new ArrayList<String>();
+		String selectQuery = "SELECT * FROM " + TABLE_USER_ANSWERS ;
+
+		Log.e("DATABASE_HELPER_getAllUserAnswer", selectQuery);
+
+		Cursor c = db.rawQuery(selectQuery, null);
+
+		if (c.moveToFirst()) {
+			do {
+				UserAnswer us = new UserAnswer();
+				us.setOptionText(c.getString(c.getColumnIndex(C_USER_ENTERED_ANSWERS)));
+
+				userAnswers.add(us.getOptionText());
+			} while (c.moveToNext());
+		}
+
+		c.close();
+		//closeReadDatabase();
+		return userAnswers;
+	}
 
     public void deleteAllData(){
         SQLiteDatabase db = getHelper(context).getWritableDatabase();
