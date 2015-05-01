@@ -311,6 +311,7 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
                 PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_BIO_KEY,userJsonObject.get("bio").toString());
                 PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_NAME_KEY,userJsonObject.get("name").toString());
                 PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_INSTITUTE_KEY,userJsonObject.get("institute").toString());
+                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_CREATOR_ID,userJsonObject.getString("id").toString());
                 PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_THUMB_URL_KEY,creatorAvatar.getString("original").toString());
                 PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_PROJECTS,userJsonObject.get("projects").toString());
                 PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_CONTRIBUTIONS,userJsonObject.get("contributions").toString());

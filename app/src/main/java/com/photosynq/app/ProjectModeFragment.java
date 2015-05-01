@@ -22,6 +22,7 @@ import com.photosynq.app.model.ProjectCreator;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
+import com.photosynq.app.utils.PrefUtils;
 import com.photosynq.app.utils.SyncHandler;
 import com.squareup.picasso.Picasso;
 
@@ -40,6 +41,7 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
     private ProjectArrayAdapter arrayAdapter;
     private ListView projectList;
     private static String mSearchString;
+    private String pCreatorId;
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -73,6 +75,8 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
         }
 
         dbHelper = DatabaseHelper.getHelper(getActivity());
+        pCreatorId = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_CREATOR_ID, PrefUtils.PREFS_DEFAULT_VAL);
+
 
         // Initialize ListView
         projectList = (ListView) rootView.findViewById(R.id.lv_project);
@@ -91,7 +95,7 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
                 ResearchProject project = (ResearchProject) projectList.getItemAtPosition(position);
-                Intent intent = new Intent(getActivity(),ProjectDetailsActivity.class);
+                Intent intent = new Intent(getActivity(), ProjectDetailsActivity.class);
                 intent.putExtra(DatabaseHelper.C_PROJECT_ID, project.getId());
                 startActivity(intent);
             }
@@ -108,7 +112,11 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
                 Toast.makeText(getActivity(), "No project found", Toast.LENGTH_LONG).show();
             }
         }else{
-            projects = dbHelper.getAllResearchProjects();
+            if(mSectionNumber == 0) {
+                projects = dbHelper.getAllResearchProjects();
+            }else{
+                projects = dbHelper.getUserCreatedContributedProjects(pCreatorId);
+            }
         }
 
         arrayAdapter = new ProjectArrayAdapter(getActivity(), projects);
@@ -127,7 +135,11 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
                 Toast.makeText(getActivity(), "No project found", Toast.LENGTH_LONG).show();
             }
         }else{
-            projects = dbHelper.getAllResearchProjects();
+            if(mSectionNumber == 0) {
+                projects = dbHelper.getAllResearchProjects();
+            }else{
+                projects = dbHelper.getUserCreatedContributedProjects(pCreatorId);
+            }
         }
         arrayAdapter = new ProjectArrayAdapter(getActivity(), projects);
         projectList.setAdapter(arrayAdapter);

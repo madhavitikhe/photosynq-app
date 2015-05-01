@@ -465,6 +465,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rp;
 	}
 
+	public List<ResearchProject> getUserCreatedContributedProjects(String userId) {
+
+		SQLiteDatabase db = getHelper(context).getWritableDatabase();
+		List<ResearchProject> researchProjects = new ArrayList<ResearchProject>();
+		String selectQuery = "SELECT  * FROM " + TABLE_RESEARCH_PROJECT
+				+ " WHERE " + C_PROJECT_LEAD_ID + " = '" + userId + "'";
+
+		Log.e("DATABASE_HELPER_userCreatedAndContrbProject", selectQuery);
+		Cursor c = db.rawQuery(selectQuery, null);
+
+		if (c.moveToFirst()) {
+			do {
+				ResearchProject rp = new ResearchProject();
+				rp.setId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
+				rp.setName(c.getString(c.getColumnIndex(C_PROJECT_NAME)));
+				rp.setDescription(c.getString(c.getColumnIndex(C_PROJECT_DESCRIPTION)));
+				rp.setDirToCollab(c.getString(c.getColumnIndex(C_PROJECT_DIR_TO_COLLAB)));
+				rp.setCreatorId(c.getString(c.getColumnIndex(C_PROJECT_LEAD_ID)));
+				rp.setStartDate(c.getString(c.getColumnIndex(C_PROJECT_START_DATE)));
+				rp.setEndDate(c.getString(c.getColumnIndex(C_PROJECT_END_DATE)));
+				rp.setImageUrl(c.getString(c.getColumnIndex(C_PROJECT_IMAGE_URL)));
+				rp.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
+				rp.setProtocols_ids(c.getString(c
+						.getColumnIndex(C_PROJECT_PROTOCOL_IDS)));
+				rp.setBeta(c.getString(c.getColumnIndex(C_PROJECT_BETA)));
+
+				// adding to todo list
+				researchProjects.add(rp);
+			} while (c.moveToNext());
+		}
+
+		c.close();
+		//closeReadDatabase();
+		return researchProjects;
+
+
+	}
+
 	// Get all research project information from database.
 	public List<ResearchProject> getAllResearchProjects() {
         SQLiteDatabase db = getHelper(context).getWritableDatabase();
