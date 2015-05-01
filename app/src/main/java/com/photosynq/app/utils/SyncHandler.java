@@ -120,7 +120,7 @@ public class SyncHandler {
                 Log.d("PHOTOSYNQ-HTTPConnection", "in async task");
                     // Download ProjectList
                     if(syncMode == ALL_SYNC_MODE || syncMode == PROJECT_LIST_MODE || syncMode == PROTOCOL_LIST_MODE) {
-                        UpdateProject updateProject = new UpdateProject((MainActivity) context);
+                        UpdateProject updateProject = new UpdateProject(navigationDrawer);
                         HTTPConnection mProjListTask = new HTTPConnection();
                         mProjListTask.delegate = updateProject;
                         mProjListTask
@@ -129,7 +129,7 @@ public class SyncHandler {
                                         + "&user_email=" + email + "&user_token="
                                         + authToken, "GET");
 
-                        UpdateProtocol updateProtocol = new UpdateProtocol((MainActivity) context);
+                        UpdateProtocol updateProtocol = new UpdateProtocol(navigationDrawer);
                         mProtocolListTask = new HTTPConnection();
                         mProtocolListTask.delegate = updateProtocol;
                         mProtocolListTask.execute(context,
@@ -137,7 +137,7 @@ public class SyncHandler {
                                         + email + "&user_token=" + authToken, "GET");
 
 
-                        UpdateMacro updateMacro = new UpdateMacro((MainActivity) context);
+                        UpdateMacro updateMacro = new UpdateMacro(navigationDrawer);
                         mMacroListTask = new HTTPConnection();
                         mMacroListTask.delegate = updateMacro;
                         mMacroListTask
@@ -216,54 +216,5 @@ public class SyncHandler {
             }
         }
 
-    }
-
-    private void getResponse(HttpResponse response){
-        HttpClient httpclient = new DefaultHttpClient();
-        String responseString = null;
-        String authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-        String email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-        String strProjectListURI = Constants.PHOTOSYNQ_PROJECTS_LIST_URL
-                + "all=%d&page=%d&user_email=%s&user_token=%s";
-
-        if (null != response) {
-            try {
-                StatusLine statusLine = response.getStatusLine();
-                if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    response.getEntity().writeTo(out);
-                    out.close();
-                    responseString = out.toString();
-                    JSONObject resultJsonObject = new JSONObject(responseString);
-                    handleProgress(new UpdateProject(navigationDrawer), responseString);
-                    String status = resultJsonObject.getString("status");
-                    if (status.equals("success")) {
-                        int currentPage = Integer.parseInt(resultJsonObject.getString("page"));
-                        int totalPages = Integer.parseInt(resultJsonObject.getString("total_pages"));
-                            HttpResponse secondResponse = httpclient.execute(new HttpGet(String.format(strProjectListURI, 1, currentPage + 1, email, authToken)));
-                            getResponse(secondResponse);
-                    }
-                } else {
-                    //Closes the connection.
-                    response.getEntity().getContent().close();
-                    throw new IOException(statusLine.getReasonPhrase());
-                }
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-        }
-        }
-
-    //publishProgress method is not accesible here, then need to write custom method.
-    private void handleProgress(PhotosynqResponse delegate, String responseString){
-        //Do anything with response..
-        if(null!=delegate)
-        {
-            delegate.onResponseReceived(responseString);
-        }
-        if (null == delegate)
-        {
-            Log.d("PHOTOSYNQ-HTTPConnection", "No results returned");
-        }
     }
 }

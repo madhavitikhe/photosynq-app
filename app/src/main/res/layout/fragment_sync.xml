@@ -5,72 +5,171 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/sync_Main_relative_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tv_auto_sync"
+            android:id="@+id/tv_auto_sync_interval"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:textSize="14sp"
             android:textColor="@color/textPrimary"
-            android:text="AUTO-SYNC"/>
+            android:text="Auto-Sync interval"/>
 
         <Spinner
             android:id="@+id/interval_time_spinner"
-            android:layout_width="match_parent"
+            android:layout_width="140dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_below="@+id/tv_auto_sync"
             android:background="@android:drawable/btn_dropdown"
-            android:spinnerMode="dropdown"/>
+            android:spinnerMode="dropdown"
+            android:layout_below="@+id/tv_auto_sync_interval"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
 
         <TextView
-            android:id="@+id/tv_auto_sync_desc"
-            android:layout_below="@+id/interval_time_spinner"
+            android:id="@+id/tv_auto_sync_interval_desc"
+            android:layout_below="@+id/tv_auto_sync_interval"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Time between Sync attempts with website. Sync includes projects, protocols, macros, and data."
+            android:layout_marginTop="5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/interval_time_spinner"
+            android:text="How often to attempt to push cached data to and update project information from Photosynq.org server "
             android:textColor="@color/textPrimaryLight"
             android:textSize="12sp"/>
 
-    </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/sync_Sub_relative_layout"
+        android:layout_below="@+id/sync_Main_relative_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_auto_sync_wifi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textSize="14sp"
+            android:textColor="@color/textPrimary"
+            android:text="Auto-Sync in Wifi range only"/>
+
+        <CheckBox
+            android:id="@+id/auto_sync_wifi_checkbox"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_auto_sync_wifi"
+            android:layout_marginLeft="15dp"
+            android:layout_alignParentRight="true"
+            />
+
+
+        <TextView
+            android:id="@+id/tv_auto_sync_wifi_desc"
+            android:layout_below="@+id/tv_auto_sync_wifi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/auto_sync_wifi_checkbox"
+            android:text="Does not sync automatically with Photosynq.org, if using cellular data (for users with high cost cell data) ."
+            android:textColor="@color/textPrimaryLight"
+            android:textSize="12sp"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_below="@+id/sync_Sub_relative_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_cached_data_points"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textSize="14sp"
+            android:textColor="@color/textPrimary"
+            android:text="Cached data points"/>
+
+        <TextView
+            android:id="@+id/tv_data_points_value"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:background="@drawable/btn_layout_gray_light"
+            android:textSize="25sp"
+            android:gravity="center"
+            android:layout_marginLeft="15dp"
+            android:layout_below="@+id/tv_cached_data_points"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+
+        <TextView
+            android:id="@+id/tv_cached_data_points_desc"
+            android:layout_below="@+id/tv_cached_data_points"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/tv_data_points_value"
+            android:text="Number of measurements currently cached on the device. Click number to view raw data as text file ."
+            android:textColor="@color/textPrimaryLight"
+            android:textSize="12sp"/>
+
+    </RelativeLayout>
+
+
 
     <LinearLayout
         android:id="@+id/btnLL"
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:padding="5dp"
         android:background="@color/fragment_background"
-        android:layout_alignParentBottom="true">
-        <Button
-            android:id="@+id/btn_sync_data"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_layout_orange"
-            android:layout_margin="10dp"
-            android:textColor="@color/white"
-            android:layout_weight="1"
-            android:textSize="14sp"
-            android:text="Sync Data"
-            android:textAllCaps="false"/>
+        android:layout_marginTop="5dp">
 
-        <Button
-            android:id="@+id/btn_clear_cache"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/btn_layout_gray_light"
-            android:layout_margin="10dp"
-            android:textColor="@color/textPrimary"
-            android:textSize="14sp"
-            android:layout_weight="1"
-            android:text="Clear Cache"
-            android:textAllCaps="false"/>
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/btn_sync_data"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_layout_orange"
+                android:layout_margin="10dp"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:text="Sync with server"
+                android:textAllCaps="false"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_sync_btn_message"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Push cached data to and update project information from PhotosynQ.org server"
+            android:textColor="@color/textPrimaryLight"
+            android:layout_marginLeft="10sp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:textAlignment="center"
+            android:textSize="11sp" />
     </LinearLayout>
 
 </RelativeLayout>
