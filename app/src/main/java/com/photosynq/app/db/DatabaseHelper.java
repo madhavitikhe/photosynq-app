@@ -59,6 +59,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String C_PROJECT_NAME = "name";
     private static final String C_PROJECT_DESCRIPTION = "description";
     private static final String C_PROJECT_SLUG = "slug";
+	private static final String C_IS_CONTRIBUTED = "is_contributed";
 
     // Project lead columns
     private static final String C_LEAD_ID = "plead_id";
@@ -121,7 +122,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ C_PROJECT_DESCRIPTION + " TEXT," + C_PROJECT_DIR_TO_COLLAB + " TEXT,"
             + C_PROJECT_LEAD_ID + " TEXT,"
 			+ C_PROJECT_START_DATE + " TEXT," + C_PROJECT_END_DATE + " TEXT," + C_PROJECT_BETA
-			+ " TEXT," + C_PROJECT_PROTOCOL_IDS + " TEXT," + C_PROJECT_IMAGE_URL + " TEXT"
+			+ " TEXT," + C_IS_CONTRIBUTED + " TEXT," + C_PROJECT_PROTOCOL_IDS + " TEXT," + C_PROJECT_IMAGE_URL + " TEXT"
 			+ ")";
 
     // Project Lead table create statement
@@ -412,6 +413,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					null != rp.getProtocols_ids() ? rp.getProtocols_ids() : "");
 			values.put(C_PROJECT_IMAGE_URL, null != rp.getImageUrl() ? rp.getImageUrl()
 					: "");
+			values.put(C_IS_CONTRIBUTED, null != rp.getIs_contributed() ? rp.getIs_contributed()
+					: "");
 			values.put(C_RECORD_HASH, rp.getRecordHash());
 			// insert row
 			long row_id = db.insert(TABLE_RESEARCH_PROJECT, null, values);
@@ -470,7 +473,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = getHelper(context).getWritableDatabase();
 		List<ResearchProject> researchProjects = new ArrayList<ResearchProject>();
 		String selectQuery = "SELECT  * FROM " + TABLE_RESEARCH_PROJECT
-				+ " WHERE " + C_PROJECT_LEAD_ID + " = '" + userId + "'";
+				+ " WHERE " + C_PROJECT_LEAD_ID + " = '" + userId + "' or " + C_IS_CONTRIBUTED + " = 'true'";
 
 		Log.e("DATABASE_HELPER_userCreatedAndContrbProject", selectQuery);
 		Cursor c = db.rawQuery(selectQuery, null);
@@ -490,6 +493,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				rp.setProtocols_ids(c.getString(c
 						.getColumnIndex(C_PROJECT_PROTOCOL_IDS)));
 				rp.setBeta(c.getString(c.getColumnIndex(C_PROJECT_BETA)));
+				rp.setIs_contributed(c.getString(c.getColumnIndex(C_IS_CONTRIBUTED)));
+
 
 				// adding to todo list
 				researchProjects.add(rp);
@@ -563,7 +568,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 rp.setImageUrl(c.getString(c.getColumnIndex(C_PROJECT_IMAGE_URL)));
                 rp.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
                 rp.setProtocols_ids(c.getString(c
-                        .getColumnIndex(C_PROJECT_PROTOCOL_IDS)));
+						.getColumnIndex(C_PROJECT_PROTOCOL_IDS)));
                 rp.setBeta(c.getString(c.getColumnIndex(C_PROJECT_BETA)));
 
                 // adding to todo list
@@ -599,6 +604,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		values.put(C_PROJECT_END_DATE, null != rp.getEndDate() ? rp.getEndDate() : "");
 		values.put(C_PROJECT_BETA, null != rp.getBeta() ? rp.getBeta() : "");
 		values.put(C_PROJECT_IMAGE_URL, null != rp.getImageUrl() ? rp.getImageUrl()
+				: "");
+		values.put(C_IS_CONTRIBUTED, null != rp.getIs_contributed() ? rp.getIs_contributed()
 				: "");
 		values.put(C_PROJECT_PROTOCOL_IDS,
 				null != rp.getProtocols_ids() ? rp.getProtocols_ids() : "");

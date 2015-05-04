@@ -1,6 +1,9 @@
 package com.photosynq.app.utils;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
@@ -65,7 +68,7 @@ public class SyncHandler {
         this.navigationDrawer = navigationDrawer;
     }
 
-    public int DoSync(int sync_mode) {
+    public int DoSync(int sync_mode, ProgressDialog progressDialog) {
 
         if(sync_mode == PROJECT_LIST_MODE){
             DatabaseHelper db = DatabaseHelper.getHelper(context);
@@ -81,16 +84,23 @@ public class SyncHandler {
             }
         }
 
-        new SyncTask().execute(sync_mode);
+        new SyncTask(progressDialog).execute(sync_mode);
         return 0;
     }
 
     private class SyncTask extends AsyncTask<Integer, Object, String> {
-
+        ProgressDialog mProgressDialog;
+        SyncTask(ProgressDialog progressDialog){
+            mProgressDialog = progressDialog;
+        }
         @Override
         protected void onPreExecute() {
             if(null != progressBar){
                 progressBar.setVisibility(View.VISIBLE);
+            }
+
+            if(null != mProgressDialog) {
+                mProgressDialog.setProgress(0);
             }
 
             if(null != navigationDrawer) {
@@ -120,7 +130,7 @@ public class SyncHandler {
                 Log.d("PHOTOSYNQ-HTTPConnection", "in async task");
                     // Download ProjectList
                     if(syncMode == ALL_SYNC_MODE || syncMode == PROJECT_LIST_MODE || syncMode == PROTOCOL_LIST_MODE) {
-                        UpdateProject updateProject = new UpdateProject(navigationDrawer);
+                        UpdateProject updateProject = new UpdateProject(navigationDrawer, mProgressDialog);
                         HTTPConnection mProjListTask = new HTTPConnection();
                         mProjListTask.delegate = updateProject;
                         mProjListTask
@@ -129,7 +139,7 @@ public class SyncHandler {
                                         + "&user_email=" + email + "&user_token="
                                         + authToken, "GET");
 
-                        UpdateProtocol updateProtocol = new UpdateProtocol(navigationDrawer);
+                        UpdateProtocol updateProtocol = new UpdateProtocol(navigationDrawer, mProgressDialog);
                         mProtocolListTask = new HTTPConnection();
                         mProtocolListTask.delegate = updateProtocol;
                         mProtocolListTask.execute(context,
@@ -137,7 +147,7 @@ public class SyncHandler {
                                         + email + "&user_token=" + authToken, "GET");
 
 
-                        UpdateMacro updateMacro = new UpdateMacro(navigationDrawer);
+                        UpdateMacro updateMacro = new UpdateMacro(navigationDrawer, mProgressDialog);
                         mMacroListTask = new HTTPConnection();
                         mMacroListTask.delegate = updateMacro;
                         mMacroListTask

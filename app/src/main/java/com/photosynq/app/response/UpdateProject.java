@@ -1,5 +1,7 @@
 package com.photosynq.app.response;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.Toast;
@@ -14,6 +16,7 @@ import com.photosynq.app.model.Option;
 import com.photosynq.app.model.ProjectCreator;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
+import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
 
@@ -27,9 +30,11 @@ import java.util.Date;
  */
 public class UpdateProject implements PhotosynqResponse {
     private MainActivity navigationDrawer;
+    private ProgressDialog mProgressDialog;
 
-    public UpdateProject(MainActivity navigationDrawer) {
+    public UpdateProject(MainActivity navigationDrawer, ProgressDialog progressDialog) {
         this.navigationDrawer = navigationDrawer;
+        this.mProgressDialog = progressDialog;
     }
 
     @Override
@@ -47,6 +52,8 @@ public class UpdateProject implements PhotosynqResponse {
 
     private void processResult(String result) {
 
+        int currentPage = 1;
+        int totalPages = 1;
         if (null != navigationDrawer) {
             navigationDrawer.runOnUiThread(new Runnable() {
                 @Override
@@ -76,8 +83,9 @@ public class UpdateProject implements PhotosynqResponse {
                 JSONObject resultJsonObject = new JSONObject(result);
 
                 if (resultJsonObject.has("projects")) {
-                    int currentPage = Integer.parseInt(resultJsonObject.getString("page"));
-                    int totalPages = Integer.parseInt(resultJsonObject.getString("total_pages"));
+                    currentPage = Integer.parseInt(resultJsonObject.getString("page"));
+                    totalPages = Integer.parseInt(resultJsonObject.getString("total_pages"));
+
 
                     String authToken = PrefUtils.getFromPrefs(navigationDrawer, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
                     String email = PrefUtils.getFromPrefs(navigationDrawer, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
@@ -118,6 +126,7 @@ public class UpdateProject implements PhotosynqResponse {
                                 jsonProject.getString("end_date"),
                                 projectImageUrl.getString("original"),
                                 jsonProject.getString("beta"),
+                                jsonProject.getString("is_contributed"),
                                 protocol_ids.substring(1, protocol_ids.length() - 1)); // remove first and last square bracket and store as a comma separated string
 
                         try {
@@ -166,6 +175,7 @@ public class UpdateProject implements PhotosynqResponse {
                         db.updateResearchProject(rp);
                     }
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -198,5 +208,8 @@ public class UpdateProject implements PhotosynqResponse {
         }
 
         System.out.println("UpdateProject End onResponseReceived: " + date1.getTime());
+        //show progress dialog process on sync screen after sync button click
+        int progress = (60 / totalPages) + 1;//60 means 60%, for projects. 60 projects + 20 protocols + 20 macros = 100
+        CommonUtils.setProgress(navigationDrawer, mProgressDialog, progress);
     }
 }

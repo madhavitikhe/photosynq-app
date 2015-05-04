@@ -1,18 +1,18 @@
 package com.photosynq.app.response;
 
-import android.content.Context;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.photosynq.app.MainActivity;
-import com.photosynq.app.ProjectModeFragment;
 import com.photosynq.app.QuickModeFragment;
 import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Protocol;
+import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
 
 import org.json.JSONArray;
@@ -25,10 +25,12 @@ import java.util.Date;
  */
 public class UpdateProtocol implements PhotosynqResponse {
     private MainActivity navigationDrawer;
+    private ProgressDialog mProgressDialog;
 
-    public UpdateProtocol(MainActivity navigationDrawer)
+    public UpdateProtocol(MainActivity navigationDrawer, ProgressDialog progressDialog)
     {
         this.navigationDrawer = navigationDrawer;
+        this.mProgressDialog = progressDialog;
     }
     @Override
     public void onResponseReceived(final String result) {
@@ -72,6 +74,7 @@ public class UpdateProtocol implements PhotosynqResponse {
 
             try {
                 JSONObject resultJsonObject = new JSONObject(result);
+
                 if (resultJsonObject.has("protocols")) {
                     String newobj = resultJsonObject.getString("protocols");
                     jArray = new JSONArray(newobj);
@@ -121,5 +124,7 @@ public class UpdateProtocol implements PhotosynqResponse {
         }
 
         System.out.println("UpdateProtocol End onResponseReceived: " + date1.getTime());
+        //show progress dialog process on sync screen after sync button click
+        CommonUtils.setProgress(navigationDrawer, mProgressDialog, 20);
     }
 }

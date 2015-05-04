@@ -15,7 +15,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,6 +25,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +61,7 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
     private int syncBtnClickCount = 0;
     long seconds = 0;
     Timer timer;
+    private ProgressDialog progressDialog;
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -147,7 +152,7 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
         intervalSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if(!adapterView.getTag().equals(Integer.toString(i))) {
+                if (!adapterView.getTag().equals(Integer.toString(i))) {
                     //adapterView.getItemAtPosition(i);
                     PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_SAVE_SYNC_INTERVAL, i + "");
 
@@ -182,62 +187,56 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
             }
         });
 
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setTitle("Syncing ...");
+        progressDialog.setMessage("Download in progress ...");
+        progressDialog.setProgressStyle(progressDialog.STYLE_HORIZONTAL);
+        progressDialog.setProgress(0);
+        progressDialog.setMax(100);
+
         Button syncBtn = (Button) rootView.findViewById(R.id.btn_sync_data);
         syncBtn.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoMedium());
-        syncBtn.setOnClickListener(new View.OnClickListener() {
+
+        syncBtn.setOnTouchListener(new View.OnTouchListener() {
+            private long firstTouchTS = 0;
+
             @Override
-            public void onClick(View v) {
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    this.firstTouchTS = System.currentTimeMillis();
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    Toast.makeText(getActivity(), ((System.currentTimeMillis() - this.firstTouchTS) / 1000) + " seconds", Toast.LENGTH_SHORT).show();
+                    firstTouchTS = ((System.currentTimeMillis() - this.firstTouchTS) / 1000);
+                    if (firstTouchTS >= 3) {
+                        new AlertDialog.Builder(getActivity())
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .setTitle("Clear Cache")
+                                .setMessage("Do you want to really clear cache ?")
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        progressDialog.show();
+                                        dbHelper.deleteAllData();
+                                        MainActivity mainActivity = (MainActivity) getActivity();
+                                        SyncHandler syncHandler = new SyncHandler(mainActivity);
+                                        syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE, progressDialog);
 
-                seconds = 2000;
-                timer.schedule(new TimerTask() {
-                    public void run() {
-                        syncBtnClickCount++;
+                                    }
+
+                                })
+                                .setNegativeButton("No", null)
+                                .show();
+                    }else{
+                        progressDialog.show();
+                        MainActivity mainActivity = (MainActivity) getActivity();
+                        SyncHandler syncHandler = new SyncHandler(mainActivity);
+                        syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE, progressDialog);
                     }
-                }, seconds);
-
-
-                //syncBtnClickCount = syncBtnClickCount + 1;
-                if (syncBtnClickCount == 3) {
-                    new AlertDialog.Builder(getActivity())
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setTitle("Clear Cache")
-                            .setMessage("Do you want to really clear cache ?")
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dbHelper.deleteAllData();
-                                    MainActivity mainActivity = (MainActivity) getActivity();
-                                    SyncHandler syncHandler = new SyncHandler(mainActivity);
-                                    syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE);
-
-                                }
-
-                            })
-                            .setNegativeButton("No", null)
-                            .show();
-                    syncBtnClickCount = 0;
-
-                } else if (syncBtnClickCount == 1){
-                    MainActivity mainActivity = (MainActivity) getActivity();
-                    SyncHandler syncHandler = new SyncHandler(mainActivity);
-                    syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE);
-                    syncBtnClickCount = 0;
                 }
+                return false;
             }
         });
 
-//        Button clearBtn = (Button) rootView.findViewById(R.id.btn_clear_cache);
-//        clearBtn.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoMedium());
-//        clearBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                dbHelper.deleteAllData();
-//                MainActivity mainActivity = (MainActivity)getActivity();
-//                SyncHandler syncHandler = new SyncHandler(mainActivity);
-//                syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE);
-//            }
-//        });
 
         return rootView;
     }
@@ -267,22 +266,19 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
     @Override
     public void onDetach() {
         super.onDetach();
-        Toast.makeText(getActivity(), "sync fragment is exited", Toast.LENGTH_LONG).show();
         if (cbAutoSyncWifiOnly.isChecked()) {
             PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_SYNC_WIFI_ON, "1");
             ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-            if (mWifi.isConnected()) {
+            if (mWifi.isConnected()) {//if Wifi is connected
                 startSyncService(set_interval_time);
-                Toast.makeText(getActivity(), "Sync data if Wifi!", Toast.LENGTH_SHORT).show();
-            }else{
+            }else{//if Wifi is not connected
                 Toast.makeText(getActivity(), "Wifi is not connected", Toast.LENGTH_SHORT).show();
             }
-        }else{
+        }else{//Mobile Data
             PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_SYNC_WIFI_ON, "0");
             startSyncService(set_interval_time);
-            Toast.makeText(getActivity(), "Sync data if Mobile Data !", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -14,10 +14,11 @@ public class ResearchProject {
     public String endDate;
     public String imageUrl;
     public String beta;
+	public String is_contributed;
     public String protocols_ids;
     
     public ResearchProject(String id, String name, String description, String dirToCollab, String creatorId,
-    		String startDate, String endDate, String imageUrl, String beta, String protocols_ids)
+    		String startDate, String endDate, String imageUrl, String beta, String is_contributed, String protocols_ids)
     {
     	this.id = id;
     	this.name = name;
@@ -28,6 +29,7 @@ public class ResearchProject {
     	this.endDate = endDate;
     	this.imageUrl = imageUrl;
     	this.beta = beta;
+		this.is_contributed = is_contributed;
     	this.protocols_ids = protocols_ids;
     	this.recordHash = getProjectRecordHash();
     	
@@ -46,6 +48,7 @@ public class ResearchProject {
 				+ (null != getStartDate() ? getStartDate() : "")
 				+ (null != getEndDate() ? getEndDate() : "") 
 				+ (null != getBeta() ? getBeta() : "")
+				+ (null != getIs_contributed() ? getIs_contributed() : "")
 				+ (null != getProtocols_ids() ? getProtocols_ids() : "")
 				+ (null != getImageUrl() ? getImageUrl() : "");
 		return CommonUtils.getMD5EncryptedString(recordString);
@@ -109,7 +112,14 @@ public class ResearchProject {
 	}
 	public void setBeta(String beta) {
 		this.beta = beta;
+	}	public String getIs_contributed() {
+		return is_contributed;
 	}
+
+	public void setIs_contributed(String is_contributed) {
+		this.is_contributed = is_contributed;
+	}
+
 	public String getProtocols_ids() {
 		return protocols_ids;
 	}

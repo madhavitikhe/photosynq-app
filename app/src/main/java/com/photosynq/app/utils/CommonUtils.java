@@ -1,6 +1,10 @@
 package com.photosynq.app.utils;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -307,6 +311,38 @@ public class CommonUtils {
         }
         return null;
 
+    }
+
+    public static void setProgress(final Activity context, ProgressDialog progressDialog, int progressValue){
+       if(progressDialog != null) {
+           int getProgress = progressDialog.getProgress();
+           progressDialog.setProgress(getProgress + progressValue);
+           if (getProgress >= 100) {
+               progressDialog.dismiss();
+
+               context.runOnUiThread(new Runnable() {
+                   @Override
+                   public void run() {
+
+                       new AlertDialog.Builder(context)
+                               .setIcon(android.R.drawable.ic_dialog_alert)
+                               .setTitle("Syncing")
+                               .setMessage("Pushed data points\n\nProjects Updates complete")
+                               .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                   @Override
+                                   public void onClick(DialogInterface dialog, int which) {
+
+                                   }
+
+                               })
+                               .show();
+
+
+                   }
+               });
+
+           }
+       }
     }
 
 

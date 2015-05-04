@@ -78,7 +78,7 @@ public class QuickModeFragment extends Fragment implements PhotosynqResponse{
         {
             MainActivity mainActivity = (MainActivity)getActivity();
             SyncHandler syncHandler = new SyncHandler(mainActivity);
-            syncHandler.DoSync(SyncHandler.PROTOCOL_LIST_MODE);
+            syncHandler.DoSync(SyncHandler.PROTOCOL_LIST_MODE, null);
         }
 
         final Button showAllProtocolsBtn = (Button) rootView.findViewById(R.id.show_all_protocol_btn);
