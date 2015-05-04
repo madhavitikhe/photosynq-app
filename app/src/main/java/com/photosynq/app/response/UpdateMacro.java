@@ -2,6 +2,7 @@ package com.photosynq.app.response;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.view.View;
 import android.widget.Toast;
 
@@ -24,11 +25,13 @@ import java.util.List;
  */
 public class UpdateMacro implements PhotosynqResponse {
 
+    private Context context;
     private MainActivity navigationDrawer;
     private ProgressDialog mProgressDialog;
 
-    public UpdateMacro(MainActivity navigationDrawer, ProgressDialog progressDialog)
+    public UpdateMacro(Context context, MainActivity navigationDrawer, ProgressDialog progressDialog)
     {
+        this.context = context;
         this.navigationDrawer = navigationDrawer;
         this.mProgressDialog = progressDialog;
 
@@ -111,7 +114,14 @@ public class UpdateMacro implements PhotosynqResponse {
             dataString.append(System.getProperty("line.separator"));
         }
         System.out.println("###### writing macros :......");
-        CommonUtils.writeStringToFile(navigationDrawer, "macros.js", dataString.toString());
+
+        if (null == navigationDrawer){
+
+            CommonUtils.writeStringToFile(context, "macros.js", dataString.toString());
+        }else{
+
+            CommonUtils.writeStringToFile(navigationDrawer, "macros.js", dataString.toString());
+        }
 //        db.closeWriteDatabase();
 //        db.closeReadDatabase();
         Date date1 = new Date();

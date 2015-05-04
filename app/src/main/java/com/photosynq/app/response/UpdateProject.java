@@ -2,6 +2,7 @@ package com.photosynq.app.response;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.Toast;
@@ -29,10 +30,12 @@ import java.util.Date;
  * Created by shekhar on 9/19/14.
  */
 public class UpdateProject implements PhotosynqResponse {
+    private Context context;
     private MainActivity navigationDrawer;
     private ProgressDialog mProgressDialog;
 
-    public UpdateProject(MainActivity navigationDrawer, ProgressDialog progressDialog) {
+    public UpdateProject(Context context, MainActivity navigationDrawer, ProgressDialog progressDialog) {
+        this.context = context;
         this.navigationDrawer = navigationDrawer;
         this.mProgressDialog = progressDialog;
     }
@@ -66,14 +69,22 @@ public class UpdateProject implements PhotosynqResponse {
         Date date = new Date();
         System.out.println("UpdateProject Start onResponseReceived: " + date.getTime());
 
-        DatabaseHelper db = DatabaseHelper.getHelper(navigationDrawer);
+        DatabaseHelper db;
+
+        if (null == navigationDrawer){
+            db = DatabaseHelper.getHelper(context);
+        }else {
+            db = DatabaseHelper.getHelper(navigationDrawer);
+        }
 //        db.openWriteDatabase();
 //        db.openReadDatabase();
         JSONArray jArray;
 
         if (null != result) {
             if (result.equals(Constants.SERVER_NOT_ACCESSIBLE)) {
-                Toast.makeText(navigationDrawer, R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+                if (null != navigationDrawer) {
+                    Toast.makeText(navigationDrawer, R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+                }
 //                db.closeWriteDatabase();
 //                db.closeReadDatabase();
                 return;
@@ -87,8 +98,18 @@ public class UpdateProject implements PhotosynqResponse {
                     totalPages = Integer.parseInt(resultJsonObject.getString("total_pages"));
 
 
-                    String authToken = PrefUtils.getFromPrefs(navigationDrawer, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-                    String email = PrefUtils.getFromPrefs(navigationDrawer, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+                    String authToken;
+                    String email;
+
+                    if (null == navigationDrawer){
+
+                        authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+                        email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+                    }else{
+
+                        authToken = PrefUtils.getFromPrefs(navigationDrawer, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+                        email = PrefUtils.getFromPrefs(navigationDrawer, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+                    }
 
                     if (currentPage < totalPages) {
                         String strProjectListURI = Constants.PHOTOSYNQ_PROJECTS_LIST_URL
@@ -96,7 +117,11 @@ public class UpdateProject implements PhotosynqResponse {
                         //UpdateProject updateProject = new UpdateProject((MainActivity) this);
                         HTTPConnection httpConnection = new HTTPConnection();
                         httpConnection.delegate = this;
-                        httpConnection.execute(navigationDrawer, String.format(strProjectListURI, 1, currentPage + 1, email, authToken), "GET");
+                        if (null == navigationDrawer) {
+                            httpConnection.execute(context, String.format(strProjectListURI, 1, currentPage + 1, email, authToken), "GET");
+                        }else{
+                            httpConnection.execute(navigationDrawer, String.format(strProjectListURI, 1, currentPage + 1, email, authToken), "GET");
+                        }
                     }
                 }
 

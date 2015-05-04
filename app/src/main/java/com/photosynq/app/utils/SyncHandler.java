@@ -130,7 +130,7 @@ public class SyncHandler {
                 Log.d("PHOTOSYNQ-HTTPConnection", "in async task");
                     // Download ProjectList
                     if(syncMode == ALL_SYNC_MODE || syncMode == PROJECT_LIST_MODE || syncMode == PROTOCOL_LIST_MODE) {
-                        UpdateProject updateProject = new UpdateProject(navigationDrawer, mProgressDialog);
+                        UpdateProject updateProject = new UpdateProject(context, navigationDrawer, mProgressDialog);
                         HTTPConnection mProjListTask = new HTTPConnection();
                         mProjListTask.delegate = updateProject;
                         mProjListTask
@@ -147,7 +147,7 @@ public class SyncHandler {
                                         + email + "&user_token=" + authToken, "GET");
 
 
-                        UpdateMacro updateMacro = new UpdateMacro(navigationDrawer, mProgressDialog);
+                        UpdateMacro updateMacro = new UpdateMacro(context, navigationDrawer, mProgressDialog);
                         mMacroListTask = new HTTPConnection();
                         mMacroListTask.delegate = updateMacro;
                         mMacroListTask
