@@ -266,7 +266,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
                                     } else {
-                                        userEnteredAnswer.setText("");
+                                       // userEnteredAnswer.setText("");
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                     }
@@ -278,7 +278,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
                                     } else {
-                                        userEnteredAnswer.setText("");
+                                       // userEnteredAnswer.setText("");
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                     }
