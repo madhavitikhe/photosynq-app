@@ -43,6 +43,11 @@ public class PrefUtils {
     //Store status of Auto sync Wifi range only checkbox (either checked or unchecked)
     public static final String PREFS_SYNC_WIFI_ON = "SYNC_WIFI_ON";
 
+    public static final String PREFS_TOTAL_CACHED_DATA_POINTS = "TOTAL_CACHED_DATA_POINTS";
+
+    //
+    public static final String PREFS_IS_SYNC_IN_PROGRESS = "IS_SYNC_IN_PROGRESS";
+
     /**
      * Called to save supplied value in shared preferences against given key.
      */

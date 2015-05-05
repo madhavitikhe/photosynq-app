@@ -80,6 +80,8 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 
         copyAssets();
 
+        PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
+
         mStrEmail = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
         mStrPassword = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_PASSWORD_KEY, PrefUtils.PREFS_DEFAULT_VAL);
         if(!mStrEmail.equals(PrefUtils.PREFS_DEFAULT_VAL) && !mStrPassword.equals(PrefUtils.PREFS_DEFAULT_VAL) ){
@@ -359,20 +361,22 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
             Log.e("tag", "Failed to get asset file list.", e);
         }
         for(String filename : files) {
-            if ( !filename.startsWith("images") && !filename.startsWith("sounds") && !filename.startsWith("webkit"))
+            if ( !filename.startsWith("images") && !filename.startsWith("sounds") && !filename.startsWith("webkit") && !filename.startsWith("html"))
             {
                 InputStream in = null;
                 OutputStream out = null;
                 try {
                     in = assetManager.open(filename);
                     File outFile = new File(getExternalFilesDir(null), filename);
-                    out = new FileOutputStream(outFile);
-                    copyFile(in, out);
+                    if(outFile.exists() == false) {
+                        out = new FileOutputStream(outFile);
+                        copyFile(in, out);
+                        out.flush();
+                        out.close();
+                        out = null;
+                    }
                     in.close();
                     in = null;
-                    out.flush();
-                    out.close();
-                    out = null;
                 } catch(IOException e) {
                     Log.e("tag", "Failed to copy asset file: " + filename, e);
                 }

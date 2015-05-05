@@ -122,6 +122,9 @@ public class UpdateProject implements PhotosynqResponse {
                         }else{
                             httpConnection.execute(navigationDrawer, String.format(strProjectListURI, 1, currentPage + 1, email, authToken), "GET");
                         }
+                    }else{
+
+                        PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
                     }
                 }
 

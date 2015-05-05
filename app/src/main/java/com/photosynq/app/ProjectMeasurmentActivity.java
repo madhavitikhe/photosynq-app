@@ -206,7 +206,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
                     AutoCompleteTextView userEnteredAnswer = (AutoCompleteTextView) viewUserSelected.findViewById(R.id.et_user_answer);
                     List<String> answers = dbHelper.getAllUserAnswers();
-                    final ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, answers);
+                    final ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.autocomplete_list_textview, answers);
                     userEnteredAnswer.setAdapter(dataAdapter);
 
                     final CheckBox userDefinedRememberCB = (CheckBox) viewUserSelected.findViewById(R.id.rememberAnswerCheckBox);
@@ -312,10 +312,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     final EditText fromEditText = (EditText) viewAutoIncrement.findViewById(R.id.from_editText);
                     final EditText toEditText = (EditText) viewAutoIncrement.findViewById(R.id.to_editText);
                     final EditText repeatEditText = (EditText) viewAutoIncrement.findViewById(R.id.repeat_editText);
-                    final Data retrieveData = dbHelper.getData(userId, projectId, question.getQuestionId());
 
                     RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
                     if (rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER)) {
+                        Data retrieveData = dbHelper.getData(userId, projectId, question.getQuestionId());
                         String[] values = retrieveData.getValue().split(",");
                         fromEditText.setText(values[0]);
                         toEditText.setText(values[1]);
@@ -341,6 +341,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                 repeatEditText.setBackgroundColor(getResources().getColor(R.color.white));
                                 editAutoIncrementValuesBtn.setText("Cancel");
                             } else if (editAutoIncrementValuesBtn.getText().equals("Cancel")) {
+                                Data retrieveData = dbHelper.getData(userId, projectId, question.getQuestionId());
                                 String[] values = retrieveData.getValue().split(",");
                                 fromEditText.setText(values[0]);
                                 toEditText.setText(values[1]);

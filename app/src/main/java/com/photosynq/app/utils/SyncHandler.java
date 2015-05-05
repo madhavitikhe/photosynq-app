@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.photosynq.app.MainActivity;
 import com.photosynq.app.db.DatabaseHelper;
@@ -110,8 +111,16 @@ public class SyncHandler {
             super.onPreExecute();
         }
 
-        protected synchronized String doInBackground(Integer... SyncMode) {
+        protected String doInBackground(Integer... SyncMode) {
             try {
+
+                String isSyncInProgress = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
+                if (isSyncInProgress.equals("true")){
+
+                    return Constants.SUCCESS;
+                }
+
+                PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "true");
 
                 int syncMode = SyncMode[0];
                 PrefUtils.saveToPrefs(context, PrefUtils.PREFS_CURRENT_LOCATION, null);
@@ -125,6 +134,8 @@ public class SyncHandler {
                 HTTPConnection mProtocolListTask = null;
                 HTTPConnection mMacroListTask = null;
                 if (!CommonUtils.isConnected(context)) {
+
+                    PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "true");
                     return Constants.SERVER_NOT_ACCESSIBLE;
                 }
                 Log.d("PHOTOSYNQ-HTTPConnection", "in async task");
@@ -170,6 +181,7 @@ public class SyncHandler {
 
             } catch (Exception e) {
                 e.printStackTrace();
+                PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "true");
                 return Constants.SERVER_NOT_ACCESSIBLE;
             }
 

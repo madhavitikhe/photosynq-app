@@ -149,6 +149,38 @@ public class CommonUtils {
         return false;
     }
 
+    public static boolean checkInternetConnection(final Context context){
+
+        Runtime runtime = Runtime.getRuntime();
+        try {
+
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            if (exitValue == 0){
+                return true;
+            }
+
+        } catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        Log.d("Connectivity", "You are not connect to a network.");
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(
+                new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        Toast.makeText(context, "You are not connect to a network.\n" +
+                                "\n" +
+                                "Check if wifi is turned on \n" +
+                                "and if networks are available in your system settings screen. ", Toast.LENGTH_LONG).show();
+                    }
+                }
+        );
+        return false;
+    }
+
 
     private static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager
@@ -320,14 +352,19 @@ public class CommonUtils {
            if (getProgress >= 100) {
                progressDialog.dismiss();
 
+               progressDialog.setProgress(0);
+
+               PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
+
                context.runOnUiThread(new Runnable() {
                    @Override
                    public void run() {
 
+                       String totalCachedDataPoints = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "0");
                        new AlertDialog.Builder(context)
                                .setIcon(android.R.drawable.ic_dialog_alert)
                                .setTitle("Syncing")
-                               .setMessage("Pushed data points\n\nProjects Updates complete")
+                               .setMessage("Pushed " + " "+totalCachedDataPoints +" data points\n\nProjects updates complete")
                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                    @Override
                                    public void onClick(DialogInterface dialog, int which) {
@@ -344,6 +381,7 @@ public class CommonUtils {
            }
        }
     }
+
 
 
     /**
