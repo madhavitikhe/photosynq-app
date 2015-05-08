@@ -14,7 +14,7 @@ public class AlarmReceiver extends BroadcastReceiver
     public void onReceive(Context context, Intent intent)
     {
        SyncHandler syncHandler = new SyncHandler(context, MainActivity.getProgressBar());
-       syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE, null);
+       syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE);
 
        System.out.println("----------------------sync data onReceive complete-----------------");
         

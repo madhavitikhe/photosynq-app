@@ -95,7 +95,7 @@ public class DisplayResultsActivity extends ActionBarActivity {
             databaseHelper.createResult(result);
 
             SyncHandler syncHandler = new SyncHandler(this, MainActivity.getProgressBar());
-            syncHandler.DoSync(SyncHandler.UPLOAD_RESULTS_MODE, null);
+            syncHandler.DoSync(SyncHandler.UPLOAD_RESULTS_MODE);
 
             view.setVisibility(View.INVISIBLE);
             discard.setVisibility(View.INVISIBLE);

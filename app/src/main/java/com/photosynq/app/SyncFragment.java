@@ -65,7 +65,8 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
     private int syncBtnClickCount = 0;
     long seconds = 0;
     Timer timer;
-    private ProgressDialog progressDialog;
+
+    private TextView tvAutoSyncCachedDataPtValue;
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -110,7 +111,7 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
         }else{
             cbAutoSyncWifiOnly.setChecked(false);
         }
-        TextView tvAutoSyncCachedDataPtValue = (TextView) rootView.findViewById(R.id.tv_data_points_value);
+        tvAutoSyncCachedDataPtValue = (TextView) rootView.findViewById(R.id.tv_data_points_value);
         tvAutoSyncCachedDataPtValue.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoRegular());
         DatabaseHelper db = DatabaseHelper.getHelper(getActivity());
         final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
@@ -192,26 +193,28 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
             }
         });
 
-        progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setTitle("Syncing ...");
-        progressDialog.setMessage("Download in progress ...");
-        progressDialog.setProgressStyle(progressDialog.STYLE_HORIZONTAL);
-        progressDialog.setProgress(0);
-        progressDialog.setMax(100);
-        progressDialog.setProgressNumberFormat(null);
-
         Button syncBtn = (Button) rootView.findViewById(R.id.btn_sync_data);
         syncBtn.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoMedium());
-
-
 
         syncBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                final Context context = getActivity();
 
-                if(clickCounter == 0)
-                    Toast.makeText(getActivity(), "Checking internet connection...", Toast.LENGTH_SHORT).show();
+                if (clickCounter == 0) {
+
+                    String isSyncInProgress = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
+                    if (isSyncInProgress.equals("true")) {
+
+                        Toast.makeText(getActivity(), "Sync already in progress!", Toast.LENGTH_LONG).show();
+                        return;
+
+                    } else {
+                        Toast.makeText(getActivity(), "Checking internet connection...", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
                 clickCounter++;
 
                 if (clickCounter == 1) {
@@ -224,51 +227,63 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
 
                         public void onFinish() {
 
-                            if (clickCounter >= 3){
+                            if (clickCounter >= 3) {
                                 // Clear cache
-                                String isSyncInProgress = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
-                                if (isSyncInProgress.equals("true")){
 
-                                    Toast.makeText(getActivity(), "Sync already in progress!", Toast.LENGTH_LONG).show();
-                                }else {
+                                if (cbAutoSyncWifiOnly.isChecked()) {
+                                    PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_SYNC_WIFI_ON, "1");//set 1 if wifi is connected
+                                    ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                                    NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-                                    if (CommonUtils.checkInternetConnection(getActivity())) {
-                                        new AlertDialog.Builder(getActivity())
-                                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                                .setTitle("Clear Cache")
-                                                .setMessage("Do you want to really clear cache ?")
-                                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        progressDialog.show();
-                                                        dbHelper.deleteAllData();
-                                                        MainActivity mainActivity = (MainActivity) getActivity();
-                                                        SyncHandler syncHandler = new SyncHandler(mainActivity);
-                                                        syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE, progressDialog);
+                                    if (mWifi != null && mWifi.isConnected()) {//if Wifi is connected
 
-                                                    }
-
-                                                })
-                                                .setNegativeButton("No", null)
-                                                .show();
-                                    }
-                                }
-                            }else if (clickCounter == 1){
-                                //Sync
-
-                                String isSyncInProgress = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
-                                if (isSyncInProgress.equals("true")){
-
-                                    Toast.makeText(getActivity(), "Sync already in progress!", Toast.LENGTH_LONG).show();
-                                }else {
-
-                                    if (CommonUtils.checkInternetConnection(getActivity())) {
-                                        progressDialog.show();
                                         MainActivity mainActivity = (MainActivity) getActivity();
                                         SyncHandler syncHandler = new SyncHandler(mainActivity);
-                                        syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE, progressDialog);
+                                        syncHandler.DoSync(SyncHandler.ALL_SYNC_UI_MODE_CLEAR_CACHE);
+
+                                    } else {//if Wifi is not connected
+
+                                        Toast.makeText(context, "You are not connect to a network.\n" +
+                                                "\n" +
+                                                "Check if wifi is turned on \n" +
+                                                "and if networks are available in your system settings screen. ", Toast.LENGTH_LONG).show();
+
                                     }
+                                } else {//Mobile Data
+
+                                    MainActivity mainActivity = (MainActivity) getActivity();
+                                    SyncHandler syncHandler = new SyncHandler(mainActivity);
+                                    syncHandler.DoSync(SyncHandler.ALL_SYNC_UI_MODE_CLEAR_CACHE);
                                 }
+
+                            } else if (clickCounter == 1) {
+                                //Sync
+
+                                if (cbAutoSyncWifiOnly.isChecked()) {
+                                    PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_SYNC_WIFI_ON, "1");//set 1 if wifi is connected
+                                    ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                                    NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+                                    if (mWifi != null && mWifi.isConnected()) {//if Wifi is connected
+
+                                        MainActivity mainActivity = (MainActivity) getActivity();
+                                        SyncHandler syncHandler = new SyncHandler(mainActivity);
+                                        syncHandler.DoSync(SyncHandler.ALL_SYNC_UI_MODE);
+
+                                    } else {//if Wifi is not connected
+
+                                        Toast.makeText(context, "You are not connect to a network.\n" +
+                                                "\n" +
+                                                "Check if wifi is turned on \n" +
+                                                "and if networks are available in your system settings screen. ", Toast.LENGTH_LONG).show();
+                                    }
+                                } else {//Mobile Data
+
+                                    MainActivity mainActivity = (MainActivity) getActivity();
+                                    SyncHandler syncHandler = new SyncHandler(mainActivity);
+                                    syncHandler.DoSync(SyncHandler.ALL_SYNC_UI_MODE);
+                                }
+
                             }
                             clickCounter = 0;
                         }
@@ -277,48 +292,22 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
             }
         });
 
-//        syncBtn.setOnTouchListener(new View.OnTouchListener() {
-//            private long firstTouchTS = 0;
-//
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//                    this.firstTouchTS = System.currentTimeMillis();
-//                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-//                    Toast.makeText(getActivity(), ((System.currentTimeMillis() - this.firstTouchTS) / 1000) + " seconds", Toast.LENGTH_SHORT).show();
-//                    firstTouchTS = ((System.currentTimeMillis() - this.firstTouchTS) / 1000);
-//                    if (firstTouchTS >= 3) {
-//                        new AlertDialog.Builder(getActivity())
-//                                .setIcon(android.R.drawable.ic_dialog_alert)
-//                                .setTitle("Clear Cache")
-//                                .setMessage("Do you want to really clear cache ?")
-//                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(DialogInterface dialog, int which) {
-//                                        progressDialog.show();
-//                                        dbHelper.deleteAllData();
-//                                        MainActivity mainActivity = (MainActivity) getActivity();
-//                                        SyncHandler syncHandler = new SyncHandler(mainActivity);
-//                                        syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE, progressDialog);
-//
-//                                    }
-//
-//                                })
-//                                .setNegativeButton("No", null)
-//                                .show();
-//                    }else{
-//                        progressDialog.show();
-//                        MainActivity mainActivity = (MainActivity) getActivity();
-//                        SyncHandler syncHandler = new SyncHandler(mainActivity);
-//                        syncHandler.DoSync(SyncHandler.ALL_SYNC_MODE, progressDialog);
-//                    }
-//                }
-//                return false;
-//            }
-//        });
-
 
         return rootView;
+    }
+
+    public void refresh(){
+
+        DatabaseHelper db = DatabaseHelper.getHelper(getActivity());
+        final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
+        PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, ""+listRecords.size());
+
+        //set total of cached points.
+        if(listRecords.size() > 0) {
+            tvAutoSyncCachedDataPtValue.setText(listRecords.size() + "");
+        }else{
+            tvAutoSyncCachedDataPtValue.setText("0");
+        }
     }
 
     public void startSyncService(long set_interval_time) {
@@ -351,10 +340,14 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
             ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-            if (mWifi.isConnected()) {//if Wifi is connected
+            if (mWifi != null && mWifi.isConnected()) {//if Wifi is connected
                 startSyncService(set_interval_time);
             }else{//if Wifi is not connected
-                Toast.makeText(getActivity(), "Wifi is not connected", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(getActivity(), "You are not connect to a network.\n" +
+                        "\n" +
+                        "Check if wifi is turned on \n" +
+                        "and if networks are available in your system settings screen. ", Toast.LENGTH_LONG).show();
             }
         }else{//Mobile Data
             PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_SYNC_WIFI_ON, "0");//set 0 if wifi is not connected

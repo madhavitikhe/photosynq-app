@@ -8,13 +8,17 @@ import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.photosynq.app.MainActivity;
+import com.photosynq.app.SyncFragment;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.http.HTTPConnection;
 import com.photosynq.app.model.AppSettings;
@@ -37,14 +41,17 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -149,19 +156,64 @@ public class CommonUtils {
         return false;
     }
 
-    public static boolean checkInternetConnection(final Context context){
+    public static boolean checkInternetConnection1(final Context context){
 
-        Runtime runtime = Runtime.getRuntime();
-        try {
+//        try {
+//
+//            Process ipProcess = null;
+//            if(Build.VERSION.SDK_INT <= 16) {
+//
+//                Runtime runtime = Runtime.getRuntime();
+//                ipProcess = runtime.exec("/system/bin/ping -w 1 -c 1 8.8.8.8");
+//            }else{
+//
+//                ipProcess = new ProcessBuilder()
+//                        .command("/system/bin/ping", "google.com")
+//                        .redirectErrorStream(true)
+//                        .start();
+//            }
+//
+////            int exitValue = ipProcess.waitFor();
+////            if (exitValue == 0){
+////                return true;
+////            }
+//
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(
+//                    ipProcess.getInputStream()));
+//
+//            StringBuffer output = new StringBuffer();
+//            String temp;
+//
+//            while ( (temp = reader.readLine()) != null)//.read(buffer)) > 0)
+//            {
+//                output.append(temp);
+//                //count++;
+//            }
+//
+//            reader.close();
+//
+//
+////            if(count > 0)
+////                str = output.toString();
+//
+//            ipProcess.destroy();
+//
+//        } catch (IOException e)          { e.printStackTrace(); }
+////        catch (InterruptedException e) { e.printStackTrace(); }
 
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            if (exitValue == 0){
-                return true;
-            }
+        ConnectivityManager cm =
+                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        } catch (IOException e)          { e.printStackTrace(); }
-        catch (InterruptedException e) { e.printStackTrace(); }
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        System.out.print(activeNetwork.getExtraInfo());
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        if (isConnected) {
+
+            return true;
+        }
 
         Log.d("Connectivity", "You are not connect to a network.");
         Handler handler = new Handler(Looper.getMainLooper());
@@ -206,65 +258,83 @@ public class CommonUtils {
         return md5;
     }
 
-    public synchronized static String uploadResults(Context context, String project_id, String row_id, String result){
-        String authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-        String email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-        StringEntity input = null;
-        String responseString = null;
-        JSONObject request_data = new JSONObject();
+    public synchronized static void uploadResults(final Context context){
 
-        try {
-            JSONObject jo = new JSONObject(result);
-            request_data.put("user_email", email);
-            request_data.put("user_token", authToken);
-            request_data.put("data", jo);
-            input = new StringEntity(request_data.toString());
-            input.setContentType("application/json");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return Constants.SERVER_NOT_ACCESSIBLE;
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return Constants.SERVER_NOT_ACCESSIBLE;
-        }
+        new AsyncTask<Object, Object, Object>() {
+            @Override
+            protected Object doInBackground(Object[] objects) {
 
-        String strDataURI = Constants.PHOTOSYNQ_DATA_URL
-                + project_id + "/data.json";
+                DatabaseHelper db = DatabaseHelper.getHelper(context);
+                List<ProjectResult> listRecords = db.getAllUnUploadedResults();
+                for (ProjectResult projectResult : listRecords) {
 
-        Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ URI" + strDataURI);
+                    String project_id = projectResult.getProjectId();
+                    String row_id = projectResult.getId();
+                    String result = projectResult.getReading();
 
-        HttpPost postRequest = new HttpPost(strDataURI);
-        if (null != input) {
-            postRequest.setEntity(input);
-        }
-        Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing POST request");
-        HttpClient httpclient = new DefaultHttpClient();
-        try {
-            HttpResponse response = httpclient.execute(postRequest);
+                    String authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+                    String email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+                    StringEntity input = null;
+                    String responseString = null;
+                    JSONObject request_data = new JSONObject();
 
-            if (null != response) {
-                StatusLine statusLine = response.getStatusLine();
-                if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    response.getEntity().writeTo(out);
-                    out.close();
-                    responseString = out.toString();
-                } else {
-                    //Closes the connection.
-                    response.getEntity().getContent().close();
-                    throw new IOException(statusLine.getReasonPhrase());
+                    try {
+                        JSONObject jo = new JSONObject(result);
+                        request_data.put("user_email", email);
+                        request_data.put("user_token", authToken);
+                        request_data.put("data", jo);
+                        input = new StringEntity(request_data.toString());
+                        input.setContentType("application/json");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        return Constants.SERVER_NOT_ACCESSIBLE;
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                        return Constants.SERVER_NOT_ACCESSIBLE;
+                    }
+
+                    String strDataURI = Constants.PHOTOSYNQ_DATA_URL
+                            + project_id + "/data.json";
+
+                    Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ URI" + strDataURI);
+
+                    HttpPost postRequest = new HttpPost(strDataURI);
+                    if (null != input) {
+                        postRequest.setEntity(input);
+                    }
+                    Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing POST request");
+                    HttpClient httpclient = new DefaultHttpClient();
+                    try {
+                        HttpResponse response = httpclient.execute(postRequest);
+
+                        if (null != response) {
+                            StatusLine statusLine = response.getStatusLine();
+                            if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+                                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                                response.getEntity().writeTo(out);
+                                out.close();
+                                responseString = out.toString();
+                            } else {
+                                //Closes the connection.
+                                response.getEntity().getContent().close();
+                                throw new IOException(statusLine.getReasonPhrase());
+                            }
+                        }
+
+                        UpdateData updateData = new UpdateData(context, row_id);
+                        updateData.onResponseReceived(responseString);
+
+                    } catch (ClientProtocolException e) {
+                        return Constants.SERVER_NOT_ACCESSIBLE;
+                    } catch (IOException e) {
+                        return Constants.SERVER_NOT_ACCESSIBLE;
+                    }
+
                 }
+                return Constants.SUCCESS;
             }
 
-            UpdateData updateData = new UpdateData(context, row_id);
-            updateData.onResponseReceived(responseString);
-
-        } catch (ClientProtocolException e) {
-            return Constants.SERVER_NOT_ACCESSIBLE;
-        } catch (IOException e) {
-            return Constants.SERVER_NOT_ACCESSIBLE;
-        }
-        return Constants.SUCCESS;
+        }.execute();
 
     }
 
@@ -368,6 +438,15 @@ public class CommonUtils {
                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                    @Override
                                    public void onClick(DialogInterface dialog, int which) {
+
+                                       MainActivity navigationDrawer = (MainActivity)context;
+                                       FragmentManager fragmentManager = navigationDrawer.getSupportFragmentManager();
+
+                                       SyncFragment syncFragment = (SyncFragment) fragmentManager.findFragmentByTag(SyncFragment.class.getName());
+                                       if (syncFragment != null) {
+
+                                           syncFragment.refresh();
+                                       }
 
                                    }
 

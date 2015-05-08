@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.photosynq.app.MainActivity;
+import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.http.HTTPConnection;
 import com.photosynq.app.http.PhotosynqResponse;
@@ -48,6 +49,8 @@ public class SyncHandler {
     public static int PROJECT_LIST_MODE = 1;
     public static int PROTOCOL_LIST_MODE = 2;
     public static int UPLOAD_RESULTS_MODE = 3;
+    public static int ALL_SYNC_UI_MODE = 4;
+    public static int ALL_SYNC_UI_MODE_CLEAR_CACHE = 5;
 
 
 //    public SyncHandler(Context context) {
@@ -69,7 +72,7 @@ public class SyncHandler {
         this.navigationDrawer = navigationDrawer;
     }
 
-    public int DoSync(int sync_mode, ProgressDialog progressDialog) {
+    public int DoSync(int sync_mode) {
 
         if(sync_mode == PROJECT_LIST_MODE){
             DatabaseHelper db = DatabaseHelper.getHelper(context);
@@ -85,23 +88,16 @@ public class SyncHandler {
             }
         }
 
-        new SyncTask(progressDialog).execute(sync_mode);
+        new SyncTask().execute(sync_mode);
         return 0;
     }
 
     private class SyncTask extends AsyncTask<Integer, Object, String> {
-        ProgressDialog mProgressDialog;
-        SyncTask(ProgressDialog progressDialog){
-            mProgressDialog = progressDialog;
-        }
+
         @Override
         protected void onPreExecute() {
             if(null != progressBar){
                 progressBar.setVisibility(View.VISIBLE);
-            }
-
-            if(null != mProgressDialog) {
-                mProgressDialog.setProgress(0);
             }
 
             if(null != navigationDrawer) {
@@ -111,7 +107,7 @@ public class SyncHandler {
             super.onPreExecute();
         }
 
-        protected String doInBackground(Integer... SyncMode) {
+        protected synchronized String doInBackground(Integer... SyncMode) {
             try {
 
                 String isSyncInProgress = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
@@ -122,69 +118,151 @@ public class SyncHandler {
 
                 PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "true");
 
-                int syncMode = SyncMode[0];
-                PrefUtils.saveToPrefs(context, PrefUtils.PREFS_CURRENT_LOCATION, null);
-                String authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-                String email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+                final int syncMode = SyncMode[0];
 
-                HttpClient httpclient = new DefaultHttpClient();
-                HttpResponse response = null;
-                HttpGet getRequest = null;
-                String responseString = null;
-                HTTPConnection mProtocolListTask = null;
-                HTTPConnection mMacroListTask = null;
+
+//                HttpClient httpclient = new DefaultHttpClient();
+//                HttpResponse response = null;
+//                HttpGet getRequest = null;
+//                String responseString = null;
+
+
+
                 if (!CommonUtils.isConnected(context)) {
 
-                    PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "true");
+                    PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
                     return Constants.SERVER_NOT_ACCESSIBLE;
                 }
+
                 Log.d("PHOTOSYNQ-HTTPConnection", "in async task");
-                    // Download ProjectList
-                    if(syncMode == ALL_SYNC_MODE || syncMode == PROJECT_LIST_MODE || syncMode == PROTOCOL_LIST_MODE) {
-                        UpdateProject updateProject = new UpdateProject(context, navigationDrawer, mProgressDialog);
-                        HTTPConnection mProjListTask = new HTTPConnection();
-                        mProjListTask.delegate = updateProject;
-                        mProjListTask
-                                .execute(context,Constants.PHOTOSYNQ_PROJECTS_LIST_URL
-                                        + "all=1"+"&page=1"
-                                        + "&user_email=" + email + "&user_token="
-                                        + authToken, "GET");
 
-                        UpdateProtocol updateProtocol = new UpdateProtocol(navigationDrawer, mProgressDialog);
-                        mProtocolListTask = new HTTPConnection();
-                        mProtocolListTask.delegate = updateProtocol;
-                        mProtocolListTask.execute(context,
-                                Constants.PHOTOSYNQ_PROTOCOLS_LIST_URL + "user_email="
-                                        + email + "&user_token=" + authToken, "GET");
+                // Sync with clear cache
+                if(syncMode == ALL_SYNC_UI_MODE_CLEAR_CACHE) {
 
+                    final MainActivity mainActivity = (MainActivity)context;
 
-                        UpdateMacro updateMacro = new UpdateMacro(context, navigationDrawer, mProgressDialog);
-                        mMacroListTask = new HTTPConnection();
-                        mMacroListTask.delegate = updateMacro;
-                        mMacroListTask
-                                .execute(context, Constants.PHOTOSYNQ_MACROS_LIST_URL
-                                        + "user_email=" + email + "&user_token="
-                                        + authToken, "GET");
+                    mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
 
-                    }
+                            new AlertDialog.Builder(mainActivity)
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .setTitle("Clear Cache")
+                                    .setMessage("Do you want to really clear cache ?")
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
 
-                    // Upload all unuploaded results
-                    if(syncMode == ALL_SYNC_MODE || syncMode == UPLOAD_RESULTS_MODE) {
-                        DatabaseHelper db = DatabaseHelper.getHelper(context);
-                        List<ProjectResult> listRecords = db.getAllUnUploadedResults();
-                        for (ProjectResult projectResult : listRecords) {
-                            CommonUtils.uploadResults(context, projectResult.getProjectId(), projectResult.getId(), projectResult.getReading());
+                                            ProgressDialog mProgressDialog = new ProgressDialog(context);
+                                            mProgressDialog.setTitle("Syncing ...");
+                                            mProgressDialog.setMessage("Download in progress ...");
+                                            mProgressDialog.setProgressStyle(mProgressDialog.STYLE_HORIZONTAL);
+                                            mProgressDialog.setProgress(0);
+                                            mProgressDialog.setMax(100);
+                                            mProgressDialog.setProgressNumberFormat(null);
+                                            mProgressDialog.show();
+
+                                            DatabaseHelper dbHelper = DatabaseHelper.getHelper(context);
+                                            dbHelper.deleteAllData();
+
+                                            syncData(ALL_SYNC_MODE, mProgressDialog);
+
+                                        }
+
+                                    })
+                                    .setNegativeButton("No", null)
+                                    .show();
                         }
-                    }
+                    });
+
+                }else if (syncMode == ALL_SYNC_UI_MODE){
+
+                    final MainActivity mainActivity = (MainActivity)context;
+                    mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            ProgressDialog mProgressDialog = new ProgressDialog(context);
+                            mProgressDialog.setTitle("Syncing ...");
+                            mProgressDialog.setMessage("Download in progress ...");
+                            mProgressDialog.setProgressStyle(mProgressDialog.STYLE_HORIZONTAL);
+                            mProgressDialog.setProgress(0);
+                            mProgressDialog.setMax(100);
+                            mProgressDialog.setProgressNumberFormat(null);
+                            mProgressDialog.show();
+
+                            syncData(ALL_SYNC_MODE, mProgressDialog);
+                        }
+                    });
+
+                }else {
+                    // Sync as per mode
+                    syncData(syncMode, null);
+                }
 
                 return Constants.SUCCESS;
 
             } catch (Exception e) {
                 e.printStackTrace();
-                PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "true");
+                PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
                 return Constants.SERVER_NOT_ACCESSIBLE;
             }
 
+        }
+
+        private void syncData(int syncMode, ProgressDialog mProgressDialog) {
+
+            PrefUtils.saveToPrefs(context, PrefUtils.PREFS_CURRENT_LOCATION, null);
+            String authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+            String email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+
+            HTTPConnection mProtocolListTask = null;
+            HTTPConnection mMacroListTask = null;
+
+            // Upload all unuploaded results
+            if(syncMode == ALL_SYNC_MODE || syncMode == UPLOAD_RESULTS_MODE) {
+
+                CommonUtils.uploadResults(context);
+
+//                DatabaseHelper db = DatabaseHelper.getHelper(context);
+//                List<ProjectResult> listRecords = db.getAllUnUploadedResults();
+//                for (ProjectResult projectResult : listRecords) {
+//                    CommonUtils.uploadResults(context, projectResult.getProjectId(), projectResult.getId(), projectResult.getReading());
+//                }
+
+                if (syncMode == UPLOAD_RESULTS_MODE) {
+                    PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
+                }
+            }
+
+            // Download ProjectList
+            if(syncMode == ALL_SYNC_MODE || syncMode == PROJECT_LIST_MODE || syncMode == PROTOCOL_LIST_MODE) {
+                UpdateProject updateProject = new UpdateProject(context, navigationDrawer, mProgressDialog);
+                HTTPConnection mProjListTask = new HTTPConnection();
+                mProjListTask.delegate = updateProject;
+                mProjListTask
+                        .execute(context, Constants.PHOTOSYNQ_PROJECTS_LIST_URL
+                                + "all=1" + "&page=1"
+                                + "&user_email=" + email + "&user_token="
+                                + authToken, "GET");
+
+                UpdateProtocol updateProtocol = new UpdateProtocol(navigationDrawer, mProgressDialog);
+                mProtocolListTask = new HTTPConnection();
+                mProtocolListTask.delegate = updateProtocol;
+                mProtocolListTask.execute(context,
+                        Constants.PHOTOSYNQ_PROTOCOLS_LIST_URL + "user_email="
+                                + email + "&user_token=" + authToken, "GET");
+
+
+                UpdateMacro updateMacro = new UpdateMacro(context, navigationDrawer, mProgressDialog);
+                mMacroListTask = new HTTPConnection();
+                mMacroListTask.delegate = updateMacro;
+                mMacroListTask
+                        .execute(context, Constants.PHOTOSYNQ_MACROS_LIST_URL
+                                + "user_email=" + email + "&user_token="
+                                + authToken, "GET");
+
+            }
         }
 
         // This is called each time you call publishProgress()
@@ -235,6 +313,15 @@ public class SyncHandler {
 
             if(null != navigationDrawer){
                 navigationDrawer.setProgressBarVisibility(View.INVISIBLE);
+            }
+
+            if (result.equals(Constants.SERVER_NOT_ACCESSIBLE)){
+
+//                if (null != mProgressDialog) {
+//                    mProgressDialog.dismiss();
+//                }
+
+                //Toast.makeText(context, R.string.server_not_reachable, Toast.LENGTH_LONG).show();
             }
         }
 
