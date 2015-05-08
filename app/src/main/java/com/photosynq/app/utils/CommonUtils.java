@@ -2,6 +2,7 @@ package com.photosynq.app.utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,10 +12,13 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.app.FragmentTransaction;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.photosynq.app.MainActivity;
+import com.photosynq.app.R;
+import com.photosynq.app.SyncFragment;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.http.HTTPConnection;
 import com.photosynq.app.model.AppSettings;
@@ -154,8 +158,9 @@ public class CommonUtils {
         Runtime runtime = Runtime.getRuntime();
         try {
 
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
+            String serverName = "/system/bin/ping -c 1 8.8.8.8";
+            Process ipProcess = runtime.exec(serverName);
+            int exitValue = ipProcess.waitFor();
             if (exitValue == 0){
                 return true;
             }
@@ -369,6 +374,31 @@ public class CommonUtils {
                                    @Override
                                    public void onClick(DialogInterface dialog, int which) {
 
+                                       Fragment frg = context.getFragmentManager().findFragmentByTag(SyncFragment.class.getName());
+                                       String tt = frg.getTag();
+
+//                                       FragmentTransaction tr = context.getFragmentManager().beginTransaction();
+//                                       SyncFragment sf = new SyncFragment();
+//                                       tr.replace(R.id.container, new SyncFragment());
+//                                       tr.commit();
+
+//                                       Fragment frg = context.getFragmentManager().findFragmentByTag(SyncFragment.class.getName());
+//                                       final FragmentTransaction ft = context.getFragmentManager().beginTransaction();
+//                                       ft.remove(frg);
+//                                       ft.detach(frg);
+//                                       ft.attach(frg);
+//                                       ft.commit();
+
+//                                       new Thread() {
+//                                           @Override
+//                                           public void run() {
+//
+//                                           }
+//                                       }.start();
+
+                                      // context.getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
+                                       context.getWindow().getDecorView().findViewById(android.R.id.content).requestLayout();
+
                                    }
 
                                })
@@ -381,89 +411,5 @@ public class CommonUtils {
            }
        }
     }
-
-
-
-    /**
-     * Download data from photosynq website, it return projects, protocols and macros list.
-     */
-//    public static void downloadData(Context context)
-//    {
-//        System.out.println("Downloading data..............");
-//        //if (CommonUtils.isConnected(context))
-//        //{
-//        DatabaseHelper db;
-//        String authToken;
-//        String email;
-//        HTTPConnection mProtocolListTask = null;
-//        HTTPConnection mMacroListTask = null;
-//        HTTPConnection mUpdateDataTask = null;
-//
-//        PrefUtils.saveToPrefs(context, PrefUtils.PREFS_CURRENT_LOCATION,
-//                null);
-//        authToken = PrefUtils
-//                .getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY,
-//                        PrefUtils.PREFS_DEFAULT_VAL);
-//        email = PrefUtils.getFromPrefs(context,
-//                PrefUtils.PREFS_LOGIN_USERNAME_KEY,
-//                PrefUtils.PREFS_DEFAULT_VAL);
-//
-//        UpdateProject updateProject = new UpdateProject((MainActivity) context);
-//        HTTPConnection mProjListTask = new HTTPConnection();
-//        mProjListTask.delegate = updateProject;
-//        mProjListTask
-//                .execute(context,Constants.PHOTOSYNQ_PROJECTS_LIST_URL
-//                        + "all=1"+"&page=1"
-//                        + "&user_email=" + email + "&user_token="
-//                        + authToken, "GET");
-//
-//
-//        UpdateProtocol updateProtocol = new UpdateProtocol((MainActivity) context);
-//        mProtocolListTask = new HTTPConnection();
-//        mProtocolListTask.delegate = updateProtocol;
-//        mProtocolListTask.execute(context,
-//                Constants.PHOTOSYNQ_PROTOCOLS_LIST_URL + "user_email="
-//                        + email + "&user_token=" + authToken, "GET");
-//
-//
-//        UpdateMacro updateMacro = new UpdateMacro((MainActivity) context);
-//        mMacroListTask = new HTTPConnection();
-//        mMacroListTask.delegate = updateMacro;
-//        mMacroListTask
-//                .execute(context,Constants.PHOTOSYNQ_MACROS_LIST_URL
-//                        + "user_email=" + email + "&user_token="
-//                        + authToken, "GET");
-//
-//        //db = new DatabaseHelper(context);
-//        db = DatabaseHelper.getHelper(context);
-//        List<ProjectResult> listRecords = db.getAllUnUploadedResults();
-//        //db.closeDB();
-//        for (ProjectResult projectResult : listRecords) {
-//            StringEntity input = null;
-//            JSONObject request_data = new JSONObject();
-//
-//            try {
-//                JSONObject jo = new JSONObject(projectResult.getReading());
-//                request_data.put("user_email", email);
-//                request_data.put("user_token", authToken);
-//                request_data.put("data", jo);
-//                input = new StringEntity(request_data.toString());
-//                input.setContentType("application/json");
-//            } catch (JSONException e) {
-//                // TODO Auto-generated catch block
-//                e.printStackTrace();
-//            } catch (UnsupportedEncodingException e) {
-//                // TODO Auto-generated catch block
-//                e.printStackTrace();
-//            }
-//
-//            UpdateData updateData = new UpdateData(context,projectResult.getId());
-//            mUpdateDataTask = new HTTPConnection(input);
-//            mUpdateDataTask.delegate = updateData;
-//            mUpdateDataTask.execute(context,Constants.PHOTOSYNQ_DATA_URL
-//                    + projectResult.getProjectId() + "/data.json", "POST");
-//        }
-//        //}
-//    }
 
 }
