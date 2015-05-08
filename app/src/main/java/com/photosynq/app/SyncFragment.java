@@ -247,18 +247,15 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
                                                 "\n" +
                                                 "Check if wifi is turned on \n" +
                                                 "and if networks are available in your system settings screen. ", Toast.LENGTH_LONG).show();
-
                                     }
+
                                 } else {//Mobile Data
 
                                     MainActivity mainActivity = (MainActivity) getActivity();
                                     SyncHandler syncHandler = new SyncHandler(mainActivity);
                                     syncHandler.DoSync(SyncHandler.ALL_SYNC_UI_MODE_CLEAR_CACHE);
                                 }
-
-                            } else if (clickCounter == 1) {
-                                //Sync
-
+                            }else if (clickCounter == 1) {
                                 if (cbAutoSyncWifiOnly.isChecked()) {
                                     PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_SYNC_WIFI_ON, "1");//set 1 if wifi is connected
                                     ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -305,7 +302,7 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
         //set total of cached points.
         if(listRecords.size() > 0) {
             tvAutoSyncCachedDataPtValue.setText(listRecords.size() + "");
-        }else{
+        }else {
             tvAutoSyncCachedDataPtValue.setText("0");
         }
     }

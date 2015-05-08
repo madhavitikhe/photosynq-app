@@ -35,9 +35,8 @@ import java.util.List;
 
 /**
  * Created by kalpesh on 30/11/14.
- *
- *  Download data from photosynq website, it return projects, protocols and macros list.
- *
+ * <p/>
+ * Download data from photosynq website, it return projects, protocols and macros list.
  */
 public class SyncHandler {
 
@@ -74,16 +73,16 @@ public class SyncHandler {
 
     public int DoSync(int sync_mode) {
 
-        if(sync_mode == PROJECT_LIST_MODE){
+        if (sync_mode == PROJECT_LIST_MODE) {
             DatabaseHelper db = DatabaseHelper.getHelper(context);
-            if(db.getAllProtocolsList().size() == 0){
+            if (db.getAllProtocolsList().size() == 0) {
                 sync_mode = ALL_SYNC_MODE;
             }
         }
 
-        if(sync_mode == PROTOCOL_LIST_MODE) {
+        if (sync_mode == PROTOCOL_LIST_MODE) {
             DatabaseHelper db = DatabaseHelper.getHelper(context);
-            if(db.getAllResearchProjects().size() == 0){
+            if (db.getAllResearchProjects().size() == 0) {
                 sync_mode = ALL_SYNC_MODE;
             }
         }
@@ -93,14 +92,13 @@ public class SyncHandler {
     }
 
     private class SyncTask extends AsyncTask<Integer, Object, String> {
-
         @Override
         protected void onPreExecute() {
-            if(null != progressBar){
+            if (null != progressBar) {
                 progressBar.setVisibility(View.VISIBLE);
             }
 
-            if(null != navigationDrawer) {
+            if (null != navigationDrawer) {
                 navigationDrawer.setProgressBarVisibility(View.VISIBLE);
             }
 
@@ -111,8 +109,8 @@ public class SyncHandler {
             try {
 
                 String isSyncInProgress = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
-                if (isSyncInProgress.equals("true")){
-
+                if (isSyncInProgress.equals("true")) {
+                    System.out.println("sync already in progress");
                     return Constants.SUCCESS;
                 }
 
@@ -170,7 +168,13 @@ public class SyncHandler {
                                         }
 
                                     })
-                                    .setNegativeButton("No", null)
+                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                                            PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
+                                        }
+                                    })
                                     .show();
                         }
                     });
@@ -269,13 +273,11 @@ public class SyncHandler {
         @Override
         protected void onProgressUpdate(Object... result) {
             //Do anything with response..
-            PhotosynqResponse delegate = (PhotosynqResponse)result[0];
-            if(null!=delegate)
-            {
+            PhotosynqResponse delegate = (PhotosynqResponse) result[0];
+            if (null != delegate) {
                 delegate.onResponseReceived((String) result[1]);
             }
-            if (null == result)
-            {
+            if (null == result) {
                 Log.d("PHOTOSYNQ-HTTPConnection", "No results returned");
             }
             super.onProgressUpdate(result);
@@ -307,11 +309,11 @@ public class SyncHandler {
 //                }
 //            }
 
-            if(null != progressBar){
+            if (null != progressBar) {
                 progressBar.setVisibility(View.INVISIBLE);
             }
 
-            if(null != navigationDrawer){
+            if (null != navigationDrawer) {
                 navigationDrawer.setProgressBarVisibility(View.INVISIBLE);
             }
 
