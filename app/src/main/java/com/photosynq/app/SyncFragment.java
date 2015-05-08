@@ -114,6 +114,8 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
         tvAutoSyncCachedDataPtValue.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoRegular());
         DatabaseHelper db = DatabaseHelper.getHelper(getActivity());
         final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
+        PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, ""+listRecords.size());
+
         //set total of cached points.
         if(listRecords.size() > 0) {
             tvAutoSyncCachedDataPtValue.setText(listRecords.size() + "");
@@ -150,7 +152,6 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
 //        <item>1 hr</item> 2
 //        <item>12 hrs</item> 3
 //        <item>1 day</item> 4
-//        <item>Manual</item> 5
         intervalSpinner.setTag(get_interval_time);
         intervalSpinner.setSelection(Integer.parseInt(get_interval_time));
         intervalSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -208,8 +209,9 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
             @Override
             public void onClick(View v) {
 
+
                 if(clickCounter == 0)
-                Toast.makeText(getActivity(), "Checking internet connection...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Checking internet connection...", Toast.LENGTH_SHORT).show();
                 clickCounter++;
 
                 if (clickCounter == 1) {

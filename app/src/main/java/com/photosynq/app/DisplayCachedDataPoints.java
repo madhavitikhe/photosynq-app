@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ProjectResult;
-import com.photosynq.app.utils.PrefUtils;
 
 import java.util.List;
 
@@ -24,8 +23,6 @@ public class DisplayCachedDataPoints extends ActionBarActivity {
 
         DatabaseHelper db = DatabaseHelper.getHelper(getApplicationContext());
         final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
-
-        PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, ""+listRecords.size());
 
         TextView txt = (TextView) findViewById(R.id.text1);
         for(int i = 0; i < listRecords.size(); i++){
