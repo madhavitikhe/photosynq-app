@@ -224,7 +224,7 @@ public class CommonUtils {
                     @Override
                     public void run()
                     {
-                        Toast.makeText(context, "You are not connect to a network.\n" +
+                            Toast.makeText(context, "You are not connect to a network.\n" +
                                 "\n" +
                                 "Check if wifi is turned on \n" +
                                 "and if networks are available in your system settings screen. ", Toast.LENGTH_LONG).show();

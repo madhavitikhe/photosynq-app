@@ -2,6 +2,7 @@ package com.photosynq.app;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -1366,8 +1367,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                 dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceAll("\\{", "{\"time\":\"" + time + "\",") + "\n];";
                                 System.out.println("All Options" + dataString);
                             } else {
-                                String currentLocation = PrefUtils.getFromPrefs(ProjectMeasurmentActivity.this, PrefUtils.PREFS_CURRENT_LOCATION, "NONE");
-                                if (!currentLocation.equals("NONE")) {
+                                String currentLocation = PrefUtils.getFromPrefs(ProjectMeasurmentActivity.this, PrefUtils.PREFS_CURRENT_LOCATION, "");
+                                if (!currentLocation.equals("")) {
                                     options = options.append("\"location\":[" + currentLocation + "],");
                                     dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options).replaceAll("\\{", "{\"time\":\"" + time + "\",") + "\n];";
                                     System.out.println("All Options" + dataString);
@@ -1479,8 +1480,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
         if (servicesConnected()) {
 
             // Get the current location
-            Location currentLocation = LocationServices.FusedLocationApi
-                    .getLastLocation(mLocationClient);
+            Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(mLocationClient);
 
             PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, LocationUtils.getLatLng(this, currentLocation));
             //Location currentLocation = mLocationClient.getLastLocation();
