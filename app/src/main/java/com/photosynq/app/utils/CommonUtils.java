@@ -146,91 +146,23 @@ public class CommonUtils {
                         @Override
                         public void run()
                         {
-                            Toast.makeText(context, "You are not connect to a network.\n" +
-                                    "\n" +
-                                    "Check if wifi is turned on \n" +
-                                    "and if networks are available in your system settings screen. ", Toast.LENGTH_LONG).show();
+                            // Check whether keep button is clicked or not
+                            String getKeepBtnStatus = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_KEEP_BTN_CLICK, "");
+                            if(getKeepBtnStatus.equals("KeepBtnCLickYes")){
+                                Toast.makeText(context, "Success!\nCached ", Toast.LENGTH_LONG).show();
+                                PrefUtils.saveToPrefs(context, PrefUtils.PREFS_KEEP_BTN_CLICK, "KeepBtnCLickNo");
+
+                            }else {
+
+                                Toast.makeText(context, "You are not connect to a network.\n" +
+                                        "\n" +
+                                        "Check if wifi is turned on \n" +
+                                        "and if networks are available in your system settings screen. ", Toast.LENGTH_LONG).show();
+                            }
                         }
                     }
             );
         }
-        return false;
-    }
-
-    public static boolean checkInternetConnection1(final Context context){
-
-//        try {
-//
-//            Process ipProcess = null;
-//            if(Build.VERSION.SDK_INT <= 16) {
-//
-//                Runtime runtime = Runtime.getRuntime();
-//                ipProcess = runtime.exec("/system/bin/ping -w 1 -c 1 8.8.8.8");
-//            }else{
-//
-//                ipProcess = new ProcessBuilder()
-//                        .command("/system/bin/ping", "google.com")
-//                        .redirectErrorStream(true)
-//                        .start();
-//            }
-//
-////            int exitValue = ipProcess.waitFor();
-////            if (exitValue == 0){
-////                return true;
-////            }
-//
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(
-//                    ipProcess.getInputStream()));
-//
-//            StringBuffer output = new StringBuffer();
-//            String temp;
-//
-//            while ( (temp = reader.readLine()) != null)//.read(buffer)) > 0)
-//            {
-//                output.append(temp);
-//                //count++;
-//            }
-//
-//            reader.close();
-//
-//
-////            if(count > 0)
-////                str = output.toString();
-//
-//            ipProcess.destroy();
-//
-//        } catch (IOException e)          { e.printStackTrace(); }
-////        catch (InterruptedException e) { e.printStackTrace(); }
-
-        ConnectivityManager cm =
-                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-
-        System.out.print(activeNetwork.getExtraInfo());
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-
-        if (isConnected) {
-
-            return true;
-        }
-
-        Log.d("Connectivity", "You are not connect to a network.");
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(
-                new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                            Toast.makeText(context, "You are not connect to a network.\n" +
-                                "\n" +
-                                "Check if wifi is turned on \n" +
-                                "and if networks are available in your system settings screen. ", Toast.LENGTH_LONG).show();
-                    }
-                }
-        );
         return false;
     }
 
