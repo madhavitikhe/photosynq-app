@@ -288,7 +288,7 @@ public class BluetoothService {
 			Log.i(TAG, "BEGIN $$$$$$$ mConnectedThread");
 			byte[] buffer = new byte[10485];
 			StringBuffer measurement=new StringBuffer();
-			int totalbytes =0;
+			//int totalbytes =0;
 			int bytes;
 
 			// Keep listening to the InputStream while connected
@@ -302,11 +302,16 @@ public class BluetoothService {
 					String readMessage = new String(buffer, 0, bytes);
                     long time= System.currentTimeMillis();
 					measurement.append(readMessage.replaceAll("\\{", "{\"time\":\""+time+"\","));
-					totalbytes += bytes;
+					//??totalbytes += bytes;
 					if (readMessage.replaceAll("\\r\\n", "######").contains("############")) {
-						mHandler.obtainMessage(Constants.MESSAGE_READ, totalbytes,-1, measurement).sendToTarget();
+						mHandler.obtainMessage (Constants.MESSAGE_READ, measurement.length(), -1, measurement).sendToTarget();
+
+                        measurement = null;
 						measurement=new StringBuffer();
-						buffer = new byte[10485];
+                        buffer = null;
+                        buffer = new byte[10485];
+                        //??measurement.delete(0, measurement.length());
+
 //						Message msg = mHandler.obtainMessage(ResultActivity.MESSAGE_STOP);
 //				        Bundle bundle = new Bundle();
 //				        bundle.putString(ResultActivity.TOAST, "Measurement Complete");

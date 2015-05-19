@@ -274,6 +274,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	public long createResult(ProjectResult result) {
         long retVal = -1;
+
+		if (result.getReading().length() <= 0){
+			return retVal;
+		}
 		try {
 			SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
@@ -1492,7 +1496,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(TABLE_RESEARCH_PROJECT,null,null);
         db.delete(TABLE_PROJECT_LEAD,null,null);
         db.delete(TABLE_REMEMBER_ANSWERS,null,null);
-        //closeWriteDatabase();
+		db.delete(TABLE_RESULTS,null,null);
+		db.delete(TABLE_USER_ANSWERS,null,null);
+		//closeWriteDatabase();
     }
 
 }

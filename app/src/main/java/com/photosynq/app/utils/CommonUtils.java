@@ -205,6 +205,12 @@ public class CommonUtils {
                     String row_id = projectResult.getId();
                     String result = projectResult.getReading();
 
+                    if (!result.contains("user_answers")){
+
+                        Log.d("PhotosynQ", result);
+                    }
+
+
                     String authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
                     String email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
                     StringEntity input = null;
@@ -220,10 +226,12 @@ public class CommonUtils {
                         input.setContentType("application/json");
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        return Constants.SERVER_NOT_ACCESSIBLE;
+                        continue;
+                        //??return Constants.SERVER_NOT_ACCESSIBLE;
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
-                        return Constants.SERVER_NOT_ACCESSIBLE;
+                        continue;
+                        //??return Constants.SERVER_NOT_ACCESSIBLE;
                     }
 
                     String strDataURI = Constants.PHOTOSYNQ_DATA_URL
@@ -258,9 +266,11 @@ public class CommonUtils {
                         updateData.onResponseReceived(responseString);
 
                     } catch (ClientProtocolException e) {
-                        return Constants.SERVER_NOT_ACCESSIBLE;
+                        continue;
+                        //??return Constants.SERVER_NOT_ACCESSIBLE;
                     } catch (IOException e) {
-                        return Constants.SERVER_NOT_ACCESSIBLE;
+                        continue;
+                        //??return Constants.SERVER_NOT_ACCESSIBLE;
                     }
 
                 }
