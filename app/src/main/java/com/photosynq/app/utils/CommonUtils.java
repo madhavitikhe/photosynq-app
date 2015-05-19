@@ -135,6 +135,7 @@ public class CommonUtils {
                 urlc.connect();
                 return (urlc.getResponseCode() == 200);
             } catch (IOException e) {
+                PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
                 Log.e("Connectivity", "Error checking internet connection", e);
                 Handler handler = new Handler(Looper.getMainLooper());
                 handler.post(
@@ -159,6 +160,7 @@ public class CommonUtils {
                 );
             }
         } else {
+            PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
             Log.d("Connectivity", "You are not connect to a network.");
             Handler handler = new Handler(Looper.getMainLooper());
             handler.post(

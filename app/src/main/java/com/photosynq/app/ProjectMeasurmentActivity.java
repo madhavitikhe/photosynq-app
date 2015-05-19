@@ -996,6 +996,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
             @Override
             public void onClick(View view) {
                 if (btnTakeMeasurement.getText().equals("+ Take Measurement")) {
+                    mIsCancelMeasureBtnClicked = false;
                     mIsMeasureBtnClicked = true;
                     if (mBluetoothService == null) {
                         mBluetoothService = new BluetoothService(ProjectMeasurmentActivity.this, mHandler);
@@ -1240,11 +1241,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                         case BluetoothService.STATE_CONNECTED:
                             if (msg.arg2 == 0) {//Sending cancel request to the device
                                 sendData("-1+-1+");
-                                if (mBluetoothService != null) {
-                                    if (mBluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
-                                        mBluetoothService.stop();
-                                    }
-                                }
                                 mtvStatusMessage.setText("Measurement cancel");
                             } else if (msg.arg2 == 1) { //Send measurement request
                                 mtvStatusMessage.setText(R.string.title_connected_to);
