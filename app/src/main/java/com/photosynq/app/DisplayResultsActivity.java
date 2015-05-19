@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.location.Location;
+import android.os.CountDownTimer;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -114,7 +115,7 @@ public class DisplayResultsActivity extends ActionBarActivity implements
 
         //-------------------- Start your GPS Reading ------------------ //
         dialog = new ProgressDialog(this);
-        dialog.setMessage("Finding your location..");
+        dialog.setMessage("Acquiring GPS location");
         dialog.setCancelable(false);
 
     }
@@ -152,26 +153,60 @@ public class DisplayResultsActivity extends ActionBarActivity implements
         }
         else
         {
+
+            PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_KEEP_BTN_CLICK, "KeepBtnCLickYes");
+
             if (!reading.contains("location")) {
 
                 String currLocation = getLocation();
 
-                new AlertDialog.Builder(this)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setMessage("Your location is temporarily not available\n\n" +
-                                "Check if GPS is turned on.")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int which) {
+                new CountDownTimer(1000, 1000) {
+                    public void onTick(long millisUntilFinished) {
 
-                                dialog.show();
+                        System.out.print("@@@@@@@@@@@@@@ test tick");
 
-                            }
+                    }
 
-                        })
-                        .show();
+                    public void onFinish() {
+                        String checkLocation = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, "");
+                        if(checkLocation.equals("")) {
 
-                if (!currLocation.equals("")){
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (!isFinishing()) {
+
+                                        new AlertDialog.Builder(DisplayResultsActivity.this)
+                                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                                .setMessage("Your location is temporarily not available\n\n" +
+                                                        "Check if GPS is turned on.")
+                                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialogInterface, int which) {
+
+                                                                dialog.show();
+                                                            }
+
+                                                        }
+
+                                                )
+                                                .show();
+
+                                    }
+                                }
+                            });
+
+
+
+                        }
+                    }
+                }.start();
+
+
+
+                if(!currLocation.equals(""))
+
+                {
 
                     saveResult();
                 }
@@ -261,6 +296,7 @@ public class DisplayResultsActivity extends ActionBarActivity implements
 
                 PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, currLocation);
                 dialog.dismiss();
+              //  Toast.makeText(DisplayResultsActivity.this, "GPS acquisition complete!", Toast.LENGTH_SHORT).show();
 
             }
 
@@ -297,6 +333,7 @@ public class DisplayResultsActivity extends ActionBarActivity implements
         PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, LocationUtils.getLatLng(this, location));
 
         dialog.dismiss();
+        Toast.makeText(DisplayResultsActivity.this, "GPS acquisition complete!", Toast.LENGTH_SHORT).show();
         stopLocationUpdates();
 
         saveResult();

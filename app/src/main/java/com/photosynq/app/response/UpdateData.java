@@ -1,6 +1,8 @@
 package com.photosynq.app.response;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Toast;
 
@@ -71,6 +73,16 @@ public class UpdateData implements PhotosynqResponse{
             if (status.toUpperCase().equals("SUCCESS"))
             {
                 //Toast.makeText(context, R.string.data_uploaded_to_server, Toast.LENGTH_LONG).show();
+
+                // This toast shows successful contribution in photosynq by submitting measurements.
+                Handler handler = new Handler(Looper.getMainLooper());
+
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        Toast.makeText(context, "Success! \nSubmitted", Toast.LENGTH_SHORT).show();
+                    }
+                }, 1000 );
+
                 long row_id = Long.parseLong(rowid);
                 if(row_id != -1) {
                     db = DatabaseHelper.getHelper(context);

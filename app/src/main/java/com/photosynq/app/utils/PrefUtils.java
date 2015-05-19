@@ -48,6 +48,9 @@ public class PrefUtils {
     //
     public static final String PREFS_IS_SYNC_IN_PROGRESS = "IS_SYNC_IN_PROGRESS";
 
+    //check whether keep button click or not.
+    public static final String PREFS_KEEP_BTN_CLICK = "KEEP_BTN_CLICK";
+
     /**
      * Called to save supplied value in shared preferences against given key.
      */
