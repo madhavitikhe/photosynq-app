@@ -118,14 +118,6 @@ public class SyncHandler {
 
                 final int syncMode = SyncMode[0];
 
-
-//                HttpClient httpclient = new DefaultHttpClient();
-//                HttpResponse response = null;
-//                HttpGet getRequest = null;
-//                String responseString = null;
-
-
-
                 if (!CommonUtils.isConnected(context)) {
 
                     PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
