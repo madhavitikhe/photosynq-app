@@ -71,7 +71,14 @@ public class UpdateMacro implements PhotosynqResponse {
         if (null != result) {
             if(result.equals(Constants.SERVER_NOT_ACCESSIBLE))
             {
-                Toast.makeText(navigationDrawer, R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+                if(null != navigationDrawer) {
+                    navigationDrawer.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(navigationDrawer, R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
 //                db.closeWriteDatabase();
 //                db.closeReadDatabase();
                 return;
