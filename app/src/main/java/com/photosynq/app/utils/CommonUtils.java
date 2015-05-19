@@ -136,6 +136,27 @@ public class CommonUtils {
                 return (urlc.getResponseCode() == 200);
             } catch (IOException e) {
                 Log.e("Connectivity", "Error checking internet connection", e);
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                // Check whether keep button is clicked or not
+                                String getKeepBtnStatus = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_KEEP_BTN_CLICK, "");
+                                if (getKeepBtnStatus.equals("KeepBtnCLickYes")) {
+                                    Toast.makeText(context, "Success!\nCached ", Toast.LENGTH_LONG).show();
+                                    PrefUtils.saveToPrefs(context, PrefUtils.PREFS_KEEP_BTN_CLICK, "KeepBtnCLickNo");
+
+                                } else {
+
+                                    Toast.makeText(context, "You are not connect to a network.\n" +
+                                            "\n" +
+                                            "Check if wifi is turned on \n" +
+                                            "and if networks are available in your system settings screen. ", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                );
             }
         } else {
             Log.d("Connectivity", "You are not connect to a network.");
