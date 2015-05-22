@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
@@ -112,6 +114,18 @@ public class SyncHandler {
                 if (isSyncInProgress.equals("true")) {
                     System.out.println("sync already in progress");
                     return Constants.SUCCESS;
+                }
+
+                String isCheckedWifiSync = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_SYNC_WIFI_ON, "0");
+                if(isCheckedWifiSync.equals("1")) {
+
+                    ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+                    if (mWifi != null && mWifi.isConnected() == false) {//if Wifi is connected
+
+                        return Constants.SUCCESS;
+                    }
                 }
 
                 PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "true");
