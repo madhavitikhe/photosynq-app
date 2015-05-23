@@ -1019,8 +1019,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                 } else if (btnTakeMeasurement.getText().equals("Cancel")) {
                     mIsCancelMeasureBtnClicked = true;
                     mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, 0).sendToTarget();
-                    btnTakeMeasurement.setText("+ Take Measurement");
-                    btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
+                    //btnTakeMeasurement.setText("+ Take Measurement");
+                    btnTakeMeasurement.setEnabled(false);
+                    btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_gray_light);
+
                 }
             }
         });
@@ -1241,7 +1243,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                         case BluetoothService.STATE_CONNECTED:
                             if (msg.arg2 == 0) {//Sending cancel request to the device
                                 sendData("-1+-1+");
-                                mtvStatusMessage.setText("Measurement cancel");
+                                mtvStatusMessage.setText("Cancelling measurement, please wait");
                             } else if (msg.arg2 == 1) { //Send measurement request
                                 mtvStatusMessage.setText(R.string.title_connected_to);
                                 mtvStatusMessage.append(mConnectedDeviceName);
@@ -1383,14 +1385,19 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                             intent.putExtra(DatabaseHelper.C_READING, reading);
                             startActivity(intent);
                         }
-                    }
-                    //mIsMeasureBtnClicked = false;
-                    mIsCancelMeasureBtnClicked = false;
-                    if (btnTakeMeasurement != null) {
-                        if (btnTakeMeasurement.getText().equals("Cancel")) {
-                            btnTakeMeasurement.setText("+ Take Measurement");
-                            btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
-                        }
+                    }else {
+                        StringBuffer measurement = (StringBuffer) msg.obj;
+                        //if(measurement.toString().contains("\\r\\n\\r\\n")) {
+                            mIsCancelMeasureBtnClicked = false;
+                            if (btnTakeMeasurement != null) {
+                                if (btnTakeMeasurement.getText().equals("Cancel")) {
+                                    mtvStatusMessage.setText("Measurement cancelled");
+                                    btnTakeMeasurement.setEnabled(true);
+                                    btnTakeMeasurement.setText("+ Take Measurement");
+                                    btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
+                                }
+                            }
+                        //}
                     }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
