@@ -148,6 +148,7 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
 
 
         String get_interval_time = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_SAVE_SYNC_INTERVAL,"2");
+        PrefUtils.saveToPrefs(getActivity(), "PrevSyncIntervalTime", get_interval_time);
         int sync_iterval = 2;
         try {
             sync_iterval = Integer.parseInt(get_interval_time);
@@ -336,7 +337,7 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
 
     public void startSyncService(long set_interval_time) {
 
-        String get_interval_time = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_SAVE_SYNC_INTERVAL,"2");
+        String get_interval_time = PrefUtils.getFromPrefs(getActivity(), "PrevSyncIntervalTime","2");
         int prev_sync_iterval = 2;
         try {
             prev_sync_iterval = Integer.parseInt(get_interval_time);
@@ -353,6 +354,26 @@ public class SyncFragment extends Fragment implements PhotosynqResponse{
             alarmMgr.cancel(alarmIntent);
         } else {
 
+            switch (prev_sync_iterval) {
+                case 0:
+                    prev_sync_iterval = 5;
+                    break;
+                case 1:
+                    prev_sync_iterval = 30;
+                    break;
+                case 2:
+                    prev_sync_iterval = 60;
+                    break;
+                case 3:
+                    prev_sync_iterval = 720;
+                    break;
+                case 4:
+                    prev_sync_iterval = 1440;
+                    break;
+                default:
+                    prev_sync_iterval = 0;
+                    break;
+            }
             if (prev_sync_iterval != set_interval_time) {
                 alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), set_interval_time * 60000, alarmIntent);//3600000*2 means 2 Hours and 60000 = 1 min
                 System.out.println("-----------Sync alarm is set-------");
