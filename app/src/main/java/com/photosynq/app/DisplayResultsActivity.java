@@ -34,7 +34,9 @@ import com.photosynq.app.utils.LocationUtils;
 import com.photosynq.app.utils.PrefUtils;
 import com.photosynq.app.utils.SyncHandler;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -351,14 +353,37 @@ public class DisplayResultsActivity extends ActionBarActivity implements
             reading = reading.replaceFirst("\\{", "{\"location\":[" + currentLocation + "],");
         }
 
-        DatabaseHelper databaseHelper = DatabaseHelper.getHelper(this);
-        ProjectResult result = new ProjectResult(projectId, reading, "N");
-        databaseHelper.createResult(result);
+
+        // Reading store into database if is in correct format (correct json format), Otherwise we discard reading.
+        if (isJSONValid(reading)) {
+
+            Log.d("IsJSONValid", "Valid Json");
+            DatabaseHelper databaseHelper = DatabaseHelper.getHelper(this);
+            ProjectResult result = new ProjectResult(projectId, reading, "N");
+            databaseHelper.createResult(result);
+
+        } else {
+            Log.d("IsJSONValid", "Invalid Json");
+            Toast.makeText(getApplicationContext(), "Invalid Json", Toast.LENGTH_SHORT).show();
+        }
 
         SyncHandler syncHandler = new SyncHandler(this, MainActivity.getProgressBar());
         syncHandler.DoSync(SyncHandler.UPLOAD_RESULTS_MODE);
 
         finish();
+    }
+
+    public boolean isJSONValid(String jsonStr) {
+        try {
+            new JSONObject(jsonStr);
+        } catch (JSONException ex) {
+            try {
+                new JSONArray(jsonStr);
+            } catch (JSONException ex1) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
