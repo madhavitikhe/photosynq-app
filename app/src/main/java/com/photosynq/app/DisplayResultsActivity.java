@@ -63,6 +63,8 @@ public class DisplayResultsActivity extends ActionBarActivity implements
     private GoogleApiClient mLocationClient = null;
 
     ProgressDialog dialog;
+    private boolean keepClickFlag = false;
+    private boolean isResultSaved = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +138,9 @@ public class DisplayResultsActivity extends ActionBarActivity implements
          */
         mLocationClient.connect();
 
+        isResultSaved = false;
+        keepClickFlag = false;
+
     }
 
     private void  reloadWebview()
@@ -155,7 +160,7 @@ public class DisplayResultsActivity extends ActionBarActivity implements
         }
         else
         {
-
+            keepClickFlag = true;
             PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_KEEP_BTN_CLICK, "KeepBtnCLickYes");
 
             if (!reading.contains("location")) {
@@ -221,6 +226,7 @@ public class DisplayResultsActivity extends ActionBarActivity implements
     }
 
     public void discard_click(View view) {
+        keepClickFlag = false;
         Toast.makeText(this, R.string.result_discarded, Toast.LENGTH_LONG).show();
         view.setVisibility(View.INVISIBLE);
         keep.setVisibility(View.INVISIBLE);
@@ -319,8 +325,8 @@ public class DisplayResultsActivity extends ActionBarActivity implements
 
     @Override
     public void onConnected(Bundle bundle) {
-
-        getLocation();
+        startLocationUpdates();
+       // getLocation();
     }
 
     @Override
@@ -334,43 +340,63 @@ public class DisplayResultsActivity extends ActionBarActivity implements
         Log.d("PHOTOSYNQ", "Location changed:" + LocationUtils.getLatLng(this, location));
         PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, LocationUtils.getLatLng(this, location));
 
-        dialog.dismiss();
-        Toast.makeText(DisplayResultsActivity.this, "GPS acquisition complete!", Toast.LENGTH_SHORT).show();
-        stopLocationUpdates();
+        if(dialog.isShowing()) {
+            dialog.dismiss();
+            Toast.makeText(DisplayResultsActivity.this, "GPS acquisition complete!", Toast.LENGTH_SHORT).show();
+        }
+      //  stopLocationUpdates();
 
-        saveResult();
+        if(!reading.isEmpty() && keepClickFlag) {
+            saveResult();
+            reading = "";
+            keepClickFlag = false;
+        }
     }
 
     private void saveResult(){
 
+        if(isResultSaved == false) {
+            isResultSaved = true;
+            
+            int index = Integer.parseInt(PrefUtils.getFromPrefs(this, PrefUtils.PREFS_QUESTION_INDEX, "1"));
+            PrefUtils.saveToPrefs(this, PrefUtils.PREFS_QUESTION_INDEX, "" + (index + 1));
 
-        int index = Integer.parseInt(PrefUtils.getFromPrefs(this, PrefUtils.PREFS_QUESTION_INDEX, "1"));
-        PrefUtils.saveToPrefs(this, PrefUtils.PREFS_QUESTION_INDEX, "" + (index + 1));
+            if (!reading.contains("location")) {
 
-        if (!reading.contains("location")){
+                String currentLocation = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_CURRENT_LOCATION, "");
+                reading = reading.replaceFirst("\\{", "{\"location\":[" + currentLocation + "],");
+            } else {
+                String currentLocation = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_CURRENT_LOCATION, "");
+                String locationStr = "\"location\":[";
+                int locationIdx = reading.indexOf(locationStr);
+                String tempReading = reading.substring(0, locationIdx + locationStr.length());
+                tempReading += currentLocation;
+                tempReading += reading.substring(reading.indexOf("]", locationIdx));
 
-            String currentLocation = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_CURRENT_LOCATION, "");
-            reading = reading.replaceFirst("\\{", "{\"location\":[" + currentLocation + "],");
+                reading = tempReading;
+                //reading = reading.replaceFirst("\"location\":", "{\"location\":[" + currentLocation + "],");
+            }
+
+
+            // Reading store into database if is in correct format (correct json format), Otherwise we discard reading.
+            if (isJSONValid(reading)) {
+
+                Log.d("IsJSONValid", "Valid Json");
+                DatabaseHelper databaseHelper = DatabaseHelper.getHelper(this);
+                ProjectResult result = new ProjectResult(projectId, reading, "N");
+                databaseHelper.createResult(result);
+
+            } else {
+                Log.d("IsJSONValid", "Invalid Json");
+                Toast.makeText(getApplicationContext(), "Invalid Json", Toast.LENGTH_SHORT).show();
+            }
+
+            SyncHandler syncHandler = new SyncHandler(this, MainActivity.getProgressBar());
+            syncHandler.DoSync(SyncHandler.UPLOAD_RESULTS_MODE);
+
+            finish();
+
         }
-
-
-        // Reading store into database if is in correct format (correct json format), Otherwise we discard reading.
-        if (isJSONValid(reading)) {
-
-            Log.d("IsJSONValid", "Valid Json");
-            DatabaseHelper databaseHelper = DatabaseHelper.getHelper(this);
-            ProjectResult result = new ProjectResult(projectId, reading, "N");
-            databaseHelper.createResult(result);
-
-        } else {
-            Log.d("IsJSONValid", "Invalid Json");
-            Toast.makeText(getApplicationContext(), "Invalid Json", Toast.LENGTH_SHORT).show();
-        }
-
-        SyncHandler syncHandler = new SyncHandler(this, MainActivity.getProgressBar());
-        syncHandler.DoSync(SyncHandler.UPLOAD_RESULTS_MODE);
-
-        finish();
     }
 
     public boolean isJSONValid(String jsonStr) {
