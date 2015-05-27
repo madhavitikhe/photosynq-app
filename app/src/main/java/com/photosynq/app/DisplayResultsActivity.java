@@ -346,7 +346,7 @@ public class DisplayResultsActivity extends ActionBarActivity implements
         }
       //  stopLocationUpdates();
 
-        if(!reading.isEmpty() && keepClickFlag) {
+        if(null != reading && !reading.isEmpty() && keepClickFlag) {
             saveResult();
             reading = "";
             keepClickFlag = false;
@@ -357,7 +357,7 @@ public class DisplayResultsActivity extends ActionBarActivity implements
 
         if(isResultSaved == false) {
             isResultSaved = true;
-            
+
             int index = Integer.parseInt(PrefUtils.getFromPrefs(this, PrefUtils.PREFS_QUESTION_INDEX, "1"));
             PrefUtils.saveToPrefs(this, PrefUtils.PREFS_QUESTION_INDEX, "" + (index + 1));
 

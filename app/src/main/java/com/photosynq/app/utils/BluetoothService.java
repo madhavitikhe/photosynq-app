@@ -322,7 +322,10 @@ public class BluetoothService {
 //				        mHandler.sendMessage(msg);
 						//System.out.println("Quitting while loop ....................");
 						//break;
-					}
+					}else{
+
+                        mHandler.obtainMessage(Constants.MESSAGE_FIRST_RESP, 0 , 0).sendToTarget();
+                    }
 				} catch (IOException e) {
 					Log.e(TAG, "disconnected", e);
 					connectionLost();
