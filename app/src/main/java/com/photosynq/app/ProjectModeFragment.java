@@ -105,10 +105,14 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
     }
 
     private void showProjectList() {
-        List<ResearchProject> projects;
+        List<ResearchProject> projects = null;
         if(mSearchString.length() > 0) {
-            projects = dbHelper.getAllResearchProjects(mSearchString);
-            if(projects.isEmpty()){
+            if(mSectionNumber == 0) {
+                projects = dbHelper.getAllResearchProjects(mSearchString);
+            }else{
+                projects = dbHelper.getUserCreatedContributedProjects(mSearchString, pCreatorId);
+            }
+            if(projects == null  || projects.isEmpty()){
                 Toast.makeText(getActivity(), "No project found", Toast.LENGTH_LONG).show();
             }
         }else{
@@ -130,7 +134,11 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
         dbHelper = DatabaseHelper.getHelper(getActivity());
         List<ResearchProject> projects;
         if(mSearchString.length() > 0) {
-            projects = dbHelper.getAllResearchProjects(mSearchString);
+            if(mSectionNumber == 0) {
+                projects = dbHelper.getAllResearchProjects(mSearchString);
+            }else{
+                projects = dbHelper.getUserCreatedContributedProjects(mSearchString, pCreatorId);
+            }
             if(projects.isEmpty()){
                 Toast.makeText(getActivity(), "No project found", Toast.LENGTH_LONG).show();
             }
