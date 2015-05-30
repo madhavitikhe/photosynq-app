@@ -1,13 +1,12 @@
 package com.photosynq.app.response;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.support.v4.app.FragmentManager;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.photosynq.app.MainActivity;
-import com.photosynq.app.QuickModeFragment;
 import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
@@ -26,11 +25,16 @@ import java.util.List;
  */
 public class UpdateMacro implements PhotosynqResponse {
 
+    private Context context;
     private MainActivity navigationDrawer;
+    private ProgressDialog mProgressDialog;
 
-    public UpdateMacro(MainActivity navigationDrawer)
+    public UpdateMacro(Context context, MainActivity navigationDrawer, ProgressDialog progressDialog)
     {
+        this.context = context;
         this.navigationDrawer = navigationDrawer;
+        this.mProgressDialog = progressDialog;
+
     }
     @Override
     public void onResponseReceived(final String result) {
@@ -67,25 +71,37 @@ public class UpdateMacro implements PhotosynqResponse {
         if (null != result) {
             if(result.equals(Constants.SERVER_NOT_ACCESSIBLE))
             {
-                Toast.makeText(navigationDrawer, R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+                if(null != navigationDrawer) {
+                    navigationDrawer.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(navigationDrawer, R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
 //                db.closeWriteDatabase();
 //                db.closeReadDatabase();
                 return;
             }
 
             try {
-                jArray = new JSONArray(result);
-                for (int i = 0; i < jArray.length(); i++) {
+                JSONObject resultJsonObject = new JSONObject(result);
 
-                    JSONObject obj = jArray.getJSONObject(i);
-                    Macro macro = new Macro(obj.getString("id"),
-                            obj.getString("name"),
-                            obj.getString("description"),
-                            obj.getString("default_x_axis"),
-                            obj.getString("default_y_axis"),
-                            obj.getString("javascript_code"),
-                            "slug");
-                    db.updateMacro(macro);
+                if (resultJsonObject.has("macros")) {
+                    String newobj = resultJsonObject.getString("macros");
+                    jArray = new JSONArray(newobj);
+                    for (int i = 0; i < jArray.length(); i++) {
+
+                        JSONObject obj = jArray.getJSONObject(i);
+                        Macro macro = new Macro(obj.getString("id"),
+                                obj.getString("name"),
+                                obj.getString("description"),
+                                obj.getString("default_x_axis"),
+                                obj.getString("default_y_axis"),
+                                obj.getString("javascript_code"),
+                                "slug");
+                        db.updateMacro(macro);
+                    }
                 }
 
             } catch (Exception e) {
@@ -105,7 +121,14 @@ public class UpdateMacro implements PhotosynqResponse {
             dataString.append(System.getProperty("line.separator"));
         }
         System.out.println("###### writing macros :......");
-        CommonUtils.writeStringToFile(navigationDrawer, "macros.js", dataString.toString());
+
+        if (null == navigationDrawer){
+
+            CommonUtils.writeStringToFile(context, "macros.js", dataString.toString());
+        }else{
+
+            CommonUtils.writeStringToFile(navigationDrawer, "macros.js", dataString.toString());
+        }
 //        db.closeWriteDatabase();
 //        db.closeReadDatabase();
         Date date1 = new Date();
@@ -120,5 +143,8 @@ public class UpdateMacro implements PhotosynqResponse {
         }
 
         System.out.println("UpdateMacro End onResponseReceived: " + date1.getTime());
+
+        //show progress dialog process on sync screen after sync button click
+        CommonUtils.setProgress(navigationDrawer, mProgressDialog, 20);
     }
 }

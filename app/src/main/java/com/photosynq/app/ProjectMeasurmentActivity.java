@@ -1,16 +1,20 @@
 package com.photosynq.app;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.DialogFragment;
@@ -26,10 +30,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -43,25 +50,25 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.zxing.client.android.CaptureActivity;
-
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.RememberAnswers;
 import com.photosynq.app.model.ResearchProject;
+import com.photosynq.app.model.UserAnswer;
 import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.LocationUtils;
 import com.photosynq.app.utils.PrefUtils;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 public class ProjectMeasurmentActivity extends ActionBarActivity implements
@@ -92,11 +99,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
     private int screenWidth;
     private Menu optionsMenu;
     int optionMenuClickFlag = 0;
-// A request to connect to Location Services
+    // A request to connect to Location Services
     private LocationRequest mLocationRequest;
 
     // Stores the current instantiation of the location client in this object
-    private GoogleApiClient mLocationClient=null;
+    private GoogleApiClient mLocationClient = null;
+
+    private CountDownTimer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,10 +167,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
          * handle callbacks.
          */
         mLocationClient = new GoogleApiClient.Builder(this)
-                 .addApi(LocationServices.API)
-                 .addConnectionCallbacks(this)
-                 .addOnConnectionFailedListener(this)
-                 .build();
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
 
     }
 
@@ -201,7 +210,11 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     questionText.setBackgroundResource(R.drawable.actionbar_bg);
                     questionText.setPadding(30, 0, 30, 30);
 
-                    EditText userEnteredAnswer = (EditText) viewUserSelected.findViewById(R.id.et_user_answer);
+                    AutoCompleteTextView userEnteredAnswer = (AutoCompleteTextView) viewUserSelected.findViewById(R.id.et_user_answer);
+                    List<String> answers = dbHelper.getAllUserAnswers();
+                    final ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.autocomplete_list_textview, answers);
+                    userEnteredAnswer.setAdapter(dataAdapter);
+
                     final CheckBox userDefinedRememberCB = (CheckBox) viewUserSelected.findViewById(R.id.rememberAnswerCheckBox);
 
                     RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
@@ -214,7 +227,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     }
 
                     //set checked false when user change menu (if not remember).
-                    if(optionMenuClickFlag == 1){
+                    if (optionMenuClickFlag == 1) {
                         userDefinedRememberCB.setChecked(false);
                         userEnteredAnswer.setText("");//reseting text while user change menu.
                     }
@@ -227,7 +240,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
                             hideKeyboard();
 
-                            EditText userEnteredAnswer = (EditText) ((View) v.getParent()).findViewById(R.id.et_user_answer);
+                            AutoCompleteTextView userEnteredAnswer = (AutoCompleteTextView) ((View) v.getParent()).findViewById(R.id.et_user_answer);
+                            userEnteredAnswer.setAdapter(dataAdapter);
                             int displayedChild = viewFlipper.getDisplayedChild();
                             int childCount = viewFlipper.getChildCount();
 
@@ -245,6 +259,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                 rememberAnswers.setProject_id(projectId);
                                 rememberAnswers.setQuestion_id(question.getQuestionId());
 
+                                UserAnswer userAnswer = new UserAnswer();
+                                userAnswer.setOptionText(str);
+                                dbHelper.createUserAnswers(userAnswer);
+
                                 //Save values into database either user comes from first question or comes from review page.
                                 if (reviewFlag) {
                                     viewFlipper.setDisplayedChild(viewFlipper.getChildCount() - 1);
@@ -254,7 +272,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
                                     } else {
-                                        userEnteredAnswer.setText("");
+                                         userEnteredAnswer.setText("");
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                     }
@@ -266,7 +284,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
                                     } else {
-                                        userEnteredAnswer.setText("");
+//                                        userEnteredAnswer.setText("");
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                     }
@@ -300,10 +318,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     final EditText fromEditText = (EditText) viewAutoIncrement.findViewById(R.id.from_editText);
                     final EditText toEditText = (EditText) viewAutoIncrement.findViewById(R.id.to_editText);
                     final EditText repeatEditText = (EditText) viewAutoIncrement.findViewById(R.id.repeat_editText);
-                    final Data retrieveData = dbHelper.getData(userId, projectId, question.getQuestionId());
 
                     RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
                     if (rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER)) {
+                        Data retrieveData = dbHelper.getData(userId, projectId, question.getQuestionId());
                         String[] values = retrieveData.getValue().split(",");
                         fromEditText.setText(values[0]);
                         toEditText.setText(values[1]);
@@ -329,6 +347,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                 repeatEditText.setBackgroundColor(getResources().getColor(R.color.white));
                                 editAutoIncrementValuesBtn.setText("Cancel");
                             } else if (editAutoIncrementValuesBtn.getText().equals("Cancel")) {
+                                Data retrieveData = dbHelper.getData(userId, projectId, question.getQuestionId());
                                 String[] values = retrieveData.getValue().split(",");
                                 fromEditText.setText(values[0]);
                                 toEditText.setText(values[1]);
@@ -392,7 +411,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                         autoIncQueCount = autoIncQueCount + 1;
                                         viewFlipper.showNext();
                                     }
-                                }else{
+                                } else {
 
                                     if (reviewFlag) {
                                         initReviewPage();
@@ -451,7 +470,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     }
 
                     //set checked false when user change menu (if question is not remember).
-                    if(optionMenuClickFlag == 2){
+                    if (optionMenuClickFlag == 2) {
                         scanCodeRememberCB.setChecked(false);
                     }
 
@@ -483,7 +502,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     viewFlipper.addView(viewScanCode);
                 }
 
-            } else if (Question.PROJECT_DEFINED == queType) {
+            } else if (Question.PROJECT_DEFINED == queType) { //If type is project defined
 
                 LinearLayout mainLinearLayout = new LinearLayout(this);
                 mainLinearLayout.setBackgroundColor(Color.WHITE);
@@ -548,10 +567,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     optionTextView.setTextColor(getResources().getColor(R.color.white));
                     optionTextView.setTypeface(CommonUtils.getInstance(this).getFontRobotoRegular());
 
-//                    ImageView imageView = new ImageView(this);
-//                    imageView.setId(i);
-//                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//                    imageView.setTag(queIndex);
                     optionTextView.setId(i);
                     optionTextView.setTag(queIndex);
                     optionTextView.setOnClickListener(new View.OnClickListener() {
@@ -603,10 +618,165 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                         }
                     });
 
-//                    Picasso.with(this)
-//                            .load(R.drawable.ic_launcher)
-//                            .error(R.drawable.ic_launcher)
-//                            .into(imageView);
+                    LinearLayout cellRelativeLayout = new LinearLayout(this);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    cellRelativeLayout.setLayoutParams(params);
+                    cellRelativeLayout.setOrientation(LinearLayout.VERTICAL);
+
+                    if (i % 2 == 0) {
+                        rowLinearLayout = new LinearLayout(this);
+                        rowLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+                        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                        params1.setMargins(10, 10, 10, 10);
+                        rowLinearLayout.setLayoutParams(params1);
+
+                        imageVParams.setMargins(0, 10, 10, 10);
+
+
+                        cellRelativeLayout.addView(optionTextView, imageVParams);
+
+                        rowLinearLayout.addView(cellRelativeLayout, linearlayoutweight);
+                        if (i == question.getOptions().size() - 1) {
+
+                            subLinearLayout.addView(rowLinearLayout);
+                        }
+
+                    } else {
+                        imageVParams.setMargins(10, 10, 10, 0);
+
+                        cellRelativeLayout.addView(optionTextView, imageVParams);
+                        rowLinearLayout.addView(cellRelativeLayout, linearlayoutweight);
+                        subLinearLayout.addView(rowLinearLayout);
+                    }
+
+                }
+                scrollView.addView(subLinearLayout);
+                mainLinearLayout.addView(scrollView);
+                mainLinearLayout.setTag(question.getQuestionId());
+                viewFlipper.addView(mainLinearLayout);
+            } else if (Question.PHOTO_TYPE_DEFINED == queType) { //If type is photo_type_defined
+
+                LinearLayout mainLinearLayout = new LinearLayout(this);
+                mainLinearLayout.setBackgroundColor(Color.WHITE);
+                mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                mainLinearLayout.setLayoutParams(layoutParams);
+
+                ScrollView scrollView = new ScrollView(this);
+                scrollView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+                LinearLayout subLinearLayout = new LinearLayout(this);
+                subLinearLayout.setOrientation(LinearLayout.VERTICAL);
+                subLinearLayout.setLayoutParams(layoutParams);
+
+                TextView questionTextView = new TextView(this);
+                questionTextView.setTextColor(Color.WHITE);
+                questionTextView.setTextSize(18);
+                questionTextView.setTypeface(CommonUtils.getInstance(this).getFontRobotoMedium());
+                questionTextView.setBackgroundResource(R.drawable.actionbar_bg);
+                questionTextView.setText(question.getQuestionText());
+                questionTextView.setPadding(10, 0, 10, 10);
+                questionTextView.setGravity(Gravity.CENTER);
+                questionTextView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                mainLinearLayout.addView(questionTextView);
+
+                LinearLayout.LayoutParams optionTVParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+                int optionIvWidth = (screenWidth / 2) - 20;
+                LinearLayout.LayoutParams imageVParams = new LinearLayout.LayoutParams(optionIvWidth, optionIvWidth);
+
+                LinearLayout.LayoutParams linearlayoutweight = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1);
+
+                LinearLayout rowLinearLayout = new LinearLayout(this);
+
+                RelativeLayout rememberCBLayout = new RelativeLayout(this);
+                RelativeLayout.LayoutParams paramsCB = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                paramsCB.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                rememberCBLayout.setLayoutParams(paramsCB);
+
+                final CheckBox rememberAnswersCB = new CheckBox(this);
+                rememberAnswersCB.setText("Remember this option");
+                rememberCBLayout.addView(rememberAnswersCB);
+                mainLinearLayout.addView(rememberCBLayout);
+
+                //Retrieve data from database and set question is remembered or not by showing checkbox checked/Unchecked.
+                RememberAnswers rememberAnswers = dbHelper.getRememberAnswers(userId, projectId, question.getQuestionId());
+                if (rememberAnswers.getIs_remember() != null && rememberAnswers.getIs_remember().equals(Constants.IS_REMEMBER)) {
+                    rememberAnswersCB.setChecked(true);
+                } else {
+                    rememberAnswersCB.setChecked(false);
+                }
+
+                for (int i = 0; i < question.getOptions().size(); i++) {
+                    String optionText = question.getOptions().get(i);
+                    final String[] splitOptionText = optionText.split(",");
+                    TextView optionTextView = new TextView(this);
+                    optionTextView.setText(splitOptionText[0]);
+                    optionTextView.setTextColor(Color.BLACK);
+                    optionTextView.setTextSize(14);
+                    optionTextView.setSingleLine(false);
+                    optionTextView.setMaxLines(Integer.MAX_VALUE);
+                    optionTextView.setTypeface(CommonUtils.getInstance(this).getFontRobotoRegular());
+
+                    ImageView imageView = new ImageView(this);
+                    imageView.setId(i);
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    imageView.setTag(queIndex);
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            int displayedChild = viewFlipper.getDisplayedChild();
+                            int childCount = viewFlipper.getChildCount();
+
+                            // allSelectedOptions.set(Integer.parseInt(v.getTag().toString()),question.getOptions().get(v.getId()));
+                            List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
+                            final Question question = questions.get(Integer.parseInt(v.getTag().toString()));
+                            RememberAnswers rememberAnswers = new RememberAnswers();
+                            rememberAnswers.setUser_id(userId);
+                            rememberAnswers.setProject_id(projectId);
+                            rememberAnswers.setQuestion_id(question.getQuestionId());
+
+                            //Update and Save values into database either user comes from first question or comes from review page.
+                            if (reviewFlag) {
+                                viewFlipper.setDisplayedChild(viewFlipper.getChildCount() - 1);
+                                reviewFlag = false;
+
+                                if (rememberAnswersCB.isChecked()) {
+                                    rememberAnswers.setSelected_option_text(splitOptionText[0]);
+                                    rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
+                                } else {
+                                    rememberAnswers.setSelected_option_text(splitOptionText[0]);
+                                    rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
+                                }
+                                dbHelper.updateRememberAnswers(rememberAnswers);
+
+                                initReviewPage();
+                            } else {
+                                if (rememberAnswersCB.isChecked()) {
+                                    rememberAnswers.setSelected_option_text(splitOptionText[0]);
+                                    rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
+                                } else {
+                                    rememberAnswers.setSelected_option_text(splitOptionText[0]);
+                                    rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
+                                }
+                                dbHelper.updateRememberAnswers(rememberAnswers);
+                                viewFlipper.showNext();
+                                if (displayedChild == childCount - 2) {
+                                    viewFlipper.stopFlipping();
+
+                                    initReviewPage();
+                                }
+                            }
+
+                        }
+                    });
+
+                    Picasso.with(this)
+                            .load(splitOptionText[1])
+                            .placeholder(R.drawable.ic_launcher)
+                            .error(R.drawable.ic_launcher)
+                            .into(imageView);
+//                    }
 
                     LinearLayout cellRelativeLayout = new LinearLayout(this);
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -621,13 +791,12 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                         rowLinearLayout.setLayoutParams(params1);
 
 
-//                        optionTextView.setId(1);
+                        optionTextView.setId(1);
                         //??imageVParams.addRule(RelativeLayout.BELOW, optionTextView.getId());
                         imageVParams.setMargins(0, 10, 10, 10);
 
-
-                        cellRelativeLayout.addView(optionTextView, imageVParams);
-//                        cellRelativeLayout.addView(imageView, imageVParams);
+                        cellRelativeLayout.addView(optionTextView, optionTVParams);
+                        cellRelativeLayout.addView(imageView, imageVParams);
 
                         rowLinearLayout.addView(cellRelativeLayout, linearlayoutweight);
                         if (i == question.getOptions().size() - 1) {
@@ -636,13 +805,12 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                         }
 
                     } else {
-//                        optionTextView.setId(1555555);
+                        optionTextView.setId(1555555);
                         //??imageVParams.addRule(RelativeLayout.BELOW, optionTextView.getId());
                         imageVParams.setMargins(10, 10, 10, 0);
 
-
-                        cellRelativeLayout.addView(optionTextView, imageVParams);
-//                        cellRelativeLayout.addView(imageView, imageVParams);
+                        cellRelativeLayout.addView(optionTextView, optionTVParams);
+                        cellRelativeLayout.addView(imageView, imageVParams);
 
                         rowLinearLayout.addView(cellRelativeLayout, linearlayoutweight);
 
@@ -778,7 +946,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
     }
 
     public void userDefinedOptions() {
-        if(null != optionsMenu) {
+        if (null != optionsMenu) {
             if (null != viewFlipper.getTag() && null != viewFlipper.getCurrentView().getTag()) {
                 Question question = dbHelper.getQuestionForProject(viewFlipper.getTag().toString(), viewFlipper.getCurrentView().getTag().toString());
                 if (question.getQuestionType() == Question.USER_DEFINED) {
@@ -828,11 +996,14 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
         mtvStatusMessage = (TextView) reviewPage.findViewById(R.id.tv_status_message);
 
         btnTakeMeasurement = (Button) reviewPage.findViewById(R.id.btn_take_measurement);
+        btnTakeMeasurement.setText("+ Take Measurement");
+        btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
 
         btnTakeMeasurement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (btnTakeMeasurement.getText().equals("+ Take Measurement")) {
+                    mIsCancelMeasureBtnClicked = false;
                     mIsMeasureBtnClicked = true;
                     if (mBluetoothService == null) {
                         mBluetoothService = new BluetoothService(ProjectMeasurmentActivity.this, mHandler);
@@ -855,8 +1026,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                 } else if (btnTakeMeasurement.getText().equals("Cancel")) {
                     mIsCancelMeasureBtnClicked = true;
                     mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, 0).sendToTarget();
-                    btnTakeMeasurement.setText("+ Take Measurement");
-                    btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
+                    //btnTakeMeasurement.setText("+ Take Measurement");
+                    btnTakeMeasurement.setEnabled(false);
+                    btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_gray_light);
+
+                    if (null != timer)
+                        timer.cancel(); // Cancel count down timer.
+
                 }
             }
         });
@@ -982,7 +1158,9 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
+            sendData("-1+-1+"); // Send cancel request
             finish();
+            sendData("1027"); // Restart teensy device
             return true;
         }
 
@@ -1046,17 +1224,19 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
     private void sendData(String data) {
         // Check that we're actually connected before trying anything
-        if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
+        if (null != mBluetoothService && mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
             Toast.makeText(getApplicationContext(), "Not Connected", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Check that there's actually something to send
-        if (data.length() > 0) {
-            // Get the message bytes and tell the BluetoothChatService to write
-            byte[] send;
-            send = data.getBytes();
-            mBluetoothService.write(send);
+        if (null != mBluetoothService) {
+            // Check that there's actually something to send
+            if (data.length() > 0) {
+                // Get the message bytes and tell the BluetoothChatService to write
+                byte[] send;
+                send = data.getBytes();
+                mBluetoothService.write(send);
+            }
         }
     }
 
@@ -1077,12 +1257,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                         case BluetoothService.STATE_CONNECTED:
                             if (msg.arg2 == 0) {//Sending cancel request to the device
                                 sendData("-1+-1+");
-                                if (mBluetoothService != null) {
-                                    if (mBluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
-                                        mBluetoothService.stop();
-                                    }
-                                }
-                                mtvStatusMessage.setText("Measurement cancel");
+                                mtvStatusMessage.setText("Cancelling measurement, please wait");
                             } else if (msg.arg2 == 1) { //Send measurement request
                                 mtvStatusMessage.setText(R.string.title_connected_to);
                                 mtvStatusMessage.append(mConnectedDeviceName);
@@ -1127,6 +1302,48 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                             System.out.println("$$$$$$$$$$$$$$ protocol json sending to device :" + protocolJson + "length:" + protocolJson.length());
 
                                             sendData(protocolJson);
+
+                                            timer = new CountDownTimer(5000, 1000) {
+
+                                                public void onTick(long millisUntilFinished) {
+                                                    System.out.print("@@@@@@@@@@@@@@ test tick on send protocol");
+                                                }
+
+                                                public void onFinish() {
+                                                    sendData("-1+-1+");
+
+//                                                    Toast.makeText(getApplicationContext(), "Timer finished - ", Toast.LENGTH_SHORT).show();
+                                                    Log.d("DeviceTimeout", "Device - timeout");
+
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            if (!isFinishing()) {
+
+                                                                new AlertDialog.Builder(ProjectMeasurmentActivity.this)
+                                                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                                                        .setTitle("Device - timeout")
+                                                                        .setMessage("Please try again.  Restart device if problem persists")
+                                                                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                                                    @Override
+                                                                                    public void onClick(DialogInterface dialogInterface, int which) {
+                                                                                        sendData("-1+-1+"); // Send cancel request
+                                                                                        finish();
+                                                                                        sendData("1027"); // Restart teensy device
+                                                                                    }
+
+                                                                                }
+
+                                                                        )
+                                                                        .show();
+                                                            }
+                                                        }
+                                                    });
+
+
+                                                }
+                                            }.start();
+
 
                                             mtvStatusMessage.setText("Initializing measurement please wait ...");
 
@@ -1179,6 +1396,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                 case Constants.MESSAGE_WRITE:
                     break;
                 case Constants.MESSAGE_READ:
+                    timer.cancel();
                     if (mIsCancelMeasureBtnClicked == false) {
                         StringBuffer measurement = (StringBuffer) msg.obj;
                         // Do not process the message if contain pwr_off from device
@@ -1204,8 +1422,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                 dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceAll("\\{", "{\"time\":\"" + time + "\",") + "\n];";
                                 System.out.println("All Options" + dataString);
                             } else {
-                                String currentLocation = PrefUtils.getFromPrefs(ProjectMeasurmentActivity.this, PrefUtils.PREFS_CURRENT_LOCATION, "NONE");
-                                if (!currentLocation.equals("NONE")) {
+                                String currentLocation = PrefUtils.getFromPrefs(ProjectMeasurmentActivity.this, PrefUtils.PREFS_CURRENT_LOCATION, "");
+                                if (!currentLocation.equals("")) {
                                     options = options.append("\"location\":[" + currentLocation + "],");
                                     dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options).replaceAll("\\{", "{\"time\":\"" + time + "\",") + "\n];";
                                     System.out.println("All Options" + dataString);
@@ -1224,14 +1442,19 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                             intent.putExtra(DatabaseHelper.C_READING, reading);
                             startActivity(intent);
                         }
-                    }
-                    //mIsMeasureBtnClicked = false;
-                    mIsCancelMeasureBtnClicked = false;
-                    if (btnTakeMeasurement != null) {
-                        if (btnTakeMeasurement.getText().equals("Cancel")) {
-                            btnTakeMeasurement.setText("+ Take Measurement");
-                            btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
+                    } else {
+                        StringBuffer measurement = (StringBuffer) msg.obj;
+                        //if(measurement.toString().contains("\\r\\n\\r\\n")) {
+                        mIsCancelMeasureBtnClicked = false;
+                        if (btnTakeMeasurement != null) {
+                            if (btnTakeMeasurement.getText().equals("Cancel")) {
+                                mtvStatusMessage.setText("Measurement cancelled");
+                                btnTakeMeasurement.setEnabled(true);
+                                btnTakeMeasurement.setText("+ Take Measurement");
+                                btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
+                            }
                         }
+                        //}
                     }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
@@ -1242,7 +1465,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
                     break;
                 case Constants.MESSAGE_TOAST:
-                    if (mIsCancelMeasureBtnClicked == false) {
+                    if (mIsCancelMeasureBtnClicked == false || mIsCancelMeasureBtnClicked == true) {
                         Toast.makeText(ProjectMeasurmentActivity.this, msg.getData().getString(Constants.TOAST),
                                 Toast.LENGTH_LONG).show();
                     }
@@ -1254,6 +1477,9 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                             btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
                         }
                     }
+                    break;
+                case Constants.MESSAGE_FIRST_RESP:
+                    timer.cancel();
                     break;
                 case Constants.MESSAGE_STOP:
                     Toast.makeText(getApplicationContext(), msg.getData().getString(Constants.TOAST),
@@ -1280,6 +1506,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
         mLocationClient.connect();
 
     }
+
     /**
      * Verify that Google Play services is available before making a request.
      *
@@ -1316,8 +1543,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
         if (servicesConnected()) {
 
             // Get the current location
-            Location currentLocation=LocationServices.FusedLocationApi
-                    .getLastLocation(mLocationClient);
+            Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(mLocationClient);
 
             PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, LocationUtils.getLatLng(this, currentLocation));
             //Location currentLocation = mLocationClient.getLastLocation();
@@ -1334,7 +1560,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
      */
     @Override
     public void onConnected(Bundle bundle) {
-        //startPeriodicUpdates();
+        //startLocationUpdates();
         getLocation();
     }
 
@@ -1342,6 +1568,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
     public void onConnectionSuspended(int i) {
 
     }
+
     /*
      * Called by Location Services if the attempt to
      * Location Services fails.
@@ -1382,7 +1609,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d("PHOTOSYNQ", "Location changed:"+ LocationUtils.getLatLng(this, location));
+        Log.d("PHOTOSYNQ", "Location changed:" + LocationUtils.getLatLng(this, location));
         PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, LocationUtils.getLatLng(this, location));
     }
 

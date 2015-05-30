@@ -47,4 +47,5 @@
 
     <string name="selectFromWeb">Set of answers cannot be changed here.  If you are the project lead, you can change the set of answers by editing the project</string>
     <string name="closebtn">Ok</string>
+    <string name="title_activity_display_cached_data_points">Cached Data Points</string>
 </resources>

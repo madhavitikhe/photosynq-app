@@ -102,6 +102,7 @@ public class QuickModeFragment extends Fragment implements PhotosynqResponse{
                 Protocol protocol = (Protocol) protocolList.getItemAtPosition(position);
                 Log.d("GEtting protocol id : ", protocol.getId());
                 Intent intent = new Intent(getActivity(),QuickMeasurmentActivity.class);
+                intent.putExtra(Protocol.ID, protocol.getId());
                 intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocol.getProtocol_json());
                 intent.putExtra(Protocol.NAME, protocol.getName());
                 intent.putExtra(Protocol.DESCRIPTION, protocol.getDescription());

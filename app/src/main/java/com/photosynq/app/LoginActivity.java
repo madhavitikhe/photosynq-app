@@ -80,6 +80,8 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
 
         copyAssets();
 
+        PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
+
         mStrEmail = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
         mStrPassword = PrefUtils.getFromPrefs(getApplicationContext() , PrefUtils.PREFS_LOGIN_PASSWORD_KEY, PrefUtils.PREFS_DEFAULT_VAL);
         if(!mStrEmail.equals(PrefUtils.PREFS_DEFAULT_VAL) && !mStrPassword.equals(PrefUtils.PREFS_DEFAULT_VAL) ){
@@ -303,14 +305,18 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
             try {
                 jsonResult = new JSONObject(result);
                 JSONObject userJsonObject = new JSONObject(jsonResult.get("user").toString());
+                JSONObject creatorAvatar = userJsonObject.getJSONObject("avatar");
 
-                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_LOGIN_USERNAME_KEY,jsonResult.get("email").toString());
+                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_LOGIN_USERNAME_KEY,userJsonObject.get("email").toString());
                 PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_LOGIN_PASSWORD_KEY, mStrPassword);
-                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_AUTH_TOKEN_KEY,jsonResult.get("auth_token").toString());
+                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_AUTH_TOKEN_KEY,userJsonObject.get("auth_token").toString());
                 PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_BIO_KEY,userJsonObject.get("bio").toString());
                 PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_NAME_KEY,userJsonObject.get("name").toString());
                 PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_INSTITUTE_KEY,userJsonObject.get("institute").toString());
-                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_THUMB_URL_KEY,userJsonObject.get("thumb_url").toString());
+                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_CREATOR_ID,userJsonObject.getString("id").toString());
+                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_THUMB_URL_KEY,creatorAvatar.getString("original").toString());
+                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_PROJECTS,userJsonObject.get("projects").toString());
+                PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_CONTRIBUTIONS,userJsonObject.get("contributions").toString());
             } catch (JSONException e) {
                 // TODO Log error
                 e.printStackTrace();
@@ -355,20 +361,22 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
             Log.e("tag", "Failed to get asset file list.", e);
         }
         for(String filename : files) {
-            if ( !filename.startsWith("images") && !filename.startsWith("sounds") && !filename.startsWith("webkit"))
+            if ( !filename.startsWith("images") && !filename.startsWith("sounds") && !filename.startsWith("webkit") && !filename.startsWith("html"))
             {
                 InputStream in = null;
                 OutputStream out = null;
                 try {
                     in = assetManager.open(filename);
                     File outFile = new File(getExternalFilesDir(null), filename);
-                    out = new FileOutputStream(outFile);
-                    copyFile(in, out);
+                    if(outFile.exists() == false) {
+                        out = new FileOutputStream(outFile);
+                        copyFile(in, out);
+                        out.flush();
+                        out.close();
+                        out = null;
+                    }
                     in.close();
                     in = null;
-                    out.flush();
-                    out.close();
-                    out = null;
                 } catch(IOException e) {
                     Log.e("tag", "Failed to copy asset file: " + filename, e);
                 }

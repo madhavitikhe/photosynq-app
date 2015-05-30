@@ -1,21 +1,35 @@
 package com.photosynq.app.utils;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.photosynq.app.MainActivity;
+import com.photosynq.app.R;
+import com.photosynq.app.SyncFragment;
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.http.HTTPConnection;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.Data;
+import com.photosynq.app.model.ProjectResult;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.response.UpdateData;
+import com.photosynq.app.response.UpdateMacro;
+import com.photosynq.app.response.UpdateProject;
+import com.photosynq.app.response.UpdateProtocol;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -28,14 +42,17 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -43,6 +60,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 
 /**
  * Created by kalpesh on 24/01/15.
@@ -116,9 +135,32 @@ public class CommonUtils {
                 urlc.connect();
                 return (urlc.getResponseCode() == 200);
             } catch (IOException e) {
+                PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
                 Log.e("Connectivity", "Error checking internet connection", e);
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                // Check whether keep button is clicked or not
+                                String getKeepBtnStatus = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_KEEP_BTN_CLICK, "");
+                                if (getKeepBtnStatus.equals("KeepBtnCLickYes")) {
+                                    Toast.makeText(context, "Success!\nCached ", Toast.LENGTH_LONG).show();
+                                    PrefUtils.saveToPrefs(context, PrefUtils.PREFS_KEEP_BTN_CLICK, "KeepBtnCLickNo");
+
+                                } else {
+
+                                    Toast.makeText(context, "You are not connect to a network.\n" +
+                                            "\n" +
+                                            "Check if wifi is turned on \n" +
+                                            "and if networks are available in your system settings screen. ", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                );
             }
         } else {
+            PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
             Log.d("Connectivity", "You are not connect to a network.");
             Handler handler = new Handler(Looper.getMainLooper());
             handler.post(
@@ -127,10 +169,19 @@ public class CommonUtils {
                         @Override
                         public void run()
                         {
-                            Toast.makeText(context, "You are not connect to a network.\n" +
-                                    "\n" +
-                                    "Check if wifi is turned on \n" +
-                                    "and if networks are available in your system settings screen. ", Toast.LENGTH_LONG).show();
+                            // Check whether keep button is clicked or not
+                            String getKeepBtnStatus = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_KEEP_BTN_CLICK, "");
+                            if(getKeepBtnStatus.equals("KeepBtnCLickYes")){
+                                Toast.makeText(context, "Success!\nCached ", Toast.LENGTH_LONG).show();
+                                PrefUtils.saveToPrefs(context, PrefUtils.PREFS_KEEP_BTN_CLICK, "KeepBtnCLickNo");
+
+                            }else {
+
+                                Toast.makeText(context, "You are not connect to a network.\n" +
+                                        "\n" +
+                                        "Check if wifi is turned on \n" +
+                                        "and if networks are available in your system settings screen. ", Toast.LENGTH_LONG).show();
+                            }
                         }
                     }
             );
@@ -163,65 +214,93 @@ public class CommonUtils {
         return md5;
     }
 
-    public synchronized static String uploadResults(Context context, String project_id, String row_id, String result){
-        String authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-        String email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-        StringEntity input = null;
-        String responseString = null;
-        JSONObject request_data = new JSONObject();
+    public synchronized static void uploadResults(final Context context){
 
-        try {
-            JSONObject jo = new JSONObject(result);
-            request_data.put("user_email", email);
-            request_data.put("user_token", authToken);
-            request_data.put("data", jo);
-            input = new StringEntity(request_data.toString());
-            input.setContentType("application/json");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return Constants.SERVER_NOT_ACCESSIBLE;
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return Constants.SERVER_NOT_ACCESSIBLE;
-        }
+        new AsyncTask<Object, Object, Object>() {
+            @Override
+            protected Object doInBackground(Object[] objects) {
 
-        String strDataURI = Constants.PHOTOSYNQ_DATA_URL
-                + project_id + "/data.json";
+                DatabaseHelper db = DatabaseHelper.getHelper(context);
+                List<ProjectResult> listRecords = db.getAllUnUploadedResults();
+                for (ProjectResult projectResult : listRecords) {
 
-        Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ URI" + strDataURI);
+                    String project_id = projectResult.getProjectId();
+                    String row_id = projectResult.getId();
+                    String result = projectResult.getReading();
 
-        HttpPost postRequest = new HttpPost(strDataURI);
-        if (null != input) {
-            postRequest.setEntity(input);
-        }
-        Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing POST request");
-        HttpClient httpclient = new DefaultHttpClient();
-        try {
-            HttpResponse response = httpclient.execute(postRequest);
+                    if (!result.contains("user_answers")){
 
-            if (null != response) {
-                StatusLine statusLine = response.getStatusLine();
-                if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    response.getEntity().writeTo(out);
-                    out.close();
-                    responseString = out.toString();
-                } else {
-                    //Closes the connection.
-                    response.getEntity().getContent().close();
-                    throw new IOException(statusLine.getReasonPhrase());
+                        Log.d("PhotosynQ", result);
+                    }
+
+
+                    String authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+                    String email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+                    StringEntity input = null;
+                    String responseString = null;
+                    JSONObject request_data = new JSONObject();
+
+                    try {
+                        JSONObject jo = new JSONObject(result);
+                        request_data.put("user_email", email);
+                        request_data.put("user_token", authToken);
+                        request_data.put("data", jo);
+                        input = new StringEntity(request_data.toString());
+                        input.setContentType("application/json");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        continue;
+                        //??return Constants.SERVER_NOT_ACCESSIBLE;
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                        continue;
+                        //??return Constants.SERVER_NOT_ACCESSIBLE;
+                    }
+
+                    String strDataURI = Constants.PHOTOSYNQ_DATA_URL
+                            + project_id + "/data.json";
+
+                    Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ URI" + strDataURI);
+
+                    HttpPost postRequest = new HttpPost(strDataURI);
+                    if (null != input) {
+                        postRequest.setEntity(input);
+                    }
+                    Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing POST request");
+                    HttpClient httpclient = new DefaultHttpClient();
+                    try {
+                        HttpResponse response = httpclient.execute(postRequest);
+
+                        if (null != response) {
+                            StatusLine statusLine = response.getStatusLine();
+                            if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+                                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                                response.getEntity().writeTo(out);
+                                out.close();
+                                responseString = out.toString();
+                            } else {
+                                //Closes the connection.
+                                response.getEntity().getContent().close();
+                                throw new IOException(statusLine.getReasonPhrase());
+                            }
+                        }
+
+                        UpdateData updateData = new UpdateData(context, row_id);
+                        updateData.onResponseReceived(responseString);
+
+                    } catch (ClientProtocolException e) {
+                        continue;
+                        //??return Constants.SERVER_NOT_ACCESSIBLE;
+                    } catch (IOException e) {
+                        continue;
+                        //??return Constants.SERVER_NOT_ACCESSIBLE;
+                    }
+
                 }
+                return Constants.SUCCESS;
             }
 
-            UpdateData updateData = new UpdateData(context, row_id);
-            updateData.onResponseReceived(responseString);
-
-        } catch (ClientProtocolException e) {
-            return Constants.SERVER_NOT_ACCESSIBLE;
-        } catch (IOException e) {
-            return Constants.SERVER_NOT_ACCESSIBLE;
-        }
-        return Constants.SUCCESS;
+        }.execute();
 
     }
 
@@ -300,6 +379,59 @@ public class CommonUtils {
         }
         return null;
 
+    }
+
+    public static void setProgress(final Activity context, ProgressDialog progressDialog, int progressValue){
+       if(progressDialog != null) {
+
+           String progressStr = PrefUtils.getFromPrefs(context, "SyncProgress", "0");
+           int progress = Integer.parseInt(progressStr);
+
+           PrefUtils.saveToPrefs(context, "SyncProgress", "" + (progress + progressValue));
+
+           int getProgress = progressDialog.getProgress();
+           progressDialog.setProgress(getProgress + progressValue);
+           if (progress >= 100) {
+               progressDialog.dismiss();
+
+               PrefUtils.saveToPrefs(context, "SyncProgress", "0");
+               progressDialog.setProgress(0);
+
+               PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
+
+               context.runOnUiThread(new Runnable() {
+                   @Override
+                   public void run() {
+
+                       String totalCachedDataPoints = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "0");
+                       new AlertDialog.Builder(context)
+                               .setIcon(android.R.drawable.ic_dialog_alert)
+                               .setTitle("Syncing")
+                               .setMessage("Pushed " + " "+totalCachedDataPoints +" data points\n\nProjects updates complete")
+                               .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                   @Override
+                                   public void onClick(DialogInterface dialog, int which) {
+
+                                       MainActivity navigationDrawer = (MainActivity)context;
+                                       FragmentManager fragmentManager = navigationDrawer.getSupportFragmentManager();
+
+                                       SyncFragment syncFragment = (SyncFragment) fragmentManager.findFragmentByTag(SyncFragment.class.getName());
+                                       if (syncFragment != null) {
+
+                                           syncFragment.refresh();
+                                       }
+
+                                   }
+
+                               })
+                               .show();
+
+
+                   }
+               });
+
+           }
+       }
     }
 
 }
