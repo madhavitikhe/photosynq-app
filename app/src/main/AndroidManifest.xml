@@ -100,6 +100,9 @@
             android:screenOrientation="nosensor"
             android:windowSoftInputMode="adjustResize">
         </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="d85db13634e01827b24da541f8488afcace1a337" />
     </application>
 
 </manifest>
