@@ -1,17 +1,20 @@
 package com.photosynq.app;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.DialogFragment;
@@ -101,6 +104,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
     // Stores the current instantiation of the location client in this object
     private GoogleApiClient mLocationClient = null;
+
+    private CountDownTimer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -267,7 +272,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
                                     } else {
-                                       // userEnteredAnswer.setText("");
+                                         userEnteredAnswer.setText("");
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                     }
@@ -279,7 +284,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
                                     } else {
-                                       // userEnteredAnswer.setText("");
+//                                        userEnteredAnswer.setText("");
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                     }
@@ -991,6 +996,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
         mtvStatusMessage = (TextView) reviewPage.findViewById(R.id.tv_status_message);
 
         btnTakeMeasurement = (Button) reviewPage.findViewById(R.id.btn_take_measurement);
+        btnTakeMeasurement.setText("+ Take Measurement");
+        btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
 
         btnTakeMeasurement.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1022,6 +1029,9 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     //btnTakeMeasurement.setText("+ Take Measurement");
                     btnTakeMeasurement.setEnabled(false);
                     btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_gray_light);
+
+                    if (null != timer)
+                        timer.cancel(); // Cancel count down timer.
 
                 }
             }
@@ -1148,7 +1158,9 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
+            sendData("-1+-1+"); // Send cancel request
             finish();
+            sendData("1027"); // Restart teensy device
             return true;
         }
 
@@ -1212,17 +1224,19 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
     private void sendData(String data) {
         // Check that we're actually connected before trying anything
-        if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
+        if (null != mBluetoothService && mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
             Toast.makeText(getApplicationContext(), "Not Connected", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Check that there's actually something to send
-        if (data.length() > 0) {
-            // Get the message bytes and tell the BluetoothChatService to write
-            byte[] send;
-            send = data.getBytes();
-            mBluetoothService.write(send);
+        if (null != mBluetoothService) {
+            // Check that there's actually something to send
+            if (data.length() > 0) {
+                // Get the message bytes and tell the BluetoothChatService to write
+                byte[] send;
+                send = data.getBytes();
+                mBluetoothService.write(send);
+            }
         }
     }
 
@@ -1289,6 +1303,48 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
                                             sendData(protocolJson);
 
+                                            timer = new CountDownTimer(5000, 1000) {
+
+                                                public void onTick(long millisUntilFinished) {
+                                                    System.out.print("@@@@@@@@@@@@@@ test tick on send protocol");
+                                                }
+
+                                                public void onFinish() {
+                                                    sendData("-1+-1+");
+
+//                                                    Toast.makeText(getApplicationContext(), "Timer finished - ", Toast.LENGTH_SHORT).show();
+                                                    Log.d("DeviceTimeout", "Device - timeout");
+
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            if (!isFinishing()) {
+
+                                                                new AlertDialog.Builder(ProjectMeasurmentActivity.this)
+                                                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                                                        .setTitle("Device - timeout")
+                                                                        .setMessage("Please try again.  Restart device if problem persists")
+                                                                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                                                    @Override
+                                                                                    public void onClick(DialogInterface dialogInterface, int which) {
+                                                                                        sendData("-1+-1+"); // Send cancel request
+                                                                                        finish();
+                                                                                        sendData("1027"); // Restart teensy device
+                                                                                    }
+
+                                                                                }
+
+                                                                        )
+                                                                        .show();
+                                                            }
+                                                        }
+                                                    });
+
+
+                                                }
+                                            }.start();
+
+
                                             mtvStatusMessage.setText("Initializing measurement please wait ...");
 
                                         } else {
@@ -1340,6 +1396,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                 case Constants.MESSAGE_WRITE:
                     break;
                 case Constants.MESSAGE_READ:
+                    timer.cancel();
                     if (mIsCancelMeasureBtnClicked == false) {
                         StringBuffer measurement = (StringBuffer) msg.obj;
                         // Do not process the message if contain pwr_off from device
@@ -1385,18 +1442,18 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                             intent.putExtra(DatabaseHelper.C_READING, reading);
                             startActivity(intent);
                         }
-                    }else {
+                    } else {
                         StringBuffer measurement = (StringBuffer) msg.obj;
                         //if(measurement.toString().contains("\\r\\n\\r\\n")) {
-                            mIsCancelMeasureBtnClicked = false;
-                            if (btnTakeMeasurement != null) {
-                                if (btnTakeMeasurement.getText().equals("Cancel")) {
-                                    mtvStatusMessage.setText("Measurement cancelled");
-                                    btnTakeMeasurement.setEnabled(true);
-                                    btnTakeMeasurement.setText("+ Take Measurement");
-                                    btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
-                                }
+                        mIsCancelMeasureBtnClicked = false;
+                        if (btnTakeMeasurement != null) {
+                            if (btnTakeMeasurement.getText().equals("Cancel")) {
+                                mtvStatusMessage.setText("Measurement cancelled");
+                                btnTakeMeasurement.setEnabled(true);
+                                btnTakeMeasurement.setText("+ Take Measurement");
+                                btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
                             }
+                        }
                         //}
                     }
                     break;
@@ -1408,7 +1465,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
                     break;
                 case Constants.MESSAGE_TOAST:
-                    if (mIsCancelMeasureBtnClicked == false) {
+                    if (mIsCancelMeasureBtnClicked == false || mIsCancelMeasureBtnClicked == true) {
                         Toast.makeText(ProjectMeasurmentActivity.this, msg.getData().getString(Constants.TOAST),
                                 Toast.LENGTH_LONG).show();
                     }
@@ -1420,6 +1477,9 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                             btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
                         }
                     }
+                    break;
+                case Constants.MESSAGE_FIRST_RESP:
+                    timer.cancel();
                     break;
                 case Constants.MESSAGE_STOP:
                     Toast.makeText(getApplicationContext(), msg.getData().getString(Constants.TOAST),
@@ -1500,7 +1560,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
      */
     @Override
     public void onConnected(Bundle bundle) {
-        //startPeriodicUpdates();
+        //startLocationUpdates();
         getLocation();
     }
 
