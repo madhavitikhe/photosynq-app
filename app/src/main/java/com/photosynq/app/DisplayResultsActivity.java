@@ -1,9 +1,17 @@
 package com.photosynq.app;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.IntentSender;
+import android.location.Location;
+import android.os.CountDownTimer;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,9 +21,16 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ProjectResult;
 import com.photosynq.app.utils.Constants;
+import com.photosynq.app.utils.LocationUtils;
 import com.photosynq.app.utils.PrefUtils;
 import com.photosynq.app.utils.SyncHandler;
 
@@ -25,16 +40,27 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 
 
-public class DisplayResultsActivity extends ActionBarActivity {
+public class DisplayResultsActivity extends ActionBarActivity implements
+        LocationListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     String projectId;
     String reading;
     String protocolJson;
     String appMode;
+    private ProgressBar progressBar;
 
     Button keep;
     Button discard;
-    private ProgressBar progressBar;
+
+    // A request to connect to Location Services
+    private LocationRequest mLocationRequest;
+
+    // Stores the current instantiation of the location client in this object
+    private GoogleApiClient mLocationClient = null;
+
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +94,46 @@ public class DisplayResultsActivity extends ActionBarActivity {
             discard.setVisibility(View.INVISIBLE);
         }
         reloadWebview();
+
+        // Create a new global location parameters object
+        mLocationRequest = LocationRequest.create();
+        //  Set the update interval
+        mLocationRequest.setInterval(LocationUtils.UPDATE_INTERVAL_IN_MILLISECONDS);
+        // Use high accuracy
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        // Set the interval ceiling to one minute
+        mLocationRequest.setFastestInterval(LocationUtils.FAST_INTERVAL_CEILING_IN_MILLISECONDS);
+        /*
+         * Create a new location client, using the enclosing class to
+         * handle callbacks.
+         */
+        mLocationClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
+        //-------------------- Start your GPS Reading ------------------ //
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Acquiring GPS location");
+        dialog.setCancelable(false);
+
+    }
+
+    /*
+     * Called when the Activity is restarted, even before it becomes visible.
+     */
+    @Override
+    public void onStart() {
+
+        super.onStart();
+
+        /*
+         * Connect the client. Don't re-start any requests here;
+         * instead, wait for onResume()
+         */
+        mLocationClient.connect();
+
     }
 
     private void  reloadWebview()
@@ -87,20 +153,68 @@ public class DisplayResultsActivity extends ActionBarActivity {
         }
         else
         {
-            int index = Integer.parseInt(PrefUtils.getFromPrefs(this, PrefUtils.PREFS_QUESTION_INDEX, "1"));
-            PrefUtils.saveToPrefs(this, PrefUtils.PREFS_QUESTION_INDEX, ""+ (index+1));
 
-            DatabaseHelper databaseHelper = DatabaseHelper.getHelper(this);
-            ProjectResult result = new ProjectResult(projectId, reading, "N");
-            databaseHelper.createResult(result);
+            PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_KEEP_BTN_CLICK, "KeepBtnCLickYes");
 
-            SyncHandler syncHandler = new SyncHandler(this, MainActivity.getProgressBar());
-            syncHandler.DoSync(SyncHandler.UPLOAD_RESULTS_MODE);
+            if (!reading.contains("location")) {
 
-            view.setVisibility(View.INVISIBLE);
-            discard.setVisibility(View.INVISIBLE);
+                String currLocation = getLocation();
 
-            finish();
+                new CountDownTimer(1000, 1000) {
+                    public void onTick(long millisUntilFinished) {
+
+                        System.out.print("@@@@@@@@@@@@@@ test tick");
+
+                    }
+
+                    public void onFinish() {
+                        String checkLocation = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, "");
+                        if(checkLocation.equals("")) {
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (!isFinishing()) {
+
+                                        new AlertDialog.Builder(DisplayResultsActivity.this)
+                                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                                .setMessage("Your location is temporarily not available\n\n" +
+                                                        "Check if GPS is turned on.")
+                                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialogInterface, int which) {
+
+                                                                dialog.show();
+                                                            }
+
+                                                        }
+
+                                                )
+                                                .show();
+
+                                    }
+                                }
+                            });
+
+
+
+                        }
+                    }
+                }.start();
+
+
+
+                if(!currLocation.equals(""))
+
+                {
+
+                    saveResult();
+                }
+
+            }else{
+
+                saveResult();
+            }
         }
     }
 
@@ -132,5 +246,167 @@ public class DisplayResultsActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Verify that Google Play services is available before making a request.
+     *
+     * @return true if Google Play services is available, otherwise false
+     */
+    private boolean servicesConnected() {
+
+        // Check that Google Play services is available
+        int resultCode =
+                GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+
+        // If Google Play services is available
+        if (ConnectionResult.SUCCESS == resultCode) {
+
+            // Continue
+            return true;
+            // Google Play services was not available for some reason
+        } else {
+            // Display an error dialog
+            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode, this, 0);
+            if (dialog != null) {
+                dialog.show();
+//                ErrorDialogFragment errorFragment = new ErrorDialogFragment();
+//                errorFragment.setDialog(dialog);
+//                errorFragment.show(getSupportFragmentManager(), "PHOTOSYNQ-RESULTACTIVITY");
+            }
+            return false;
+        }
+    }
+
+    public String getLocation() {
+
+        // If Google Play Services is available
+        if (servicesConnected()) {
+
+            // Get the current location
+            Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(mLocationClient);
+
+            if (currentLocation == null) {
+
+                startLocationUpdates();
+
+            } else{
+
+                String currLocation = LocationUtils.getLatLng(this, currentLocation);
+
+                PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, currLocation);
+                dialog.dismiss();
+              //  Toast.makeText(DisplayResultsActivity.this, "GPS acquisition complete!", Toast.LENGTH_SHORT).show();
+
+            }
+
+            return LocationUtils.getLatLng(this, currentLocation);
+        }
+        return "";
+    }
+
+    protected void startLocationUpdates () {
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mLocationClient, mLocationRequest, this);
+    }
+
+    protected void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mLocationClient, this);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+        getLocation();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        Log.d("PHOTOSYNQ", "Location changed:" + LocationUtils.getLatLng(this, location));
+        PrefUtils.saveToPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, LocationUtils.getLatLng(this, location));
+
+        dialog.dismiss();
+        Toast.makeText(DisplayResultsActivity.this, "GPS acquisition complete!", Toast.LENGTH_SHORT).show();
+        stopLocationUpdates();
+
+        saveResult();
+    }
+
+    private void saveResult(){
+
+
+        int index = Integer.parseInt(PrefUtils.getFromPrefs(this, PrefUtils.PREFS_QUESTION_INDEX, "1"));
+        PrefUtils.saveToPrefs(this, PrefUtils.PREFS_QUESTION_INDEX, "" + (index + 1));
+
+        if (!reading.contains("location")){
+
+            String currentLocation = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_CURRENT_LOCATION, "");
+            reading = reading.replaceFirst("\\{", "{\"location\":[" + currentLocation + "],");
+        }
+
+        DatabaseHelper databaseHelper = DatabaseHelper.getHelper(this);
+        ProjectResult result = new ProjectResult(projectId, reading, "N");
+        databaseHelper.createResult(result);
+
+        SyncHandler syncHandler = new SyncHandler(this, MainActivity.getProgressBar());
+        syncHandler.DoSync(SyncHandler.UPLOAD_RESULTS_MODE);
+
+        finish();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+        /*
+         * Google Play services can resolve some errors it detects.
+         * If the error has a resolution, try sending an Intent to
+         * start a Google Play services activity that can resolve
+         * error.
+         */
+        if (connectionResult.hasResolution()) {
+            try {
+
+                // Start an Activity that tries to resolve the error
+                connectionResult.startResolutionForResult(
+                        this,
+                        LocationUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST);
+
+                /*
+                * Thrown if Google Play services canceled the original
+                * PendingIntent
+                */
+
+            } catch (IntentSender.SendIntentException e) {
+
+                // Log the error
+                e.printStackTrace();
+            }
+        } else {
+
+            // If no resolution is available, display a dialog to the user with the error.
+            showErrorDialog(connectionResult.getErrorCode());
+        }
+    }
+
+    private void showErrorDialog(int errorCode) {
+
+        // Get the error dialog from Google Play services
+        Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
+                errorCode,
+                this,
+                LocationUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST);
+
+        // If Google Play services can provide an error dialog
+        if (errorDialog != null) {
+
+            errorDialog.show();
+        }
     }
 }

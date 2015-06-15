@@ -1,18 +1,18 @@
 package com.photosynq.app.response;
 
-import android.content.Context;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.photosynq.app.MainActivity;
-import com.photosynq.app.ProjectModeFragment;
 import com.photosynq.app.QuickModeFragment;
 import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.Protocol;
+import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
 
 import org.json.JSONArray;
@@ -25,10 +25,12 @@ import java.util.Date;
  */
 public class UpdateProtocol implements PhotosynqResponse {
     private MainActivity navigationDrawer;
+    private ProgressDialog mProgressDialog;
 
-    public UpdateProtocol(MainActivity navigationDrawer)
+    public UpdateProtocol(MainActivity navigationDrawer, ProgressDialog progressDialog)
     {
         this.navigationDrawer = navigationDrawer;
+        this.mProgressDialog = progressDialog;
     }
     @Override
     public void onResponseReceived(final String result) {
@@ -64,25 +66,38 @@ public class UpdateProtocol implements PhotosynqResponse {
         if (null != result) {
             if(result.equals(Constants.SERVER_NOT_ACCESSIBLE))
             {
-                Toast.makeText(navigationDrawer, R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+                if(null != navigationDrawer) {
+                    navigationDrawer.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(navigationDrawer, R.string.server_not_reachable, Toast.LENGTH_LONG).show();
+                        }
+
+                    });
+                }
 //                db.closeWriteDatabase();
 //                db.closeReadDatabase();
                 return;
             }
 
             try {
-                jArray = new JSONArray(result);
-                for (int i = 0; i < jArray.length(); i++) {
+                JSONObject resultJsonObject = new JSONObject(result);
 
-                    JSONObject obj = jArray.getJSONObject(i);
-                    String id = obj.getString("id");
-                    Protocol protocol = new Protocol(id,
-                            obj.getString("name"),
-                            obj.getString("protocol_json2"),
-                            obj.getString("description"),
-                            obj.getString("macro_id"), "slug",
-                            obj.getString("pre_selected"));
-                    db.updateProtocol(protocol);
+                if (resultJsonObject.has("protocols")) {
+                    String newobj = resultJsonObject.getString("protocols");
+                    jArray = new JSONArray(newobj);
+                    for (int i = 0; i < jArray.length(); i++) {
+
+                        JSONObject obj = jArray.getJSONObject(i);
+                        String id = obj.getString("id");
+                        Protocol protocol = new Protocol(id,
+                                obj.getString("name"),
+                                obj.getString("protocol_json"),
+                                obj.getString("description"),
+                                obj.getString("macro_id"), "slug",
+                                obj.getString("pre_selected"));
+                        db.updateProtocol(protocol);
+                    }
                 }
 
             } catch (Exception e) {
@@ -117,5 +132,7 @@ public class UpdateProtocol implements PhotosynqResponse {
         }
 
         System.out.println("UpdateProtocol End onResponseReceived: " + date1.getTime());
+        //show progress dialog process on sync screen after sync button click
+        CommonUtils.setProgress(navigationDrawer, mProgressDialog, 20);
     }
 }

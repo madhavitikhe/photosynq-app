@@ -75,6 +75,14 @@ public class ProfileFragment extends Fragment {
         tvContact.setText(strContactMailId);
         tvContact.setTypeface(CommonUtils.getInstance(context).getFontRobotoRegular());
 
+        String strProjects = PrefUtils.getFromPrefs(context , PrefUtils.PREFS_PROJECTS, PrefUtils.PREFS_DEFAULT_VAL);
+        TextView tvProjects = (TextView) rootView.findViewById(R.id.tv_projects);
+        tvProjects.setText(strProjects);
+
+        String strConribution = PrefUtils.getFromPrefs(context , PrefUtils.PREFS_CONTRIBUTIONS, PrefUtils.PREFS_DEFAULT_VAL);
+        TextView tvContributions = (TextView) rootView.findViewById(R.id.tv_contrb);
+        tvContributions.setText(strConribution);
+
         Button signOut = (Button) rootView.findViewById(R.id.sign_out_btn);
         signOut.setTypeface(CommonUtils.getInstance(context).getFontRobotoMedium());
         signOut.setOnClickListener(new View.OnClickListener() {

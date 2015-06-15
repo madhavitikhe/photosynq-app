@@ -26,6 +26,7 @@ public class BluetoothService {
     // Member fields
     private final BluetoothAdapter mAdapter;
     private final Handler mHandler;
+    private final Context mContext;
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
     private int mState;
@@ -47,6 +48,7 @@ public class BluetoothService {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         mHandler = handler;
+        mContext = context;
     }
 
     /**
@@ -284,29 +286,35 @@ public class BluetoothService {
             mmOutStream = tmpOut;
         }
 
-		public void run() {
+        public void run() {
 			Log.i(TAG, "BEGIN $$$$$$$ mConnectedThread");
 			byte[] buffer = new byte[10485];
 			StringBuffer measurement=new StringBuffer();
-			int totalbytes =0;
+            //int totalbytes =0;
 			int bytes;
 
 			// Keep listening to the InputStream while connected
 			while (true) {
 				try {
-					// Read from the InputStream
-					bytes = mmInStream.read(buffer);
+                    // Read from the InputStream
+                    bytes = mmInStream.read(buffer);
 
-					// Send the obtained bytes to the UI Activity
+                    // Send the obtained bytes to the UI Activity
 //					mHandler.obtainMessage(ResultActivity.MESSAGE_READ, bytes,-1, buffer).sendToTarget();
-					String readMessage = new String(buffer, 0, bytes);
-                    long time= System.currentTimeMillis();
-					measurement.append(readMessage.replaceAll("\\{", "{\"time\":\""+time+"\","));
-					totalbytes += bytes;
+                    String readMessage = new String(buffer, 0, bytes);
+                    long time = System.currentTimeMillis();
+
+                    measurement.append(readMessage.replaceAll("\\{", "{\"time\":\""+time+"\","));
+
 					if (readMessage.replaceAll("\\r\\n", "######").contains("############")) {
-						mHandler.obtainMessage(Constants.MESSAGE_READ, totalbytes,-1, measurement).sendToTarget();
+						mHandler.obtainMessage (Constants.MESSAGE_READ, measurement.length(), -1, measurement).sendToTarget();
+
+                        measurement = null;
 						measurement=new StringBuffer();
-						buffer = new byte[10485];
+                        buffer = null;
+                        buffer = new byte[10485];
+                        //??measurement.delete(0, measurement.length());
+
 //						Message msg = mHandler.obtainMessage(ResultActivity.MESSAGE_STOP);
 //				        Bundle bundle = new Bundle();
 //				        bundle.putString(ResultActivity.TOAST, "Measurement Complete");

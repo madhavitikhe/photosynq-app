@@ -1,18 +1,15 @@
 package com.photosynq.app;
 
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -21,19 +18,13 @@ import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.http.PhotosynqResponse;
-import com.photosynq.app.model.AppSettings;
-import com.photosynq.app.model.ProjectLead;
-import com.photosynq.app.model.Protocol;
+import com.photosynq.app.model.ProjectCreator;
 import com.photosynq.app.model.ResearchProject;
-import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
 import com.photosynq.app.utils.SyncHandler;
 import com.squareup.picasso.Picasso;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -50,6 +41,7 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
     private ProjectArrayAdapter arrayAdapter;
     private ListView projectList;
     private static String mSearchString;
+    private String pCreatorId;
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -83,6 +75,8 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
         }
 
         dbHelper = DatabaseHelper.getHelper(getActivity());
+        pCreatorId = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_CREATOR_ID, PrefUtils.PREFS_DEFAULT_VAL);
+
 
         // Initialize ListView
         projectList = (ListView) rootView.findViewById(R.id.lv_project);
@@ -101,7 +95,7 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
                 ResearchProject project = (ResearchProject) projectList.getItemAtPosition(position);
-                Intent intent = new Intent(getActivity(),ProjectDetailsActivity.class);
+                Intent intent = new Intent(getActivity(), ProjectDetailsActivity.class);
                 intent.putExtra(DatabaseHelper.C_PROJECT_ID, project.getId());
                 startActivity(intent);
             }
@@ -118,7 +112,11 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
                 Toast.makeText(getActivity(), "No project found", Toast.LENGTH_LONG).show();
             }
         }else{
-            projects = dbHelper.getAllResearchProjects();
+            if(mSectionNumber == 0) {
+                projects = dbHelper.getAllResearchProjects();
+            }else{
+                projects = dbHelper.getUserCreatedContributedProjects(pCreatorId);
+            }
         }
 
         arrayAdapter = new ProjectArrayAdapter(getActivity(), projects);
@@ -137,7 +135,11 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
                 Toast.makeText(getActivity(), "No project found", Toast.LENGTH_LONG).show();
             }
         }else{
-            projects = dbHelper.getAllResearchProjects();
+            if(mSectionNumber == 0) {
+                projects = dbHelper.getAllResearchProjects();
+            }else{
+                projects = dbHelper.getUserCreatedContributedProjects(pCreatorId);
+            }
         }
         arrayAdapter = new ProjectArrayAdapter(getActivity(), projects);
         projectList.setAdapter(arrayAdapter);
@@ -218,9 +220,9 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
                 try {
                     tvProjectName.setText(project.getName());
 
-                    ProjectLead projectLead = dbHelper.getProjectLead(project.getpLeadId());
-                    if(null != projectLead)
-                        tvProjectBy.setText("by " + projectLead.getName());
+                    ProjectCreator projectCreator = dbHelper.getProjectLead(project.getCreatorId());
+                    if(null != projectCreator)
+                        tvProjectBy.setText("by " + projectCreator.getName());
 
                     ImageView imageview = (ImageView) convertView.findViewById(R.id.im_projectImage);
                     Picasso.with(getActivity()).load(project.getImageUrl()).into(imageview);

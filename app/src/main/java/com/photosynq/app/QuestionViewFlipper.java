@@ -5,9 +5,7 @@ import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 import android.widget.ViewFlipper;
 
-import com.google.android.gms.games.quest.Quest;
 import com.photosynq.app.db.DatabaseHelper;
-import com.photosynq.app.model.Question;
 import com.photosynq.app.model.RememberAnswers;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;

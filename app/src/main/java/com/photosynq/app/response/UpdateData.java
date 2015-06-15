@@ -1,13 +1,13 @@
 package com.photosynq.app.response;
 
 import android.content.Context;
-import android.view.View;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Toast;
 
-import com.photosynq.app.MainActivity;
-import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.R;
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
 
@@ -58,10 +58,12 @@ public class UpdateData implements PhotosynqResponse{
         try {
             if(result.equals(Constants.SERVER_NOT_ACCESSIBLE))
             {
-                //Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
-                String sync_interval = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_SAVE_SYNC_INTERVAL, PrefUtils.PREFS_DEFAULT_VAL);
-                Toast.makeText(context, context.getResources().getString(R.string.error_sending_data,sync_interval), Toast.LENGTH_LONG).show();
+                if (null != context) {
+                  String sync_interval = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_SAVE_SYNC_INTERVAL, PrefUtils.PREFS_DEFAULT_VAL);
+                  Toast.makeText(context, context.getResources().getString(R.string.error_sending_data,sync_interval), Toast.LENGTH_LONG).show();
+                }
                 return;
+
             }
 
             JSONObject jo = new JSONObject(result);
@@ -71,6 +73,19 @@ public class UpdateData implements PhotosynqResponse{
             if (status.toUpperCase().equals("SUCCESS"))
             {
                 //Toast.makeText(context, R.string.data_uploaded_to_server, Toast.LENGTH_LONG).show();
+
+                // This toast shows successful contribution in photosynq by submitting measurements.
+                Handler handler = new Handler(Looper.getMainLooper());
+
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        String getKeepBtnStatus = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_KEEP_BTN_CLICK, "");
+                        if(getKeepBtnStatus.equals("KeepBtnCLickYes")) {
+                            Toast.makeText(context, "Success! \nSubmitted", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, 1000 );
+
                 long row_id = Long.parseLong(rowid);
                 if(row_id != -1) {
                     db = DatabaseHelper.getHelper(context);
