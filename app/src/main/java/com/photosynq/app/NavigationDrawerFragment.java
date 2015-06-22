@@ -3,6 +3,7 @@ package com.photosynq.app;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
@@ -23,19 +24,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
+import com.photosynq.app.model.ProjectResult;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
+import com.photosynq.app.utils.SyncHandler;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -72,6 +78,8 @@ public class NavigationDrawerFragment extends Fragment {
 
     TextView tvDeviceName;
     TextView tvDeviceAddress;
+    private DatabaseHelper db;
+    private Button totalDataPointsBtn;
 
     public NavigationDrawerFragment() {
     }
@@ -145,6 +153,34 @@ public class NavigationDrawerFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 selectItem(5);
+            }
+        });
+
+        db = DatabaseHelper.getHelper(getActivity());
+        final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
+        PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "" + listRecords.size());
+        totalDataPointsBtn = (Button) linearLayout.findViewById(R.id.totalCachedDataPointsBtn);
+        totalDataPointsBtn.setText("" + listRecords.size());
+
+        totalDataPointsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(listRecords.size() == 0) {
+                    Toast.makeText(getActivity(), "No cached data point", Toast.LENGTH_SHORT).show();
+                }else {
+                    Intent intent = new Intent(getActivity(), DisplayCachedDataPoints.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        TableRow syncWithServerBtnMenuBar = (TableRow) linearLayout.findViewById(R.id.sync_with_server_btn_menu_bar);
+        syncWithServerBtnMenuBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity mainActivity = (MainActivity) getActivity();
+                SyncHandler syncHandler = new SyncHandler(mainActivity);
+                syncHandler.DoSync(SyncHandler.ALL_SYNC_UI_MODE);
             }
         });
 
@@ -424,5 +460,34 @@ public class NavigationDrawerFragment extends Fragment {
         public void setItemSelected(int position) {
             mSelectedPosition = position;
         }
+    }
+
+    public void onResume() {
+        super.onResume();
+        Thread t = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(1000);
+                        if (getActivity() != null) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    db = DatabaseHelper.getHelper(getActivity());
+                                    final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
+                                    String totalCachedDataPoints = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "0");
+                                    totalDataPointsBtn.setText("" + listRecords.size());
+                                }
+                            });
+                        }
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
+
+        t.start();
     }
 }
