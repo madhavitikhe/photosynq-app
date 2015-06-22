@@ -136,8 +136,11 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
         deviceAddress = CommonUtils.getDeviceAddress(this);
         if (null == deviceAddress) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            SelectDeviceDialog selectDeviceDialog = new SelectDeviceDialog();
+            selectDeviceDialog.show(fragmentManager, "Select Measurement Device");
             Toast.makeText(this, "Measurement device not configured, Please configure measurement device (bluetooth).", Toast.LENGTH_SHORT).show();
-            finish();
+            //finish();
         }
 
         String showDirections = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_SHOW_DIRECTIONS, "YES");
