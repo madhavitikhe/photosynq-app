@@ -18,6 +18,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -135,8 +136,11 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
         deviceAddress = CommonUtils.getDeviceAddress(this);
         if (null == deviceAddress) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            SelectDeviceDialog selectDeviceDialog = new SelectDeviceDialog();
+            selectDeviceDialog.show(fragmentManager, "Select Measurement Device");
             Toast.makeText(this, "Measurement device not configured, Please configure measurement device (bluetooth).", Toast.LENGTH_SHORT).show();
-            finish();
+            //finish();
         }
 
         String showDirections = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_SHOW_DIRECTIONS, "YES");
@@ -272,7 +276,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_REMEMBER);
                                     } else {
-                                         userEnteredAnswer.setText("");
+//                                         userEnteredAnswer.setText("");
                                         rememberAnswers.setSelected_option_text(str);
                                         rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                     }
@@ -1156,13 +1160,30 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
             default:
         }
 
+//        //noinspection SimplifiableIfStatement
+//        if (id == android.R.id.home) {
+//            sendData("-1+-1+"); // Send cancel request
+//            finish();
+//            sendData("1027"); // Restart teensy device
+//            return true;
+//        }
+
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
-            sendData("-1+-1+"); // Send cancel request
-            finish();
-            sendData("1027"); // Restart teensy device
+            int displayedChild = viewFlipper.getDisplayedChild();
+            int childCount = viewFlipper.getChildCount();
+            if(displayedChild == 0){
+                viewFlipper.stopFlipping();
+                sendData("-1+-1+"); // Send cancel request
+                finish();
+                sendData("1027"); // Restart teensy device
+            }else {
+                viewFlipper.showPrevious();
+            }
             return true;
         }
+
+
 
         return super.onOptionsItemSelected(item);
     }

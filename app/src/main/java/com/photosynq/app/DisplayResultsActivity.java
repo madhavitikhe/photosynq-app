@@ -388,7 +388,7 @@ public class DisplayResultsActivity extends ActionBarActivity implements
 
             } else {
                 Log.d("IsJSONValid", "Invalid Json");
-                Toast.makeText(getApplicationContext(), "Invalid Json", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error: Invalid JSON. Restart device and try again", Toast.LENGTH_SHORT).show();
             }
 
             SyncHandler syncHandler = new SyncHandler(this, MainActivity.getProgressBar());

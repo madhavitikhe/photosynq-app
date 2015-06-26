@@ -117,9 +117,6 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
         TextView tvWelcomeDesc = (TextView) findViewById(R.id.txtWelDesc);
         tvWelcomeDesc.setTypeface(robotoLightFace);
 
-        Button tutorial_btn = (Button) findViewById(R.id.tutorial_button);
-        tutorial_btn.setTypeface(robotoMediumFace);
-
         Button signIn = (Button) findViewById(R.id.sign_in_button);
         signIn.setTypeface(robotoMediumFace);
         signIn.setOnClickListener(new View.OnClickListener() {
@@ -127,6 +124,17 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
             public void onClick(View view) {
 
                 startLoginActivity();
+            }
+        });
+
+        Button createNewAccount = (Button) findViewById(R.id.create_new_account_button);
+        createNewAccount.setTypeface(robotoMediumFace);
+        createNewAccount.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uriUrl = Uri.parse("http://staging.photosynq.venturit.net/users/sign_up");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uriUrl);
+                startActivity(intent);
             }
         });
     }
