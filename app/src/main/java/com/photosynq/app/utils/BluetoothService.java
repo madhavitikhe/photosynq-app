@@ -44,11 +44,22 @@ public class BluetoothService {
      * @param context  The UI Activity Context
      * @param handler  A Handler to send messages back to the UI Activity
      */
-    public BluetoothService(Context context, Handler handler) {
+    private BluetoothService(Context context, Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         mHandler = handler;
         mContext = context;
+    }
+
+    private static BluetoothService bluetoothService;
+    public static BluetoothService getInstance(Context context, Handler handler){
+
+        if (bluetoothService == null){
+
+            bluetoothService = new BluetoothService(context, handler);
+        }
+
+        return bluetoothService;
     }
 
     /**
@@ -324,7 +335,7 @@ public class BluetoothService {
 						//break;
 					}else{
 
-                        mHandler.obtainMessage(Constants.MESSAGE_FIRST_RESP, measurement.length(), - 1 , measurement).sendToTarget();
+                        mHandler.obtainMessage(Constants.MESSAGE_FIRST_RESP, readMessage.length(), -1 , readMessage).sendToTarget();
                     }
 				} catch (IOException e) {
 					Log.e(TAG, "disconnected", e);

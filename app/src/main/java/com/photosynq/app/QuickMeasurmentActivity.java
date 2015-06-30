@@ -39,7 +39,7 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
 
     private TextView mtvStatusMessage;
 
-    private BluetoothService mBluetoothService = null;
+    //private BluetoothService mBluetoothService = null;
     private BluetoothAdapter mBluetoothAdapter = null;
     private static final int REQUEST_ENABLE_BT = 2;
 
@@ -66,9 +66,8 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         }
-        if (null == mBluetoothService) {
-            mBluetoothService = new BluetoothService(getApplicationContext(), mHandler);
-        }
+
+        final BluetoothService mBluetoothService = BluetoothService.getInstance(getApplicationContext(), mHandler);
 
         btnTakeMeasurement = (Button) findViewById(R.id.btn_take_measurement);
         btnTakeMeasurement.setTypeface(CommonUtils.getInstance(this).getFontRobotoMedium());
@@ -166,6 +165,7 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
 
     private void sendData(String data) {
         // Check that we're actually connected before trying anything
+        BluetoothService mBluetoothService = BluetoothService.getInstance(this, mHandler);
         if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
             Toast.makeText(getApplicationContext(),"Not Connected", Toast.LENGTH_SHORT).show();
             return;
@@ -184,7 +184,7 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
     public void onDestroy() {
         super.onDestroy();
         // Stop the Bluetooth  services
-        if (mBluetoothService != null) mBluetoothService.stop();
+        //??if (mBluetoothService != null) mBluetoothService.stop();
     }
 
     private final Handler mHandler = new Handler() {
@@ -281,7 +281,7 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
                 case Constants.MESSAGE_STOP:
                     Toast.makeText(getApplicationContext(), msg.getData().getString(Constants.TOAST),
                             Toast.LENGTH_SHORT).show();
-                    mBluetoothService.stop();
+                    //??mBluetoothService.stop();
                     break;
             }
         }

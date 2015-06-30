@@ -151,6 +151,8 @@ public class DisplayResultsActivity extends ActionBarActivity implements
         webview.loadUrl(url);
         webview.getSettings().setJavaScriptEnabled(true);
 
+        WebView.setWebContentsDebuggingEnabled(true);
+
     }
     public void keep_click(View view) throws UnsupportedEncodingException, JSONException {
 
