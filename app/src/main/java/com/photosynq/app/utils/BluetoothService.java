@@ -324,7 +324,7 @@ public class BluetoothService {
 						//break;
 					}else{
 
-                        mHandler.obtainMessage(Constants.MESSAGE_FIRST_RESP, 0 , 0).sendToTarget();
+                        mHandler.obtainMessage(Constants.MESSAGE_FIRST_RESP, measurement.length(), - 1 , measurement).sendToTarget();
                     }
 				} catch (IOException e) {
 					Log.e(TAG, "disconnected", e);

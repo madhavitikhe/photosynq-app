@@ -70,6 +70,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 public class ProjectMeasurmentActivity extends ActionBarActivity implements
@@ -80,6 +81,9 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
     private String deviceAddress;
     private String mConnectedDeviceName;
     private String projectId;
+
+    private TextView txtOutput;
+    private TextView txtOutputTitle;
 
     private BluetoothService mBluetoothService = null;
     private BluetoothAdapter mBluetoothAdapter = null;
@@ -944,9 +948,16 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
         }
 
+        View viewOutput = getLayoutInflater().inflate(R.layout.alert_output_dialog, null);
+        txtOutput = (TextView)viewOutput.findViewById(R.id.tvOutput);
+        txtOutputTitle = (TextView)viewOutput.findViewById(R.id.tvOutputTitle);
+
+        liLayout.addView(viewOutput);
+
         int viewCount = viewFlipper.getChildCount();
         refreshReviewPage(viewFlipper.getChildAt(viewCount - 1));
 
+        invalidateOptionsMenu();
     }
 
     public void userDefinedOptions() {
@@ -959,7 +970,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     optionsMenu.getItem(0).setEnabled(false);
                 }
             } else {
-                optionsMenu.getItem(0).setEnabled(false);
+                optionsMenu.getItem(0).setEnabled(true);
             }
         }
     }
@@ -1139,9 +1150,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_project_measurment, menu);
-        optionsMenu = menu;
-        userDefinedOptions();
         return true;
     }
 
@@ -1153,6 +1161,40 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
         int id = item.getItemId(); //TODO crashing on first question - Shekhar
 
         switch (item.getItemId()) {
+            case 0:
+
+                if (txtOutput != null){
+
+                    int visible = txtOutput.getVisibility();
+                    if (visible == 0){
+                        txtOutput.setVisibility(View.INVISIBLE);
+                        txtOutputTitle.setVisibility(View.INVISIBLE);
+                    }else{
+                        txtOutput.setVisibility(View.VISIBLE);
+                        txtOutputTitle.setVisibility(View.VISIBLE);
+                    }
+
+                }
+
+//                // Get the layout inflater
+//                LayoutInflater inflater = getLayoutInflater();
+//                View view = inflater.inflate(R.layout.alert_output_dialog, null);
+//                txtOutput = (TextView)view.findViewById(R.id.tvOutput);
+//                new AlertDialog.Builder(this)
+//                        .setIcon(android.R.drawable.ic_dialog_alert)
+//                        .setView(view)
+//                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialogInterface, int which) {
+//
+//
+//                                    }
+//
+//                                }
+//
+//                        )
+//                        .show();
+                break;
             case R.id.userSelectedMenuItem:
             case R.id.autoIncMenuItem:
             case R.id.barCodeOptionMenuItem:
@@ -1183,11 +1225,28 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
             return true;
         }
 
-
-
         return super.onOptionsItemSelected(item);
     }
 
+
+    public boolean onPrepareOptionsMenu(Menu menu){
+        //code here
+        if (9595 == viewFlipper.getCurrentView().getId()) {
+
+            menu.clear();
+            menu.add("Output");
+            optionsMenu = menu;
+
+
+        }else{
+
+            getMenuInflater().inflate(R.menu.menu_project_measurment, menu);
+            optionsMenu = menu;
+            userDefinedOptions();
+        }
+
+        return true;
+    }
 
     private boolean changeQuestionType(MenuItem item) {
         List<Question> questions = dbHelper.getAllQuestionForProject(projectId);
@@ -1265,7 +1324,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
     public void onDestroy() {
         super.onDestroy();
         // Stop the Bluetooth  services
-        if (mBluetoothService != null) mBluetoothService.stop();
+        if (mBluetoothService != null){
+            sendData("-1+-1+");
+            mBluetoothService.stop();
+        }
     }
 
     private final Handler mHandler = new Handler() {
@@ -1276,6 +1338,9 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     if (Constants.D) Log.i("PHOTOSYNC", "MESSAGE_STATE_CHANGE: " + msg.arg1);
                     switch (msg.arg1) {
                         case BluetoothService.STATE_CONNECTED:
+                            if (txtOutput != null) {
+                                txtOutput.setText("");
+                            }
                             if (msg.arg2 == 0) {//Sending cancel request to the device
                                 sendData("-1+-1+");
                                 mtvStatusMessage.setText("Cancelling measurement, please wait");
@@ -1423,6 +1488,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                         // Do not process the message if contain pwr_off from device
                         if (!measurement.toString().contains("pwr_off")) {
 
+                            if (txtOutput != null) {
+                                txtOutput.setText(measurement.toString());
+                            }
+
                             // construct a string from the valid bytes in the buffer
                             // String readMessage = new String(readBuf, 0, msg.arg1);
                             mtvStatusMessage.setText(R.string.connected);
@@ -1438,7 +1507,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                 }
                             }
                             options.append(" ],");
-                            long time = System.currentTimeMillis();
+                            final long time = System.currentTimeMillis();
                             if (options.equals("")) {
                                 dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceAll("\\{", "{\"time\":\"" + time + "\",") + "\n];";
                                 System.out.println("All Options" + dataString);
@@ -1456,12 +1525,27 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                             System.out.println("###### writing data.js :" + dataString);
                             CommonUtils.writeStringToFile(ProjectMeasurmentActivity.this, "data.js", dataString);
 
-                            Intent intent = new Intent(ProjectMeasurmentActivity.this, DisplayResultsActivity.class);
-                            intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
-                            intent.putExtra(Constants.APP_MODE, Constants.APP_MODE_PROJECT_MEASURE);
-                            String reading = measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options).replaceAll("\\{", "{\"time\":\"" + time + "\",");
-                            intent.putExtra(DatabaseHelper.C_READING, reading);
-                            startActivity(intent);
+                            final String reading = measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options).replaceAll("\\{", "{\"time\":\"" + time + "\",");
+
+                            new CountDownTimer(2000, 1000){
+
+                                @Override
+                                public void onTick(long l) {
+
+                                }
+
+                                @Override
+                                public void onFinish() {
+
+                                    Intent intent = new Intent(ProjectMeasurmentActivity.this, DisplayResultsActivity.class);
+                                    intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
+                                    intent.putExtra(Constants.APP_MODE, Constants.APP_MODE_PROJECT_MEASURE);
+                                    intent.putExtra(DatabaseHelper.C_READING, reading);
+                                    startActivity(intent);
+                                }
+                            }.start();
+
+
                         }
                     } else {
                         StringBuffer measurement = (StringBuffer) msg.obj;
@@ -1500,6 +1584,15 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     }
                     break;
                 case Constants.MESSAGE_FIRST_RESP:
+
+                    if (txtOutput != null) {
+                        StringBuffer measurement = (StringBuffer) msg.obj;
+                        // Do not process the message if contain pwr_off from device
+
+                        //String prevOutput = txtOutput.getText().toString();
+                        txtOutput.setText(measurement.toString());
+                    }
+
                     timer.cancel();
                     break;
                 case Constants.MESSAGE_STOP:

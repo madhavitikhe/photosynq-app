@@ -60,6 +60,19 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
 
         dbHelper = DatabaseHelper.getHelper(this);
 
+        deviceAddress = CommonUtils.getDeviceAddress(this);
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (null != mBluetoothAdapter && !mBluetoothAdapter.isEnabled()) {
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+        }
+        if (null == mBluetoothService) {
+            mBluetoothService = new BluetoothService(getApplicationContext(), mHandler);
+        }
+
+        btnTakeMeasurement = (Button) findViewById(R.id.btn_take_measurement);
+        btnTakeMeasurement.setTypeface(CommonUtils.getInstance(this).getFontRobotoMedium());
+
         String protocolName = "";
         String protocolDescription = "";
         Bundle extras = getIntent().getExtras();
@@ -68,9 +81,25 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
             protocolJson = extras.getString(DatabaseHelper.C_PROTOCOL_JSON);
             protocolName = extras.getString(Protocol.NAME);
             protocolDescription = extras.getString(Protocol.DESCRIPTION);
-        }
 
-        deviceAddress = CommonUtils.getDeviceAddress(this);
+            String isCalledFromResults = extras.getString("IsCalledFromResults");
+            if (isCalledFromResults != null && isCalledFromResults.equals("TRUE")) {
+                if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
+                    // Get the BLuetoothDevice object
+                    if(null == deviceAddress)
+                    {
+                        Toast.makeText(QuickMeasurmentActivity.this, "Measurement device not configured, Please configure measurement device (bluetooth).", Toast.LENGTH_SHORT).show();
+                    }else {
+                        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
+                        mBluetoothService.connect(device);
+                    }
+                } else {
+                    mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, BluetoothService.STATE_CONNECTED, 1).sendToTarget();
+                }
+                btnTakeMeasurement.setText("Cancel Measure");
+                btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_red);
+            }
+        }
 
         TextView tvProtocolName = (TextView) findViewById(R.id.tv_protocol_name);
         tvProtocolName.setTypeface(CommonUtils.getInstance(this).getFontRobotoRegular());
@@ -83,17 +112,6 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
         mtvStatusMessage = (TextView) findViewById(R.id.tv_status_message);
         mtvStatusMessage.setTypeface(CommonUtils.getInstance(this).getFontRobotoRegular());
 
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (null != mBluetoothAdapter && !mBluetoothAdapter.isEnabled()) {
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-        }
-        if (null == mBluetoothService) {
-            mBluetoothService = new BluetoothService(getApplicationContext(), mHandler);
-        }
-
-        btnTakeMeasurement = (Button) findViewById(R.id.btn_take_measurement);
-        btnTakeMeasurement.setTypeface(CommonUtils.getInstance(this).getFontRobotoMedium());
         btnTakeMeasurement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -178,15 +196,18 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
                     switch (msg.arg1) {
                         case BluetoothService.STATE_CONNECTED:
                             //if(msg.arg2 == 1) { //Send measurement request
-                                mtvStatusMessage.setText(R.string.title_connected_to);
+                            mtvStatusMessage.setText(R.string.title_connected_to);
+                            if (mConnectedDeviceName != null) {
                                 mtvStatusMessage.append(mConnectedDeviceName);
+                            }
                                 if (protocolJson.length() > 0) {
                                     //change this once you get actual protocol
+                                    //change this once you get actual protocol
 
-                                    protocolJson = "[" + protocolJson + "]";
+                                    //??protocolJson = "[" + protocolJson + "]";
                                     System.out.println("sending protocol to device using quick measure : " + protocolJson + "length:" + protocolJson.length());
 
-                                    sendData(protocolJson);
+                                    sendData("[" + protocolJson + "]");
                                 }
 
                                 mtvStatusMessage.setText("Initializing measurement please wait ...");
@@ -227,6 +248,7 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
 
                         Intent intent = new Intent(getApplicationContext(), DisplayResultsActivity.class);
                         intent.putExtra(Constants.APP_MODE, Constants.APP_MODE_QUICK_MEASURE);
+                        intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocolJson);
                         startActivity(intent);
                     }
 

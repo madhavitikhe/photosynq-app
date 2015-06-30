@@ -5,12 +5,14 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -141,10 +143,6 @@ public class SelectDeviceDialog extends DialogFragment {
 //                        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment, fragment.getClass().getName()).commit();
 //                    }
 
-                    if (null != appSettings.getConnectionId()) {
-                        ((MainActivity) getActivity()).setDeviceConnected(btDevice.getName(), appSettings.getConnectionId());
-
-                    }
 
                     pairedDeviceList.setItemsCanFocus(true);
 
@@ -152,8 +150,16 @@ public class SelectDeviceDialog extends DialogFragment {
                     radiolistitem.setChecked(true);
 
                     btArrayAdapter.notifyDataSetInvalidated();
+
+                    if (null != appSettings.getConnectionId()) {
+                        ((MainActivity) getActivity()).setDeviceConnected(btDevice.getName(), appSettings.getConnectionId());
+
+                    }
+
+
                 } catch (Exception e) {
 
+                    System.out.println(e.getMessage());
                 }
             }
         });
@@ -197,8 +203,23 @@ public class SelectDeviceDialog extends DialogFragment {
 
                 System.out.println("\nBluetooth is enabled...");
 
-                // Starting the device discovery
-                bluetoothAdapter.startDiscovery();
+                new AlertDialog.Builder(getActivity())
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setMessage("Please make sure the device is turned on, and press ok to begin search")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int which) {
+
+                                        // Starting the device discovery
+                                        bluetoothAdapter.startDiscovery();
+
+                                    }
+
+                                }
+
+                        )
+                        .show();
+
             } else {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, 1);

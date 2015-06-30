@@ -171,6 +171,7 @@ public class NavigationDrawerFragment extends Fragment {
                     Intent intent = new Intent(getActivity(), DisplayCachedDataPoints.class);
                     startActivity(intent);
                 }
+                selectItem(6);
             }
         });
 
@@ -181,6 +182,8 @@ public class NavigationDrawerFragment extends Fragment {
                 MainActivity mainActivity = (MainActivity) getActivity();
                 SyncHandler syncHandler = new SyncHandler(mainActivity);
                 syncHandler.DoSync(SyncHandler.ALL_SYNC_UI_MODE);
+
+                selectItem(6);
             }
         });
 

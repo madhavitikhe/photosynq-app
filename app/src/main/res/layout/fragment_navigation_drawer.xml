@@ -65,31 +65,61 @@
 
                 <TableRow
                     android:id="@+id/sync_with_server_btn_menu_bar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="fill_parent"
+                    android:layout_height="35dp"
                     android:background="@drawable/btn_layout_orange">
 
-                    <TextView
-                        android:id="@+id/syncWithServerMenu"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="30dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="10dp"
-                        android:text="Sync with server"
-                        android:textColor="@color/white"
-                        android:textSize="18sp" />
+                    <RelativeLayout
+                        android:layout_height="fill_parent"
+                        android:layout_width="fill_parent">
 
-                    <Button
-                        android:id="@+id/totalCachedDataPointsBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginLeft="5dp"
-                        android:textSize="20sp"
-                        android:textColor="@color/black"
-                        android:background="@drawable/btn_layout_white"
-                        android:text="0" />
+                        <TextView
+                            android:id="@+id/syncWithServerMenu"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="5dp"
+                            android:text="Sync with server"
+                            android:textColor="@color/white"
+                            android:textSize="18sp" />
+
+                        <Button
+                            android:id="@+id/totalCachedDataPointsBtn"
+                            android:layout_toRightOf="@id/syncWithServerMenu"
+                            android:layout_toEndOf="@id/syncWithServerMenu"
+                            android:layout_width="50dp"
+                            android:layout_height="30dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginStart="40dp"
+                            android:layout_marginLeft="40dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
+                            android:textSize="16sp"
+                            android:textColor="@color/black"
+                            android:background="@drawable/btn_layout_white"
+                            android:text="0" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/totalCachedDataPointsBtn"
+                            android:layout_marginTop="0dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:text="Cached"
+                            android:textColor="@color/white"
+                            android:textSize="12sp" />
+
+
+
+                    </RelativeLayout>
 
                 </TableRow>
             </TableLayout>
