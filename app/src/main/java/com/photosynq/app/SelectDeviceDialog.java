@@ -49,6 +49,7 @@ import java.util.Set;
  */
 public class SelectDeviceDialog extends DialogFragment {
 
+    SelectDeviceDialogDelegate mSelectDeviceDialogDelegate;
     BluetoothAdapter bluetoothAdapter;
     ListView pairedDeviceList;
     View bluetoothStatus;
@@ -94,6 +95,12 @@ public class SelectDeviceDialog extends DialogFragment {
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                String deviceAddress = CommonUtils.getDeviceAddress(getActivity());
+                if (mSelectDeviceDialogDelegate != null){
+                    mSelectDeviceDialogDelegate.onDeviceSelected( deviceAddress);
+                }
+
                 dismiss();
             }
         });
@@ -132,6 +139,7 @@ public class SelectDeviceDialog extends DialogFragment {
                     String bluetoothID = btDevice.getAddress();
                     appSettings.setConnectionId(bluetoothID);
                     databaseHelper.updateSettings(appSettings);
+
 //                    String first_run = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE, "YES");
 //                    if( first_run.equals("YES")) {
 //                        Bundle bundle = new Bundle();
@@ -176,6 +184,13 @@ public class SelectDeviceDialog extends DialogFragment {
         getDialog().getWindow().setLayout(width, height);
 
         return rootView;
+    }
+
+    public void show(android.support.v4.app.FragmentManager manager, String tag, SelectDeviceDialogDelegate selectDeviceDialogDelegate) {
+        super.show(manager, tag);
+
+        mSelectDeviceDialogDelegate = selectDeviceDialogDelegate;
+
     }
 
     public boolean createBond(BluetoothDevice btDevice)

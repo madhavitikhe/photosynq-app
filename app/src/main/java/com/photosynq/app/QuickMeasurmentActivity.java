@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
+import com.photosynq.app.model.BluetoothMessage;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.BluetoothService;
@@ -67,7 +68,12 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         }
 
-        final BluetoothService mBluetoothService = BluetoothService.getInstance(getApplicationContext(), mHandler);
+        View reviewPage = findViewById(R.id.ll_btn);
+
+        BluetoothMessage bluetoothMessage = new BluetoothMessage();
+        bluetoothMessage.view = reviewPage;
+
+        final BluetoothService mBluetoothService = BluetoothService.getInstance(bluetoothMessage, mHandler);
 
         btnTakeMeasurement = (Button) findViewById(R.id.btn_take_measurement);
         btnTakeMeasurement.setTypeface(CommonUtils.getInstance(this).getFontRobotoMedium());
@@ -165,7 +171,12 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
 
     private void sendData(String data) {
         // Check that we're actually connected before trying anything
-        BluetoothService mBluetoothService = BluetoothService.getInstance(this, mHandler);
+
+        View reviewPage = findViewById(R.id.ll_btn);
+        BluetoothMessage bluetoothMessage = new BluetoothMessage();
+        bluetoothMessage.view = reviewPage;
+
+        BluetoothService mBluetoothService = BluetoothService.getInstance(bluetoothMessage, mHandler);
         if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
             Toast.makeText(getApplicationContext(),"Not Connected", Toast.LENGTH_SHORT).show();
             return;

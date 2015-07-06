@@ -63,8 +63,8 @@ public class QuestionViewFlipper extends ViewFlipper {
     @Override
     public void showNext() {
         super.showNext();
-        projectMeasurmentActivity.initReviewPage();
-        projectMeasurmentActivity.userDefinedOptions();
+        //??projectMeasurmentActivity.initReviewPage();
+        //??projectMeasurmentActivity.userDefinedOptions();
 
     }
 }
