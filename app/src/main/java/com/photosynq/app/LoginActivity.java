@@ -132,7 +132,8 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
         createNewAccount.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uriUrl = Uri.parse("http://staging.photosynq.venturit.net/users/sign_up");
+
+                Uri uriUrl = Uri.parse(Constants.SERVER_URL + "users/sign_up");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uriUrl);
                 startActivity(intent);
             }

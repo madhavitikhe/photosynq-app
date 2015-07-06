@@ -201,6 +201,9 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+
+            BluetoothMessage bluetoothMessage = (BluetoothMessage) msg.obj;
+
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     if(Constants.D) Log.i("PHOTOSYNC", "MESSAGE_STATE_CHANGE: " + msg.arg1);
@@ -237,9 +240,9 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
                 case Constants.MESSAGE_WRITE:
                     break;
                 case Constants.MESSAGE_READ:
-                    StringBuffer measurement = (StringBuffer)msg.obj;
+                    String measurement = bluetoothMessage.message;
                     // Do not process the message if contain pwr_off from device
-                    if (!measurement.toString().contains("pwr_off")) {
+                    if (!measurement.contains("pwr_off")) {
                         // construct a string from the valid bytes in the buffer
                         // String readMessage = new String(readBuf, 0, msg.arg1);
                         mtvStatusMessage.setText(R.string.start_measurement);
@@ -249,9 +252,9 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
                         String currentLocation = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, "NONE");
                         if (!currentLocation.equals("NONE")) {
                             options.append("\"location\":[" + currentLocation + "],");
-                            dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options) + "\n];";
+                            dataString = "var data = [\n" + measurement.replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options) + "\n];";
                         } else {
-                            dataString = "var data = [\n" + measurement.toString().replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options) + "\n];";
+                            dataString = "var data = [\n" + measurement.replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options) + "\n];";
                         }
 
                         System.out.println("###### writing data.js :" + dataString);
