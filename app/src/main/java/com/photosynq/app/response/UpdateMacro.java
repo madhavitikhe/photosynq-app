@@ -109,26 +109,27 @@ public class UpdateMacro implements PhotosynqResponse {
             }
         }
 
-        // Writing macros.js file with all macro functions
-        StringBuffer dataString = new StringBuffer();
-        List<Macro> macros = db.getAllMacros();
-        for (Macro macro : macros) {
-            dataString.append("function macro_" + macro.getId() + "(json){");
-            dataString.append(System.getProperty("line.separator"));
-            dataString.append(macro.getJavascriptCode().replaceAll("\\r\\n", System.getProperty("line.separator"))); //replacing ctrl+m characters
-            dataString.append(System.getProperty("line.separator") + " }");
-            dataString.append(System.getProperty("line.separator"));
-            dataString.append(System.getProperty("line.separator"));
-        }
-        System.out.println("###### writing macros :......");
-
-        if (null == navigationDrawer){
-
-            CommonUtils.writeStringToFile(context, "macros.js", dataString.toString());
-        }else{
-
-            CommonUtils.writeStringToFile(navigationDrawer, "macros.js", dataString.toString());
-        }
+        //??
+//        // Writing macros.js file with all macro functions
+//        StringBuffer dataString = new StringBuffer();
+//        List<Macro> macros = db.getAllMacros();
+//        for (Macro macro : macros) {
+//            dataString.append("function macro_" + macro.getId() + "(json){");
+//            dataString.append(System.getProperty("line.separator"));
+//            dataString.append(macro.getJavascriptCode().replaceAll("\\r\\n", System.getProperty("line.separator"))); //replacing ctrl+m characters
+//            dataString.append(System.getProperty("line.separator") + " }");
+//            dataString.append(System.getProperty("line.separator"));
+//            dataString.append(System.getProperty("line.separator"));
+//        }
+//        System.out.println("###### writing macros :......");
+//
+//        if (null == navigationDrawer){
+//
+//            CommonUtils.writeStringToFile(context, "macros.js", dataString.toString());
+//        }else{
+//
+//            CommonUtils.writeStringToFile(navigationDrawer, "macros.js", dataString.toString());
+//        }
 //        db.closeWriteDatabase();
 //        db.closeReadDatabase();
         Date date1 = new Date();

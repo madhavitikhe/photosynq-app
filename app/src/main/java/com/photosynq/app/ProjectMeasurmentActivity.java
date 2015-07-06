@@ -56,6 +56,7 @@ import com.google.zxing.client.android.CaptureActivity;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.BluetoothMessage;
 import com.photosynq.app.model.Data;
+import com.photosynq.app.model.Macro;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.RememberAnswers;
@@ -1280,6 +1281,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                 finish();
                 //??sendData("1027"); // Restart teensy device
             }else {
+                reviewFlag = true;
                 viewFlipper.showPrevious();
             }
             return true;
@@ -1445,6 +1447,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                         if (projectProtocols.length >= 1) {
                                             int protocol_total = 0;
                                             int protocol_measurements = 1;
+                                            StringBuffer dataStringMacro = new StringBuffer();
+
                                             for (String protocolId : projectProtocols) {
                                                 if (protocolId.equals(""))
                                                     continue;
@@ -1466,7 +1470,36 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                                 } else {
                                                     protocol_total += 1;
                                                 }
+
+                                                // Writing macros.js file with all macro functions
+                                                List<Macro> macros = dbHelper.getAllMacros();
+                                                for (Macro macro : macros) {
+                                                    if (macro.getId().equals( protocol.getMacroId())) {
+                                                        dataStringMacro.append("function macro_" + macro.getId() + "(json){");
+                                                        dataStringMacro.append(System.getProperty("line.separator"));
+                                                        dataStringMacro.append("try{");
+                                                        dataStringMacro.append(System.getProperty("line.separator"));
+//                                                        String evalStr = macro.getJavascriptCode().replaceAll("\\r\\n", " ");
+//                                                        evalStr = evalStr.replaceAll("\"", "\\\\\"");
+//                                                        dataStringMacro.append("eval(\"" + evalStr + "\");");
+//                                                        dataStringMacro.append(System.getProperty("line.separator"));
+                                                        dataStringMacro.append(macro.getJavascriptCode().replaceAll("\\r\\n", System.getProperty("line.separator"))); //replacing ctrl+m characters
+                                                        dataStringMacro.append(System.getProperty("line.separator"));
+                                                        dataStringMacro.append("}"); //try closing
+                                                        dataStringMacro.append(System.getProperty("line.separator"));
+                                                        dataStringMacro.append("catch(err) {}");
+                                                        dataStringMacro.append(System.getProperty("line.separator") + " }");
+                                                        dataStringMacro.append(System.getProperty("line.separator"));
+                                                        dataStringMacro.append(System.getProperty("line.separator"));
+
+                                                        break;
+                                                    }
+                                                }
+                                                System.out.println("###### writing macros :......");
+
                                             }
+
+                                            CommonUtils.writeStringToFile(ProjectMeasurmentActivity.this, "macros.js", dataStringMacro.toString());
 
                                             protocol_total *= protocol_measurements;
 
@@ -1693,7 +1726,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
                             }
                         } else {
-                            StringBuffer measurement = (StringBuffer) msg.obj;
+                            String measurement = bluetoothMessage.message;
                             //if(measurement.toString().contains("\\r\\n\\r\\n")) {
                             mIsCancelMeasureBtnClicked = false;
                             if (btnTakeMeasurement != null) {

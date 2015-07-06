@@ -1544,4 +1544,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		//closeWriteDatabase();
     }
 
+	public void deleteOptions(String project_id) {
+
+		SQLiteDatabase db = getHelper(context).getWritableDatabase();
+		db.delete(TABLE_OPTION, C_PROJECT_ID + " = ?",
+				new String[]{null != project_id ? project_id : ""});
+
+	}
+
+	public void deleteQuestions(String project_id) {
+
+		SQLiteDatabase db = getHelper(context).getWritableDatabase();
+		db.delete(TABLE_QUESTION, C_PROJECT_ID + " = ?",
+				new String[] { project_id});
+
+	}
 }

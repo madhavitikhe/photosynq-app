@@ -175,6 +175,11 @@ public class UpdateProject implements PhotosynqResponse {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+
+                        db.deleteOptions(rp.id);
+
+                        db.deleteQuestions(rp.id);
+
                         JSONArray customFields = jsonProject.getJSONArray("filters");
                         for (int j = 0; j < customFields.length(); j++) {
                             JSONObject jsonQuestion = customFields.getJSONObject(j);

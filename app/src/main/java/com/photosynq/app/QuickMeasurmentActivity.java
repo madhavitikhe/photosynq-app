@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.BluetoothMessage;
+import com.photosynq.app.model.Macro;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.BluetoothService;
@@ -29,6 +30,8 @@ import com.photosynq.app.utils.PrefUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 
 public class QuickMeasurmentActivity extends ActionBarActivity {
@@ -222,7 +225,40 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
                                     System.out.println("sending protocol to device using quick measure : " + protocolJson + "length:" + protocolJson.length());
 
                                     sendData("[" + protocolJson + "]");
+
+                                    Protocol protocol = dbHelper.getProtocol(protocolId);
+                                    if (null != protocol) {
+
+                                        StringBuffer dataStringMacro = new StringBuffer();
+
+                                        // Writing macros.js file with all macro functions
+                                        List<Macro> macros = dbHelper.getAllMacros();
+                                        for (Macro macro : macros) {
+                                            if (macro.getId().equals(protocol.getMacroId())) {
+                                                dataStringMacro.append("function macro_" + macro.getId() + "(json){");
+                                                dataStringMacro.append(System.getProperty("line.separator"));
+                                                dataStringMacro.append("try{");
+                                                dataStringMacro.append(System.getProperty("line.separator"));
+//                                                        String evalStr = macro.getJavascriptCode().replaceAll("\\r\\n", " ");
+//                                                        evalStr = evalStr.replaceAll("\"", "\\\\\"");
+//                                                        dataStringMacro.append("eval(\"" + evalStr + "\");");
+//                                                        dataStringMacro.append(System.getProperty("line.separator"));
+                                                dataStringMacro.append(macro.getJavascriptCode().replaceAll("\\r\\n", System.getProperty("line.separator"))); //replacing ctrl+m characters
+                                                dataStringMacro.append(System.getProperty("line.separator"));
+                                                dataStringMacro.append("}"); //try closing
+                                                dataStringMacro.append(System.getProperty("line.separator"));
+                                                dataStringMacro.append("catch(err) {}");
+                                                dataStringMacro.append(System.getProperty("line.separator") + " }");
+                                                dataStringMacro.append(System.getProperty("line.separator"));
+                                                dataStringMacro.append(System.getProperty("line.separator"));
+
+                                                break;
+                                            }
+                                        }
+                                        CommonUtils.writeStringToFile(getApplicationContext(), "macros.js", dataStringMacro.toString());
+                                    }
                                 }
+
 
                                 mtvStatusMessage.setText("Initializing measurement please wait ...");
 
