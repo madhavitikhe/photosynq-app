@@ -40,6 +40,8 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
     private String mConnectedDeviceName;
     private String protocolId;
     private String protocolJson;
+    private String mProtocolName = "";
+    private String mProtocolDescription = "";
 
     private TextView mtvStatusMessage;
 
@@ -81,16 +83,15 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
         btnTakeMeasurement = (Button) findViewById(R.id.btn_take_measurement);
         btnTakeMeasurement.setTypeface(CommonUtils.getInstance(this).getFontRobotoMedium());
 
-        String protocolName = "";
-        String protocolDescription = "";
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             protocolId = extras.getString(Protocol.ID);
             protocolJson = extras.getString(DatabaseHelper.C_PROTOCOL_JSON);
-            protocolName = extras.getString(Protocol.NAME);
-            protocolDescription = extras.getString(Protocol.DESCRIPTION);
+            mConnectedDeviceName = extras.getString(Constants.DEVICE_NAME);
+            mProtocolName = extras.getString(Protocol.NAME);
+            mProtocolDescription = extras.getString(Protocol.DESCRIPTION);
 
-            String isCalledFromResults = extras.getString("IsCalledFromResults");
+            String isCalledFromResults = extras.getString(Constants.START_MEASURE);
             if (isCalledFromResults != null && isCalledFromResults.equals("TRUE")) {
                 if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
                     // Get the BLuetoothDevice object
@@ -106,16 +107,17 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
                 }
                 btnTakeMeasurement.setText("Cancel Measure");
                 btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_red);
+
             }
         }
 
         TextView tvProtocolName = (TextView) findViewById(R.id.tv_protocol_name);
         tvProtocolName.setTypeface(CommonUtils.getInstance(this).getFontRobotoRegular());
-        tvProtocolName.setText(protocolName);
+        tvProtocolName.setText(mProtocolName);
 
         TextView tvProtocolDesc = (TextView) findViewById(R.id.tv_protocol_desc);
         tvProtocolDesc.setTypeface(CommonUtils.getInstance(this).getFontRobotoRegular());
-        tvProtocolDesc.setText(protocolDescription);
+        tvProtocolDesc.setText(mProtocolDescription);
 
         mtvStatusMessage = (TextView) findViewById(R.id.tv_status_message);
         mtvStatusMessage.setTypeface(CommonUtils.getInstance(this).getFontRobotoRegular());
@@ -147,6 +149,8 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
                 }
             }
         });
+
+
     }
 
     @Override
@@ -298,8 +302,14 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
 
                         Intent intent = new Intent(getApplicationContext(), DisplayResultsActivity.class);
                         intent.putExtra(Constants.APP_MODE, Constants.APP_MODE_QUICK_MEASURE);
+                        intent.putExtra(Protocol.ID, protocolId);
                         intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocolJson);
+                        intent.putExtra(Constants.DEVICE_NAME, mConnectedDeviceName);
+                        intent.putExtra(Protocol.NAME, mProtocolName);
+                        intent.putExtra(Protocol.DESCRIPTION, mProtocolDescription);
                         startActivity(intent);
+
+                        finish();
                     }
 
                     if(btnTakeMeasurement != null) {

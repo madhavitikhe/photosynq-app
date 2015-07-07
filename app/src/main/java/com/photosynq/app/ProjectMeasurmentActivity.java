@@ -1089,8 +1089,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                         btnTakeMeasurement.setEnabled(false);
                         btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_gray_light);
 
-                        PrefUtils.saveToPrefs(ProjectMeasurmentActivity.this, "isGetResponse", "false");
-
                         //??
 //                    if (null != timer)
 //                        timer.cancel(); // Cancel count down timer.
@@ -1382,6 +1380,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                 mBluetoothService.write(send);
             }
         }
+
     }
 
     @Override
@@ -1424,6 +1423,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
                                 if (msg.arg2 == 0) {//Sending cancel request to the device
                                     sendData("-1+-1+");
+                                    //setDeviceTimeOut();
                                     mtvStatusMessage.setText("Cancelling measurement, please wait");
                                 } else if (msg.arg2 == 1) { //Send measurement request
                                     mtvStatusMessage.setText(R.string.title_connected_to);
@@ -1520,54 +1520,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
                                                 System.out.println("$$$$$$$$$$$$$$ protocol json sending to device :" + protocolJson + "length:" + protocolJson.length());
 
-                                                PrefUtils.saveToPrefs(ProjectMeasurmentActivity.this, "isGetResponse", "false");
                                                 sendData(protocolJson);
-
-                                                //??timer = new CountDownTimer(5000, 1000) {
-                                                new CountDownTimer(5000, 1000) {
-
-                                                    public void onTick(long millisUntilFinished) {
-                                                        System.out.print("@@@@@@@@@@@@@@ test tick on send protocol");
-                                                    }
-
-                                                    public void onFinish() {
-
-                                                        String isGetResponse = PrefUtils.getFromPrefs(ProjectMeasurmentActivity.this, "isGetResponse", "false");
-                                                        if (isGetResponse.equals("false")) {
-                                                            sendData("-1+-1+");
-
-//                                                    Toast.makeText(getApplicationContext(), "Timer finished - ", Toast.LENGTH_SHORT).show();
-                                                            Log.d("DeviceTimeout", "Device - timeout");
-
-                                                            runOnUiThread(new Runnable() {
-                                                                @Override
-                                                                public void run() {
-                                                                    if (!isFinishing()) {
-
-                                                                        new AlertDialog.Builder(ProjectMeasurmentActivity.this)
-                                                                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                                                                .setTitle("Device - timeout")
-                                                                                .setMessage("Please try again.  Restart device if problem persists")
-                                                                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                                                                            @Override
-                                                                                            public void onClick(DialogInterface dialogInterface, int which) {
-                                                                                                sendData("-1+-1+"); // Send cancel request
-                                                                                                finish();
-                                                                                                //??sendData("1027"); // Restart teensy device
-                                                                                            }
-
-                                                                                        }
-
-                                                                                )
-                                                                                .show();
-                                                                    }
-                                                                }
-                                                            });
-                                                        }
-
-                                                    }
-                                                }.start();
-
+                                                setDeviceTimeOut();
 
                                                 mtvStatusMessage.setText("Initializing measurement please wait ...");
 
@@ -1617,7 +1571,14 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                 break;
                             case BluetoothService.STATE_FIRST_RESP:
 
+                                PrefUtils.saveToPrefs(ProjectMeasurmentActivity.this, "isGetResponse", "true");
                                 final String measurement = bluetoothMessage.message;
+
+                                if (mIsCancelMeasureBtnClicked == true) {
+
+                                    mProgressBar.setProgress(0);
+                                    break;
+                                }
 
                                 if (measurement != null) {
                                     TextView txtOutput = (TextView) findViewById(R.id.tvOutput);
@@ -1651,7 +1612,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                     }
                                 }
 
-                                PrefUtils.saveToPrefs(ProjectMeasurmentActivity.this, "isGetResponse", "true");
                                 break;
                         }
                         break;
@@ -1705,7 +1665,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
                                 final String reading = measurement.replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options).replaceAll("\\{", "{\"time\":\"" + time + "\",");
 
-                                new CountDownTimer(2000, 1000) {
+                                new CountDownTimer(1000, 1000) {
 
                                     @Override
                                     public void onTick(long l) {
@@ -1795,6 +1755,54 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
          */
         mLocationClient.connect();
 
+    }
+
+    void setDeviceTimeOut(){
+
+        PrefUtils.saveToPrefs(ProjectMeasurmentActivity.this, "isGetResponse", "false");
+        new CountDownTimer(5000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                System.out.print("@@@@@@@@@@@@@@ test tick on send protocol");
+            }
+
+            public void onFinish() {
+
+                String isGetResponse = PrefUtils.getFromPrefs(ProjectMeasurmentActivity.this, "isGetResponse", "false");
+                if (isGetResponse.equals("false")) {
+                    sendData("-1+-1+");
+
+//                                                    Toast.makeText(getApplicationContext(), "Timer finished - ", Toast.LENGTH_SHORT).show();
+                    Log.d("DeviceTimeout", "Device - timeout");
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!isFinishing()) {
+
+                                new AlertDialog.Builder(ProjectMeasurmentActivity.this)
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .setTitle("Device - timeout")
+                                        .setMessage("Please try again.  Restart device if problem persists")
+                                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int which) {
+                                                        sendData("-1+-1+"); // Send cancel request
+                                                        finish();
+                                                        //??sendData("1027"); // Restart teensy device
+                                                    }
+
+                                                }
+
+                                        )
+                                        .show();
+                            }
+                        }
+                    });
+                }
+
+            }
+        }.start();
     }
 
     /**

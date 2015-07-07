@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
 import android.os.CountDownTimer;
@@ -29,6 +30,8 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.ProjectResult;
+import com.photosynq.app.model.Protocol;
+import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.LocationUtils;
 import com.photosynq.app.utils.PrefUtils;
@@ -48,8 +51,12 @@ public class DisplayResultsActivity extends ActionBarActivity implements
         GoogleApiClient.OnConnectionFailedListener {
 
     String projectId;
+    String protocolId;
     String reading;
     String protocolJson;
+    String mConnectedDeviceName;
+    String mProtocolName = "";
+    String mProtocolDescription = "";
     String appMode;
     private ProgressBar progressBar;
 
@@ -83,8 +90,12 @@ public class DisplayResultsActivity extends ActionBarActivity implements
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             projectId = extras.getString(DatabaseHelper.C_PROJECT_ID);
+            protocolId = extras.getString(Protocol.ID);
+            mConnectedDeviceName = extras.getString(Constants.DEVICE_NAME);
             reading = extras.getString(DatabaseHelper.C_READING);
             protocolJson = extras.getString(DatabaseHelper.C_PROTOCOL_JSON);
+            mProtocolName = extras.getString(Protocol.NAME);
+            mProtocolDescription = extras.getString(Protocol.DESCRIPTION);
             appMode = extras.getString(Constants.APP_MODE);
             System.out.println(this.getClass().getName()+"############app mode="+appMode);
         }
@@ -94,8 +105,11 @@ public class DisplayResultsActivity extends ActionBarActivity implements
         if(appMode.equals(Constants.APP_MODE_QUICK_MEASURE))
         {
             keep.setText("Return");
+            keep.setBackgroundResource(R.drawable.btn_layout_gray_light);
             keep.setVisibility(View.VISIBLE);
-            discard.setVisibility(View.INVISIBLE);
+            discard.setText("Measure");
+            discard.setBackgroundResource(R.drawable.btn_layout_orange);
+            discard.setVisibility(View.VISIBLE);
         }
         reloadWebview();
 
@@ -228,11 +242,26 @@ public class DisplayResultsActivity extends ActionBarActivity implements
     }
 
     public void discard_click(View view) {
-        keepClickFlag = false;
-        Toast.makeText(this, R.string.result_discarded, Toast.LENGTH_LONG).show();
-        view.setVisibility(View.INVISIBLE);
-        keep.setVisibility(View.INVISIBLE);
-        finish();
+
+        if(appMode.equals(Constants.APP_MODE_QUICK_MEASURE)){
+
+            Intent intent = new Intent(getApplicationContext(), QuickMeasurmentActivity.class);
+            intent.putExtra(Protocol.ID, protocolId);
+            intent.putExtra(DatabaseHelper.C_PROTOCOL_JSON, protocolJson);
+            intent.putExtra(Constants.DEVICE_NAME, mConnectedDeviceName);
+            intent.putExtra(Constants.START_MEASURE, "TRUE");
+            intent.putExtra(Protocol.NAME, mProtocolName);
+            intent.putExtra(Protocol.DESCRIPTION, mProtocolDescription);
+            startActivity(intent);
+
+            finish();
+        }else {
+            keepClickFlag = false;
+            Toast.makeText(this, R.string.result_discarded, Toast.LENGTH_LONG).show();
+            view.setVisibility(View.INVISIBLE);
+            keep.setVisibility(View.INVISIBLE);
+            finish();
+        }
     }
 
     @Override

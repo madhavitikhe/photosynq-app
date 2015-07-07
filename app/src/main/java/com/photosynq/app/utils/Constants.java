@@ -45,6 +45,7 @@ public class Constants {
      * Remember the position of the selected item.
      */
     public static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
+    public static final String START_MEASURE = "start_measure";
 
     //
     public enum QuestionType {
