@@ -214,7 +214,7 @@ public class CommonUtils {
         return md5;
     }
 
-    public synchronized static void uploadResults(final Context context){
+    public synchronized static void uploadResults(final Context context, final int projectId){
 
         new AsyncTask<Object, Object, Object>() {
             @Override
@@ -225,6 +225,16 @@ public class CommonUtils {
                 for (ProjectResult projectResult : listRecords) {
 
                     String project_id = projectResult.getProjectId();
+
+                    if (projectId != -1){
+
+                        if (!project_id.equals("" + projectId)){
+
+                            continue;
+                        }
+                    }
+
+
                     String row_id = projectResult.getId();
                     String result = projectResult.getReading();
 

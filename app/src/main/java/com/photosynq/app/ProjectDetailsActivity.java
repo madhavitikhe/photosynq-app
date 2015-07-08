@@ -1,5 +1,6 @@
 package com.photosynq.app;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -185,7 +186,7 @@ public class ProjectDetailsActivity extends ActionBarActivity {
 
         Intent intent = new Intent(this, ProjectMeasurmentActivity.class);
         intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectID);
-        startActivity(intent);
+        startActivityForResult(intent, 555);
     }
 
     public void join_team_click(View view){
@@ -232,5 +233,15 @@ public class ProjectDetailsActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        if (resultCode == 555) {
+
+            finish();
+        }
     }
 }

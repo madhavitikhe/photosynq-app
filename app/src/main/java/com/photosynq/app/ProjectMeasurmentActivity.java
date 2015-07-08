@@ -57,6 +57,7 @@ import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.BluetoothMessage;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Macro;
+import com.photosynq.app.model.ProjectResult;
 import com.photosynq.app.model.Protocol;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.RememberAnswers;
@@ -67,6 +68,7 @@ import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.LocationUtils;
 import com.photosynq.app.utils.PrefUtils;
+import com.photosynq.app.utils.SyncHandler;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -1258,6 +1260,18 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
             case R.id.autoIncMenuItem:
             case R.id.barCodeOptionMenuItem:
                 return changeQuestionType(item);
+            case R.id.project_home_menu:
+                finish();
+                break;
+            case R.id.main_menu:
+                setResult(555);
+                finish();
+                break;
+            case R.id.sync_menu:
+                SyncHandler syncHandler = new SyncHandler(this, MainActivity.getProgressBar());
+                syncHandler.DoSync(projectId);
+
+                break;
             default:
         }
 
@@ -1291,19 +1305,26 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
     public boolean onPrepareOptionsMenu(Menu menu){
         //code here
-        if (9595 == viewFlipper.getCurrentView().getId()) {
+//        if (9595 == viewFlipper.getCurrentView().getId()) {
+//
+//            menu.clear();
+//            menu.add("Output");
+//            optionsMenu = menu;
+//
+//
+//        }else{
 
             menu.clear();
-            menu.add("Output");
-            optionsMenu = menu;
-
-
-        }else{
-
             getMenuInflater().inflate(R.menu.menu_project_measurment, menu);
             optionsMenu = menu;
+            MenuItem menuItem = menu.getItem(menu.size() - 1);
+
+        final List<ProjectResult> listRecords = dbHelper.getAllUnUploadedResults(projectId);
+        int totalPoints = listRecords.size();
+
+        menuItem.setTitle("Sync " + totalPoints + " Points");
             userDefinedOptions();
-        }
+        //}
 
         return true;
     }
@@ -1692,6 +1713,9 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                             if (btnTakeMeasurement != null) {
                                 if (btnTakeMeasurement.getText().equals("Cancel")) {
                                     mtvStatusMessage.setText("Measurement cancelled");
+                                    TextView txtOutput = (TextView) findViewById(R.id.tvOutput);
+                                    txtOutput.setText("");
+                                    txtOutput.invalidate();
                                     btnTakeMeasurement.setEnabled(true);
                                     btnTakeMeasurement.setText("+ Take Measurement");
                                     btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);

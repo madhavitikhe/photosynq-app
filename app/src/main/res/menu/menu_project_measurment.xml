@@ -4,7 +4,6 @@
     tools:context="com.photosynq.app.ProjectMeasurmentActivity">
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
-        android:orderInCategory="100"
         android:icon="@drawable/ic_action_settings"
         app:showAsAction="always" >
 
@@ -20,4 +19,20 @@
                 android:title="QR/Bar code scan" />
         </menu>
     </item>
+
+            <item
+                android:id="@+id/project_home_menu"
+                android:title="Project Home"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/main_menu"
+                android:title="Main Menu"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/sync_menu"
+                android:title="Sync # Points"
+                app:showAsAction="never"/>
+
+
+
 </menu>

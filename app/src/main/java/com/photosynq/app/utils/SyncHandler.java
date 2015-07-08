@@ -93,6 +93,12 @@ public class SyncHandler {
         return 0;
     }
 
+    public int DoSync(String projectId) {
+
+        new SyncTask().execute(UPLOAD_RESULTS_MODE, Integer.parseInt(projectId));
+        return 0;
+    }
+
     private class SyncTask extends AsyncTask<Integer, Object, String> {
         @Override
         protected void onPreExecute() {
@@ -207,7 +213,8 @@ public class SyncHandler {
 
                 }else {
                     // Sync as per mode
-                    syncData(syncMode, null);
+                    int projectId = SyncMode[1];
+                    syncData(syncMode, projectId);
                 }
 
                 return Constants.SUCCESS;
@@ -232,7 +239,7 @@ public class SyncHandler {
             // Upload all unuploaded results
             if(syncMode == ALL_SYNC_MODE || syncMode == UPLOAD_RESULTS_MODE) {
 
-                CommonUtils.uploadResults(context);
+                CommonUtils.uploadResults(context, -1);
 
 //                DatabaseHelper db = DatabaseHelper.getHelper(context);
 //                List<ProjectResult> listRecords = db.getAllUnUploadedResults();
@@ -273,6 +280,33 @@ public class SyncHandler {
                                 + authToken, "GET");
 
             }
+        }
+
+        private void syncData(int syncMode, int projectId) {
+
+            PrefUtils.saveToPrefs(context, PrefUtils.PREFS_CURRENT_LOCATION, null);
+            String authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+            String email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+
+            HTTPConnection mProtocolListTask = null;
+            HTTPConnection mMacroListTask = null;
+
+            // Upload all unuploaded results
+            if(syncMode == UPLOAD_RESULTS_MODE) {
+
+                CommonUtils.uploadResults(context, projectId);
+
+//                DatabaseHelper db = DatabaseHelper.getHelper(context);
+//                List<ProjectResult> listRecords = db.getAllUnUploadedResults();
+//                for (ProjectResult projectResult : listRecords) {
+//                    CommonUtils.uploadResults(context, projectResult.getProjectId(), projectResult.getId(), projectResult.getReading());
+//                }
+
+                if (syncMode == UPLOAD_RESULTS_MODE) {
+                    PrefUtils.saveToPrefs(context, PrefUtils.PREFS_IS_SYNC_IN_PROGRESS, "false");
+                }
+            }
+
         }
 
         // This is called each time you call publishProgress()
