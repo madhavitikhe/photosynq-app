@@ -12,11 +12,16 @@ import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.Data;
@@ -36,6 +41,7 @@ import java.util.Locale;
 public class ProjectDetailsActivity extends ActionBarActivity {
 
     String projectID;
+    ShowcaseView sv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +59,11 @@ public class ProjectDetailsActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("");
 
+        String isShowed = PrefUtils.getFromPrefs(this, "IsFirstProjectDetailsActivity", "FALSE");
+        if (isShowed.equals("FALSE")) {
+            CommonUtils.showShowCaseView(this, R.id.btn_take_measurement, "To collect data, choose a project, follow directions, answer questions, and take sensor measurement", "");
+            PrefUtils.saveToPrefs(this, "IsFirstProjectDetailsActivity", "TRUE");
+        }
 
         DatabaseHelper databaseHelper = DatabaseHelper.getHelper(this);
         Bundle extras = getIntent().getExtras();

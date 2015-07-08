@@ -42,7 +42,7 @@ public class QuestionViewFlipper extends ViewFlipper {
         super.setDisplayedChild(whichChild);
         projectMeasurmentActivity = ((ProjectMeasurmentActivity)((RelativeLayout)(getParent().getParent())).getContext());
         if(null != getTag() && null != getCurrentView().getTag()) {
-            projectMeasurmentActivity.initReviewPage();
+            //??projectMeasurmentActivity.initReviewPage();
             showNextIfRemembered();
         }
         projectMeasurmentActivity.userDefinedOptions();

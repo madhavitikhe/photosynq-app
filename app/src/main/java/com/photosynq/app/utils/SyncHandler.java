@@ -89,7 +89,7 @@ public class SyncHandler {
             }
         }
 
-        new SyncTask().execute(sync_mode);
+        new SyncTask().execute(sync_mode, -1);
         return 0;
     }
 
@@ -211,10 +211,14 @@ public class SyncHandler {
                         }
                     });
 
-                }else {
-                    // Sync as per mode
+                }else if (syncMode == UPLOAD_RESULTS_MODE) {
+
                     int projectId = SyncMode[1];
                     syncData(syncMode, projectId);
+                }else{
+
+                    // Sync as per mode
+                    syncData(syncMode, null);
                 }
 
                 return Constants.SUCCESS;

@@ -16,6 +16,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.model.ProjectCreator;
@@ -100,6 +102,7 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
                 startActivity(intent);
             }
         });
+
 
         return rootView;
     }

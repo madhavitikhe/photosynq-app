@@ -18,6 +18,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -46,6 +47,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -107,7 +111,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 //    private TextView mtvStatusMessage;
 //    private ProgressBar mProgressBar;
 
-    Button btnTakeMeasurement;
+    //??Button btnTakeMeasurement;
     private boolean mIsCancelMeasureBtnClicked = false;
     private boolean mIsMeasureBtnClicked = false;
     private boolean scanMode = false;
@@ -188,7 +192,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
             showDirection();
         }
-
 
     }
 
@@ -1049,7 +1052,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
             mProgressBar.setProgress(0);
 //
 
-            btnTakeMeasurement = (Button) reviewPage.findViewById(R.id.btn_take_measurement);
+            final Button btnTakeMeasurement = (Button) reviewPage.findViewById(R.id.btn_take_measurement);
             btnTakeMeasurement.setText("+ Take Measurement");
             btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
 
@@ -1271,6 +1274,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                 SyncHandler syncHandler = new SyncHandler(this, MainActivity.getProgressBar());
                 syncHandler.DoSync(projectId);
 
+                Toast.makeText(this, "Sync started!", Toast.LENGTH_LONG).show();
+
                 break;
             default:
         }
@@ -1431,6 +1436,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                 View reviewPage = bluetoothMessage.view;
                 TextView mtvStatusMessage = (TextView) reviewPage.findViewById(R.id.tv_status_message);
                 ProgressBar mProgressBar = (ProgressBar) reviewPage.findViewById(R.id.progressBar);
+                Button btnTakeMeasurement = (Button) reviewPage.findViewById(R.id.btn_take_measurement);
 
                 switch (msg.what) {
                     case Constants.MESSAGE_STATE_CHANGE:
@@ -1884,6 +1890,51 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
     public void onConnected(Bundle bundle) {
         //startLocationUpdates();
         getLocation();
+
+        String currLocation = getLocation();
+
+        new CountDownTimer(1000, 1000) {
+            public void onTick(long millisUntilFinished) {
+
+                System.out.print("@@@@@@@@@@@@@@ test tick");
+
+            }
+
+            public void onFinish() {
+                String checkLocation = PrefUtils.getFromPrefs(getApplicationContext(), PrefUtils.PREFS_CURRENT_LOCATION, "");
+                if(checkLocation.equals("")) {
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!isFinishing()) {
+
+                                new AlertDialog.Builder(ProjectMeasurmentActivity.this)
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .setMessage("Your location is temporarily not available\n\n" +
+                                                "Check if GPS is turned on.")
+                                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int which) {
+
+                                                        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+
+                                                    }
+
+                                                }
+
+                                        )
+                                        .show();
+
+                            }
+                        }
+                    });
+
+
+
+                }
+            }
+        }.start();
     }
 
     @Override

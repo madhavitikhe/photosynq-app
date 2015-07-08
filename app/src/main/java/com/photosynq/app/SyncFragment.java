@@ -115,8 +115,8 @@ public class SyncFragment extends Fragment implements PhotosynqResponse {
         }
         tvAutoSyncCachedDataPtValue = (TextView) rootView.findViewById(R.id.tv_data_points_value);
         tvAutoSyncCachedDataPtValue.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoRegular());
-        DatabaseHelper db = DatabaseHelper.getHelper(getActivity());
-        final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
+        final DatabaseHelper db = DatabaseHelper.getHelper(getActivity());
+        List<ProjectResult> listRecords = db.getAllUnUploadedResults();
         PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "" + listRecords.size());
 
         //set total of cached points.
@@ -130,6 +130,7 @@ public class SyncFragment extends Fragment implements PhotosynqResponse {
             @Override
             public void onClick(View v) {
 
+                List<ProjectResult> listRecords = db.getAllUnUploadedResults();
                 if (listRecords.size() == 0) {
                     Toast.makeText(getActivity(), "No cached data point", Toast.LENGTH_SHORT).show();
                 } else {

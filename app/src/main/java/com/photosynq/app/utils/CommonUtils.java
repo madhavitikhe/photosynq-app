@@ -15,8 +15,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.photosynq.app.MainActivity;
 import com.photosynq.app.R;
 import com.photosynq.app.SyncFragment;
@@ -389,6 +393,25 @@ public class CommonUtils {
         }
         return null;
 
+    }
+
+    public static ShowcaseView showShowCaseView(Activity activity, int viewId, String title, String message){
+
+        RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lps.addRule(RelativeLayout.CENTER_VERTICAL);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        int margin = ((Number) (activity.getResources().getDisplayMetrics().density * 12)).intValue();
+        lps.setMargins(margin, 100, margin, 100);
+
+        ViewTarget target = new ViewTarget( viewId, activity);
+        ShowcaseView sv = new ShowcaseView.Builder(activity, true)
+                .setTarget(target)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setStyle(R.style.CustomShowcaseTheme4)
+                .build();
+        sv.setButtonPosition(lps);
+        return  sv;
     }
 
     public static void setProgress(final Activity context, ProgressDialog progressDialog, int progressValue){

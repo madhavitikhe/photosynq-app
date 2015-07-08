@@ -32,6 +32,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.ProjectResult;
@@ -157,7 +160,7 @@ public class NavigationDrawerFragment extends Fragment {
         });
 
         db = DatabaseHelper.getHelper(getActivity());
-        final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
+        List<ProjectResult> listRecords = db.getAllUnUploadedResults();
         PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "" + listRecords.size());
         totalDataPointsBtn = (Button) linearLayout.findViewById(R.id.totalCachedDataPointsBtn);
         totalDataPointsBtn.setText("" + listRecords.size());
@@ -165,6 +168,7 @@ public class NavigationDrawerFragment extends Fragment {
         totalDataPointsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                List<ProjectResult> listRecords = db.getAllUnUploadedResults();
                 if(listRecords.size() == 0) {
                     Toast.makeText(getActivity(), "No cached data point", Toast.LENGTH_SHORT).show();
                 }else {
@@ -182,6 +186,8 @@ public class NavigationDrawerFragment extends Fragment {
                 MainActivity mainActivity = (MainActivity) getActivity();
                 SyncHandler syncHandler = new SyncHandler(mainActivity);
                 syncHandler.DoSync(SyncHandler.ALL_SYNC_UI_MODE);
+
+                Toast.makeText(getActivity(), "Sync started!", Toast.LENGTH_LONG).show();
 
                 selectItem(6);
             }
@@ -205,6 +211,7 @@ public class NavigationDrawerFragment extends Fragment {
                 });
         mDrawerListView.setAdapter(mNavigationAdapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+
         return linearLayout;
     }
 
@@ -270,7 +277,7 @@ public class NavigationDrawerFragment extends Fragment {
                 }
 
                 if(appSettings.getConnectionId() == null){
-                    ((MainActivity) getActivity()).setDeviceConnected("Click here to connect device", "");
+                    ((MainActivity) getActivity()).setDeviceConnected("Tap to connect device", "");
                 }
 
 
@@ -295,6 +302,44 @@ public class NavigationDrawerFragment extends Fragment {
         // per the navigation drawer design guidelines.
         if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
             mDrawerLayout.openDrawer(mFragmentContainerView);
+
+            CommonUtils.showShowCaseView(getActivity(), R.id.tvDeviceName, "Welcome to PhotosynQ!", "First, pair your measurement device")
+                    .setOnShowcaseEventListener(new OnShowcaseEventListener() {
+                        @Override
+                        public void onShowcaseViewHide(ShowcaseView showcaseView) {
+
+                        }
+
+                        @Override
+                        public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+
+                            CommonUtils.showShowCaseView(getActivity(), R.id.navigation_item_list, "Search for new projects in Discover or projects you created or joined in My Projects", "")
+                                    .setOnShowcaseEventListener(new OnShowcaseEventListener() {
+                                        @Override
+                                        public void onShowcaseViewHide(ShowcaseView showcaseView) {
+
+                                        }
+
+                                        @Override
+                                        public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+
+                                            CommonUtils.showShowCaseView(getActivity(), R.id.tvDeviceName, "If collecting data offline, sync saved data + update projects once you have internet access", "");
+                                        }
+
+                                        @Override
+                                        public void onShowcaseViewShow(ShowcaseView showcaseView) {
+
+                                        }
+                                    });
+
+                        }
+
+                        @Override
+                        public void onShowcaseViewShow(ShowcaseView showcaseView) {
+
+                        }
+                    });
+
         }
 
         // Defer code dependent on restoration of previous instance state.
@@ -406,6 +451,11 @@ public class NavigationDrawerFragment extends Fragment {
     public void setDeviceConnected(String deviceName, String deviceAddress) {
         tvDeviceName.setText(deviceName);
         tvDeviceAddress.setText(deviceAddress);
+
+        if (deviceName.equals("Tap to connect device")) {
+            CommonUtils.showShowCaseView(getActivity(), R.id.tvDeviceName, "First, pair your measurement device", "");
+        }
+
     }
 
     /**

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
 import android.os.CountDownTimer;
+import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -135,6 +136,20 @@ public class DisplayResultsActivity extends ActionBarActivity implements
         dialog = new ProgressDialog(this);
         dialog.setMessage("Acquiring GPS location");
         dialog.setCancelable(false);
+        dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                saveResult();
+            }
+        });
+
+        String isShowed = PrefUtils.getFromPrefs(this, "IsFirstDisplayResultsActivity", "FALSE");
+        if (isShowed.equals("FALSE")) {
+            CommonUtils.showShowCaseView(this, R.id.linearLayout1, "Submit data to the project, or discard", "");
+            PrefUtils.saveToPrefs(this, "IsFirstDisplayResultsActivity", "TRUE");
+        }
 
     }
 
@@ -155,6 +170,22 @@ public class DisplayResultsActivity extends ActionBarActivity implements
         isResultSaved = false;
         keepClickFlag = false;
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        stopLocationUpdates();
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mLocationClient.isConnected()) {
+            startLocationUpdates();
+        }
     }
 
     private void  reloadWebview()
@@ -207,6 +238,7 @@ public class DisplayResultsActivity extends ActionBarActivity implements
                                                             @Override
                                                             public void onClick(DialogInterface dialogInterface, int which) {
 
+                                                                startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                                                                 dialog.show();
                                                             }
 
@@ -375,7 +407,6 @@ public class DisplayResultsActivity extends ActionBarActivity implements
             dialog.dismiss();
             Toast.makeText(DisplayResultsActivity.this, "GPS acquisition complete!", Toast.LENGTH_SHORT).show();
         }
-      //  stopLocationUpdates();
 
         if(null != reading && !reading.isEmpty() && keepClickFlag) {
             saveResult();
@@ -395,7 +426,9 @@ public class DisplayResultsActivity extends ActionBarActivity implements
             if (!reading.contains("location")) {
 
                 String currentLocation = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_CURRENT_LOCATION, "");
-                reading = reading.replaceFirst("\\{", "{\"location\":[" + currentLocation + "],");
+                if(!currentLocation.equals("")) {
+                    reading = reading.replaceFirst("\\{", "{\"location\":[" + currentLocation + "],");
+                }
             } else {
                 String currentLocation = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_CURRENT_LOCATION, "");
                 String locationStr = "\"location\":[";

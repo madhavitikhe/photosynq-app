@@ -130,7 +130,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:text="Device not connected"
+                android:text="Tap to connect device"
                 android:textColor="@color/textPrimaryLight" />
 
             <TextView
