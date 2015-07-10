@@ -2,6 +2,7 @@ package com.photosynq.app;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.ViewFlipper;
 
@@ -18,6 +19,8 @@ public class QuestionViewFlipper extends ViewFlipper {
     private DatabaseHelper dbHelper = DatabaseHelper.getHelper(getContext());
     private ProjectMeasurmentActivity projectMeasurmentActivity;
     final String userId = PrefUtils.getFromPrefs(getContext(), PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+
+    private int nav_direction = 1;
 
     public QuestionViewFlipper(Context context) {
         super(context);
@@ -43,7 +46,11 @@ public class QuestionViewFlipper extends ViewFlipper {
         projectMeasurmentActivity = ((ProjectMeasurmentActivity)((RelativeLayout)(getParent().getParent())).getContext());
         if(null != getTag() && null != getCurrentView().getTag()) {
             //??projectMeasurmentActivity.initReviewPage();
-            showNextIfRemembered();
+            if (nav_direction == 0){
+                showPrevIfRemembered();
+            }else {
+                showNextIfRemembered();
+            }
         }
         projectMeasurmentActivity.userDefinedOptions();
     }
@@ -51,6 +58,7 @@ public class QuestionViewFlipper extends ViewFlipper {
     private void showNextIfRemembered()
     {
 
+        nav_direction = 1;
         RememberAnswers rememberedAnswers = dbHelper.getRememberAnswers(userId, getTag().toString(), getCurrentView().getTag().toString());
         if(rememberedAnswers.getIs_remember() != null && rememberedAnswers.getIs_remember().equals(Constants.IS_REMEMBER))
         {
@@ -60,9 +68,43 @@ public class QuestionViewFlipper extends ViewFlipper {
         }
     }
 
-    @Override
-    public void showNext() {
-        super.showNext();
+    private void showPrevIfRemembered()
+    {
+
+        nav_direction = 0;
+        if (getDisplayedChild() == getChildCount() - 1){
+            showPrevious();
+        }
+
+            RememberAnswers rememberedAnswers = dbHelper.getRememberAnswers(userId, getTag().toString(), getCurrentView().getTag().toString());
+            if (rememberedAnswers.getIs_remember() != null && rememberedAnswers.getIs_remember().equals(Constants.IS_REMEMBER)) {
+                if (getDisplayedChild() == 0) {
+                    projectMeasurmentActivity.finish();
+                }else {
+
+                    showPrevious();
+                }
+            }
+
+
+    }
+
+    public void showNextView() {
+
+        nav_direction = 1;
+
+        showNext();
+        //??projectMeasurmentActivity.initReviewPage();
+        //??projectMeasurmentActivity.userDefinedOptions();
+
+    }
+
+
+    public void showPreviousView() {
+
+        nav_direction = 0;
+
+        showPrevious();
         //??projectMeasurmentActivity.initReviewPage();
         //??projectMeasurmentActivity.userDefinedOptions();
 

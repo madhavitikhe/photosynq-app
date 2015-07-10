@@ -342,7 +342,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                         rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                     }
                                     dbHelper.updateRememberAnswers(rememberAnswers);
-                                    viewFlipper.showNext();
+                                    viewFlipper.showNextView();
                                     if (displayedChild == childCount - 2) {
                                         viewFlipper.stopFlipping();
                                         initReviewPage();
@@ -462,7 +462,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                         reviewFlag = false;
                                     } else {
                                         autoIncQueCount = autoIncQueCount + 1;
-                                        viewFlipper.showNext();
+                                        viewFlipper.showNextView();
                                     }
                                 } else {
 
@@ -472,7 +472,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                         reviewFlag = false;
                                     } else {
 
-                                        viewFlipper.showNext();
+                                        viewFlipper.showNextView();
                                     }
                                 }
                             }
@@ -492,7 +492,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                             reviewFlag = false;
                         } else {
 
-                            viewFlipper.showNext();
+                            viewFlipper.showNextView();
                         }
                     }
                     PrefUtils.saveToPrefs(this, PrefUtils.PREFS_QUESTION_INDEX, "0");
@@ -660,7 +660,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                     rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                 }
                                 dbHelper.updateRememberAnswers(rememberAnswers);
-                                viewFlipper.showNext();
+                                viewFlipper.showNextView();
                                 if (displayedChild == childCount - 2) {
                                     viewFlipper.stopFlipping();
 
@@ -813,7 +813,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                     rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                                 }
                                 dbHelper.updateRememberAnswers(rememberAnswers);
-                                viewFlipper.showNext();
+                                viewFlipper.showNextView();
                                 if (displayedChild == childCount - 2) {
                                     viewFlipper.stopFlipping();
 
@@ -1010,12 +1010,12 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
             if (null != viewFlipper.getTag() && null != viewFlipper.getCurrentView().getTag()) {
                 Question question = dbHelper.getQuestionForProject(viewFlipper.getTag().toString(), viewFlipper.getCurrentView().getTag().toString());
                 if (question.getQuestionType() == Question.USER_DEFINED) {
-                    optionsMenu.getItem(0).setEnabled(true);
+                    optionsMenu.getItem(0).setVisible(true);
                 } else {
-                    optionsMenu.getItem(0).setEnabled(false);
+                    optionsMenu.getItem(0).setVisible(false);
                 }
             } else {
-                optionsMenu.getItem(0).setEnabled(false);
+                optionsMenu.getItem(0).setVisible(false);
             }
         }
     }
@@ -1038,14 +1038,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
         reviewPage.setId(9595);
         viewFlipper.addView(reviewPage);
 
-        TextView mtvStatusMessage = (TextView) reviewPage.findViewById(R.id.tv_status_message);
-        ProgressBar mProgressBar = (ProgressBar) reviewPage.findViewById(R.id.progressBar);
 
-        if (autoIncQueCount == queCount) {
-            initReviewPage();
-        } else {
-            refreshReviewPage(reviewPage);
-        }
+        initReviewPage();
+//        if (autoIncQueCount == queCount) {
+//            initReviewPage();
+//        } else {
+//            refreshReviewPage(reviewPage);
+//        }
     }
 
     private void refreshReviewPage(final View reviewPage) {
@@ -1204,7 +1203,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                         rememberAnswers.setIs_remember(Constants.IS_NOT_REMEMBER);
                     }
                     dbHelper.updateRememberAnswers(rememberAnswers);
-                    viewFlipper.showNext();
+                    viewFlipper.showNextView();
                     if (displayedChild == childCount - 2) {
                         viewFlipper.stopFlipping();
 
@@ -1307,8 +1306,12 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                 finish();
                 //??sendData("1027"); // Restart teensy device
             }else {
-                reviewFlag = true;
-                viewFlipper.showPrevious();
+                //reviewFlag = true;
+
+//                if (viewFlipper.getDisplayedChild() == viewFlipper.getChildCount() - 1){
+//                    viewFlipper.showPrevious();
+//                }
+                viewFlipper.showPreviousView();
             }
             return true;
         }
