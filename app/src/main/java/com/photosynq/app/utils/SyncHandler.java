@@ -1,5 +1,6 @@
 package com.photosynq.app.utils;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -7,6 +8,8 @@ import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -43,6 +46,7 @@ import java.util.List;
 public class SyncHandler {
 
     private Context context = null;
+    private Activity activity = null;
     private MainActivity navigationDrawer;
     private ProgressBar progressBar;
 
@@ -63,13 +67,19 @@ public class SyncHandler {
 //        this.context = navigationDrawer;
 //    }
 
-    public SyncHandler(Context context, ProgressBar progressBar) {
+    public SyncHandler(Context context) {
         this.context = context;
+    }
+
+    public SyncHandler(Activity activity, ProgressBar progressBar) {
+        this.context = activity;
+        this.activity = activity;
         this.progressBar = progressBar;
     }
 
     public SyncHandler(MainActivity navigationDrawer) {
         this.context = navigationDrawer;
+        this.activity = navigationDrawer;
         this.navigationDrawer = navigationDrawer;
     }
 
@@ -149,7 +159,7 @@ public class SyncHandler {
                 // Sync with clear cache
                 if(syncMode == ALL_SYNC_UI_MODE_CLEAR_CACHE) {
 
-                    final MainActivity mainActivity = (MainActivity)context;
+                    final Activity mainActivity = (Activity)activity;
 
                     mainActivity.runOnUiThread(new Runnable() {
                         @Override
@@ -193,7 +203,7 @@ public class SyncHandler {
 
                 }else if (syncMode == ALL_SYNC_UI_MODE){
 
-                    final MainActivity mainActivity = (MainActivity)context;
+                    final Activity mainActivity = (Activity)activity;
                     mainActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -258,7 +268,7 @@ public class SyncHandler {
 
             // Download ProjectList
             if(syncMode == ALL_SYNC_MODE || syncMode == PROJECT_LIST_MODE || syncMode == PROTOCOL_LIST_MODE) {
-                UpdateProject updateProject = new UpdateProject(context, navigationDrawer, mProgressDialog);
+                UpdateProject updateProject = new UpdateProject(activity, navigationDrawer, mProgressDialog);
                 HTTPConnection mProjListTask = new HTTPConnection();
                 mProjListTask.delegate = updateProject;
                 mProjListTask
@@ -267,7 +277,7 @@ public class SyncHandler {
                                 + "&user_email=" + email + "&user_token="
                                 + authToken, "GET");
 
-                UpdateProtocol updateProtocol = new UpdateProtocol(navigationDrawer, mProgressDialog);
+                UpdateProtocol updateProtocol = new UpdateProtocol(activity, navigationDrawer, mProgressDialog);
                 mProtocolListTask = new HTTPConnection();
                 mProtocolListTask.delegate = updateProtocol;
                 mProtocolListTask.execute(context,
@@ -275,7 +285,7 @@ public class SyncHandler {
                                 + email + "&user_token=" + authToken, "GET");
 
 
-                UpdateMacro updateMacro = new UpdateMacro(context, navigationDrawer, mProgressDialog);
+                UpdateMacro updateMacro = new UpdateMacro(activity, navigationDrawer, mProgressDialog);
                 mMacroListTask = new HTTPConnection();
                 mMacroListTask.delegate = updateMacro;
                 mMacroListTask
@@ -287,6 +297,8 @@ public class SyncHandler {
         }
 
         private void syncData(int syncMode, int projectId) {
+
+            Spanned tt = Html.fromHtml("sdfsdf");
 
             PrefUtils.saveToPrefs(context, PrefUtils.PREFS_CURRENT_LOCATION, null);
             String authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);

@@ -121,7 +121,12 @@ public class SelectDeviceDialog extends DialogFragment {
             btDeviceList.add(device);
             if(null != appSettings.getConnectionId() && appSettings.getConnectionId().equals(device.getAddress()))
             {
-                ((MainActivity) getActivity()).setDeviceConnected(device.getName(), appSettings.getConnectionId());
+                try {
+                    ((MainActivity) getActivity()).setDeviceConnected(device.getName(), appSettings.getConnectionId());
+                }catch (Exception e){
+
+                    ((ProjectMeasurmentActivity) getActivity()).setDeviceConnected(device.getName(), appSettings.getConnectionId());
+                }
             }
         }
 

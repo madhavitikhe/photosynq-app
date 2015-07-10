@@ -16,8 +16,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.model.ProjectCreator;
@@ -99,12 +97,24 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
                 ResearchProject project = (ResearchProject) projectList.getItemAtPosition(position);
                 Intent intent = new Intent(getActivity(), ProjectDetailsActivity.class);
                 intent.putExtra(DatabaseHelper.C_PROJECT_ID, project.getId());
-                startActivity(intent);
+                startActivityForResult(intent, 555);
+
             }
         });
 
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        if (resultCode == 555) {
+
+            ((MainActivity) getActivity()).openDrawer();
+
+        }
     }
 
     private void showProjectList() {
@@ -239,7 +249,7 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
                     Picasso.with(getActivity()).load(project.getImageUrl()).into(imageview);
                     Picasso.with(getActivity())
                             .load(project.getImageUrl())
-                            .error(R.drawable.ic_launcher)
+                            .error(R.drawable.ic_launcher1)
                             .into(imageview);
 
                 } catch (Exception e) {

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -15,12 +16,15 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.photosynq.app.MainActivity;
 import com.photosynq.app.R;
 import com.photosynq.app.SyncFragment;
@@ -65,6 +69,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import tourguide.tourguide.Overlay;
+import tourguide.tourguide.Pointer;
+import tourguide.tourguide.ToolTip;
+import tourguide.tourguide.TourGuide;
 
 
 /**
@@ -395,27 +404,44 @@ public class CommonUtils {
 
     }
 
-    public static ShowcaseView showShowCaseView(Activity activity, int viewId, String title, String message){
-
-        RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lps.addRule(RelativeLayout.CENTER_VERTICAL);
-        lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        int margin = ((Number) (activity.getResources().getDisplayMetrics().density * 12)).intValue();
-        lps.setMargins(margin, 100, margin, 100);
-
-        ViewTarget target = new ViewTarget( viewId, activity);
-        ShowcaseView sv = new ShowcaseView.Builder(activity, true)
-                .setTarget(target)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setStyle(R.style.CustomShowcaseTheme4)
-                .build();
-        sv.setButtonPosition(lps);
-        return  sv;
-    }
+//    public static TourGuide showShowCaseView(Activity activity, int viewId, String title, String message){
+//
+//        Animation animation = new TranslateAnimation(0f, 0f, 200f, 0f);
+//        animation.setDuration(1000);
+//        animation.setFillAfter(true);
+//        animation.setInterpolator(new BounceInterpolator());
+//
+//        ToolTip toolTip = new ToolTip()
+//                .setTitle(title)
+//                .setDescription(message)
+//                .setTextColor(Color.parseColor("#bdc3c7"))
+//                .setBackgroundColor(Color.parseColor("#e74c3c"))
+//                .setShadow(true)
+//                .setGravity(Gravity.TOP)
+//                .setEnterAnimation(animation);
+//
+//        View view = activity.findViewById(viewId);
+//        TourGuide mTourGuideHandler = TourGuide.init(activity).with(TourGuide.Technique.Click)
+//                .setPointer(new Pointer())
+//                .setToolTip(toolTip)
+//                .setOverlay(new Overlay())
+//                .playOn(view);
+//
+//        return mTourGuideHandler;
+//
+////        ViewTarget target = new ViewTarget( viewId, activity);
+////        ShowcaseView sv = new ShowcaseView.Builder(activity, true)
+////                .setTarget(target)
+////                .setContentTitle(title)
+////                .setContentText(message)
+////                .setStyle(R.style.CustomShowcaseTheme4)
+////                .build();
+////        sv.setButtonPosition(lps);
+//
+//    }
 
     public static void setProgress(final Activity context, ProgressDialog progressDialog, int progressValue){
-       if(progressDialog != null) {
+       if(progressDialog != null && context != null) {
 
            String progressStr = PrefUtils.getFromPrefs(context, "SyncProgress", "0");
            int progress = Integer.parseInt(progressStr);
@@ -440,19 +466,21 @@ public class CommonUtils {
                        new AlertDialog.Builder(context)
                                .setIcon(android.R.drawable.ic_dialog_alert)
                                .setTitle("Syncing")
-                               .setMessage("Pushed " + " "+totalCachedDataPoints +" data points\n\nProjects updates complete")
+                               .setMessage("Pushed " + " " + totalCachedDataPoints + " data points\n\nProjects updates complete")
                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                    @Override
                                    public void onClick(DialogInterface dialog, int which) {
 
-                                       MainActivity navigationDrawer = (MainActivity)context;
-                                       FragmentManager fragmentManager = navigationDrawer.getSupportFragmentManager();
+                                       try {
+                                           MainActivity navigationDrawer = (MainActivity) context;
+                                           FragmentManager fragmentManager = navigationDrawer.getSupportFragmentManager();
 
-                                       SyncFragment syncFragment = (SyncFragment) fragmentManager.findFragmentByTag(SyncFragment.class.getName());
-                                       if (syncFragment != null) {
+                                           SyncFragment syncFragment = (SyncFragment) fragmentManager.findFragmentByTag(SyncFragment.class.getName());
+                                           if (syncFragment != null) {
 
-                                           syncFragment.refresh();
-                                       }
+                                               syncFragment.refresh();
+                                           }
+                                       }catch (Exception e){}
 
                                    }
 

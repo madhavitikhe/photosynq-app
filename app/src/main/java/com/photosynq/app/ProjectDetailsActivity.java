@@ -19,9 +19,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
-import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.Data;
@@ -41,7 +38,6 @@ import java.util.Locale;
 public class ProjectDetailsActivity extends ActionBarActivity {
 
     String projectID;
-    ShowcaseView sv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,11 +55,11 @@ public class ProjectDetailsActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("");
 
-        String isShowed = PrefUtils.getFromPrefs(this, "IsFirstProjectDetailsActivity", "FALSE");
-        if (isShowed.equals("FALSE")) {
-            CommonUtils.showShowCaseView(this, R.id.btn_take_measurement, "To collect data, choose a project, follow directions, answer questions, and take sensor measurement", "");
-            PrefUtils.saveToPrefs(this, "IsFirstProjectDetailsActivity", "TRUE");
-        }
+//        String isShowed = PrefUtils.getFromPrefs(this, "IsFirstProjectDetailsActivity", "FALSE");
+//        if (isShowed.equals("FALSE")) {
+//            CommonUtils.showShowCaseView(this, R.id.btn_take_measurement, "To collect data, choose a project, follow directions, answer questions, and take sensor measurement", "");
+//            PrefUtils.saveToPrefs(this, "IsFirstProjectDetailsActivity", "TRUE");
+//        }
 
         DatabaseHelper databaseHelper = DatabaseHelper.getHelper(this);
         Bundle extras = getIntent().getExtras();
@@ -76,7 +72,7 @@ public class ProjectDetailsActivity extends ActionBarActivity {
             ImageView projectImage = (ImageView) findViewById(R.id.im_projectImage);
             Picasso.with(this)
                     .load(project.getImageUrl())
-                    .error(R.drawable.ic_launcher)
+                    .error(R.drawable.ic_launcher1)
                     .into(projectImage);
 
             ImageView profileImage = (ImageView) findViewById(R.id.user_profile_image);
@@ -84,7 +80,7 @@ public class ProjectDetailsActivity extends ActionBarActivity {
             String imageUrl = projectLead.getImageUrl();
             Picasso.with(this)
                     .load(imageUrl)
-                    .error(R.drawable.ic_launcher)
+                    .error(R.drawable.ic_launcher1)
                     .into(profileImage);
 
             Typeface tfRobotoRegular = CommonUtils.getInstance(this).getFontRobotoRegular();
@@ -252,6 +248,7 @@ public class ProjectDetailsActivity extends ActionBarActivity {
 
         if (resultCode == 555) {
 
+            setResult(555);
             finish();
         }
     }

@@ -145,11 +145,11 @@ public class DisplayResultsActivity extends ActionBarActivity implements
             }
         });
 
-        String isShowed = PrefUtils.getFromPrefs(this, "IsFirstDisplayResultsActivity", "FALSE");
-        if (isShowed.equals("FALSE")) {
-            CommonUtils.showShowCaseView(this, R.id.linearLayout1, "Submit data to the project, or discard", "");
-            PrefUtils.saveToPrefs(this, "IsFirstDisplayResultsActivity", "TRUE");
-        }
+//        String isShowed = PrefUtils.getFromPrefs(this, "IsFirstDisplayResultsActivity", "FALSE");
+//        if (isShowed.equals("FALSE")) {
+//            CommonUtils.showShowCaseView(this, R.id.linearLayout1, "Submit data to the project, or discard", "");
+//            PrefUtils.saveToPrefs(this, "IsFirstDisplayResultsActivity", "TRUE");
+//        }
 
     }
 

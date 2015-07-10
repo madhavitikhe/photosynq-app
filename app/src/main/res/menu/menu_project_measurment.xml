@@ -20,18 +20,18 @@
         </menu>
     </item>
 
-            <item
-                android:id="@+id/project_home_menu"
-                android:title="Project Home"
-                app:showAsAction="never"/>
-            <item
-                android:id="@+id/main_menu"
-                android:title="Main Menu"
-                app:showAsAction="never"/>
-            <item
-                android:id="@+id/sync_menu"
-                android:title="Sync # Points"
-                app:showAsAction="never"/>
+            <!--<item-->
+                <!--android:id="@+id/project_home_menu"-->
+                <!--android:title="Project Home"-->
+                <!--app:showAsAction="never"/>-->
+            <!--<item-->
+                <!--android:id="@+id/main_menu"-->
+                <!--android:title="Main Menu"-->
+                <!--app:showAsAction="never"/>-->
+            <!--<item-->
+                <!--android:id="@+id/sync_menu"-->
+                <!--android:title="Sync # Points"-->
+                <!--app:showAsAction="never"/>-->
 
 
 

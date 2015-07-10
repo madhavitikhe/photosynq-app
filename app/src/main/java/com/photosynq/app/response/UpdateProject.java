@@ -1,5 +1,6 @@
 package com.photosynq.app.response;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -30,11 +31,11 @@ import java.util.Date;
  * Created by shekhar on 9/19/14.
  */
 public class UpdateProject implements PhotosynqResponse {
-    private Context context;
+    private Activity context;
     private MainActivity navigationDrawer;
     private ProgressDialog mProgressDialog;
 
-    public UpdateProject(Context context, MainActivity navigationDrawer, ProgressDialog progressDialog) {
+    public UpdateProject(Activity context, MainActivity navigationDrawer, ProgressDialog progressDialog) {
         this.context = context;
         this.navigationDrawer = navigationDrawer;
         this.mProgressDialog = progressDialog;
@@ -249,6 +250,6 @@ public class UpdateProject implements PhotosynqResponse {
         System.out.println("UpdateProject End onResponseReceived: " + date1.getTime());
         //show progress dialog process on sync screen after sync button click
         int progress = (60 / totalPages) + 1;//60 means 60%, for projects. 60 projects + 20 protocols + 20 macros = 100
-        CommonUtils.setProgress(navigationDrawer, mProgressDialog, progress);
+        CommonUtils.setProgress(context, mProgressDialog, progress);
     }
 }

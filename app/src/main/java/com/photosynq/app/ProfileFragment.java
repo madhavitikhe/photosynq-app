@@ -54,7 +54,7 @@ public class ProfileFragment extends Fragment {
         ImageView profileImage = (ImageView) rootView.findViewById(R.id.user_profile_image);
         Picasso.with(context)
                 .load(imageUrl)
-                .error(R.drawable.ic_launcher)
+                .error(R.drawable.ic_launcher1)
                 .into(profileImage);
 
         String strName = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_NAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);

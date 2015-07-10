@@ -1,21 +1,21 @@
 package com.photosynq.app;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.support.v7.app.ActionBarActivity;
-import android.app.Activity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,25 +44,23 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 import java.util.Set;
 
-import tourguide.tourguide.TourGuide;
-
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
-public class NavigationDrawerFragment extends Fragment {
+public class SubNavigationDrawerFragment extends Fragment {
 
     /**
      * Per the design guidelines, you should show the drawer on launch until the user manually
      * expands it. This shared preference tracks this.
      */
-    private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
+    private static final String PREF_USER_LEARNED_SUB_DRAWER = "sub_navigation_drawer_learned";
 
     /**
      * A pointer to the current callbacks instance (the Activity).
      */
-    private NavigationDrawerCallbacks mCallbacks;
+    private SubNavigationDrawerCallbacks mCallbacks;
 
     /**
      * Helper component that ties the action bar to the navigation drawer.
@@ -71,7 +69,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
-    private NavigationDrawerAdapter mNavigationAdapter;
+    private SubNavigationDrawerAdapter mNavigationAdapter;
     private View mFragmentContainerView;
 
     private int mCurrentSelectedPosition = 0;
@@ -82,9 +80,10 @@ public class NavigationDrawerFragment extends Fragment {
     TextView tvDeviceAddress;
     //TourGuide mTourGuideHandler;
     private DatabaseHelper db;
+    private String mProjectId;
     private Button totalDataPointsBtn;
 
-    public NavigationDrawerFragment() {
+    public SubNavigationDrawerFragment() {
     }
 
     @Override
@@ -94,7 +93,7 @@ public class NavigationDrawerFragment extends Fragment {
         // Read in the flag indicating whether or not the user has demonstrated awareness of the
         // drawer. See PREF_USER_LEARNED_DRAWER for details.
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
+        mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_SUB_DRAWER, false);
 
         if (savedInstanceState != null) {
             mCurrentSelectedPosition = savedInstanceState.getInt(Constants.STATE_SELECTED_POSITION);
@@ -102,7 +101,7 @@ public class NavigationDrawerFragment extends Fragment {
         }
 
         // Select either the default item (0) or the last selected item.
-        selectItem(mCurrentSelectedPosition);
+        //selectItem(mCurrentSelectedPosition);
     }
 
     @Override
@@ -116,7 +115,7 @@ public class NavigationDrawerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         LinearLayout linearLayout = (LinearLayout) inflater.inflate(
-                R.layout.fragment_navigation_drawer, container, false);
+                R.layout.fragment_sub_navigation_drawer, container, false);
 
         TextView tvUserName = (TextView) linearLayout.findViewById(R.id.tvUserName);
         tvUserName.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoLight());
@@ -124,7 +123,7 @@ public class NavigationDrawerFragment extends Fragment {
         tvUserName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectItem(5);
+                selectItem(4);
             }
         });
 
@@ -137,7 +136,7 @@ public class NavigationDrawerFragment extends Fragment {
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectItem(5);
+                selectItem(4);
             }
         });
 
@@ -146,7 +145,7 @@ public class NavigationDrawerFragment extends Fragment {
         tvDeviceName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectItem(6);
+                selectItem(3);
                 //mTourGuideHandler.cleanUp();
             }
         });
@@ -156,13 +155,12 @@ public class NavigationDrawerFragment extends Fragment {
         tvDeviceAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectItem(6);
+                selectItem(3);
             }
         });
 
         db = DatabaseHelper.getHelper(getActivity());
-        List<ProjectResult> listRecords = db.getAllUnUploadedResults();
-        PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "" + listRecords.size());
+        List<ProjectResult> listRecords = db.getAllUnUploadedResults(mProjectId);
         totalDataPointsBtn = (Button) linearLayout.findViewById(R.id.totalCachedDataPointsBtn);
         totalDataPointsBtn.setText("" + listRecords.size());
 
@@ -176,7 +174,7 @@ public class NavigationDrawerFragment extends Fragment {
                     Intent intent = new Intent(getActivity(), DisplayCachedDataPoints.class);
                     startActivity(intent);
                 }
-                selectItem(7);
+                selectItem(6);
             }
         });
 
@@ -184,13 +182,13 @@ public class NavigationDrawerFragment extends Fragment {
         syncWithServerBtnMenuBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity mainActivity = (MainActivity) getActivity();
-                SyncHandler syncHandler = new SyncHandler(mainActivity, MainActivity.getProgressBar());
+                //MainActivity mainActivity = (MainActivity) getActivity();
+                SyncHandler syncHandler = new SyncHandler(getActivity(), MainActivity.getProgressBar());
                 syncHandler.DoSync(SyncHandler.ALL_SYNC_UI_MODE);
 
                 Toast.makeText(getActivity(), "Sync started!", Toast.LENGTH_LONG).show();
 
-                selectItem(7);
+                selectItem(6);
             }
         });
 
@@ -201,15 +199,12 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
-        mNavigationAdapter = new NavigationDrawerAdapter(
+        mNavigationAdapter = new SubNavigationDrawerAdapter(
                 getActivity(),
                 R.layout.navigation_drawer_item,
                 new String[]{
-                        getString(R.string.discover_title),
-                        getString(R.string.my_projects_title),
-                        getString(R.string.quick_measurement_title),
-                        getString(R.string.sync_settings_title),
-                        "About"
+                        "Project Home",
+                        "Main Menu"
                 });
         mDrawerListView.setAdapter(mNavigationAdapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
@@ -227,9 +222,13 @@ public class NavigationDrawerFragment extends Fragment {
      * @param fragmentId   The android:id of this fragment in its activity's layout.
      * @param drawerLayout The DrawerLayout containing this fragment's UI.
      */
-    public void setUp(int fragmentId, DrawerLayout drawerLayout) {
+    public void setUp(int fragmentId, DrawerLayout drawerLayout, String projectId) {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
+        mProjectId = projectId;
+
+        List<ProjectResult> listRecords = db.getAllUnUploadedResults(mProjectId);
+        totalDataPointsBtn.setText("" + listRecords.size());
 
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
@@ -246,7 +245,7 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerToggle = new ActionBarDrawerToggle(
                 getActivity(),                    /* host Activity */
                 mDrawerLayout,                    /* DrawerLayout object */
-                R.drawable.ic_action_navigation_menu,             /* nav drawer image to replace 'Up' caret */
+                R.drawable.back_arrow,             /* nav drawer image to replace 'Up' caret */
                 R.string.navigation_drawer_open,  /* "open drawer" description for accessibility */
                 R.string.navigation_drawer_close  /* "close drawer" description for accessibility */
         ) {
@@ -293,7 +292,7 @@ public class NavigationDrawerFragment extends Fragment {
                     mUserLearnedDrawer = true;
                     SharedPreferences sp = PreferenceManager
                             .getDefaultSharedPreferences(getActivity());
-                    sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
+                    sp.edit().putBoolean(PREF_USER_LEARNED_SUB_DRAWER, true).apply();
                 }
 
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
@@ -371,7 +370,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     private void selectItem(int position) {
         mCurrentSelectedPosition = position;
-        if(position < 5) {
+        if(position < 3) {
             if (mDrawerListView != null) {
                 mDrawerListView.setItemChecked(position, true);
                 mNavigationAdapter.setItemSelected(position);
@@ -389,7 +388,7 @@ public class NavigationDrawerFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallbacks = (NavigationDrawerCallbacks) activity;
+            mCallbacks = (SubNavigationDrawerCallbacks) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
         }
@@ -463,21 +462,21 @@ public class NavigationDrawerFragment extends Fragment {
     /**
      * Callbacks interface that all activities using this fragment must implement.
      */
-    public static interface NavigationDrawerCallbacks {
+    public static interface SubNavigationDrawerCallbacks {
         /**
          * Called when an item in the navigation drawer is selected.
          */
         void onNavigationDrawerItemSelected(int position);
     }
 
-    private class NavigationDrawerAdapter extends ArrayAdapter<String> {
+    private class SubNavigationDrawerAdapter extends ArrayAdapter<String> {
 
         private Context mContext;
         private int id;
         private String[] items;
         private int mSelectedPosition;
 
-        public NavigationDrawerAdapter(Context context, int resourceId , String[] list )
+        public SubNavigationDrawerAdapter(Context context, int resourceId , String[] list )
         {
             super(context, resourceId, list);
             mContext = context;
@@ -531,8 +530,7 @@ public class NavigationDrawerFragment extends Fragment {
                                 @Override
                                 public void run() {
                                     db = DatabaseHelper.getHelper(getActivity());
-                                    final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
-                                    String totalCachedDataPoints = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "0");
+                                    List<ProjectResult> listRecords = db.getAllUnUploadedResults(mProjectId);
                                     totalDataPointsBtn.setText("" + listRecords.size());
                                 }
                             });

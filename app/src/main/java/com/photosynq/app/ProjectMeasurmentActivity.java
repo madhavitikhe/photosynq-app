@@ -21,6 +21,7 @@ import android.os.Message;
 import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -47,9 +48,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
-import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -87,7 +85,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        SelectDeviceDialogDelegate{
+        SelectDeviceDialogDelegate,
+        SubNavigationDrawerFragment.SubNavigationDrawerCallbacks{
 
     BluetoothMessage bluetoothMessage;
     private Handler mHandler;
@@ -128,6 +127,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
     //private CountDownTimer timer;
     //private boolean isGetResponse = false;
+
+    private SubNavigationDrawerFragment mSubNavigationDrawerFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,6 +193,14 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
             showDirection();
         }
+
+        mSubNavigationDrawerFragment = (SubNavigationDrawerFragment)
+                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+
+        // Set up the drawer.
+        mSubNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout) findViewById(R.id.drawer_layout), projectId);
 
     }
 
@@ -817,8 +826,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
                     Picasso.with(this)
                             .load(splitOptionText[1])
-                            .placeholder(R.drawable.ic_launcher)
-                            .error(R.drawable.ic_launcher)
+                            .placeholder(R.drawable.ic_launcher1)
+                            .error(R.drawable.ic_launcher1)
                             .into(imageView);
 //                    }
 
@@ -1006,7 +1015,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     optionsMenu.getItem(0).setEnabled(false);
                 }
             } else {
-                optionsMenu.getItem(0).setEnabled(true);
+                optionsMenu.getItem(0).setEnabled(false);
             }
         }
     }
@@ -1263,20 +1272,20 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
             case R.id.autoIncMenuItem:
             case R.id.barCodeOptionMenuItem:
                 return changeQuestionType(item);
-            case R.id.project_home_menu:
-                finish();
-                break;
-            case R.id.main_menu:
-                setResult(555);
-                finish();
-                break;
-            case R.id.sync_menu:
-                SyncHandler syncHandler = new SyncHandler(this, MainActivity.getProgressBar());
-                syncHandler.DoSync(projectId);
+//            case R.id.project_home_menu:
+//                finish();
+//                break;
+//            case R.id.main_menu:
+//                setResult(555);
+//                finish();
+//                break;
+//            case R.id.sync_menu:
+//                SyncHandler syncHandler = new SyncHandler(this, MainActivity.getProgressBar());
+//                syncHandler.DoSync(projectId);
+//
+//                Toast.makeText(this, "Sync started!", Toast.LENGTH_LONG).show();
 
-                Toast.makeText(this, "Sync started!", Toast.LENGTH_LONG).show();
-
-                break;
+//                break;
             default:
         }
 
@@ -2001,6 +2010,46 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
         }
     }
 
+    @Override
+    public void onNavigationDrawerItemSelected(int position) {
+
+        // update the main content by replacing fragments
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+//        case R.id.project_home_menu:
+//                finish();
+//                break;
+//            case R.id.main_menu:
+//                setResult(555);
+//                finish();
+//                break;
+//            case R.id.sync_menu:
+//                SyncHandler syncHandler = new SyncHandler(this, MainActivity.getProgressBar());
+//                syncHandler.DoSync(projectId);
+//
+//                Toast.makeText(this, "Sync started!", Toast.LENGTH_LONG).show();
+
+        switch (position){
+            case 0:
+                // Open Discover
+                finish();
+                break;
+            case 1:
+                // Open MyProjects
+                setResult(555);
+                finish();
+                break;
+            case 3:
+                // Open select device
+                SelectDeviceDialog selectDeviceDialog = new SelectDeviceDialog();
+                selectDeviceDialog.show(fragmentManager, "Select Measurement Device");
+                break;
+        }
+    }
+
+    public void setDeviceConnected(String deviceName, String deviceAddress) {
+        mSubNavigationDrawerFragment.setDeviceConnected(deviceName, deviceAddress);
+    }
     /**
      * Define a DialogFragment to display the error dialog generated in
      * showErrorDialog.

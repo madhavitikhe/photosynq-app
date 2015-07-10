@@ -1,5 +1,6 @@
 package com.photosynq.app.response;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.support.v4.app.FragmentManager;
@@ -24,11 +25,13 @@ import java.util.Date;
  * Created by shekhar on 9/19/14.
  */
 public class UpdateProtocol implements PhotosynqResponse {
+    private Activity context;
     private MainActivity navigationDrawer;
     private ProgressDialog mProgressDialog;
 
-    public UpdateProtocol(MainActivity navigationDrawer, ProgressDialog progressDialog)
+    public UpdateProtocol(Activity context, MainActivity navigationDrawer, ProgressDialog progressDialog)
     {
+        this.context = context;
         this.navigationDrawer = navigationDrawer;
         this.mProgressDialog = progressDialog;
     }
@@ -133,6 +136,6 @@ public class UpdateProtocol implements PhotosynqResponse {
 
         System.out.println("UpdateProtocol End onResponseReceived: " + date1.getTime());
         //show progress dialog process on sync screen after sync button click
-        CommonUtils.setProgress(navigationDrawer, mProgressDialog, 20);
+        CommonUtils.setProgress(context, mProgressDialog, 20);
     }
 }

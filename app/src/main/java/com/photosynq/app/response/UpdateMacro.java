@@ -1,5 +1,6 @@
 package com.photosynq.app.response;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -25,11 +26,11 @@ import java.util.List;
  */
 public class UpdateMacro implements PhotosynqResponse {
 
-    private Context context;
+    private Activity context;
     private MainActivity navigationDrawer;
     private ProgressDialog mProgressDialog;
 
-    public UpdateMacro(Context context, MainActivity navigationDrawer, ProgressDialog progressDialog)
+    public UpdateMacro(Activity context, MainActivity navigationDrawer, ProgressDialog progressDialog)
     {
         this.context = context;
         this.navigationDrawer = navigationDrawer;
@@ -146,6 +147,6 @@ public class UpdateMacro implements PhotosynqResponse {
         System.out.println("UpdateMacro End onResponseReceived: " + date1.getTime());
 
         //show progress dialog process on sync screen after sync button click
-        CommonUtils.setProgress(navigationDrawer, mProgressDialog, 20);
+        CommonUtils.setProgress(context, mProgressDialog, 20);
     }
 }

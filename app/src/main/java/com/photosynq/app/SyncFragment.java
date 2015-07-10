@@ -438,16 +438,18 @@ public class SyncFragment extends Fragment implements PhotosynqResponse {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    DatabaseHelper db = DatabaseHelper.getHelper(getActivity());
-                                    final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
-                                    PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "" + listRecords.size());
+                                    try {
+                                        DatabaseHelper db = DatabaseHelper.getHelper(getActivity());
+                                        final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
+                                        PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "" + listRecords.size());
 
-                                    //set total of cached points.
-                                    if (listRecords.size() > 0) {
-                                        tvAutoSyncCachedDataPtValue.setText(listRecords.size() + "");
-                                    } else {
-                                        tvAutoSyncCachedDataPtValue.setText("0");
-                                    }
+                                        //set total of cached points.
+                                        if (listRecords.size() > 0) {
+                                            tvAutoSyncCachedDataPtValue.setText(listRecords.size() + "");
+                                        } else {
+                                            tvAutoSyncCachedDataPtValue.setText("0");
+                                        }
+                                    }catch (Exception e){}
                                 }
                             });
                         }

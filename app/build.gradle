@@ -44,7 +44,9 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.3.2@aar') {
         transitive = true;
     }
-    compile 'com.github.amlcurran.showcaseview:library:5.0.0'
+    compile ('com.github.worker8:tourguide:1.0.10-SNAPSHOT@aar'){
+        transitive=true
+    }
 }
 
 repositories {
@@ -52,5 +54,10 @@ repositories {
     maven {
         url 'https://raw.github.com/embarkmobile/zxing-android-minimal/mvn-repo/maven-repository/'
     }
-    maven { url 'https://maven.fabric.io/public' }
+    maven {
+        url 'https://maven.fabric.io/public'
+    }
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
 }
