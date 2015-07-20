@@ -302,7 +302,7 @@ public class SubNavigationDrawerFragment extends Fragment {
         // If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
         // per the navigation drawer design guidelines.
         if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
-            mDrawerLayout.openDrawer(mFragmentContainerView);
+            //??mDrawerLayout.openDrawer(mFragmentContainerView);
 
 //            CommonUtils.showShowCaseView(getActivity(), R.id.tvDeviceName, "Welcome to PhotosynQ!", "First, pair your measurement device")
 //                    .setOnShowcaseEventListener(new OnShowcaseEventListener() {

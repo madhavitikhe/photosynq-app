@@ -102,11 +102,11 @@ public class MainActivity extends ActionBarActivity
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             //use the query to search your data somehow
-            if(mCurrentSelectedPosition == 0) {//Discover
+            if(mCurrentSelectedPosition == 1) { //My Projects
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, ProjectModeFragment.newInstance(mCurrentSelectedPosition, query), ProjectModeFragment.class.getName())
                         .commit();
-            }else if(mCurrentSelectedPosition == 1) { //My Projects
+            }else{
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, ProjectModeFragment.newInstance(mCurrentSelectedPosition, query), ProjectModeFragment.class.getName())
                         .commit();

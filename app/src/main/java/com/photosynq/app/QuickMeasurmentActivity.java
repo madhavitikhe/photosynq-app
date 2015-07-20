@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -34,7 +35,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 
-public class QuickMeasurmentActivity extends ActionBarActivity {
+public class QuickMeasurmentActivity extends ActionBarActivity implements SelectDeviceDialogDelegate {
 
     private String deviceAddress;
     private String mConnectedDeviceName;
@@ -95,9 +96,12 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
             if (isCalledFromResults != null && isCalledFromResults.equals("TRUE")) {
                 if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
                     // Get the BLuetoothDevice object
+                    deviceAddress = CommonUtils.getDeviceAddress(QuickMeasurmentActivity.this);
                     if(null == deviceAddress)
                     {
                         Toast.makeText(QuickMeasurmentActivity.this, "Measurement device not configured, Please configure measurement device (bluetooth).", Toast.LENGTH_SHORT).show();
+                        selectDevice();
+                        return;
                     }else {
                         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
                         mBluetoothService.connect(device);
@@ -132,6 +136,9 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
                         if(null == deviceAddress)
                         {
                             Toast.makeText(QuickMeasurmentActivity.this, "Measurement device not configured, Please configure measurement device (bluetooth).", Toast.LENGTH_SHORT).show();
+                            selectDevice();
+                            return;
+
                         }else {
                             BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
                             mBluetoothService.connect(device);
@@ -175,6 +182,29 @@ public class QuickMeasurmentActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void selectDevice() {
+
+        deviceAddress = CommonUtils.getDeviceAddress(this);
+        if (null == deviceAddress) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            SelectDeviceDialog selectDeviceDialog = new SelectDeviceDialog();
+            selectDeviceDialog.show(fragmentManager, "Select Measurement Device", this);
+        }
+    }
+
+    @Override
+    public void onDeviceSelected(String result) {
+
+        deviceAddress = result;
+        if (null == deviceAddress) {
+            Toast.makeText(this, "Measurement device not configured, Please configure measurement device (bluetooth).", Toast.LENGTH_SHORT).show();
+
+            selectDevice();
+        }
+
+    }
+
 
     private void sendData(String data) {
         // Check that we're actually connected before trying anything

@@ -17,6 +17,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.Display;
@@ -36,6 +38,8 @@ import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.model.AppSettings;
+import com.photosynq.app.model.BluetoothMessage;
+import com.photosynq.app.utils.BluetoothService;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.PrefUtils;
 
@@ -145,6 +149,10 @@ public class SelectDeviceDialog extends DialogFragment {
                     appSettings.setConnectionId(bluetoothID);
                     databaseHelper.updateSettings(appSettings);
 
+                    BluetoothMessage bluetoothMessage = new BluetoothMessage();
+                    BluetoothService mBluetoothService = BluetoothService.getInstance(bluetoothMessage, mHandler);
+                    mBluetoothService.stop();
+
 //                    String first_run = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_FIRST_INSTALL_CYCLE, "YES");
 //                    if( first_run.equals("YES")) {
 //                        Bundle bundle = new Bundle();
@@ -190,6 +198,13 @@ public class SelectDeviceDialog extends DialogFragment {
 
         return rootView;
     }
+
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+
+        }
+    };
 
     public void show(android.support.v4.app.FragmentManager manager, String tag, SelectDeviceDialogDelegate selectDeviceDialogDelegate) {
         super.show(manager, tag);

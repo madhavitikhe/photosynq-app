@@ -66,6 +66,12 @@ public class QuestionViewFlipper extends ViewFlipper {
                 showNext();
             }
         }
+        int displayedChild = getDisplayedChild();
+        int childCount = getChildCount();
+        if (displayedChild == childCount - 1) {
+
+            projectMeasurmentActivity.refreshReviewPage(getChildAt(childCount - 1));
+        }
     }
 
     private void showPrevIfRemembered()

@@ -182,17 +182,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
         createHandler();
 
-        deviceAddress = CommonUtils.getDeviceAddress(this);
-        if (null == deviceAddress) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            SelectDeviceDialog selectDeviceDialog = new SelectDeviceDialog();
-            selectDeviceDialog.show(fragmentManager, "Select Measurement Device", this);
-            //Toast.makeText(this, "Measurement device not configured, Please configure measurement device (bluetooth).", Toast.LENGTH_SHORT).show();
-            //finish();
-        }else{
+        selectDevice();
 
-            showDirection();
-        }
+        showDirection();
+
 
         mSubNavigationDrawerFragment = (SubNavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -204,11 +197,21 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
     }
 
+    private void selectDevice() {
+
+        deviceAddress = CommonUtils.getDeviceAddress(this);
+        if (null == deviceAddress) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            SelectDeviceDialog selectDeviceDialog = new SelectDeviceDialog();
+            selectDeviceDialog.show(fragmentManager, "Select Measurement Device", this);
+        }
+    }
+
     private void showDirection() {
 
         String showDirections = PrefUtils.getFromPrefs(this, PrefUtils.PREFS_SHOW_DIRECTIONS, "YES");
         if (showDirections.equals("YES")) {
-            if (null != projectId && null != deviceAddress) {
+            if (null != projectId) {
                 Intent directionIntent = new Intent(this, DirectionsActivity.class);
                 directionIntent.putExtra(DatabaseHelper.C_PROJECT_ID, projectId);
                 startActivity(directionIntent);
@@ -222,7 +225,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
         deviceAddress = result;
         if (null == deviceAddress) {
             Toast.makeText(this, "Measurement device not configured, Please configure measurement device (bluetooth).", Toast.LENGTH_SHORT).show();
-            finish();
+
+            selectDevice();
         }
 
     }
@@ -1047,7 +1051,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 //        }
     }
 
-    private void refreshReviewPage(final View reviewPage) {
+    public void refreshReviewPage(final View reviewPage) {
 
         int displayedChild = viewFlipper.getDisplayedChild();
         int childCount = viewFlipper.getChildCount();
@@ -1058,6 +1062,8 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
             mtvStatusMessage.setText(R.string.start_measurement);
             ProgressBar mProgressBar = (ProgressBar) reviewPage.findViewById(R.id.progressBar);
             mProgressBar.setProgress(0);
+            TextView txtOutput = (TextView) findViewById(R.id.tvOutput);
+            txtOutput.setText("");
 //
 
             final Button btnTakeMeasurement = (Button) reviewPage.findViewById(R.id.btn_take_measurement);
@@ -1084,8 +1090,12 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                             // Get the BLuetoothDevice object
                             if (mBluetoothAdapter == null)
                                 mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+                            deviceAddress = CommonUtils.getDeviceAddress(ProjectMeasurmentActivity.this);
                             if (null == deviceAddress) {
                                 Toast.makeText(ProjectMeasurmentActivity.this, "Measurement device not configured, Please configure measurement device (bluetooth).", Toast.LENGTH_SHORT).show();
+                                selectDevice();
+                                return;
                             } else {
                                 BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
                                 mBluetoothService.connect(device);
@@ -1152,11 +1162,13 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                     if (viewCount > 1) {
                         viewFlipper.setDisplayedChild(0);
                     }
-                    refreshReviewPage(viewFlipper.getChildAt(viewCount - 1));
+                    //refreshReviewPage(viewFlipper.getChildAt(viewCount - 1));
+                    initReviewPage();
                 }
             }
             //clearflag = true;
         }
+
         scanMode = false;
         mIsMeasureBtnClicked = false;
         mIsCancelMeasureBtnClicked = false;
@@ -1634,21 +1646,33 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
 
                                     int progress = mProgressBar.getProgress();
                                     int maxProgress = mProgressBar.getMax();
-                                    if (measurement.indexOf("}") > 0 && progress > 0) {
 
+
+                                    try {
+                                        progress = measurement.split("\\}").length - 1;
                                         if (progress < maxProgress) {
                                             mProgressBar.setProgress(progress + 1);
                                             mtvStatusMessage.setText("Measurement " + (progress + 1) + " of " + maxProgress);
                                         }
-
-                                    } else {
-
-                                        if (progress == 0) {
-                                            mProgressBar.setProgress(progress + 1);
-                                            mtvStatusMessage.setText("Measurement " + (1) + " of " + maxProgress);
-                                        }
-
+                                    }catch(Exception e){
+                                        e.printStackTrace();
                                     }
+
+//                                    if (measurement.indexOf("}") > 0 && progress > 0) {
+//
+//                                        if (progress < maxProgress) {
+//                                            mProgressBar.setProgress(progress + 1);
+//                                            mtvStatusMessage.setText("Measurement " + (progress + 1) + " of " + maxProgress);
+//                                        }
+//
+//                                    } else {
+//
+//                                        if (progress == 0) {
+//                                            mProgressBar.setProgress(progress + 1);
+//                                            mtvStatusMessage.setText("Measurement " + (1) + " of " + maxProgress);
+//                                        }
+//
+//                                    }
                                 }
 
                                 break;
@@ -1663,7 +1687,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                         if (mIsCancelMeasureBtnClicked == false) {
                             String measurement = bluetoothMessage.message;
                             // Do not process the message if contain pwr_off from device
-                            if (!measurement.contains("pwr_off")) {
+                            if (measurement.contains("sample") || measurement.contains("user_questions")) {
 
 //                            if (txtOutput != null) {
 //                                txtOutput.setText( measurement.toString());

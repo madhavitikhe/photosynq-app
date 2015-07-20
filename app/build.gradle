@@ -17,8 +17,8 @@ android {
         applicationId "com.photosynq.app"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 17
-        versionName "2.4"
+        versionCode 20
+        versionName "2.5"
     }
 
     sourceSets {
