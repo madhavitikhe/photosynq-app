@@ -44,7 +44,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 import java.util.Set;
 
-import tourguide.tourguide.TourGuide;
+//import tourguide.tourguide.TourGuide;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -161,16 +161,17 @@ public class NavigationDrawerFragment extends Fragment {
         });
 
         db = DatabaseHelper.getHelper(getActivity());
-        List<ProjectResult> listRecords = db.getAllUnUploadedResults();
-        PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "" + listRecords.size());
+        //List<ProjectResult> listRecords = db.getAllUnUploadedResults();
+        //int recordCount = db.getAllUnuploadedResultsCount(null);
+        //PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "" + recordCount);
         totalDataPointsBtn = (Button) linearLayout.findViewById(R.id.totalCachedDataPointsBtn);
-        totalDataPointsBtn.setText("" + listRecords.size());
+        //totalDataPointsBtn.setText("" + recordCount);
 
         totalDataPointsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<ProjectResult> listRecords = db.getAllUnUploadedResults();
-                if(listRecords.size() == 0) {
+                int recordCount = db.getAllUnuploadedResultsCount(null);
+                if(recordCount == 0) {
                     Toast.makeText(getActivity(), "No cached data point", Toast.LENGTH_SHORT).show();
                 }else {
                     Intent intent = new Intent(getActivity(), DisplayCachedDataPoints.class);
@@ -278,6 +279,9 @@ public class NavigationDrawerFragment extends Fragment {
                     }
                 }
 
+                //final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
+                int recordCount = db.getAllUnuploadedResultsCount(null);
+                totalDataPointsBtn.setText("" + recordCount);
                 if(appSettings.getConnectionId() == null){
                     ((MainActivity) getActivity()).setDeviceConnected("Tap to connect device", "");
                 }
@@ -519,30 +523,30 @@ public class NavigationDrawerFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
-        Thread t = new Thread() {
-
-            @Override
-            public void run() {
-                try {
-                    while (!isInterrupted()) {
-                        Thread.sleep(1000);
-                        if (getActivity() != null) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    db = DatabaseHelper.getHelper(getActivity());
-                                    final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
-                                    String totalCachedDataPoints = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "0");
-                                    totalDataPointsBtn.setText("" + listRecords.size());
-                                }
-                            });
-                        }
-                    }
-                } catch (InterruptedException e) {
-                }
-            }
-        };
-
-        t.start();
+//        Thread t = new Thread() {
+//
+//            @Override
+//            public void run() {
+//                try {
+//                    while (!isInterrupted()) {
+//                        Thread.sleep(1000);
+//                        if (getActivity() != null) {
+//                            getActivity().runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    db = DatabaseHelper.getHelper(getActivity());
+//                                    final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
+//                                    String totalCachedDataPoints = PrefUtils.getFromPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "0");
+//                                    totalDataPointsBtn.setText("" + listRecords.size());
+//                                }
+//                            });
+//                        }
+//                    }
+//                } catch (InterruptedException e) {
+//                }
+//            }
+//        };
+//
+//        t.start();
     }
 }

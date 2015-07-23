@@ -331,13 +331,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //		return projectsResults;
 //	}
 //
+	public int getAllUnuploadedResultsCount(String projectId){
+		int count = 0;
+		SQLiteDatabase db = getHelper(context).getWritableDatabase();
+		String selectQuery = "";
+		if (null != projectId)
+		{
+			 selectQuery = "SELECT count(*) FROM " + TABLE_RESULTS + " WHERE "
+					+ C_UPLOADED + " = 'N' AND " + C_PROJECT_ID + " = '" + projectId + "'";
+			Log.e("DATABASE_HELPER_getUnuploadedResultsCount", selectQuery);
+		}else {
+			 selectQuery = "SELECT count(*) FROM " + TABLE_RESULTS + " WHERE "
+					+ C_UPLOADED + " = 'N'";
+			Log.e("getUnuploadedResultsCount", selectQuery);
+		}
+
+		Cursor c = db.rawQuery(selectQuery, null);
+		if (c.moveToFirst()) {
+			count = c.getInt(0);
+		}
+		return count;
+	}
+
+
 	public List<ProjectResult> getAllUnUploadedResults() {
         SQLiteDatabase db = getHelper(context).getWritableDatabase();
         List<ProjectResult> projectsResults = new ArrayList<ProjectResult>();
 		String selectQuery = "SELECT rowid,* FROM " + TABLE_RESULTS + " WHERE "
 				+ C_UPLOADED + " = 'N'";
 
-		Log.e("DATABASE_HELPER_getAllResearchProject", selectQuery);
+		Log.e("getAllUnUploadedResults", selectQuery);
 
 		Cursor c = db.rawQuery(selectQuery, null);
 
@@ -359,33 +382,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return projectsResults;
 	}
 
-	public List<ProjectResult> getAllUnUploadedResults(String projectId) {
-		SQLiteDatabase db = getHelper(context).getWritableDatabase();
-		List<ProjectResult> projectsResults = new ArrayList<ProjectResult>();
-		String selectQuery = "SELECT rowid,* FROM " + TABLE_RESULTS + " WHERE "
-				+ C_UPLOADED + " = 'N' AND " + C_PROJECT_ID + " = '" + projectId + "'";
-
-		Log.e("DATABASE_HELPER_getAllResearchProject", selectQuery);
-
-		Cursor c = db.rawQuery(selectQuery, null);
-
-		if (c.moveToFirst()) {
-			do {
-				ProjectResult rp = new ProjectResult();
-				rp.setId(c.getString(c.getColumnIndex(C_ROW_ID)));
-				rp.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
-				rp.setReading(c.getString(c.getColumnIndex(C_READING)));
-				rp.setUploaded(c.getString(c.getColumnIndex(C_UPLOADED)));
-
-				// adding to todo list
-				projectsResults.add(rp);
-			} while (c.moveToNext());
-		}
-
-		c.close();
-		//closeReadDatabase();
-		return projectsResults;
-	}
+//	public List<ProjectResult> getAllUnUploadedResults(String projectId) {
+//		SQLiteDatabase db = getHelper(context).getWritableDatabase();
+//		List<ProjectResult> projectsResults = new ArrayList<ProjectResult>();
+//		String selectQuery = "SELECT rowid,* FROM " + TABLE_RESULTS + " WHERE "
+//				+ C_UPLOADED + " = 'N' AND " + C_PROJECT_ID + " = '" + projectId + "'";
+//
+//		Log.e("DATABASE_HELPER_getAllResearchProject", selectQuery);
+//
+//		Cursor c = db.rawQuery(selectQuery, null);
+//
+//		if (c.moveToFirst()) {
+//			do {
+//				ProjectResult rp = new ProjectResult();
+//				rp.setId(c.getString(c.getColumnIndex(C_ROW_ID)));
+//				rp.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
+//				rp.setReading(c.getString(c.getColumnIndex(C_READING)));
+//				rp.setUploaded(c.getString(c.getColumnIndex(C_UPLOADED)));
+//
+//				// adding to todo list
+//				projectsResults.add(rp);
+//			} while (c.moveToNext());
+//		}
+//
+//		c.close();
+//		//closeReadDatabase();
+//		return projectsResults;
+//	}
 //
 //	public boolean updateResults(ProjectResult result) {
 //

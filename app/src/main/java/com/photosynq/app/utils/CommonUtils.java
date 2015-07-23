@@ -70,10 +70,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import tourguide.tourguide.Overlay;
-import tourguide.tourguide.Pointer;
-import tourguide.tourguide.ToolTip;
-import tourguide.tourguide.TourGuide;
+//import tourguide.tourguide.Overlay;
+//import tourguide.tourguide.Pointer;
+//import tourguide.tourguide.ToolTip;
+//import tourguide.tourguide.TourGuide;
 
 
 /**
@@ -466,7 +466,7 @@ public class CommonUtils {
                        new AlertDialog.Builder(context)
                                .setIcon(android.R.drawable.ic_dialog_alert)
                                .setTitle("Syncing")
-                               .setMessage("Pushed " + " " + totalCachedDataPoints + " data points\n\nProjects updates complete")
+                               .setMessage("Pushed data points\n\nProjects updates complete")
                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                    @Override
                                    public void onClick(DialogInterface dialog, int which) {

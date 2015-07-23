@@ -160,15 +160,15 @@ public class SubNavigationDrawerFragment extends Fragment {
         });
 
         db = DatabaseHelper.getHelper(getActivity());
-        List<ProjectResult> listRecords = db.getAllUnUploadedResults(mProjectId);
+        //int recordCount = db.getAllUnuploadedResultsCount(mProjectId);
         totalDataPointsBtn = (Button) linearLayout.findViewById(R.id.totalCachedDataPointsBtn);
-        totalDataPointsBtn.setText("" + listRecords.size());
+        //totalDataPointsBtn.setText("" + recordCount);
 
         totalDataPointsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<ProjectResult> listRecords = db.getAllUnUploadedResults();
-                if(listRecords.size() == 0) {
+                int recordCount = db.getAllUnuploadedResultsCount(null);
+                if(recordCount == 0) {
                     Toast.makeText(getActivity(), "No cached data point", Toast.LENGTH_SHORT).show();
                 }else {
                     Intent intent = new Intent(getActivity(), DisplayCachedDataPoints.class);
@@ -227,8 +227,8 @@ public class SubNavigationDrawerFragment extends Fragment {
         mDrawerLayout = drawerLayout;
         mProjectId = projectId;
 
-        List<ProjectResult> listRecords = db.getAllUnUploadedResults(mProjectId);
-        totalDataPointsBtn.setText("" + listRecords.size());
+        //List<ProjectResult> listRecords = db.getAllUnUploadedResults(mProjectId);
+        //totalDataPointsBtn.setText("" + listRecords.size());
 
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
@@ -276,6 +276,10 @@ public class SubNavigationDrawerFragment extends Fragment {
                         setDeviceConnected(device.getName(), appSettings.getConnectionId());
                     }
                 }
+
+                int resultsCount = db.getAllUnuploadedResultsCount(mProjectId);
+                totalDataPointsBtn.setText("" + resultsCount);
+
 
                 if(appSettings.getConnectionId() == null){
                     ((MainActivity) getActivity()).setDeviceConnected("Tap to connect device", "");
@@ -518,29 +522,29 @@ public class SubNavigationDrawerFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
-        Thread t = new Thread() {
-
-            @Override
-            public void run() {
-                try {
-                    while (!isInterrupted()) {
-                        Thread.sleep(1000);
-                        if (getActivity() != null) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    db = DatabaseHelper.getHelper(getActivity());
-                                    List<ProjectResult> listRecords = db.getAllUnUploadedResults(mProjectId);
-                                    totalDataPointsBtn.setText("" + listRecords.size());
-                                }
-                            });
-                        }
-                    }
-                } catch (InterruptedException e) {
-                }
-            }
-        };
-
-        t.start();
+//        Thread t = new Thread() {
+//
+//            @Override
+//            public void run() {
+//                try {
+//                    while (!isInterrupted()) {
+//                        Thread.sleep(1000);
+//                        if (getActivity() != null) {
+//                            getActivity().runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    db = DatabaseHelper.getHelper(getActivity());
+//                                    List<ProjectResult> listRecords = db.getAllUnUploadedResults(mProjectId);
+//                                    totalDataPointsBtn.setText("" + listRecords.size());
+//                                }
+//                            });
+//                        }
+//                    }
+//                } catch (InterruptedException e) {
+//                }
+//            }
+//        };
+//
+//        t.start();
     }
 }

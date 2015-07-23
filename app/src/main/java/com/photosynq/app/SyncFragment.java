@@ -116,22 +116,19 @@ public class SyncFragment extends Fragment implements PhotosynqResponse {
         tvAutoSyncCachedDataPtValue = (TextView) rootView.findViewById(R.id.tv_data_points_value);
         tvAutoSyncCachedDataPtValue.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoRegular());
         final DatabaseHelper db = DatabaseHelper.getHelper(getActivity());
-        List<ProjectResult> listRecords = db.getAllUnUploadedResults();
-        PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "" + listRecords.size());
+        //List<ProjectResult> listRecords = db.getAllUnUploadedResults();
+        int recordCount = db.getAllUnuploadedResultsCount(null);
+        PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "" + recordCount);
 
         //set total of cached points.
-        if (listRecords.size() > 0) {
-            tvAutoSyncCachedDataPtValue.setText(listRecords.size() + "");
-        } else {
-            tvAutoSyncCachedDataPtValue.setText("0");
-        }
+        tvAutoSyncCachedDataPtValue.setText(recordCount + "");
 
         tvAutoSyncCachedDataPtValue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                List<ProjectResult> listRecords = db.getAllUnUploadedResults();
-                if (listRecords.size() == 0) {
+                int recordCount = db.getAllUnuploadedResultsCount(null);
+                if (recordCount == 0) {
                     Toast.makeText(getActivity(), "No cached data point", Toast.LENGTH_SHORT).show();
                 } else {
                     Intent intent = new Intent(getActivity(), DisplayCachedDataPoints.class);
@@ -327,15 +324,11 @@ public class SyncFragment extends Fragment implements PhotosynqResponse {
     public void refresh() {
 
         DatabaseHelper db = DatabaseHelper.getHelper(getActivity());
-        final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
-        PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "" + listRecords.size());
+        int recordCount = db.getAllUnuploadedResultsCount(null);
+        PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "" + recordCount);
 
         //set total of cached points.
-        if (listRecords.size() > 0) {
-            tvAutoSyncCachedDataPtValue.setText(listRecords.size() + "");
-        } else {
-            tvAutoSyncCachedDataPtValue.setText("0");
-        }
+        tvAutoSyncCachedDataPtValue.setText(recordCount + "");
     }
 
     public void startSyncService(long set_interval_time) {
@@ -427,38 +420,44 @@ public class SyncFragment extends Fragment implements PhotosynqResponse {
 
     public void onResume() {
         super.onResume();
-        Thread t = new Thread() {
+        DatabaseHelper db = DatabaseHelper.getHelper(getActivity());
+        int recordCount = db.getAllUnuploadedResultsCount(null);
 
-            @Override
-            public void run() {
-                try {
-                    while (!isInterrupted()) {
-                        Thread.sleep(1000);
-                        if (getActivity() != null) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        DatabaseHelper db = DatabaseHelper.getHelper(getActivity());
-                                        final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
-                                        PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "" + listRecords.size());
+        tvAutoSyncCachedDataPtValue.setText(recordCount + "");
 
-                                        //set total of cached points.
-                                        if (listRecords.size() > 0) {
-                                            tvAutoSyncCachedDataPtValue.setText(listRecords.size() + "");
-                                        } else {
-                                            tvAutoSyncCachedDataPtValue.setText("0");
-                                        }
-                                    }catch (Exception e){}
-                                }
-                            });
-                        }
-                    }
-                } catch (InterruptedException e) {
-                }
-            }
-        };
 
-        t.start();
+//        Thread t = new Thread() {
+//
+//            @Override
+//            public void run() {
+//                try {
+//                    while (!isInterrupted()) {
+//                        Thread.sleep(1000);
+//                        if (getActivity() != null) {
+//                            getActivity().runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    try {
+//                                        DatabaseHelper db = DatabaseHelper.getHelper(getActivity());
+//                                        int recordCount = db.getAllUnuploadedResultsCount(null);
+//                                        PrefUtils.saveToPrefs(getActivity(), PrefUtils.PREFS_TOTAL_CACHED_DATA_POINTS, "" + recordCount);
+//
+//                                        //set total of cached points.
+//                                        if (recordCount > 0) {
+//                                            tvAutoSyncCachedDataPtValue.setText(recordCount + "");
+//                                        } else {
+//                                            tvAutoSyncCachedDataPtValue.setText("0");
+//                                        }
+//                                    }catch (Exception e){}
+//                                }
+//                            });
+//                        }
+//                    }
+//                } catch (InterruptedException e) {
+//                }
+//            }
+//        };
+//
+//        t.start();
     }
 }

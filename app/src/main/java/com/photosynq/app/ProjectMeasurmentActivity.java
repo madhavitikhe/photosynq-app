@@ -1348,10 +1348,10 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
             optionsMenu = menu;
             MenuItem menuItem = menu.getItem(menu.size() - 1);
 
-        final List<ProjectResult> listRecords = dbHelper.getAllUnUploadedResults(projectId);
-        int totalPoints = listRecords.size();
+        int recordCount = dbHelper.getAllUnuploadedResultsCount(projectId);
 
-        menuItem.setTitle("Sync " + totalPoints + " Points");
+
+        menuItem.setTitle("Sync " + recordCount + " Points");
             userDefinedOptions();
         //}
 
