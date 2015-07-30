@@ -22,6 +22,7 @@ import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.model.UserAnswer;
 import com.photosynq.app.utils.PrefUtils;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String C_PROJECT_PROTOCOL_IDS = "protocols_ids";
     private static final String C_PROJECT_NAME = "name";
     private static final String C_PROJECT_DESCRIPTION = "description";
-    private static final String C_PROJECT_SLUG = "slug";
+    //private static final String C_PROJECT_SLUG = "slug";
 	private static final String C_IS_CONTRIBUTED = "is_contributed";
 
     // Project lead columns
@@ -111,82 +112,136 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	// User Entered Answers.
 	private static final String C_USER_ENTERED_ANSWERS = "user_entered_answers";
+    private static final String TEXT = " TEXT ";
+    private static final String COMMA = ", ";
+    private static final String PRIMARY_KEY = " PRIMARY KEY ";
+    private static final String CREATE_TABLE = "CREATE TABLE ";
 
     private Context context;
-
 	// Reaserch Project table create statement
 	//
-	private static final String CREATE_TABLE_RESEARCH_PROJECT = "CREATE TABLE "
-			+ TABLE_RESEARCH_PROJECT + "(" + C_RECORD_HASH
-			+ " TEXT PRIMARY KEY," + C_PROJECT_ID + " TEXT," + C_PROJECT_NAME + " TEXT,"
-			+ C_PROJECT_DESCRIPTION + " TEXT," + C_PROJECT_DIR_TO_COLLAB + " TEXT,"
-            + C_PROJECT_LEAD_ID + " TEXT,"
-			+ C_PROJECT_START_DATE + " TEXT," + C_PROJECT_END_DATE + " TEXT," + C_PROJECT_BETA
-			+ " TEXT," + C_IS_CONTRIBUTED + " TEXT," + C_PROJECT_PROTOCOL_IDS + " TEXT," + C_PROJECT_IMAGE_URL + " TEXT"
-			+ ")";
+	private static final StringBuilder CREATE_TABLE_RESEARCH_PROJECT =
+            new StringBuilder(CREATE_TABLE)
+                    .append(TABLE_RESEARCH_PROJECT ).append("(")
+                    .append(C_RECORD_HASH).append(TEXT).append(PRIMARY_KEY).append(COMMA)
+                    .append(C_PROJECT_ID).append( TEXT).append(COMMA)
+                    .append(C_PROJECT_NAME).append(TEXT).append(COMMA)
+                    .append(C_PROJECT_DESCRIPTION).append(TEXT).append(COMMA)
+                    .append(C_PROJECT_DIR_TO_COLLAB).append(TEXT).append(COMMA)
+                    .append(C_PROJECT_LEAD_ID).append(TEXT).append(COMMA)
+                    .append(C_PROJECT_START_DATE).append(TEXT).append(COMMA)
+                    .append(C_PROJECT_END_DATE).append(TEXT).append(COMMA)
+                    .append(C_PROJECT_BETA).append(TEXT).append(COMMA)
+                    .append(C_IS_CONTRIBUTED).append(TEXT).append(COMMA)
+                    .append(C_PROJECT_PROTOCOL_IDS).append(TEXT).append(COMMA)
+                    .append(C_PROJECT_IMAGE_URL).append(TEXT).append(")");
 
     // Project Lead table create statement
-    private static final String CREATE_TABLE_PROJECT_LEAD = "CREATE TABLE "
-            + TABLE_PROJECT_LEAD + "(" + C_LEAD_ID
-            + " TEXT PRIMARY KEY," + C_LEAD_NAME + " TEXT,"
-            + C_LEAD_DATA_COUNT + " TEXT," + C_LEAD_IMAGE_URL + " TEXT"
-            + ")";
+    private static final StringBuilder CREATE_TABLE_PROJECT_LEAD =
+                new StringBuilder( CREATE_TABLE)
+                    .append(TABLE_PROJECT_LEAD).append("(")
+                    .append(C_LEAD_ID).append(TEXT).append(PRIMARY_KEY).append(COMMA)
+                    .append(C_LEAD_NAME).append(TEXT).append(COMMA)
+                    .append(C_LEAD_DATA_COUNT).append(TEXT).append(COMMA)
+                    .append(C_LEAD_IMAGE_URL).append(TEXT).append(")");
+
 
 	// Question table create statement
-	private static final String CREATE_TABLE_QUESTION = "CREATE TABLE "
-			+ TABLE_QUESTION + "(" + C_RECORD_HASH + " TEXT PRIMARY KEY," + C_PROJECT_ID
-			+ " TEXT," + C_QUESTION_ID + " TEXT," + C_QUESTION_TEXT + " TEXT, "+C_QUESTION_TYPE+" integer )";
+
+	private static final StringBuilder CREATE_TABLE_QUESTION =
+            new StringBuilder(CREATE_TABLE)
+                    .append(TABLE_QUESTION).append("(")
+                    .append(C_RECORD_HASH).append(TEXT).append(PRIMARY_KEY).append(COMMA)
+                    .append(C_PROJECT_ID).append(TEXT).append(COMMA)
+                    .append(C_QUESTION_ID).append(TEXT).append(COMMA)
+                    .append(C_QUESTION_TEXT).append(TEXT).append(COMMA)
+                    .append(C_QUESTION_TYPE).append(" integer ").append(")");
 
 	// Answer table create statement
-	private static final String CREATE_TABLE_OPTION = "CREATE TABLE "
-			+ TABLE_OPTION + "(" + C_RECORD_HASH + " TEXT PRIMARY KEY," + C_OPTION_TEXT
-			+ " TEXT ," + C_PROJECT_ID + " TEXT," + C_QUESTION_ID + " TEXT)";
+
+	private static final StringBuilder CREATE_TABLE_OPTION =
+            new StringBuilder(CREATE_TABLE)
+                    .append(TABLE_OPTION).append("(")
+                    .append(C_RECORD_HASH).append(TEXT).append(PRIMARY_KEY).append(COMMA)
+                    .append(C_OPTION_TEXT).append(TEXT).append(COMMA)
+                    .append(C_PROJECT_ID).append(TEXT).append(COMMA)
+                    .append(C_QUESTION_ID).append(TEXT).append(")");
 
 	// Protocol table create statement
-	private static final String CREATE_TABLE_PROTOCOL = "CREATE TABLE "
-			+ TABLE_PROTOCOL + "(" + C_RECORD_HASH + " TEXT PRIMARY KEY," + C_PROTOCOL_ID
-			+ " TEXT ," + C_PROTOCOL_NAME + " TEXT ," + C_PROTOCOL_JSON + " TEXT ,"
-			+ C_PROTOCOL_DESCRIPTION + " TEXT ," + C_PROTOCOL_MACRO_ID + " TEXT ," + C_PROTOCOL_MACRO_SLUG + " TEXT ,"
-            + C_PROTOCOL_PRE_SEL +" TEXT)";
+	private static final StringBuilder CREATE_TABLE_PROTOCOL =
+            new StringBuilder(CREATE_TABLE)
+                    .append(TABLE_PROTOCOL).append("(")
+                    .append(C_RECORD_HASH).append(TEXT).append(PRIMARY_KEY).append(COMMA)
+                    .append(C_PROTOCOL_ID).append(TEXT).append(COMMA)
+                    .append(C_PROTOCOL_NAME).append(TEXT).append(COMMA)
+                    .append(C_PROTOCOL_JSON).append(TEXT).append(COMMA)
+                    .append(C_PROTOCOL_DESCRIPTION).append(TEXT).append(COMMA)
+                    .append(C_PROTOCOL_MACRO_ID).append(TEXT).append(COMMA)
+                    .append(C_PROTOCOL_MACRO_SLUG).append(TEXT).append(COMMA)
+                    .append(C_PROTOCOL_PRE_SEL).append(TEXT).append(")");
+    // Macro table create statement
+    private static final StringBuilder CREATE_TABLE_MACRO =
+            new StringBuilder(CREATE_TABLE)
+                    .append(TABLE_MACRO).append("(")
+                    .append(C_RECORD_HASH).append(TEXT).append(PRIMARY_KEY).append(COMMA)
+                    .append(C_MACRO_ID).append(TEXT).append(COMMA)
+                    .append(C_MACRO_NAME).append(TEXT).append(COMMA)
+                    .append(C_MACRO_DESCRIPTION).append(TEXT).append(COMMA)
+                    .append(C_MACRO_DEFAULT_X_AXIS).append(TEXT).append(COMMA)
+                    .append(C_MACRO_DEFAULT_Y_AXIS).append(TEXT).append(COMMA)
+                    .append(C_MACRO_JAVASCRIPT_CODE).append(TEXT).append(COMMA)
+                    .append(C_MACRO_SLUG).append(TEXT).append(")");
 
-	// Macro table create statement
-	private static final String CREATE_TABLE_MACRO = "CREATE TABLE "
-			+ TABLE_MACRO + "(" + C_RECORD_HASH + " TEXT PRIMARY KEY," + C_MACRO_ID + " TEXT ,"
-			+ C_MACRO_NAME + " TEXT ," + C_MACRO_DESCRIPTION + " TEXT ," + C_MACRO_DEFAULT_X_AXIS
-			+ " TEXT ," + C_MACRO_DEFAULT_Y_AXIS + " TEXT ," + C_MACRO_JAVASCRIPT_CODE
-			+ " TEXT ," + C_MACRO_SLUG + " TEXT)";
+    private static final StringBuilder CREATE_TABLE_RESULTS =
+            new StringBuilder(CREATE_TABLE)
+                    .append(TABLE_RESULTS).append("(")
+                    .append(C_RECORD_HASH).append(TEXT).append(PRIMARY_KEY).append(COMMA)
+                    .append(C_PROJECT_ID).append(TEXT).append(COMMA)
+                    .append(C_UPLOADED).append(TEXT).append(COMMA)
+                    .append(C_READING).append(TEXT).append(")");
 
-	private static final String CREATE_TABLE_RESULTS = "CREATE TABLE "
-			+ TABLE_RESULTS + "(" + C_RECORD_HASH + " TEXT PRIMARY KEY," + C_PROJECT_ID
-			+ " TEXT ," + C_UPLOADED + " TEXT ," + C_READING + " TEXT)";
+    private static final StringBuilder CREATE_TABLE_SETTINGS =
+            new StringBuilder(CREATE_TABLE)
+                    .append(TABLE_SETTINGS).append("(")
+                    .append(C_USER_ID).append(TEXT).append(COMMA)
+                    .append(C_MODE_TYPE).append(TEXT).append(COMMA)
+                    .append(C_CONNECTION_ID).append(TEXT).append(COMMA)
+                    .append(C_PROJECT_ID).append(TEXT).append(")");
 
-	private static final String CREATE_TABLE_SETTINGS = "CREATE TABLE "
-			+ TABLE_SETTINGS + "(" + C_USER_ID + " TEXT," + C_MODE_TYPE
-			+ " TEXT ," + C_CONNECTION_ID + " TEXT ," + C_PROJECT_ID
-			+ " TEXT )";
+    private static final StringBuilder CREATE_TABLE_DATA =
+            new StringBuilder(CREATE_TABLE)
+                    .append(TABLE_DATA).append("(")
+                    .append(C_USER_ID).append(TEXT).append(COMMA)
+                    .append(C_PROJECT_ID).append(TEXT).append(COMMA)
+                    .append(C_QUESTION_ID).append(TEXT).append(COMMA)
+                    .append(C_TYPE).append(TEXT).append(COMMA)
+                    .append(C_VALUES).append(TEXT).append(")");
 
-	private static final String CREATE_TABLE_DATA = "CREATE TABLE "
-			+ TABLE_DATA + "(" + C_USER_ID + " TEXT," + C_PROJECT_ID + " TEXT,"
-			+ C_QUESTION_ID + " TEXT," + C_TYPE + " TEXT," + C_VALUES + " TEXT )";
+    private static final StringBuilder CREATE_TABLE_REMEMBER_ANSWERS =
+            new StringBuilder(CREATE_TABLE)
+                    .append(TABLE_REMEMBER_ANSWERS).append("(")
+                    .append(C_USER_ID).append(TEXT).append(COMMA)
+                    .append(C_PROJECT_ID).append(TEXT).append(COMMA)
+                    .append(C_QUESTION_ID).append(TEXT).append(COMMA)
+                    .append(C_SELECTED_OPTION_TEXT).append(TEXT).append(COMMA)
+                    .append(C_IS_REMEMBER).append(TEXT).append(")");
 
-    // Remember_Answer table create statement
-    private static final String CREATE_TABLE_REMEMBER_ANSWERS = "CREATE TABLE "
-            + TABLE_REMEMBER_ANSWERS + "(" + C_USER_ID + " TEXT," + C_PROJECT_ID + " TEXT,"
-            + C_QUESTION_ID + " TEXT," + C_SELECTED_OPTION_TEXT + " TEXT," + C_IS_REMEMBER + " TEXT )";
+    private static final StringBuilder CREATE_TABLE_USER_ANSWERS =
+            new StringBuilder(CREATE_TABLE)
+                    .append(TABLE_USER_ANSWERS).append("(")
+                    .append(C_USER_ENTERED_ANSWERS).append(TEXT).append(PRIMARY_KEY)
+                    .append(")");
 
-	// User Entered Answers create statement.
-	private static final String CREATE_TABLE_USER_ANSWERS = "CREATE TABLE "
-			+ TABLE_USER_ANSWERS + "(" + C_USER_ENTERED_ANSWERS + " TEXT PRIMARY KEY )";
-
+    private static final String FROM = " FROM ";
+    private static final String SELECT = "SELECT ";
+    private static final String WHERE = " WHERE ";
+    private static final String AND =  " AND ";
+    private static final String DROP_TABLE_IF_EXIST = "DROP TABLE IF EXISTS ";
 
 	private DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION); this.context =context;}
 
 	private static DatabaseHelper instance;
-    private int mWriteOpenCounter;
-    private int mReadOpenCounter;
-    private SQLiteDatabase mWriteDatabase;
-    private SQLiteDatabase mReadDatabase;
 
 	public static synchronized DatabaseHelper getHelper(Context context) {
 		if (instance == null)
@@ -194,96 +249,58 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		return instance;
 	}
+    public static synchronized SQLiteDatabase getWDatabase(Context context) {
+        if (instance == null)
+            instance = new DatabaseHelper(context);
 
+        return instance.getWritableDatabase();
+    }
 
-//    public synchronized SQLiteDatabase openWriteDatabase() {
-//        mWriteOpenCounter++;
-//        if(mWriteOpenCounter == 1) {
-//            // Opening new database
-//            mWriteDatabase = this.getWritableDatabase();
-//        }
-//        return mWriteDatabase;
-//    }
-
-
-//    public synchronized void closeWriteDatabase() {
-//        mWriteOpenCounter--;
-//        if(mWriteOpenCounter == 0) {
-//            // Closing database
-//            if(mWriteDatabase.isOpen())
-//                mWriteDatabase.close();
-//        }
-//        if(mWriteOpenCounter < 0)
-//            mWriteOpenCounter = 0;
-//    }
-//
-//    public synchronized SQLiteDatabase openReadDatabase() {
-//        mReadOpenCounter++;
-//        if(mReadOpenCounter == 1) {
-//            // Opening new database
-//            mReadDatabase = this.getReadableDatabase();
-//        }
-//        return mReadDatabase;
-//    }
-
-//    public synchronized void closeReadDatabase() {
-//        mReadOpenCounter--;
-//        if(mReadOpenCounter == 0) {
-//            // Closing database
-//            if(mReadDatabase.isOpen())
-//                mReadDatabase.close();
-//        }
-//        if(mReadOpenCounter < 0)
-//            mReadOpenCounter = 0;
-//    }
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// creating required tables
-		db.execSQL(CREATE_TABLE_RESEARCH_PROJECT);
-		db.execSQL(CREATE_TABLE_QUESTION);
-		db.execSQL(CREATE_TABLE_OPTION);
-		db.execSQL(CREATE_TABLE_PROTOCOL);
-		db.execSQL(CREATE_TABLE_MACRO);
-		db.execSQL(CREATE_TABLE_RESULTS);
-		db.execSQL(CREATE_TABLE_SETTINGS);
-		db.execSQL(CREATE_TABLE_DATA);
-        db.execSQL(CREATE_TABLE_PROJECT_LEAD);
-        db.execSQL(CREATE_TABLE_REMEMBER_ANSWERS);
-		db.execSQL(CREATE_TABLE_USER_ANSWERS);
+		db.execSQL(CREATE_TABLE_RESEARCH_PROJECT.toString());
+		db.execSQL(CREATE_TABLE_QUESTION.toString());
+		db.execSQL(CREATE_TABLE_OPTION.toString());
+		db.execSQL(CREATE_TABLE_PROTOCOL.toString());
+		db.execSQL(CREATE_TABLE_MACRO.toString());
+		db.execSQL(CREATE_TABLE_RESULTS.toString());
+		db.execSQL(CREATE_TABLE_SETTINGS.toString());
+		db.execSQL(CREATE_TABLE_DATA.toString());
+        db.execSQL(CREATE_TABLE_PROJECT_LEAD.toString());
+        db.execSQL(CREATE_TABLE_REMEMBER_ANSWERS.toString());
+		db.execSQL(CREATE_TABLE_USER_ANSWERS.toString());
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVer, int newVer) {
 		// on upgrade drop older tables
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESEARCH_PROJECT);
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_QUESTION);
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_OPTION);
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROTOCOL);
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_MACRO);
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESULTS);
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SETTINGS);
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATA);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECT_LEAD);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REMEMBER_ANSWERS);
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER_ANSWERS);
+		db.execSQL(DROP_TABLE_IF_EXIST + TABLE_RESEARCH_PROJECT);
+		db.execSQL(DROP_TABLE_IF_EXIST + TABLE_QUESTION);
+		db.execSQL(DROP_TABLE_IF_EXIST + TABLE_OPTION);
+		db.execSQL(DROP_TABLE_IF_EXIST + TABLE_PROTOCOL);
+		db.execSQL(DROP_TABLE_IF_EXIST + TABLE_MACRO);
+		db.execSQL(DROP_TABLE_IF_EXIST + TABLE_RESULTS);
+		db.execSQL(DROP_TABLE_IF_EXIST + TABLE_SETTINGS);
+		db.execSQL(DROP_TABLE_IF_EXIST + TABLE_DATA);
+        db.execSQL(DROP_TABLE_IF_EXIST + TABLE_PROJECT_LEAD);
+        db.execSQL(DROP_TABLE_IF_EXIST + TABLE_REMEMBER_ANSWERS);
+		db.execSQL(DROP_TABLE_IF_EXIST + TABLE_USER_ANSWERS);
 		// create new tables;
 		onCreate(db);
 
 	}
 
 	public long createResult(ProjectResult result) {
-        long retVal = -1;
-
 		if (result.getReading().length() <= 0){
-			return retVal;
+			return -1;
 		}
 		try {
-			SQLiteDatabase db = getHelper(context).getWritableDatabase();
-
+			SQLiteDatabase db = getWDatabase(context);
 			ContentValues values = new ContentValues();
 			values.put(C_PROJECT_ID,
-					null != result.getProjectId() ? result.getProjectId() : "");
+                    null != result.getProjectId() ? result.getProjectId() : "");
 			values.put(C_READING,
 					null != result.getReading() ? result.getReading() : "");
 			values.put(C_UPLOADED,
@@ -292,77 +309,51 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			long row_id = db.insert(TABLE_RESULTS, null, values);
 
 			if (row_id >= 0) {
-				retVal = row_id;
+				return row_id;
 			}
-		} catch (SQLiteConstraintException contraintException) {
-
-		} catch (SQLException sqliteException) {
-
-		}
-        //closeWriteDatabase();
-        return retVal;
+		} catch (Exception e) {
+            Log.e("DBHGAURC", e.getMessage());
+        }
+        return -1;
 	}
 
-//	public List<ProjectResult> getAllResultsForProject(String projectId) {
-//		SQLiteDatabase db = openReadDatabase();
-//		List<ProjectResult> projectsResults = new ArrayList<ProjectResult>();
-//		String selectQuery = "SELECT  rowid,* FROM " + TABLE_RESULTS
-//				+ " WHERE " + C_PROJECT_ID + " = " + projectId;
-//
-//		Log.e("DATABASE_HELPER_getAllResearchProject", selectQuery);
-//
-//		Cursor c = db.rawQuery(selectQuery, null);
-//
-//		if (c.moveToFirst()) {
-//			do {
-//				ProjectResult rp = new ProjectResult();
-//				rp.setId(c.getString(c.getColumnIndex(C_ROW_ID)));
-//				rp.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
-//				rp.setReading(c.getString(c.getColumnIndex(C_READING)));
-//				rp.setUploaded(c.getString(c.getColumnIndex(C_UPLOADED)));
-//
-//				// adding to todo list
-//				projectsResults.add(rp);
-//			} while (c.moveToNext());
-//		}
-//
-//		c.close();
-//        closeReadDatabase();
-//		return projectsResults;
-//	}
-//
 	public int getAllUnuploadedResultsCount(String projectId){
-		int count = 0;
-		SQLiteDatabase db = getHelper(context).getWritableDatabase();
-		String selectQuery = "";
-		if (null != projectId)
-		{
-			 selectQuery = "SELECT count(*) FROM " + TABLE_RESULTS + " WHERE "
-					+ C_UPLOADED + " = 'N' AND " + C_PROJECT_ID + " = '" + projectId + "'";
-			Log.e("DATABASE_HELPER_getUnuploadedResultsCount", selectQuery);
-		}else {
-			 selectQuery = "SELECT count(*) FROM " + TABLE_RESULTS + " WHERE "
-					+ C_UPLOADED + " = 'N'";
-			Log.e("getUnuploadedResultsCount", selectQuery);
+		StringBuilder selectQuery = new StringBuilder();
+
+        if (null != projectId) {
+
+            selectQuery.append(SELECT).append(" count(*) ").append(FROM)
+                     .append(TABLE_RESULTS).append(WHERE)
+                     .append(C_UPLOADED).append(" = 'N' ").append(AND)
+                     .append(C_PROJECT_ID).append(" = '")
+                     .append(projectId).append("'");
+
+			Log.e("DBHGAURC", selectQuery.toString());
+		} else {
+
+            selectQuery.append(SELECT).append(" count(*) ").append(FROM)
+                    .append(TABLE_RESULTS).append(WHERE)
+                    .append(C_UPLOADED).append(" = 'N'");
+
+			Log.e("DBHGAURC", selectQuery.toString());
 		}
 
-		Cursor c = db.rawQuery(selectQuery, null);
-		if (c.moveToFirst()) {
-			count = c.getInt(0);
-		}
-		return count;
+		Cursor c = getWDatabase(context).rawQuery(selectQuery.toString(), null);
+        int cnt = c.getCount();
+        c.close();
+        return cnt;
 	}
-
 
 	public List<ProjectResult> getAllUnUploadedResults() {
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
-        List<ProjectResult> projectsResults = new ArrayList<ProjectResult>();
-		String selectQuery = "SELECT rowid,* FROM " + TABLE_RESULTS + " WHERE "
-				+ C_UPLOADED + " = 'N'";
+        StringBuilder selectQuery = new StringBuilder();
+        List<ProjectResult> projectsResults = new ArrayList<>();
+        selectQuery.append(SELECT).append(" rowid,* ").append(FROM)
+                .append(TABLE_RESULTS).append(WHERE)
+                .append(C_UPLOADED).append(" = 'N'");
 
-		Log.e("getAllUnUploadedResults", selectQuery);
+		Log.e("DBHGAUR", selectQuery.toString());
 
-		Cursor c = db.rawQuery(selectQuery, null);
+		Cursor c = getWDatabase(context).rawQuery(selectQuery.toString(), null);
 
 		if (c.moveToFirst()) {
 			do {
@@ -372,83 +363,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				rp.setReading(c.getString(c.getColumnIndex(C_READING)));
 				rp.setUploaded(c.getString(c.getColumnIndex(C_UPLOADED)));
 
-				// adding to todo list
 				projectsResults.add(rp);
 			} while (c.moveToNext());
 		}
 
 		c.close();
-        //closeReadDatabase();
 		return projectsResults;
 	}
 
-//	public List<ProjectResult> getAllUnUploadedResults(String projectId) {
-//		SQLiteDatabase db = getHelper(context).getWritableDatabase();
-//		List<ProjectResult> projectsResults = new ArrayList<ProjectResult>();
-//		String selectQuery = "SELECT rowid,* FROM " + TABLE_RESULTS + " WHERE "
-//				+ C_UPLOADED + " = 'N' AND " + C_PROJECT_ID + " = '" + projectId + "'";
-//
-//		Log.e("DATABASE_HELPER_getAllResearchProject", selectQuery);
-//
-//		Cursor c = db.rawQuery(selectQuery, null);
-//
-//		if (c.moveToFirst()) {
-//			do {
-//				ProjectResult rp = new ProjectResult();
-//				rp.setId(c.getString(c.getColumnIndex(C_ROW_ID)));
-//				rp.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
-//				rp.setReading(c.getString(c.getColumnIndex(C_READING)));
-//				rp.setUploaded(c.getString(c.getColumnIndex(C_UPLOADED)));
-//
-//				// adding to todo list
-//				projectsResults.add(rp);
-//			} while (c.moveToNext());
-//		}
-//
-//		c.close();
-//		//closeReadDatabase();
-//		return projectsResults;
-//	}
-//
-//	public boolean updateResults(ProjectResult result) {
-//
-//        boolean retVal = false;
-//		SQLiteDatabase db = openWriteDatabase();
-//
-//		ContentValues values = new ContentValues();
-//		values.put(C_PROJECT_ID,
-//				null != result.getProjectId() ? result.getProjectId() : "");
-//		values.put(C_READING, null != result.getReading() ? result.getReading()
-//				: "");
-//		values.put(C_UPLOADED,
-//				null != result.getUploaded() ? result.getUploaded() : "");
-//
-//		int rowsaffected = db.update(
-//				TABLE_RESULTS,
-//				values,
-//				C_PROJECT_ID + " = ? and " + C_ROW_ID + " =?",
-//				new String[] { String.valueOf(result.getProjectId()),
-//						String.valueOf(result.getId()) });
-//		// updating row
-//		if (rowsaffected > 0) {
-//			retVal = true;
-//		}
-//        closeWriteDatabase();
-//		return retVal;
-//	}
 
 	public void deleteResult(String rowid) {
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
-		db.delete(TABLE_RESULTS, C_ROW_ID + " = ?",
-				new String[] { String.valueOf(rowid) });
-        //closeWriteDatabase();
+
+        getWDatabase(context).delete(TABLE_RESULTS, C_ROW_ID + " = ?",
+                new String[]{rowid});
 	}
 
 	// Insert research project information in database
 	public boolean createResearchProject(ResearchProject rp) {
-        boolean retVal = false;
+
 		try {
-            SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_PROJECT_ID, null != rp.getId() ? rp.getId() : "");
@@ -472,33 +405,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					: "");
 			values.put(C_RECORD_HASH, rp.getRecordHash());
 			// insert row
-			long row_id = db.insert(TABLE_RESEARCH_PROJECT, null, values);
+			long row_id = getWDatabase(context).insert(TABLE_RESEARCH_PROJECT, null, values);
 
 			if (row_id >= 0) {
-				retVal = true;
+				return true;
 			}
 		} catch (SQLiteConstraintException contraintException) {
 			// If data already present then handle the case here.
-			Log.d("DATABASE_HELPER_RESEARCH_PROJECTS",
+			Log.d("DBHRP",
 					"Record already present in database for record hash ="
 							+ rp.getRecordHash());
 
-		} catch (SQLException sqliteException) {}
-        //closeWriteDatabase();
-        return retVal;
+		} catch (SQLException ignored) {}
+        return false;
 	}
 
 	// Get research project information from database
 	public ResearchProject getResearchProject(String id) {
         ResearchProject rp = null;
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
+		StringBuilder selectQuery = new StringBuilder(SELECT).append(" * ")
+                .append(FROM)
+                .append(TABLE_RESEARCH_PROJECT)
+				.append(WHERE).append(C_PROJECT_ID)
+                .append(" = '").append(id).append("'");
 
-		String selectQuery = "SELECT  * FROM " + TABLE_RESEARCH_PROJECT
-				+ " WHERE " + C_PROJECT_ID + " = '" + id + "'";
+		Log.e("DBHGRP", selectQuery.toString());
 
-		Log.e("DATABASE_HELPER_getResearchProject", selectQuery);
-
-		Cursor c = db.rawQuery(selectQuery, null);
+		Cursor c = getWDatabase(context).rawQuery(selectQuery.toString(), null);
 
         if (c != null) {
             c.moveToFirst();
@@ -519,19 +452,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
             c.close();
         }
-        //closeReadDatabase();
         return rp;
 	}
 
 	public List<ResearchProject> getUserCreatedContributedProjects(String userId) {
 
-		SQLiteDatabase db = getHelper(context).getWritableDatabase();
-		List<ResearchProject> researchProjects = new ArrayList<ResearchProject>();
-		String selectQuery = "SELECT  * FROM " + TABLE_RESEARCH_PROJECT
-				+ " WHERE " + C_PROJECT_LEAD_ID + " = '" + userId + "' or " + C_IS_CONTRIBUTED + " = 'true'";
+		List<ResearchProject> researchProjects = new ArrayList<>();
+		StringBuilder selectQuery = new StringBuilder(SELECT).append(" * ")
+                .append(FROM).append( TABLE_RESEARCH_PROJECT)
+				.append(WHERE).append( C_PROJECT_LEAD_ID)
+                .append(" = '").append(userId)
+                .append("' or ").append(C_IS_CONTRIBUTED).append(" = 'true'");
 
-		Log.e("DATABASE_HELPER_userCreatedAndContrbProject", selectQuery);
-		Cursor c = db.rawQuery(selectQuery, null);
+		Log.e("DBHGUCCP", selectQuery.toString());
+		Cursor c = getWDatabase(context).rawQuery(selectQuery.toString(), null);
 
 		if (c.moveToFirst()) {
 			do {
@@ -550,33 +484,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				rp.setBeta(c.getString(c.getColumnIndex(C_PROJECT_BETA)));
 				rp.setIs_contributed(c.getString(c.getColumnIndex(C_IS_CONTRIBUTED)));
 
-
-				// adding to todo list
 				researchProjects.add(rp);
 			} while (c.moveToNext());
 		}
 
 		c.close();
-		//closeReadDatabase();
 		return researchProjects;
 	}
 
 	// Get all research project information from database where name contains search string.
 	public List<ResearchProject> getUserCreatedContributedProjects(String searchString, String userId) {
-		SQLiteDatabase db = getHelper(context).getWritableDatabase();
-		List<ResearchProject> researchProjects = new ArrayList<ResearchProject>();
+		List<ResearchProject> researchProjects = new ArrayList<>();
 
-		String selectQuery = "SELECT  * FROM " + TABLE_RESEARCH_PROJECT
-				+ " WHERE ( " + C_PROJECT_LEAD_ID + " = '" + userId
-				+ "' or " + C_IS_CONTRIBUTED + " = 'true')"
-				+ " AND "+ C_PROJECT_NAME + " LIKE '%" + searchString + "%'";
+		StringBuilder selectQuery = new StringBuilder(SELECT).append(" * ")
+                .append(FROM).append( TABLE_RESEARCH_PROJECT)
+				.append(WHERE).append(C_PROJECT_LEAD_ID)
+                .append(" = '").append(userId)
+				.append("' or ").append(C_IS_CONTRIBUTED).append(" = 'true')")
+                .append(AND).append(C_PROJECT_NAME ).append(" LIKE '%").append(searchString).append("%'");
 
-//		String selectQuery = "SELECT  * FROM " + TABLE_RESEARCH_PROJECT
-//				+ " WHERE " + C_PROJECT_NAME + " LIKE '%" + searchString + "%'";
+		Log.e("DBHGUCCP", selectQuery.toString());
 
-		Log.e("DATABASE_HELPER_getAllResearchProject", selectQuery);
-
-		Cursor c = db.rawQuery(selectQuery, null);
+		Cursor c = getWDatabase(context).rawQuery(selectQuery.toString(), null);
 
 		if (c.moveToFirst()) {
 			do {
@@ -591,30 +520,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				rp.setImageUrl(c.getString(c.getColumnIndex(C_PROJECT_IMAGE_URL)));
 				rp.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
 				rp.setProtocols_ids(c.getString(c
-						.getColumnIndex(C_PROJECT_PROTOCOL_IDS)));
+                        .getColumnIndex(C_PROJECT_PROTOCOL_IDS)));
 				rp.setBeta(c.getString(c.getColumnIndex(C_PROJECT_BETA)));
 				rp.setIs_contributed(c.getString(c.getColumnIndex(C_IS_CONTRIBUTED)));
 
-				// adding to todo list
 				researchProjects.add(rp);
 			} while (c.moveToNext());
 		}
 
 		c.close();
-		//closeReadDatabase();
 		return researchProjects;
 	}
 
 
 	// Get all research project information from database.
 	public List<ResearchProject> getAllResearchProjects() {
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
-		List<ResearchProject> researchProjects = new ArrayList<ResearchProject>();
-		String selectQuery = "SELECT  * FROM " + TABLE_RESEARCH_PROJECT;
+		List<ResearchProject> researchProjects = new ArrayList<>();
+		StringBuilder selectQuery = new StringBuilder(SELECT).append(" * ").append(FROM).append(TABLE_RESEARCH_PROJECT);
 
-		Log.e("DATABASE_HELPER_getAllResearchProject", selectQuery);
+        Log.e("DBHGARP", selectQuery.toString());
 
-		Cursor c = db.rawQuery(selectQuery, null);
+		Cursor c = getWDatabase(context).rawQuery(selectQuery.toString(), null);
 
 		if (c.moveToFirst()) {
 			do {
@@ -632,26 +558,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 						.getColumnIndex(C_PROJECT_PROTOCOL_IDS)));
 				rp.setBeta(c.getString(c.getColumnIndex(C_PROJECT_BETA)));
 
-				// adding to todo list
 				researchProjects.add(rp);
 			} while (c.moveToNext());
 		}
 
 		c.close();
-        //closeReadDatabase();
 		return researchProjects;
 	}
 
     // Get all research project information from database where name contains search string.
     public List<ResearchProject> getAllResearchProjects(String searchString) {
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
-        List<ResearchProject> researchProjects = new ArrayList<ResearchProject>();
-        String selectQuery = "SELECT  * FROM " + TABLE_RESEARCH_PROJECT
-                + " WHERE " + C_PROJECT_NAME + " LIKE '%" + searchString + "%'";
+        List<ResearchProject> researchProjects = new ArrayList<>();
+        StringBuilder selectQuery = new StringBuilder(SELECT).append(" * ")
+                .append(FROM).append( TABLE_RESEARCH_PROJECT)
+                .append(WHERE).append( C_PROJECT_NAME)
+                .append(" LIKE '%").append(searchString).append("%'");
 
-        Log.e("DATABASE_HELPER_getAllResearchProject", selectQuery);
+        Log.e("DBHGARP", selectQuery.toString());
 
-        Cursor c = db.rawQuery(selectQuery, null);
+        Cursor c = getWDatabase(context).rawQuery(selectQuery.toString(), null);
 
         if (c.moveToFirst()) {
             do {
@@ -669,14 +594,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 						.getColumnIndex(C_PROJECT_PROTOCOL_IDS)));
                 rp.setBeta(c.getString(c.getColumnIndex(C_PROJECT_BETA)));
 
-                // adding to todo list
-                researchProjects.add(rp);
+				researchProjects.add(rp);
             } while (c.moveToNext());
         }
 
         c.close();
-        //closeReadDatabase();
-        return researchProjects;
+            return researchProjects;
     }
 
 	/*
@@ -684,92 +607,67 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	 */
 	public boolean updateResearchProject(ResearchProject rp) {
 
-        boolean retVal = false;
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(C_PROJECT_ID, null != rp.getId() ? rp.getId() : "");
+        values.put(C_PROJECT_NAME, null != rp.getName() ? rp.getName() : "");
+        values.put(C_PROJECT_DESCRIPTION,
+                null != rp.getDescription() ? rp.getDescription() : "");
+        values.put(C_PROJECT_DIR_TO_COLLAB,
+                null != rp.getDirToCollab() ? rp.getDirToCollab() : "");
+        values.put(C_PROJECT_LEAD_ID,
+                null != rp.getCreatorId() ? rp.getCreatorId() : "");
+        values.put(C_PROJECT_START_DATE, null != rp.getStartDate() ? rp.getStartDate()
+                : "");
+        values.put(C_PROJECT_END_DATE, null != rp.getEndDate() ? rp.getEndDate() : "");
+        values.put(C_PROJECT_BETA, null != rp.getBeta() ? rp.getBeta() : "");
+        values.put(C_PROJECT_IMAGE_URL, null != rp.getImageUrl() ? rp.getImageUrl()
+                : "");
+        values.put(C_IS_CONTRIBUTED, null != rp.getIs_contributed() ? rp.getIs_contributed()
+                : "");
+        values.put(C_PROJECT_PROTOCOL_IDS,
+                null != rp.getProtocols_ids() ? rp.getProtocols_ids() : "");
+        values.put(C_RECORD_HASH, rp.getRecordHash());
 
-		String name = rp.getName();
-		ContentValues values = new ContentValues();
-		values.put(C_PROJECT_ID, null != rp.getId() ? rp.getId() : "");
-		values.put(C_PROJECT_NAME, null != rp.getName() ? rp.getName() : "");
-		values.put(C_PROJECT_DESCRIPTION,
-				null != rp.getDescription() ? rp.getDescription() : "");
-		values.put(C_PROJECT_DIR_TO_COLLAB,
-				null != rp.getDirToCollab() ? rp.getDirToCollab() : "");
-		values.put(C_PROJECT_LEAD_ID,
-				null != rp.getCreatorId() ? rp.getCreatorId() : "");
-		values.put(C_PROJECT_START_DATE, null != rp.getStartDate() ? rp.getStartDate()
-				: "");
-		values.put(C_PROJECT_END_DATE, null != rp.getEndDate() ? rp.getEndDate() : "");
-		values.put(C_PROJECT_BETA, null != rp.getBeta() ? rp.getBeta() : "");
-		values.put(C_PROJECT_IMAGE_URL, null != rp.getImageUrl() ? rp.getImageUrl()
-				: "");
-		values.put(C_IS_CONTRIBUTED, null != rp.getIs_contributed() ? rp.getIs_contributed()
-				: "");
-		values.put(C_PROJECT_PROTOCOL_IDS,
-				null != rp.getProtocols_ids() ? rp.getProtocols_ids() : "");
-		values.put(C_RECORD_HASH, rp.getRecordHash());
+        int rowsaffected = getWDatabase(context).update(TABLE_RESEARCH_PROJECT, values, C_PROJECT_ID
+                + " = ?", new String[]{String.valueOf(rp.getId())});
+        // if update fails that indicates there is no then create new row
+        return rowsaffected > 0 || createResearchProject(rp);
+    }
 
-		int rowsaffected = db.update(TABLE_RESEARCH_PROJECT, values, C_PROJECT_ID
-				+ " = ?", new String[] { String.valueOf(rp.getId()) });
-		// if update fails that indicates there is no then create new row
-		if (rowsaffected <= 0) {
-			retVal = createResearchProject(rp);
-		}else{ // updating row
-            retVal = true;
-        }
-		//closeWriteDatabase();
-		return retVal;
-	}
-
-//	/*
-//	 * Deleting a research project
-//	 */
-//	public void deleteResearchProject(String id) {
-//		SQLiteDatabase db = openWriteDatabase();
-//		db.delete(TABLE_RESEARCH_PROJECT, C_ID + " = ?",
-//				new String[] { String.valueOf(id) });
-//        closeWriteDatabase();
-//	}
-//
 
     // Insert project lead information in database
     public boolean createProjectLead(ProjectCreator projectCreator) {
-        boolean retVal = false;
         try {
-            SQLiteDatabase db = getHelper(context).getWritableDatabase();
-
             ContentValues values = new ContentValues();
             values.put(C_LEAD_ID, null != projectCreator.getId() ? projectCreator.getId() : "");
             values.put(C_LEAD_NAME, null != projectCreator.getName() ? projectCreator.getName() : "");
 			values.put(C_LEAD_IMAGE_URL, null != projectCreator.getImageUrl() ? projectCreator.getImageUrl() : "");
 
-            long row_id = db.insert(TABLE_PROJECT_LEAD, null, values);
+            long row_id = getWDatabase(context).insert(TABLE_PROJECT_LEAD, null, values);
 
             if (row_id >= 0) {
-                retVal = true;
+                return true;
             }
         } catch (SQLiteConstraintException contraintException) {
             // If data already present then handle the case here.
-            Log.d("DATABASE_HELPER_PROJECT_LEAD",
-                    "Record already present in database for record hash ="
-                            + projectCreator.getRecordHash());
+            Log.d("DHPL", "Record already present in database for record hash =" + projectCreator.getRecordHash());
 
-        } catch (SQLException sqliteException) {}
-        //closeWriteDatabase();
-        return retVal;
+        } catch (SQLException sqliteException) {
+            Log.d("DHPL", sqliteException.getMessage());
+        }
+        return false;
     }
 
     // Get project lead information from database
-    public ProjectCreator getProjectLead(String id) {
-        ProjectCreator projectCreator = null;
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
+    public ProjectCreator getProjectLead(String id) {ProjectCreator projectCreator = null;
 
-        String selectQuery = "SELECT  * FROM " + TABLE_PROJECT_LEAD
-                + " WHERE " + C_LEAD_ID + " = '" + id + "'";
+        StringBuilder selectQuery = new StringBuilder(SELECT).append(" * ")
+                .append(FROM).append(TABLE_PROJECT_LEAD)
+                .append(WHERE).append(C_LEAD_ID).append(" = '").append(id).append("'");
 
-        Log.e("DATABASE_HELPER_getProjectLead", selectQuery);
+        Log.e("DHPL", selectQuery.toString());
 
-        Cursor c = db.rawQuery(selectQuery, null);
+        Cursor c = getWDatabase(context).rawQuery(selectQuery.toString(), null);
 
         if (c != null) {
             c.moveToFirst();
@@ -782,7 +680,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
             c.close();
         }
-        //closeReadDatabase();
         return projectCreator;
     }
 
@@ -791,32 +688,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public boolean updateProjectLead(ProjectCreator projectCreator) {
 
-        boolean retVal = false;
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
-
         ContentValues values = new ContentValues();
         values.put(C_LEAD_ID, null != projectCreator.getId() ? projectCreator.getId() : "");
         values.put(C_LEAD_NAME, null != projectCreator.getName() ? projectCreator.getName() : "");
-		values.put(C_LEAD_IMAGE_URL, null != projectCreator.getImageUrl() ? projectCreator.getImageUrl() : "");
+        values.put(C_LEAD_IMAGE_URL, null != projectCreator.getImageUrl() ? projectCreator.getImageUrl() : "");
 
-        int rowsaffected = db.update(TABLE_PROJECT_LEAD, values, C_LEAD_ID
-                + " = ?", new String[] { String.valueOf(projectCreator.getId()) });
+        int rowsaffected = getWDatabase(context).update(TABLE_PROJECT_LEAD, values, C_LEAD_ID
+                + " = ?", new String[]{String.valueOf(projectCreator.getId())});
         // if update fails that indicates there is no then create new row
-        if (rowsaffected <= 0) {
-            retVal = createProjectLead(projectCreator);
-        }else{ // updating row
-            retVal = true;
-        }
-        //closeWriteDatabase();
-        return retVal;
+        return rowsaffected > 0 || createProjectLead(projectCreator);
     }
 
     // Insert a question in database
 	public boolean createQuestion(Question que) {
-        boolean retVal = false;
 		try {
-            SQLiteDatabase db = getHelper(context).getWritableDatabase();
-
 			ContentValues values = new ContentValues();
 			values.put(C_RECORD_HASH,
 					null != que.getRecordHash() ? que.getRecordHash() : "");
@@ -826,64 +711,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			values.put(C_PROJECT_ID, que.getProjectId());
             values.put(C_QUESTION_TYPE, que.getQuestionType());
 			// insert row
-			long row_id = db.insert(TABLE_QUESTION, null, values);
+			long row_id = getWDatabase(context).insert(TABLE_QUESTION, null, values);
 			if (row_id >= 0) {
-				retVal = true;
+				return true;
 			}
 		} catch (SQLiteConstraintException contraintException) {
 			// If data already present then handle the case here.
+            Log.d("DBHCQ", "Record already present in database for record hash =" + que.getRecordHash());
 		} catch (SQLException sqliteException) {
+            Log.d("DBHCQ", sqliteException.getMessage());
 		}
-        //closeWriteDatabase();
-        return retVal;
+        return false;
 	}
 
 	public boolean updateQuestion(Question question) {
-        boolean retVal = false;
 
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
-
-		ContentValues values = new ContentValues();
-		values.put(C_RECORD_HASH,
-				null != question.getRecordHash() ? question.getRecordHash()
-						: "");
-		values.put(C_QUESTION_ID,
-				null != question.getQuestionId() ? question.getQuestionId()
-						: "");
-		values.put(C_QUESTION_TEXT,
-				null != question.getQuestionText() ? question.getQuestionText()
-						: "");
-		values.put(C_PROJECT_ID, question.getProjectId());
+        ContentValues values = new ContentValues();
+        values.put(C_RECORD_HASH,
+                null != question.getRecordHash() ? question.getRecordHash()
+                        : "");
+        values.put(C_QUESTION_ID,
+                null != question.getQuestionId() ? question.getQuestionId()
+                        : "");
+        values.put(C_QUESTION_TEXT,
+                null != question.getQuestionText() ? question.getQuestionText()
+                        : "");
+        values.put(C_PROJECT_ID, question.getProjectId());
         values.put(C_QUESTION_TYPE, question.getQuestionType());
 
-		int rowsaffected = db.update(
-				TABLE_QUESTION,
-				values,
-				C_QUESTION_ID + " = ? and " + C_PROJECT_ID + " =?",
-				new String[] { String.valueOf(question.getQuestionId()),
-						String.valueOf(question.getProjectId()) });
+        int rowsaffected = getWDatabase(context).update(
+                TABLE_QUESTION,
+                values,
+                C_QUESTION_ID + " = ? and " + C_PROJECT_ID + " =?",
+                new String[]{question.getQuestionId(), question.getProjectId()});
+
         String user_id = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-        if(question.getQuestionType() == Question.PROJECT_DEFINED || question.getQuestionType() == Question.PHOTO_TYPE_DEFINED) {
+
+        if (question.getQuestionType() == Question.PROJECT_DEFINED || question.getQuestionType() == Question.PHOTO_TYPE_DEFINED) {
             Data data = new Data(user_id, question.getProjectId(), question.getQuestionId(), "", "");
             updateData(data);
         }
-		// if update fails that indicates there is no then create new row
-		if (rowsaffected <= 0) {
-			retVal = createQuestion(question);
-		}else {
-            // updating row
-            retVal = true;
-        }
-        //closeWriteDatabase();
-        return retVal;
-	}
+        // if update fails that indicates there is no then create new row
+        return rowsaffected > 0 || createQuestion(question);
+
+    }
 
 	// Insert Option in database
 	public boolean createOption(Option op) {
-        boolean retVal = false;
 		try {
-            SQLiteDatabase db = getHelper(context).getWritableDatabase();
-
 			ContentValues values = new ContentValues();
 			values.put(C_RECORD_HASH, op.getRecordHash());
 			values.put(C_OPTION_TEXT,
@@ -893,52 +768,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			values.put(C_PROJECT_ID,
 					null != op.getProjectId() ? op.getProjectId() : "");
 			// insert row
-			long row_id = db.insert(TABLE_OPTION, null, values);
+			long row_id = getWDatabase(context).insert(TABLE_OPTION, null, values);
 			if (row_id >= 0) {
-				retVal = true;
+				return true;
 			}
 		} catch (SQLiteConstraintException contraintException) {
-			// If data already present then handle the case here.
+            Log.d("DBHCO", "Record already present in database for record hash =" + op.getRecordHash());
 		} catch (SQLException sqliteException) {
+            Log.d("DBHCO", sqliteException.getMessage());
 		}
-        //closeWriteDatabase();
-        return retVal;
+        return false;
 	}
 
 	public boolean updateOption(Option option) {
-        boolean retVal = false;
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
-		ContentValues values = new ContentValues();
-		values.put(C_RECORD_HASH, option.getRecordHash());
-		values.put(C_OPTION_TEXT,
-				null != option.getOptionText() ? option.getOptionText() : "");
-		values.put(C_QUESTION_ID,
-				null != option.getQuestionId() ? option.getQuestionId() : "");
-		values.put(C_PROJECT_ID,
-				null != option.getProjectId() ? option.getProjectId() : "");
+        ContentValues values = new ContentValues();
+        values.put(C_RECORD_HASH, option.getRecordHash());
+        values.put(C_OPTION_TEXT,
+                null != option.getOptionText() ? option.getOptionText() : "");
+        values.put(C_QUESTION_ID,
+                null != option.getQuestionId() ? option.getQuestionId() : "");
+        values.put(C_PROJECT_ID,
+                null != option.getProjectId() ? option.getProjectId() : "");
 
-		int rowsaffected = db.update(TABLE_OPTION, values, C_RECORD_HASH
-				+ " = ?",
-				new String[] { String.valueOf(option.getRecordHash()) });
-		// if update fails that indicates there is no then create new row
-		if (rowsaffected <= 0) {
-			retVal = createOption(option);
-		}else {
-            retVal = true;
-        }
-        //closeWriteDatabase();
-        return retVal;
-	}
+        int rowsaffected = getWDatabase(context).update(TABLE_OPTION, values, C_RECORD_HASH
+                        + " = ?",
+                new String[]{String.valueOf(option.getRecordHash())});
+        // if update fails that indicates there is no then create new row
+        return rowsaffected > 0 || createOption(option);
+    }
 
 	public Question getQuestionForProject(String project_id,String question_id) {
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 		Question que= new Question();
-		String selectQuery = "SELECT  * FROM " + TABLE_QUESTION + " WHERE "
-				+ C_PROJECT_ID + " = " + project_id
-				+ " AND " + C_QUESTION_ID + " = " + question_id;
+		StringBuilder selectQuery =new StringBuilder(SELECT).append(" * ")
+                .append(FROM).append(TABLE_QUESTION )
+                .append(WHERE).append(C_PROJECT_ID).append(" = ").append(project_id)
+                .append(AND).append(C_QUESTION_ID).append(" = ").append(question_id);
 
-		Cursor c = db.rawQuery(selectQuery, null);
+		Cursor c = getWDatabase(context).rawQuery(selectQuery.toString(), null);
 
 		if (c.moveToFirst()) {
 
@@ -951,16 +818,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 que.setQuestionType(c.getInt(c.getColumnIndex(C_QUESTION_TYPE)));
 				que.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
 
-				// adding to todo list
 				if (!que.getQuestionText().equals("")) {
-					String selectOptionsQuery = "SELECT  * FROM "
-							+ TABLE_OPTION + " WHERE " + C_QUESTION_ID + " = "
-							+ questionId + " and " + C_PROJECT_ID + " = "
-							+ project_id;
+					StringBuilder selectOptionsQuery = new StringBuilder(SELECT).append(" * ")
+                    .append(FROM).append(TABLE_OPTION).append(WHERE).append( C_QUESTION_ID).append( " = ")
+                            .append(questionId).append(AND).append(C_PROJECT_ID).append( " = ").append(project_id);
 
-					Cursor optionCursor = db.rawQuery(selectOptionsQuery, null);
+					Cursor optionCursor = getWDatabase(context).rawQuery(selectOptionsQuery.toString(), null);
 					if (optionCursor.moveToFirst()) {
-						List<String> optionlist = new ArrayList<String>();
+						List<String> optionlist = new ArrayList<>();
 						do {
 							String option = optionCursor.getString(optionCursor
 									.getColumnIndex(C_OPTION_TEXT));
@@ -975,18 +840,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			}
 		}
 		c.close();
-        //closeReadDatabase();
 		return que;
 	}
 
 	// Get list of all questions for given project.
 	public List<Question> getAllQuestionForProject(String project_id) {
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
-		List<Question> questions = new ArrayList<Question>();
-		String selectQuery = "SELECT  * FROM " + TABLE_QUESTION + " WHERE "
-				+ C_PROJECT_ID + " = " + project_id;
+		List<Question> questions = new ArrayList<>();
+		StringBuilder selectQuery = new StringBuilder(SELECT).append(" * ")
+                .append(FROM).append(TABLE_QUESTION)
+                .append(WHERE).append(C_PROJECT_ID).append(" = ").append( project_id);
 
-		Cursor c = db.rawQuery(selectQuery, null);
+		Cursor c = getWDatabase(context).rawQuery(selectQuery.toString(), null);
 
 		if (c.moveToFirst()) {
 			do {
@@ -1001,14 +865,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				que.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
 
 				if (!que.getQuestionText().equals("")) {
-					String selectOptionsQuery = "SELECT  * FROM "
-							+ TABLE_OPTION + " WHERE " + C_QUESTION_ID + " = "
-							+ questionId + " and " + C_PROJECT_ID + " = "
-							+ project_id;
+					StringBuilder selectOptionsQuery = new StringBuilder(SELECT).append(" * ")
+                            .append(FROM).append(TABLE_OPTION)
+                            .append(WHERE).append( C_QUESTION_ID).append(" = ")
+                            .append(questionId).append(AND).append(C_PROJECT_ID ).append( " = ")
+							.append( project_id);
 
-					Cursor optionCursor = db.rawQuery(selectOptionsQuery, null);
+					Cursor optionCursor = getWDatabase(context).rawQuery(selectOptionsQuery.toString(), null);
 					if (optionCursor.moveToFirst()) {
-						List<String> optionlist = new ArrayList<String>();
+						List<String> optionlist = new ArrayList<>();
 						do {
 							String option = optionCursor.getString(optionCursor
 									.getColumnIndex(C_OPTION_TEXT));
@@ -1026,16 +891,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		}
 		c.close();
-        //closeReadDatabase();
 		return questions;
 	}
 
 	// Insert Option in database
 	public boolean createProtocol(Protocol protocol) {
-        boolean retVal = false;
 		try {
-            SQLiteDatabase db = getHelper(context).getWritableDatabase();
-
 			ContentValues values = new ContentValues();
 			values.put(C_RECORD_HASH, protocol.getRecordHash());
 			values.put(C_PROTOCOL_ID, null != protocol.getId() ? protocol.getId() : "");
@@ -1056,58 +917,49 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(C_PROTOCOL_PRE_SEL,
                     null != protocol.getPreSelected() ? protocol.getPreSelected() : "");
 			// insert row
-			long row_id = db.insert(TABLE_PROTOCOL, null, values);
+			long row_id = getWDatabase(context).insert(TABLE_PROTOCOL, null, values);
 			if (row_id >= 0) {
-				retVal = true;
+				return true;
 			}
 		} catch (SQLiteConstraintException contraintException) {
-			// If data already present then handle the case here.
+            Log.d("DBHCP", "Record already present in database for record hash =" + protocol.getRecordHash());
 		} catch (SQLException sqliteException) {
+            Log.d("DBHCP", sqliteException.getMessage());
 		}
-//        closeWriteDatabase();
-        return retVal;
+
+        return false;
 	}
 
 	public boolean updateProtocol(Protocol protocol) {
-        boolean retVal = false;
 
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
-
-		ContentValues values = new ContentValues();
-		values.put(C_RECORD_HASH, protocol.getRecordHash());
-		values.put(C_PROTOCOL_ID, null != protocol.getId() ? protocol.getId() : "");
-		values.put(C_PROTOCOL_NAME, null != protocol.getName() ? protocol.getName() : "");
-		values.put(
-				C_PROTOCOL_JSON,
-				null != protocol.getProtocol_json() ? protocol
-						.getProtocol_json() : "");
-		values.put(C_PROTOCOL_DESCRIPTION,
-				null != protocol.getDescription() ? protocol.getDescription()
-						: "");
-		values.put(C_PROTOCOL_MACRO_ID,
-				null != protocol.getMacroId() ? protocol.getMacroId() : "");
-		values.put(C_PROTOCOL_MACRO_SLUG, null != protocol.getSlug() ? protocol.getSlug() : "");
+        ContentValues values = new ContentValues();
+        values.put(C_RECORD_HASH, protocol.getRecordHash());
+        values.put(C_PROTOCOL_ID, null != protocol.getId() ? protocol.getId() : "");
+        values.put(C_PROTOCOL_NAME, null != protocol.getName() ? protocol.getName() : "");
+        values.put(
+                C_PROTOCOL_JSON,
+                null != protocol.getProtocol_json() ? protocol
+                        .getProtocol_json() : "");
+        values.put(C_PROTOCOL_DESCRIPTION,
+                null != protocol.getDescription() ? protocol.getDescription()
+                        : "");
+        values.put(C_PROTOCOL_MACRO_ID,
+                null != protocol.getMacroId() ? protocol.getMacroId() : "");
+        values.put(C_PROTOCOL_MACRO_SLUG, null != protocol.getSlug() ? protocol.getSlug() : "");
         values.put(C_PROTOCOL_PRE_SEL, null != protocol.getPreSelected() ? protocol.getPreSelected() : "");
 
-		int rowsaffected = db.update(TABLE_PROTOCOL, values, C_PROTOCOL_ID + " = ?",
-				new String[] { String.valueOf(protocol.getId()) });
-		// if update fails that indicates there is no then create new row
-		if (rowsaffected <= 0) {
-			retVal = createProtocol(protocol);
-		}else {
-            retVal = true;
-        }
-        //closeWriteDatabase();
-        return retVal;
-	}
+        int rowsaffected = getWDatabase(context).update(TABLE_PROTOCOL, values, C_PROTOCOL_ID + " = ?",
+                new String[]{String.valueOf(protocol.getId())});
+        // if update fails that indicates there is no then create new row
+        return rowsaffected > 0 || createProtocol(protocol);
+    }
 
 	// Get all protocols
 	public List<Protocol> getAllProtocolsList() {
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
-		List<Protocol> protocols = new ArrayList<Protocol>();
+		List<Protocol> protocols = new ArrayList<>();
 		String selectQuery = "SELECT  * FROM " + TABLE_PROTOCOL;
 
-		Cursor c = db.rawQuery(selectQuery, null);
+		Cursor c = getWDatabase(context).rawQuery(selectQuery, null);
 
 		if (c.moveToFirst()) {
 			do {
@@ -1124,18 +976,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				protocol.setMacroId(c.getString(c.getColumnIndex(C_MACRO_ID)));
                 protocol.setPreSelected(c.getString(c.getColumnIndex(C_PROTOCOL_PRE_SEL)));
 
-				// adding to todo list
 				protocols.add(protocol);
 			} while (c.moveToNext());
 		}
 		c.close();
-        //closeReadDatabase();
 		return protocols;
 	}
 
     // Get pre-selected protocols
     public List<Protocol> getFewProtocolList() {
-        List<Protocol> protocols = new ArrayList<Protocol>();
+        List<Protocol> protocols = new ArrayList<>();
         List<Protocol> allProtocols = getAllProtocolsList();
 
         for(int proIdx = 0 ; proIdx < allProtocols.size(); proIdx++){
@@ -1151,13 +1001,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
 	public Protocol getProtocol(String protocolId) {
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 		Protocol protocol = new Protocol();
 		String selectQuery = "SELECT  * FROM " + TABLE_PROTOCOL + " WHERE "
 				+ C_PROTOCOL_ID + " = " + protocolId;
-		;
 
-		Cursor c = db.rawQuery(selectQuery, null);
+        Cursor c = getWDatabase(context).rawQuery(selectQuery, null);
 
 		if (c.moveToFirst()) {
 
@@ -1172,15 +1020,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             protocol.setPreSelected(c.getString(c.getColumnIndex(C_PROTOCOL_PRE_SEL)));
 		}
 		c.close();
-        //closeReadDatabase();
 		return protocol;
 	}
 
 	// Insert Macro in database
 	public boolean createMacro(Macro macro) {
-        boolean retVal = false;
+
 		try {
-            SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_RECORD_HASH, macro.getRecordHash());
@@ -1201,84 +1047,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					null != macro.getJavascriptCode() ? macro
 							.getJavascriptCode() : "");
 			// insert row
-			long row_id = db.insert(TABLE_MACRO, null, values);
+			long row_id = getWDatabase(context).insert(TABLE_MACRO, null, values);
 			if (row_id >= 0) {
-				retVal = true;
+				return true;
 			}
 		} catch (SQLiteConstraintException contraintException) {
-			// If data already present then handle the case here.
+            Log.d("DBHCM", "Record already present in database for record hash =" + macro.getRecordHash());
 		} catch (SQLException sqliteException) {
+            Log.d("DBHCM", sqliteException.getMessage());
 		}
 
-        //closeWriteDatabase();
-        return retVal;
+        return false;
 	}
 
 	public boolean updateMacro(Macro macro) {
-        boolean retVal = false;
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
-		ContentValues values = new ContentValues();
-		values.put(C_RECORD_HASH, macro.getRecordHash());
-		values.put(C_MACRO_ID, null != macro.getId() ? macro.getId() : "");
-		values.put(C_MACRO_NAME, null != macro.getName() ? macro.getName() : "");
-		values.put(C_MACRO_DESCRIPTION,
-				null != macro.getDescription() ? macro.getDescription() : "");
-		values.put(C_MACRO_SLUG, null != macro.getSlug() ? macro.getSlug() : "");
-		values.put(C_MACRO_DEFAULT_X_AXIS,
-				null != macro.getDefaultXAxis() ? macro.getDefaultXAxis() : "");
-		values.put(C_MACRO_DEFAULT_Y_AXIS,
-				null != macro.getDefaultYAxis() ? macro.getDefaultYAxis() : "");
-		values.put(C_MACRO_JAVASCRIPT_CODE,
-				null != macro.getJavascriptCode() ? macro.getJavascriptCode()
-						: "");
+        ContentValues values = new ContentValues();
+        values.put(C_RECORD_HASH, macro.getRecordHash());
+        values.put(C_MACRO_ID, null != macro.getId() ? macro.getId() : "");
+        values.put(C_MACRO_NAME, null != macro.getName() ? macro.getName() : "");
+        values.put(C_MACRO_DESCRIPTION,
+                null != macro.getDescription() ? macro.getDescription() : "");
+        values.put(C_MACRO_SLUG, null != macro.getSlug() ? macro.getSlug() : "");
+        values.put(C_MACRO_DEFAULT_X_AXIS,
+                null != macro.getDefaultXAxis() ? macro.getDefaultXAxis() : "");
+        values.put(C_MACRO_DEFAULT_Y_AXIS,
+                null != macro.getDefaultYAxis() ? macro.getDefaultYAxis() : "");
+        values.put(C_MACRO_JAVASCRIPT_CODE,
+                null != macro.getJavascriptCode() ? macro.getJavascriptCode()
+                        : "");
 
-		int rowsaffected = db.update(TABLE_MACRO, values, C_MACRO_ID + " = ?",
-				new String[] { String.valueOf(macro.getId()) });
-		// if update fails that indicates there is no then create new row
-		if (rowsaffected <= 0) {
-			retVal = createMacro(macro);
-		}else{
-            retVal = true;
-        }
-		//closeWriteDatabase();
-        return retVal;
-	}
-
-//	// get macro from database
-//	public Macro getMacro(String id) {
-//		SQLiteDatabase db = openReadDatabase();
-//
-//		String selectQuery = "SELECT  * FROM " + TABLE_MACRO + " WHERE " + C_ID
-//				+ " = '" + id + "'";
-//
-//		Log.e("DATABASE_HELPER_getMacro", selectQuery);
-//
-//		Cursor c = db.rawQuery(selectQuery, null);
-//
-//		if (c != null)
-//			c.moveToFirst();
-//
-//		Macro macro = new Macro();
-//		macro.setId(c.getString(c.getColumnIndex(C_ID)));
-//		macro.setName(c.getString(c.getColumnIndex(C_NAME)));
-//		macro.setDescription(c.getString(c.getColumnIndex(C_DESCRIPTION)));
-//		macro.setRecordHash(c.getString(c.getColumnIndex(C_RECORD_HASH)));
-//		macro.setSlug(c.getString(c.getColumnIndex(C_SLUG)));
-//		macro.setDefaultXAxis(c.getString(c.getColumnIndex(C_DEFAULT_X_AXIS)));
-//		macro.setDefaultYAxis(c.getString(c.getColumnIndex(C_DEFAULT_Y_AXIS)));
-//		macro.setJavascriptCode(c.getString(c.getColumnIndex(C_JAVASCRIPT_CODE)));
-//
-//        closeReadDatabase();
-//		return macro;
-//	}
+        int rowsaffected = getWDatabase(context).update(TABLE_MACRO, values, C_MACRO_ID + " = ?",
+                new String[]{String.valueOf(macro.getId())});
+        // if update fails that indicates there is no then create new row
+        return rowsaffected > 0 || createMacro(macro);
+    }
 
 	public List<Macro> getAllMacros() {
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
-		List<Macro> macros = new ArrayList<Macro>();
+		List<Macro> macros = new ArrayList<>();
 		String selectQuery = "SELECT  * FROM " + TABLE_MACRO;
 
-		Cursor c = db.rawQuery(selectQuery, null);
+		Cursor c = getWDatabase(context).rawQuery(selectQuery, null);
 
 		if (c.moveToFirst()) {
 			do {
@@ -1296,19 +1105,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				macro.setJavascriptCode(c.getString(c
 						.getColumnIndex(C_MACRO_JAVASCRIPT_CODE)));
 
-				// adding to todo list
 				macros.add(macro);
 			} while (c.moveToNext());
 		}
 		c.close();
-        //closeReadDatabase();
 		return macros;
 	}
 
 	public boolean createSettings(AppSettings setting) {
-        boolean retVal = false;
 		try {
-            SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_MODE_TYPE, setting.getModeType());
@@ -1317,28 +1122,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			values.put(C_PROJECT_ID, setting.getProjectId());
 
 			// Inserting Row
-			long row_id = db.insert(TABLE_SETTINGS, null, values);
+			long row_id = getWDatabase(context).insert(TABLE_SETTINGS, null, values);
 			if (row_id >= 0) {
-				retVal = true;
+				return true;
 			}
 		} catch (SQLiteConstraintException contraintException) {
-			// If data already present then handle the case here.
+            Log.d("DBHCS", "Record already present in database setting");
 		} catch (SQLException sqliteException) {
+            Log.d("DBHCS", sqliteException.getMessage());
 		}
-        //closeWriteDatabase();
-        return retVal;
+        return false;
 	}
 
 	// Getting single parameters of settings
 	public AppSettings getSettings(String userID) {
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 		String selectQuery = "SELECT  * FROM " + TABLE_SETTINGS + " WHERE "
 				+ C_USER_ID + " = '" + userID + "'";
 
 		AppSettings setting = new AppSettings();
 		setting.setUserId(userID);
-		Cursor c = db.rawQuery(selectQuery, null);
+		Cursor c = getWDatabase(context).rawQuery(selectQuery, null);
 		if (c.moveToFirst()) {
 
 			setting.setUserId(c.getString(c.getColumnIndex(C_USER_ID)));
@@ -1348,39 +1152,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			setting.setProjectId(c.getString(c.getColumnIndex(C_PROJECT_ID)));
 		}
 		c.close();
-        //closeReadDatabase();
 		return setting;
 	}
 
 	// Updating single setting
 	public boolean updateSettings(AppSettings setting) {
-        boolean retVal = false;
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
-		ContentValues values = new ContentValues();
-		values.put(C_USER_ID, setting.getUserId());
-		values.put(C_MODE_TYPE, setting.getModeType());
-		values.put(C_CONNECTION_ID, setting.getConnectionId());
-		values.put(C_PROJECT_ID, setting.getProjectId());
+        ContentValues values = new ContentValues();
+        values.put(C_USER_ID, setting.getUserId());
+        values.put(C_MODE_TYPE, setting.getModeType());
+        values.put(C_CONNECTION_ID, setting.getConnectionId());
+        values.put(C_PROJECT_ID, setting.getProjectId());
 
-		// updating row
-		int rowUpdated = db.update(TABLE_SETTINGS, values, C_USER_ID + " = ?",
-				new String[]{String.valueOf(setting.getUserId())});
+        // updating row
+        int rowUpdated = getWDatabase(context).update(TABLE_SETTINGS, values, C_USER_ID + " = ?",
+                new String[]{String.valueOf(setting.getUserId())});
 
-		if (rowUpdated <= 0) {
-			retVal = createSettings(setting);
-		}else{
-            retVal = true;
-        }
-		//closeWriteDatabase();
-        return retVal;
-	}
+        return rowUpdated > 0 || createSettings(setting);
+
+    }
 
 	public boolean createData(Data data) {
-        boolean retVal = false;
 		try {
-            SQLiteDatabase db = getHelper(context).getWritableDatabase();
-
 			ContentValues values = new ContentValues();
 			values.put(C_USER_ID, data.getUser_id());
 			values.put(C_PROJECT_ID, data.getProject_id());
@@ -1389,28 +1182,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			values.put(C_VALUES, data.getValue());
 
 			// Inserting Row
-			long row_id = db.insert(TABLE_DATA, null, values);
+			long row_id = getWDatabase(context).insert(TABLE_DATA, null, values);
 			if (row_id >= 0) {
-				retVal = true;
+				return true;
 			}
 		} catch (SQLiteConstraintException contraintException) {
-			// If data already present then handle the case here.
+            Log.d("DBHCD", "Record already present in database for data");
 		} catch (SQLException sqliteException) {
+            Log.d("DHPL", sqliteException.getMessage());
 		}
-        //closeWriteDatabase();
-        return retVal;
+        return false;
 	}
 
 	// Getting single parameters of settings
 	public Data getData(String userID, String projectID, String questionID) {
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 		String selectQuery = "SELECT  * FROM " + TABLE_DATA + " WHERE "
 				+ C_USER_ID + " = '" + userID + "' and " + C_PROJECT_ID + " = '" + projectID + "' and " + C_QUESTION_ID + " = '" + questionID + "'";
 
 		Data data = new Data();
 		data.setUser_id(userID);
-		Cursor c = db.rawQuery(selectQuery, null);
+		Cursor c = getWDatabase(context).rawQuery(selectQuery, null);
 		if (c.moveToFirst()) {
 
 			data.setUser_id(c.getString(c.getColumnIndex(C_USER_ID)));
@@ -1420,39 +1212,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			data.setValue(c.getString(c.getColumnIndex(C_VALUES)));
 		}
 		c.close();
-        //closeReadDatabase();
 		return data;
 	}
 
 	// Updating single setting
 	public boolean updateData(Data data) {
-        boolean retVal = false;
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
-		ContentValues values = new ContentValues();
-		values.put(C_USER_ID, data.getUser_id());
-		values.put(C_PROJECT_ID, data.getProject_id());
-		values.put(C_QUESTION_ID, data.getQuestion_id());
-		values.put(C_TYPE, data.getType());
-		values.put(C_VALUES, data.getValue());
+        ContentValues values = new ContentValues();
+        values.put(C_USER_ID, data.getUser_id());
+        values.put(C_PROJECT_ID, data.getProject_id());
+        values.put(C_QUESTION_ID, data.getQuestion_id());
+        values.put(C_TYPE, data.getType());
+        values.put(C_VALUES, data.getValue());
 
-		// updating row
-		int rowUpdated = db.update(TABLE_DATA, values, C_USER_ID + " = ? and " + C_QUESTION_ID + " = ? and " + C_PROJECT_ID + " = ?",
-				new String[]{String.valueOf(data.getUser_id()), String.valueOf(data.getQuestion_id()), String.valueOf(data.getProject_id())});
+        // updating row
+        int rowUpdated = getWDatabase(context).update(
+                TABLE_DATA, values, C_USER_ID + " = ? and " + C_QUESTION_ID + " = ? and " + C_PROJECT_ID + " = ?",
+                new String[]{data.getUser_id(), data.getQuestion_id(), data.getProject_id()});
 
-		if (rowUpdated <= 0) {
-			retVal = createData(data);
-		}else{
-            retVal = true;
-        }
-        //closeWriteDatabase();
-		return retVal;
-	}
+        return rowUpdated > 0 || createData(data);
+    }
 
     public boolean createRememberAnswers(RememberAnswers rememberAnswers) {
-        boolean retVal = false;
         try {
-            SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
             ContentValues values = new ContentValues();
             values.put(C_USER_ID, rememberAnswers.getUser_id());
@@ -1462,28 +1244,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(C_IS_REMEMBER, rememberAnswers.getIs_remember());
 
             // Inserting Row
-            long row_id = db.insert(TABLE_REMEMBER_ANSWERS, null, values);
+            long row_id = getWDatabase(context).insert(TABLE_REMEMBER_ANSWERS, null, values);
             if (row_id >= 0) {
-                retVal = true;
+                return true;
             }
         } catch (SQLiteConstraintException contraintException) {
-            // If data already present then handle the case here.
+            Log.d("DBHCRA", "Record already present in database for remembred answers");
         } catch (SQLException sqliteException) {
+            Log.d("DBHCRA", sqliteException.getMessage());
         }
-        //closeWriteDatabase();
-        return retVal;
+        return false;
     }
 
     // Getting single parameters of remember answer
     public RememberAnswers getRememberAnswers(String userID, String projectID, String questionID ) {
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
         String selectQuery = "SELECT  * FROM " + TABLE_REMEMBER_ANSWERS + " WHERE "
                 + C_USER_ID + " = '" + userID + "' and " + C_PROJECT_ID + " = '" + projectID + "' and " + C_QUESTION_ID + " = '" + questionID + "'";
 
         RememberAnswers rememberAnswers = new RememberAnswers();
         rememberAnswers.setUser_id(userID);
-        Cursor c = db.rawQuery(selectQuery, null);
+        Cursor c = getWDatabase(context).rawQuery(selectQuery, null);
         if (c.moveToFirst()) {
 
             rememberAnswers.setUser_id(c.getString(c.getColumnIndex(C_USER_ID)));
@@ -1493,78 +1274,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             rememberAnswers.setIs_remember(c.getString(c.getColumnIndex(C_IS_REMEMBER)));
         }
         c.close();
-        //closeReadDatabase();
         return rememberAnswers;
-    }
-
-    public int getRememberAnswersCount(String userID, String projectID) {
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
-
-        String selectQuery = "SELECT  * FROM " + TABLE_REMEMBER_ANSWERS + " WHERE "
-                + C_USER_ID + " = '" + userID + "' and " + C_PROJECT_ID + " = '" + projectID + "' and " + C_IS_REMEMBER + " = '1'";
-
-        Cursor c = db.rawQuery(selectQuery, null);
-        int count = c.getCount();
-        c.close();
-        //closeReadDatabase();
-        return count;
     }
 
 
     // Updating single remember answer
     public boolean updateRememberAnswers(RememberAnswers rememberAnswers) {
-        boolean retVal = false;
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(C_USER_ID, rememberAnswers.getUser_id());
         values.put(C_PROJECT_ID, rememberAnswers.getProject_id());
         values.put(C_QUESTION_ID, rememberAnswers.getQuestion_id());
         values.put(C_SELECTED_OPTION_TEXT, rememberAnswers.getSelected_option_text());
-		values.put(C_IS_REMEMBER, rememberAnswers.getIs_remember());
+        values.put(C_IS_REMEMBER, rememberAnswers.getIs_remember());
 
-		// updating row
-		int rowUpdated = db.update(TABLE_REMEMBER_ANSWERS, values, C_USER_ID + " = ? and " + C_PROJECT_ID + " = ? and " + C_QUESTION_ID + " = ?",
-				new String[]{String.valueOf(rememberAnswers.getUser_id()), String.valueOf(rememberAnswers.getProject_id()), String.valueOf(rememberAnswers.getQuestion_id())});
+        // updating row
+        int rowUpdated = getWDatabase(context).update(
+                TABLE_REMEMBER_ANSWERS, values, C_USER_ID + " = ? and " + C_PROJECT_ID + " = ? and " + C_QUESTION_ID + " = ?",
+                new String[]{rememberAnswers.getUser_id(), rememberAnswers.getProject_id(), rememberAnswers.getQuestion_id()});
 
-        if (rowUpdated <= 0) {
-            retVal = createRememberAnswers(rememberAnswers);
-        }else{
-            retVal = true;
-        }
-        //closeWriteDatabase();
-        return retVal;
+        return rowUpdated > 0 || createRememberAnswers(rememberAnswers);
     }
 
 	public boolean createUserAnswers(UserAnswer userAnswer) {
-		boolean retVal = false;
 		try {
-			SQLiteDatabase db = getHelper(context).getWritableDatabase();
 
 			ContentValues values = new ContentValues();
 			values.put(C_USER_ENTERED_ANSWERS, userAnswer.getOptionText());
 
 			// Inserting Row
-			long row_id = db.insert(TABLE_USER_ANSWERS, null, values);
+			long row_id = getWDatabase(context).insert(TABLE_USER_ANSWERS, null, values);
 			if (row_id >= 0) {
-				retVal = true;
+				return true;
 			}
 		} catch (SQLiteConstraintException contraintException) {
-			// If data already present then handle the case here.
+            Log.d("DBHCUA", "Record already present in database for User answers");
 		} catch (SQLException sqliteException) {
+            Log.d("DBHCRA", sqliteException.getMessage());
 		}
-		//closeWriteDatabase();
-		return retVal;
+		return false;
 	}
 
 	public List<String> getAllUserAnswers() {
-		SQLiteDatabase db = getHelper(context).getWritableDatabase();
-		List<String> userAnswers = new ArrayList<String>();
+		List<String> userAnswers = new ArrayList<>();
 		String selectQuery = "SELECT * FROM " + TABLE_USER_ANSWERS ;
 
-		Log.e("DATABASE_HELPER_getAllUserAnswer", selectQuery);
+		Log.e("DHGAUA", selectQuery);
 
-		Cursor c = db.rawQuery(selectQuery, null);
+		Cursor c = getWDatabase(context).rawQuery(selectQuery, null);
 
 		if (c.moveToFirst()) {
 			do {
@@ -1576,12 +1333,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}
 
 		c.close();
-		//closeReadDatabase();
 		return userAnswers;
 	}
 
     public void deleteAllData(){
-        SQLiteDatabase db = getHelper(context).getWritableDatabase();
+        SQLiteDatabase db = getWDatabase(context);
         db.delete(TABLE_OPTION,null,null);
         db.delete(TABLE_DATA,null,null);
         db.delete(TABLE_MACRO,null,null);
@@ -1597,16 +1353,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	public void deleteOptions(String project_id) {
 
-		SQLiteDatabase db = getHelper(context).getWritableDatabase();
-		db.delete(TABLE_OPTION, C_PROJECT_ID + " = ?",
+		getWDatabase(context).delete(TABLE_OPTION, C_PROJECT_ID + " = ?",
 				new String[]{null != project_id ? project_id : ""});
 
 	}
 
 	public void deleteQuestions(String project_id) {
 
-		SQLiteDatabase db = getHelper(context).getWritableDatabase();
-		db.delete(TABLE_QUESTION, C_PROJECT_ID + " = ?",
+		getWDatabase(context).delete(TABLE_QUESTION, C_PROJECT_ID + " = ?",
 				new String[] { project_id});
 
 	}

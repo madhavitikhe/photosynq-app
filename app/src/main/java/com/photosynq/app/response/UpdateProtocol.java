@@ -64,8 +64,6 @@ public class UpdateProtocol implements PhotosynqResponse {
 
         JSONArray jArray;
         DatabaseHelper db = DatabaseHelper.getHelper(navigationDrawer);
-//        db.openWriteDatabase();
-//        db.openReadDatabase();
         if (null != result) {
             if(result.equals(Constants.SERVER_NOT_ACCESSIBLE))
             {
@@ -78,8 +76,6 @@ public class UpdateProtocol implements PhotosynqResponse {
 
                     });
                 }
-//                db.closeWriteDatabase();
-//                db.closeReadDatabase();
                 return;
             }
 
@@ -108,8 +104,6 @@ public class UpdateProtocol implements PhotosynqResponse {
             }
         }
 
-//        db.closeWriteDatabase();
-//        db.closeReadDatabase();
         Date date1 = new Date();
 
         if(null != navigationDrawer) {
