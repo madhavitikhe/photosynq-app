@@ -1,9 +1,7 @@
 package com.photosynq.app.response;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.Toast;
@@ -15,7 +13,6 @@ import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.http.HTTPConnection;
 import com.photosynq.app.http.PhotosynqResponse;
 import com.photosynq.app.model.Option;
-import com.photosynq.app.model.ProjectCreator;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.CommonUtils;
@@ -146,10 +143,6 @@ public class UpdateProject implements PhotosynqResponse {
                         JSONObject projectImageUrl = jsonProject.getJSONObject("project_photo");//get project image url.
                         JSONObject creatorJsonObj = jsonProject.getJSONObject("creator");//get project creator infos.
                         JSONObject creatorAvatar = creatorJsonObj.getJSONObject("avatar");//
-                        ProjectCreator pCreator = new ProjectCreator();
-                        pCreator.setId(creatorJsonObj.getString("id"));
-                        pCreator.setName(creatorJsonObj.getString("name"));
-                        pCreator.setImageUrl(creatorAvatar.getString("thumb"));
 
                         ResearchProject rp = new ResearchProject(
                                 jsonProject.getString("id"),
@@ -162,20 +155,10 @@ public class UpdateProject implements PhotosynqResponse {
                                 projectImageUrl.getString("original"),
                                 jsonProject.getString("beta"),
                                 jsonProject.getString("is_contributed"),
-                                protocol_ids.substring(1, protocol_ids.length() - 1)); // remove first and last square bracket and store as a comma separated string
-
-                        try {
-                            //get project creator information like id, name, profile_image.
-                            ProjectCreator projectCreator = new ProjectCreator(
-                                    creatorJsonObj.getString("id"),
-                                    creatorJsonObj.getString("name"),
-                                    creatorAvatar.getString("thumb"));
-
-                            db.updateProjectLead(projectCreator);
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                                protocol_ids.substring(1, protocol_ids.length() - 1),
+                                creatorJsonObj.getString("name"),
+                                creatorJsonObj.getString("contributions"),
+                                creatorAvatar.getString("thumb")); // remove first and last square bracket and store as a comma separated string
 
                         db.deleteOptions(rp.id);
 
@@ -221,8 +204,6 @@ public class UpdateProject implements PhotosynqResponse {
             }
         }
 
-//        db.closeWriteDatabase();
-//        db.closeReadDatabase();
         Date date1 = new Date();
 
         if (null != navigationDrawer) {

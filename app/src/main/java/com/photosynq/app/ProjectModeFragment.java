@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import com.photosynq.app.db.DatabaseHelper;
 import com.photosynq.app.http.PhotosynqResponse;
-import com.photosynq.app.model.ProjectCreator;
 import com.photosynq.app.model.ResearchProject;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
@@ -240,10 +239,7 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
             if (null != project) {
                 try {
                     tvProjectName.setText(project.getName());
-
-                    ProjectCreator projectCreator = dbHelper.getProjectLead(project.getCreatorId());
-                    if(null != projectCreator)
-                        tvProjectBy.setText("by " + projectCreator.getName());
+                    tvProjectBy.setText("by " + project.getLead_name());
 
                     ImageView imageview = (ImageView) convertView.findViewById(R.id.im_projectImage);
                     Picasso.with(getActivity()).load(project.getImageUrl()).into(imageview);

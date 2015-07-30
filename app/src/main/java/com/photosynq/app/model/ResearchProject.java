@@ -16,9 +16,14 @@ public class ResearchProject {
     public String beta;
 	public String is_contributed;
     public String protocols_ids;
-    
-    public ResearchProject(String id, String name, String description, String dirToCollab, String creatorId,
-    		String startDate, String endDate, String imageUrl, String beta, String is_contributed, String protocols_ids)
+	public String lead_name;
+	public String lead_data_count;
+    public String lead_avatar;
+
+
+	public ResearchProject(String id, String name, String description, String dirToCollab, String creatorId,
+    		String startDate, String endDate, String imageUrl, String beta, String is_contributed, String protocols_ids,
+                            String lead_name, String lead_data_count, String lead_avatar)
     {
     	this.id = id;
     	this.name = name;
@@ -31,7 +36,11 @@ public class ResearchProject {
     	this.beta = beta;
 		this.is_contributed = is_contributed;
     	this.protocols_ids = protocols_ids;
+        this.lead_name = lead_name;
+        this.lead_data_count = lead_data_count;
+        this.lead_avatar = lead_avatar;
     	this.recordHash = getProjectRecordHash();
+
     	
     }
     public ResearchProject()
@@ -50,7 +59,10 @@ public class ResearchProject {
 				+ (null != getBeta() ? getBeta() : "")
 				+ (null != getIs_contributed() ? getIs_contributed() : "")
 				+ (null != getProtocols_ids() ? getProtocols_ids() : "")
-				+ (null != getImageUrl() ? getImageUrl() : "");
+				+ (null != getImageUrl() ? getImageUrl() : "")
+                + (null != getLead_name() ? getLead_name() : "")
+                + (null != getLead_data_count() ? getLead_data_count() : "")
+                + (null != getLead_avatar() ? getLead_avatar() : "");
 		return CommonUtils.getMD5EncryptedString(recordString);
 	}
 	public String getRecordHash() {
@@ -126,4 +138,31 @@ public class ResearchProject {
 	public void setProtocols_ids(String protocols_ids) {
 		this.protocols_ids = protocols_ids;
 	}
+
+	public String getLead_name() {
+		return lead_name;
+	}
+
+	public void setLead_name(String lead_name) {
+		this.lead_name = lead_name;
+	}
+
+	public String getLead_data_count() {
+		return lead_data_count;
+	}
+
+	public void setLead_data_count(String lead_data_count) {
+		this.lead_data_count = lead_data_count;
+	}
+
+    public String getLead_avatar() {
+        return lead_avatar;
+    }
+
+    public void setLead_avatar(String lead_avatar) {
+        this.lead_avatar = lead_avatar;
+    }
+
+
+
 }
