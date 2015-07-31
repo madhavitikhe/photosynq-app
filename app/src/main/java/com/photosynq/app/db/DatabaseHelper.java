@@ -61,9 +61,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Project lead columns
 //    private static final String C_LEAD_ID = "plead_id";
-    private static final String C_LEAD_NAME = "name";
+    private static final String C_LEAD_NAME = "lead_name";
     private static final String C_LEAD_DATA_COUNT = "data_count";
-    private static final String C_LEAD_IMAGE_URL = "image_url";
+    private static final String C_LEAD_IMAGE_URL = "lead_avatar_url";
 
 	// Question and Option Table - column names
     public static final String C_QUESTION_ID = "question_id";// Question
@@ -135,7 +135,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     .append(C_IS_CONTRIBUTED).append(TEXT).append(COMMA)
                     .append(C_PROJECT_PROTOCOL_IDS).append(TEXT).append(COMMA)
                     .append(C_PROJECT_IMAGE_URL).append(TEXT).append(")");
-    
+
 
 	// Question table create statement
 
@@ -499,7 +499,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		StringBuilder selectQuery = new StringBuilder(SELECT).append(" * ")
                 .append(FROM).append( TABLE_RESEARCH_PROJECT)
-				.append(WHERE).append(C_PROJECT_LEAD_ID)
+				.append(WHERE).append("(").append(C_PROJECT_LEAD_ID)
                 .append(" = '").append(userId)
 				.append("' or ").append(C_IS_CONTRIBUTED).append(" = 'true')")
                 .append(AND).append(C_PROJECT_NAME ).append(" LIKE '%").append(searchString).append("%'");

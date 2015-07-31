@@ -43,14 +43,6 @@ public class UpdateData implements PhotosynqResponse{
 
     private void processResult(String result) {
 
-//        if(null != navigationDrawer) {
-//            navigationDrawer.runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    navigationDrawer.setProgressBarVisibility(View.VISIBLE);
-//                }
-//            });
-//        }
 
         System.out.println("data update result :"+result);
         Date date = new Date();
@@ -101,15 +93,6 @@ public class UpdateData implements PhotosynqResponse{
         }
 
         Date date1 = new Date();
-
-//        if(null != navigationDrawer) {
-//            navigationDrawer.runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    navigationDrawer.setProgressBarVisibility(View.INVISIBLE);
-//                }
-//            });
-//        }
 
         System.out.println("UpdateData End onResponseReceived: " + date1.getTime());
     }

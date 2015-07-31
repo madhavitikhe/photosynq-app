@@ -61,13 +61,10 @@ public class HTTPConnection extends AsyncTask<Object, Object, String>{
 					user.put("user", credentials);
 					input = new StringEntity(user.toString());
 					input.setContentType("application/json");
-			} catch (JSONException e) {
-				e.printStackTrace();
-			} catch (UnsupportedEncodingException e) {
+			} catch (JSONException | UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
-			
-		}
+        }
 		super.onPreExecute();	
 	}
 
@@ -76,31 +73,31 @@ public class HTTPConnection extends AsyncTask<Object, Object, String>{
         HttpClient httpclient = new DefaultHttpClient();
         Context context = (Context)uri[0];
         HttpResponse response = null;
-        HttpPost postRequest = null;
-        HttpGet getRequest = null;
+        HttpPost postRequest;
+        HttpGet getRequest;
         String responseString = null;
         if(!CommonUtils.isConnected(context))
         {
             return Constants.SERVER_NOT_ACCESSIBLE;
         }
-        Log.d("PHOTOSYNQ-HTTPConnection", "in async task");
+        Log.d("PHTTPC", "in async task");
         try {
-            Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ URI"+uri[1]);
-            if("POST".equals((String) uri[2]) )
+            Log.d("PHTTPC", "$$$$ URI"+uri[1]);
+            if("POST".equals(uri[2]) )
             {
                 postRequest = new HttpPost((String)uri[1]);
                 if(null!=input)
                 {
                     postRequest.setEntity(input);
                 }
-                Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing POST request");
+                Log.d("PHTTPC", "$$$$ Executing POST request");
                 response = httpclient.execute(postRequest);
-            }else if ("GET".equals((String) uri[2]) ) {
+            }else if ("GET".equals(uri[2]) ) {
                 getRequest = new HttpGet((String) uri[1]);
-                Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing GET request");
+                Log.d("PHTTPC", "$$$$ Executing GET request");
                 response = httpclient.execute(getRequest);
             }
-            Log.d("PHOTOSYNQ-HTTPConnection", "in async task");
+            Log.d("PHTTPC", "in async task");
 
             if (null != response) {
                 try {
@@ -120,8 +117,6 @@ public class HTTPConnection extends AsyncTask<Object, Object, String>{
                 }
             }
 
-        } catch (ClientProtocolException e) {
-            //TODO Handle problems..
         } catch (IOException e) {
             //TODO Handle problems..
         }
@@ -138,7 +133,7 @@ public class HTTPConnection extends AsyncTask<Object, Object, String>{
         }
         if (null == result)
         {
-        	Log.d("PHOTOSYNQ-HTTPConnection","No results returned");
+        	Log.d("PHTTPC","No results returned");
         }
     }
 }

@@ -25,6 +25,8 @@ import com.photosynq.app.utils.PrefUtils;
 import com.photosynq.app.utils.SyncHandler;
 import com.squareup.picasso.Picasso;
 
+import junit.framework.TestCase;
+
 import java.util.List;
 
 
@@ -41,6 +43,8 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
     private ListView projectList;
     private static String mSearchString;
     private String pCreatorId;
+    private List<ResearchProject> projects;
+
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -117,10 +121,9 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
     }
 
     private void showProjectList() {
-        List<ResearchProject> projects = null;
         if(mSearchString.length() > 0) {
             if(mSectionNumber == 0) {
-                projects = dbHelper.getAllResearchProjects(mSearchString);
+                projects=dbHelper.getAllResearchProjects(mSearchString);
             }else{
                 projects = dbHelper.getUserCreatedContributedProjects(mSearchString, pCreatorId);
             }
@@ -131,7 +134,7 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
             if(mSectionNumber == 0) {
                 projects = dbHelper.getAllResearchProjects();
             }else{
-                projects = dbHelper.getUserCreatedContributedProjects(pCreatorId);
+                projects= dbHelper.getUserCreatedContributedProjects(pCreatorId);
             }
         }
 
@@ -144,25 +147,28 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
      */
     private void refreshProjectList() {
         dbHelper = DatabaseHelper.getHelper(getActivity());
-        List<ResearchProject> projects;
+        projects.clear();
         if(mSearchString.length() > 0) {
             if(mSectionNumber == 0) {
-                projects = dbHelper.getAllResearchProjects(mSearchString);
+                projects.addAll(dbHelper.getAllResearchProjects(mSearchString));
             }else{
-                projects = dbHelper.getUserCreatedContributedProjects(mSearchString, pCreatorId);
+                projects.addAll(dbHelper.getUserCreatedContributedProjects(mSearchString, pCreatorId));
             }
             if(projects.isEmpty()){
                 Toast.makeText(getActivity(), "No project found", Toast.LENGTH_LONG).show();
             }
         }else{
             if(mSectionNumber == 0) {
-                projects = dbHelper.getAllResearchProjects();
+                projects.addAll(dbHelper.getAllResearchProjects());
             }else{
-                projects = dbHelper.getUserCreatedContributedProjects(pCreatorId);
+                projects.addAll(dbHelper.getUserCreatedContributedProjects(pCreatorId));
             }
         }
-        arrayAdapter = new ProjectArrayAdapter(getActivity(), projects);
-        projectList.setAdapter(arrayAdapter);
+
+        //arrayAdapter = new ProjectArrayAdapter(getActivity(), projects);
+        //projectList.setAdapter(arrayAdapter);
+        arrayAdapter.notifyDataSetChanged();
+        projectList.invalidateViews();
     }
 
     @Override
@@ -224,36 +230,55 @@ public class ProjectModeFragment extends Fragment implements PhotosynqResponse{
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null)
-                convertView = mInflater.inflate(R.layout.project_list_item, null);
+        public View getView(int position, View view, ViewGroup parent) {
+            ViewHolder holder;
 
-            TextView tvProjectName = (TextView) convertView.findViewById(R.id.tv_project_name);
-            tvProjectName.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoRegular());
-            TextView tvProjectBy = (TextView) convertView.findViewById(R.id.tv_project_by);
-            tvProjectBy.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoRegular());
 //            TextView tvLastCont = (TextView) convertView.findViewById(R.id.tv_last_contribution);
 //            tvLastCont.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoRegular());
+
+            if (view == null) {
+                view = LayoutInflater.from(context).inflate(R.layout.project_list_item, parent, false);
+                holder = new ViewHolder();
+                holder.imageview = (ImageView) view.findViewById(R.id.im_projectImage);
+                holder.tvProjectName = (TextView) view.findViewById(R.id.tv_project_name);
+                holder.tvProjectName.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoRegular());
+                holder.tvProjectBy = (TextView) view.findViewById(R.id.tv_project_by);
+                holder.tvProjectBy.setTypeface(CommonUtils.getInstance(getActivity()).getFontRobotoRegular());
+                view.setTag(holder);
+            } else {
+                holder = (ViewHolder) view.getTag();
+            }
 
             ResearchProject project = getItem(position);
             if (null != project) {
                 try {
-                    tvProjectName.setText(project.getName());
-                    tvProjectBy.setText("by " + project.getLead_name());
+                    holder.tvProjectName.setText(project.getName());
+                    holder.tvProjectBy.setText("by " + project.getLead_name());
 
-                    ImageView imageview = (ImageView) convertView.findViewById(R.id.im_projectImage);
-                    Picasso.with(getActivity()).load(project.getImageUrl()).into(imageview);
-                    Picasso.with(getActivity())
+//                    ImageView imageview = (ImageView) convertView.findViewById(R.id.im_projectImage);
+                    //Picasso.with(getActivity()).load(project.getImageUrl()).into(imageview);
+//                    Picasso.with(this.context)
+//                            .load(project.getImageUrl())
+//                            .into(imageview);
+
+                    Picasso.with(context)
                             .load(project.getImageUrl())
+                            .placeholder(R.drawable.ic_launcher1)
                             .error(R.drawable.ic_launcher1)
-                            .into(imageview);
-
+                            .resize(200,200)
+                            .centerCrop()
+                            .into(holder.imageview);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
 
-            return convertView;
+            return view;
         }
+    }
+    static class ViewHolder {
+        TextView tvProjectName;
+        TextView tvProjectBy;
+        ImageView imageview;
     }
 }

@@ -74,8 +74,6 @@ public class UpdateProject implements PhotosynqResponse {
         }else {
             db = DatabaseHelper.getHelper(navigationDrawer);
         }
-//        db.openWriteDatabase();
-//        db.openReadDatabase();
         JSONArray jArray;
 
         if (null != result) {
@@ -89,8 +87,6 @@ public class UpdateProject implements PhotosynqResponse {
 
                     });
                 }
-//                db.closeWriteDatabase();
-//                db.closeReadDatabase();
                 return;
             }
 
