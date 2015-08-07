@@ -81,12 +81,6 @@
                 android:value="com.photosynq.app.ProjectDetailsActivity" />
         </activity>
         <activity
-            android:name=".ProjectDataActivity"
-            android:label="@string/title_activity_project_data"
-            android:screenOrientation="nosensor"
-            android:windowSoftInputMode="adjustResize" >
-        </activity>
-        <activity
             android:name=".DirectionsActivity"
             android:label="@string/title_activity_directions"
             android:screenOrientation="nosensor"
@@ -99,11 +93,33 @@
             android:name=".DisplayCachedDataPoints"
             android:label="@string/title_activity_display_cached_data_points"
             android:screenOrientation="nosensor"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize" >
         </activity>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="d85db13634e01827b24da541f8488afcace1a337" />
+
+        <activity
+            android:name=".Questions.ProjectDefinedQuestion"
+            android:label="@string/title_activity_project_defined_question" >
+        </activity>
+        <activity
+            android:name=".Questions.UserDefinedQuestion"
+            android:label="@string/title_activity_user_defined_question" >
+        </activity>
+        <activity
+            android:name=".Questions.ScancodeQuestion"
+            android:label="@string/title_activity_scancode_question" >
+        </activity>
+        <activity
+            android:name=".Questions.AutoIncrQuestion"
+            android:label="@string/title_activity_auto_incr_question" >
+        </activity>
+        <activity
+            android:name=".Questions.ReviewQuestions"
+            android:label="@string/title_activity_review_questions" >
+        </activity>
     </application>
 
 </manifest>

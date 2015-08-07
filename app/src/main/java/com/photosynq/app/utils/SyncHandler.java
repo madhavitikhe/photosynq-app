@@ -154,7 +154,7 @@ public class SyncHandler {
                     return Constants.SERVER_NOT_ACCESSIBLE;
                 }
 
-                Log.d("PHOTOSYNQ-HTTPConnection", "in async task");
+                Log.d("sync_handler", "in async task");
 
                 // Sync with clear cache
                 if(syncMode == ALL_SYNC_UI_MODE_CLEAR_CACHE) {
@@ -334,7 +334,7 @@ public class SyncHandler {
                 delegate.onResponseReceived((String) result[1]);
             }
             if (null == result) {
-                Log.d("PHOTOSYNQ-HTTPConnection", "No results returned");
+                Log.d("sync_handler", "No results returned");
             }
             super.onProgressUpdate(result);
         }

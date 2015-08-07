@@ -321,7 +321,7 @@ public class BluetoothService {
                     String readMessage = new String(buffer, 0, bytes);
                     long time = System.currentTimeMillis();
 
-                    measurement.append(readMessage.replaceAll("\\{", "{\"time\":\""+time+"\","));
+                    measurement.append(readMessage.replaceAll("\\{", "{\"time\":"+time+","));
                     //tempMeasurement.append(readMessage.replaceAll("\\{", "{\"time\":\""+time+"\","));
                     mBluetoothMessage.message = measurement.toString();
                     if (readMessage.replaceAll("\\r\\n", "######").contains("############")) {

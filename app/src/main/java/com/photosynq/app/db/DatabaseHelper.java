@@ -206,6 +206,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     .append(C_PROJECT_ID).append(TEXT).append(COMMA)
                     .append(C_QUESTION_ID).append(TEXT).append(COMMA)
                     .append(C_TYPE).append(TEXT).append(COMMA)
+                    .append(C_SELECTED_OPTION_TEXT).append(TEXT).append(COMMA)
+                    .append(C_IS_REMEMBER).append(TEXT).append(COMMA)
                     .append(C_VALUES).append(TEXT).append(")");
 
     private static final StringBuilder CREATE_TABLE_REMEMBER_ANSWERS =
@@ -259,6 +261,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(CREATE_TABLE_RESULTS.toString());
 		db.execSQL(CREATE_TABLE_SETTINGS.toString());
 		db.execSQL(CREATE_TABLE_DATA.toString());
+        Log.e("DBHGAURC", CREATE_TABLE_DATA.toString());
         db.execSQL(CREATE_TABLE_REMEMBER_ANSWERS.toString());
 		db.execSQL(CREATE_TABLE_USER_ANSWERS.toString());
 	}
@@ -327,8 +330,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			Log.e("DBHGAURC", selectQuery.toString());
 		}
 
-		Cursor c = getWDatabase(context).rawQuery(selectQuery.toString(), null);
-        int cnt = c.getCount();
+        int cnt = 0;
+        Cursor c = getWDatabase(context).rawQuery(selectQuery.toString(), null);
+        if (c.moveToFirst()) {
+            cnt = c.getInt(0);
+        }
         c.close();
         return cnt;
 	}
@@ -704,7 +710,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String user_id = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
 
         if (question.getQuestionType() == Question.PROJECT_DEFINED || question.getQuestionType() == Question.PHOTO_TYPE_DEFINED) {
-            Data data = new Data(user_id, question.getProjectId(), question.getQuestionId(), "", "");
+            Data data = new Data(user_id, question.getProjectId(), question.getQuestionId(), "", "","","");
             updateData(data);
         }
         // if update fails that indicates there is no then create new row
@@ -1136,6 +1142,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			values.put(C_QUESTION_ID, data.getQuestion_id());
 			values.put(C_TYPE, data.getType());
 			values.put(C_VALUES, data.getValue());
+            values.put(C_IS_REMEMBER,data.getIs_remembered());
+            values.put(C_SELECTED_OPTION_TEXT,data.getSelected_option());
 
 			// Inserting Row
 			long row_id = getWDatabase(context).insert(TABLE_DATA, null, values);
@@ -1153,8 +1161,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	// Getting single parameters of settings
 	public Data getData(String userID, String projectID, String questionID) {
 
-		String selectQuery = "SELECT  * FROM " + TABLE_DATA + " WHERE "
-				+ C_USER_ID + " = '" + userID + "' and " + C_PROJECT_ID + " = '" + projectID + "' and " + C_QUESTION_ID + " = '" + questionID + "'";
+		String selectQuery = "SELECT  * FROM " + TABLE_DATA
+                + " WHERE " + C_USER_ID + " = '" + userID
+                + "' and " + C_PROJECT_ID + " = '" + projectID
+                + "' and " + C_QUESTION_ID + " = '" + questionID + "'";
 
 		Data data = new Data();
 		data.setUser_id(userID);
@@ -1165,8 +1175,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			data.setProject_id(c.getString(c.getColumnIndex(C_PROJECT_ID)));
 			data.setQuestion_id(c.getString(c.getColumnIndex(C_QUESTION_ID)));
 			data.setType(c.getString(c.getColumnIndex(C_TYPE)));
-			data.setValue(c.getString(c.getColumnIndex(C_VALUES)));
-		}
+            data.setSelected_option(c.getString(c.getColumnIndex(C_SELECTED_OPTION_TEXT)));
+            data.setIs_remembered(c.getString(c.getColumnIndex(C_IS_REMEMBER)));
+            data.setValue(c.getString(c.getColumnIndex(C_VALUES)));
+
+        }
 		c.close();
 		return data;
 	}
@@ -1179,11 +1192,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(C_PROJECT_ID, data.getProject_id());
         values.put(C_QUESTION_ID, data.getQuestion_id());
         values.put(C_TYPE, data.getType());
+        values.put(C_SELECTED_OPTION_TEXT, data.getType());
+        values.put(C_IS_REMEMBER, data.getType());
+        values.put(C_TYPE, data.getType());
         values.put(C_VALUES, data.getValue());
 
         // updating row
         int rowUpdated = getWDatabase(context).update(
-                TABLE_DATA, values, C_USER_ID + " = ? and " + C_QUESTION_ID + " = ? and " + C_PROJECT_ID + " = ?",
+                TABLE_DATA, values, C_USER_ID + " = ? and "
+                        + C_QUESTION_ID + " = ? and "
+                        + C_PROJECT_ID + " = ?",
                 new String[]{data.getUser_id(), data.getQuestion_id(), data.getProject_id()});
 
         return rowUpdated > 0 || createData(data);

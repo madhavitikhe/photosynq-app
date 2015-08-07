@@ -191,52 +191,6 @@ public class ProjectDetailsActivity extends ActionBarActivity {
         startActivityForResult(intent, 555);
     }
 
-    public void join_team_click(View view){
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_project_details, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-
-            DatabaseHelper databaseHelper = DatabaseHelper.getHelper(this);
-            List<Question> questions = databaseHelper.getAllQuestionForProject(projectID);
-            if(questions.size() <= 0)
-            {
-                Toast.makeText(this, "No Questions for project selected", Toast.LENGTH_LONG).show();
-
-            }else {
-
-                Intent intent = new Intent(this, ProjectDataActivity.class);
-                intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectID);
-                startActivity(intent);
-            }
-
-            return true;
-        }
-
-        if (id == android.R.id.home){
-
-            finish();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);

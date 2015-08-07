@@ -993,7 +993,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                 });
             }
 
-            allOptions.add(data_value);
+            allOptions.add("\""+question.getQuestionId()+"\":\""+data_value+"\"");
 
         }
 
@@ -1698,35 +1698,35 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                 //??mtvStatusMessage.setText(R.string.connected);
                                 String dataString;
                                 StringBuffer options = new StringBuffer();
-                                options.append("\"user_answers\": [");
+                                options.append("\"user_answers\": {");
                                 //loop
                                 if (null != allOptions) {
                                     for (int i = 0; i < allOptions.size(); i++) {
-                                        options.append("\"" + allOptions.get(i) + "\"");
+                                        options.append( allOptions.get(i));
                                         if (i < allOptions.size() - 1)
                                             options.append(",");
                                     }
                                 }
-                                options.append(" ],");
-                                final long time = System.currentTimeMillis();
+                                options.append(" },");
+//                                final long time = System.currentTimeMillis();
                                 if (options.equals("")) {
-                                    dataString = "var data = [\n" + measurement.replaceAll("\\r\\n", "").replaceAll("\\{", "{\"time\":\"" + time + "\",") + "\n];";
+                                    dataString = "var data = [\n" + measurement.replaceAll("\\r\\n", "") + "\n];";
                                     System.out.println("All Options" + dataString);
                                 } else {
                                     String currentLocation = PrefUtils.getFromPrefs(ProjectMeasurmentActivity.this, PrefUtils.PREFS_CURRENT_LOCATION, "");
                                     if (!currentLocation.equals("")) {
                                         options = options.append("\"location\":[" + currentLocation + "],");
-                                        dataString = "var data = [\n" + measurement.replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options).replaceAll("\\{", "{\"time\":\"" + time + "\",") + "\n];";
+                                        dataString = "var data = [\n" + measurement.replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options) + "\n];";
                                         System.out.println("All Options" + dataString);
                                     } else {
-                                        dataString = "var data = [\n" + measurement.replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options).replaceAll("\\{", "{\"time\":\"" + time + "\",") + "\n];";
+                                        dataString = "var data = [\n" + measurement.replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options) + "\n];";
                                         System.out.println("All Options" + dataString);
                                     }
                                 }
                                 System.out.println("###### writing data.js :" + dataString);
                                 CommonUtils.writeStringToFile(ProjectMeasurmentActivity.this, "data.js", dataString);
 
-                                final String reading = measurement.replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options).replaceAll("\\{", "{\"time\":\"" + time + "\",");
+                                final String reading = measurement.replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options);
 
                                 new CountDownTimer(1000, 1000) {
 
