@@ -232,93 +232,102 @@ public class CommonUtils {
         new AsyncTask<Object, Object, Object>() {
             @Override
             protected Object doInBackground(Object[] objects) {
-
                 DatabaseHelper db = DatabaseHelper.getHelper(context);
-                List<ProjectResult> listRecords = db.getAllUnUploadedResults();
-                for (ProjectResult projectResult : listRecords) {
+                String offsetid = "0";
+                int totalrecords = db.getAllUnuploadedResultsCount(null);
+                for(int recordsloop = 0; recordsloop < Math.ceil((double)totalrecords/5); recordsloop++) {
+                    int index = 1;
 
-                    String project_id = projectResult.getProjectId();
+                    List<ProjectResult> listRecords = db.getAllUnUploadedResults(5, offsetid);
+                    for (ProjectResult projectResult : listRecords) {
 
-                    if (projectId != -1){
+                        String project_id = projectResult.getProjectId();
 
-                        if (!project_id.equals("" + projectId)){
+                        if (projectId != -1) {
 
-                            continue;
-                        }
-                    }
+                            if (!project_id.equals("" + projectId)) {
 
-
-                    String row_id = projectResult.getId();
-                    String result = projectResult.getReading();
-
-                    if (!result.contains("user_answers")){
-
-                        Log.d("PhotosynQ", result);
-                    }
-
-
-                    String authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-                    String email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
-                    StringEntity input = null;
-                    String responseString = null;
-                    JSONObject request_data = new JSONObject();
-
-                    try {
-                        JSONObject jo = new JSONObject(result);
-                        request_data.put("user_email", email);
-                        request_data.put("user_token", authToken);
-                        request_data.put("data", jo);
-                        input = new StringEntity(request_data.toString());
-                        input.setContentType("application/json");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        continue;
-                        //??return Constants.SERVER_NOT_ACCESSIBLE;
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                        continue;
-                        //??return Constants.SERVER_NOT_ACCESSIBLE;
-                    }
-
-                    String strDataURI = Constants.PHOTOSYNQ_DATA_URL
-                            + project_id + "/data.json";
-
-                    Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ URI" + strDataURI);
-
-                    HttpPost postRequest = new HttpPost(strDataURI);
-                    if (null != input) {
-                        postRequest.setEntity(input);
-                    }
-                    Log.d("PHOTOSYNQ-HTTPConnection", "$$$$ Executing POST request");
-                    HttpClient httpclient = new DefaultHttpClient();
-                    try {
-                        HttpResponse response = httpclient.execute(postRequest);
-
-                        if (null != response) {
-                            StatusLine statusLine = response.getStatusLine();
-                            if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                                response.getEntity().writeTo(out);
-                                out.close();
-                                responseString = out.toString();
-                            } else {
-                                //Closes the connection.
-                                response.getEntity().getContent().close();
-                                throw new IOException(statusLine.getReasonPhrase());
+                                continue;
                             }
                         }
 
-                        UpdateData updateData = new UpdateData(context, row_id);
-                        updateData.onResponseReceived(responseString);
+                        if (index == listRecords.size()) {
+                            offsetid = projectResult.getId();
+                        }
+                        String row_id = projectResult.getId();
+                        String result = projectResult.getReading();
 
-                    } catch (ClientProtocolException e) {
-                        continue;
-                        //??return Constants.SERVER_NOT_ACCESSIBLE;
-                    } catch (IOException e) {
-                        continue;
-                        //??return Constants.SERVER_NOT_ACCESSIBLE;
+                        if (!result.contains("user_answers")) {
+
+                            Log.d("PhotosynQ", result);
+                        }
+
+
+                        String authToken = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_AUTH_TOKEN_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+                        String email = PrefUtils.getFromPrefs(context, PrefUtils.PREFS_LOGIN_USERNAME_KEY, PrefUtils.PREFS_DEFAULT_VAL);
+                        StringEntity input = null;
+                        String responseString = null;
+                        JSONObject request_data = new JSONObject();
+
+                        try {
+                            JSONObject jo = new JSONObject(result);
+                            request_data.put("user_email", email);
+                            request_data.put("user_token", authToken);
+                            request_data.put("data", jo);
+                            input = new StringEntity(request_data.toString());
+                            input.setContentType("application/json");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            continue;
+                            //??return Constants.SERVER_NOT_ACCESSIBLE;
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                            continue;
+                            //??return Constants.SERVER_NOT_ACCESSIBLE;
+                        }
+
+                        String strDataURI = Constants.PHOTOSYNQ_DATA_URL
+                                + project_id + "/data.json";
+
+                        Log.d("commonutils", "$$$$ URI" + strDataURI);
+
+                        HttpPost postRequest = new HttpPost(strDataURI);
+                        if (null != input) {
+                            postRequest.setEntity(input);
+                        }
+                        Log.d("commonutils", "$$$$ Executing POST request");
+                        HttpClient httpclient = new DefaultHttpClient();
+                        try {
+                            HttpResponse response = httpclient.execute(postRequest);
+
+                            if (null != response) {
+                                StatusLine statusLine = response.getStatusLine();
+                                if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+                                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                                    response.getEntity().writeTo(out);
+                                    out.close();
+                                    responseString = out.toString();
+                                } else {
+                                    //Closes the connection.
+                                    response.getEntity().getContent().close();
+                                    throw new IOException(statusLine.getReasonPhrase());
+                                }
+                            }
+
+                            UpdateData updateData = new UpdateData(context, row_id);
+                            updateData.onResponseReceived(responseString);
+
+                        } catch (ClientProtocolException e) {
+                            continue;
+                            //??return Constants.SERVER_NOT_ACCESSIBLE;
+                        } catch (IOException e) {
+                            continue;
+                            //??return Constants.SERVER_NOT_ACCESSIBLE;
+                        }
+
+                        index++;
+
                     }
-
                 }
                 return Constants.SUCCESS;
             }

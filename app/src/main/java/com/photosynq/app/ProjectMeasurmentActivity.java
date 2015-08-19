@@ -1709,11 +1709,12 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                 }
                                 options.append(" },");
 //                                final long time = System.currentTimeMillis();
-                                if (options.equals("")) {
-                                    dataString = "var data = [\n" + measurement.replaceAll("\\r\\n", "") + "\n];";
+                                String currentLocation = PrefUtils.getFromPrefs(ProjectMeasurmentActivity.this, PrefUtils.PREFS_CURRENT_LOCATION, "");
+                                if (allOptions.size() <= 0) {
+                                    dataString = "var data = [\n" + measurement.replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + "\"location\":[" + currentLocation + "],") + "\n];";
                                     System.out.println("All Options" + dataString);
                                 } else {
-                                    String currentLocation = PrefUtils.getFromPrefs(ProjectMeasurmentActivity.this, PrefUtils.PREFS_CURRENT_LOCATION, "");
+
                                     if (!currentLocation.equals("")) {
                                         options = options.append("\"location\":[" + currentLocation + "],");
                                         dataString = "var data = [\n" + measurement.replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options) + "\n];";
@@ -1726,7 +1727,7 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                 System.out.println("###### writing data.js :" + dataString);
                                 CommonUtils.writeStringToFile(ProjectMeasurmentActivity.this, "data.js", dataString);
 
-                                final String reading = measurement.replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options);
+                                final String reading = measurement.replaceAll("\\r\\n", "");
 
                                 new CountDownTimer(1000, 1000) {
 

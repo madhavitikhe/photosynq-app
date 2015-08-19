@@ -339,12 +339,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cnt;
 	}
 
-	public List<ProjectResult> getAllUnUploadedResults() {
+	public List<ProjectResult> getAllUnUploadedResults(int limitRows, String offsetid) {
         StringBuilder selectQuery = new StringBuilder();
         List<ProjectResult> projectsResults = new ArrayList<>();
         selectQuery.append(SELECT).append(" rowid,* ").append(FROM)
                 .append(TABLE_RESULTS).append(WHERE)
-                .append(C_UPLOADED).append(" = 'N'");
+                .append(C_UPLOADED).append(" = 'N' ")
+                .append(AND).append(" rowid > "+offsetid)
+                .append(" LIMIT "+limitRows);
 
 		Log.e("DBHGAUR", selectQuery.toString());
 

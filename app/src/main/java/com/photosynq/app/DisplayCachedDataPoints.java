@@ -20,14 +20,14 @@ public class DisplayCachedDataPoints extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_cached_data_points);
+//TODO shekhar improve this
+//        DatabaseHelper db = DatabaseHelper.getHelper(getApplicationContext());
+//        final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
 
-        DatabaseHelper db = DatabaseHelper.getHelper(getApplicationContext());
-        final List<ProjectResult> listRecords = db.getAllUnUploadedResults();
-
-        TextView txt = (TextView) findViewById(R.id.text1);
-        for(int i = 0; i < listRecords.size(); i++){
-            txt.append(Html.fromHtml("<br/><b>PROJECT_ID - </b>"+listRecords.get(i).getProjectId()+ "\n\n" + "<br/><b>IS_UPLOADED - </b>" + listRecords.get(i).getUploaded() + "\n\n" + "<br/><b>READINGS - </b>" + listRecords.get(i).getReading() + "\n\n<br/><br/>-------------------------------------------"));
-        }
+//        TextView txt = (TextView) findViewById(R.id.text1);
+//        for(int i = 0; i < listRecords.size(); i++){
+//            txt.append(Html.fromHtml("<br/><b>PROJECT_ID - </b>"+listRecords.get(i).getProjectId()+ "\n\n" + "<br/><b>IS_UPLOADED - </b>" + listRecords.get(i).getUploaded() + "\n\n" + "<br/><b>READINGS - </b>" + listRecords.get(i).getReading() + "\n\n<br/><br/>-------------------------------------------"));
+//        }
     }
 
     @Override
