@@ -164,7 +164,7 @@ public class UpdateProject implements PhotosynqResponse {
                         for (int j = 0; j < customFields.length(); j++) {
                             JSONObject jsonQuestion = customFields.getJSONObject(j);
                             int questionType = Integer.parseInt(jsonQuestion.getString("value_type"));
-                            JSONArray optionValuesJArray = jsonQuestion.getJSONArray("value");
+                                JSONArray optionValuesJArray = jsonQuestion.getJSONArray("value");
                             //Sometime option value is empty i.e we need to set "" parameter.
                             if (optionValuesJArray.length() == 0) {
                                 Option option = new Option(jsonQuestion.getString("id"), "", jsonProject.getString("id"));

@@ -1602,7 +1602,6 @@ public class ProjectMeasurmentActivity extends ActionBarActivity implements
                                         }
 
                                     } catch (JSONException e) {
-                                        // TODO Auto-generated catch block
                                         e.printStackTrace();
                                     }
 

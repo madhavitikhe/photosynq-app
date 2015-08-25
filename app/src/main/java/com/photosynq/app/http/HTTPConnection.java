@@ -118,7 +118,6 @@ public class HTTPConnection extends AsyncTask<Object, Object, String>{
             }
 
         } catch (IOException e) {
-            //TODO Handle problems..
         }
         return responseString;
     }

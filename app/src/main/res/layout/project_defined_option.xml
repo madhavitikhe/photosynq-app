@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:id="@+id/proj_def_spinner_ll"
+    android:layout_height="match_parent">
+
+    <com.photosynq.app.questions.NoDefaultSpinner
+        android:id="@+id/project_defined_options_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:prompt="@string/pleaseselectanswer"
+        android:spinnerMode="dialog"
+        android:textColor="@color/textPrimary"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip">
+    </com.photosynq.app.questions.NoDefaultSpinner>
+    <CheckBox
+        android:id="@+id/remember_check_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Remember answer"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"/>
+
+
+</LinearLayout>

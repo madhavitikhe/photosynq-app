@@ -328,7 +328,6 @@ public class LoginActivity extends Activity implements PhotosynqResponse {
                 PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_PROJECTS,userJsonObject.get("projects").toString());
                 PrefUtils.saveToPrefs(getApplicationContext(),PrefUtils.PREFS_CONTRIBUTIONS,userJsonObject.get("contributions").toString());
             } catch (JSONException e) {
-                // TODO Log error
                 e.printStackTrace();
             }
 

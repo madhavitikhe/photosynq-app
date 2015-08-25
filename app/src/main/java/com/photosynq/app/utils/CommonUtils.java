@@ -235,6 +235,7 @@ public class CommonUtils {
                 DatabaseHelper db = DatabaseHelper.getHelper(context);
                 String offsetid = "0";
                 int totalrecords = db.getAllUnuploadedResultsCount(null);
+                //TODO change batch from 5 to 100 -shekhar
                 for(int recordsloop = 0; recordsloop < Math.ceil((double)totalrecords/5); recordsloop++) {
                     int index = 1;
 

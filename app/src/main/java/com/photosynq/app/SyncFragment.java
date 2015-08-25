@@ -227,6 +227,8 @@ public class SyncFragment extends Fragment implements PhotosynqResponse {
         syncBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO this has known problem of getting stuck when user is somehow able to submit sync,
+                // or think about if user starts sync and next moment auto sync yields - Shekhar
 
                 final Context context = getActivity();
 

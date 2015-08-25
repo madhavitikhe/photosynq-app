@@ -11,9 +11,9 @@ public class Question {
     private String recordHash;
     private String questionText;
 
-    public static int PROJECT_DEFINED = 1;
-    public static int USER_DEFINED = 2;
-	public static int PHOTO_TYPE_DEFINED = 3;
+    public static final int PROJECT_DEFINED = 1;
+    public static final int USER_DEFINED = 2;
+	public static final int PHOTO_TYPE_DEFINED = 3;
 
     public int getQuestionType() {
         return questionType;

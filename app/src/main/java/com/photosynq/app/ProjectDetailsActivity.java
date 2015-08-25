@@ -21,6 +21,7 @@ import com.photosynq.app.model.AppSettings;
 import com.photosynq.app.model.Data;
 import com.photosynq.app.model.Question;
 import com.photosynq.app.model.ResearchProject;
+import com.photosynq.app.questions.QuestionsList;
 import com.photosynq.app.utils.CommonUtils;
 import com.photosynq.app.utils.Constants;
 import com.photosynq.app.utils.PrefUtils;
@@ -186,9 +187,14 @@ public class ProjectDetailsActivity extends ActionBarActivity {
             }
         }
 
-        Intent intent = new Intent(this, ProjectMeasurmentActivity.class);
+//        Intent intent = new Intent(this, ProjectMeasurmentActivity.class);
+//        intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectID);
+//        startActivityForResult(intent, 555);
+        Intent intent = new Intent(this, QuestionsList.class);
         intent.putExtra(DatabaseHelper.C_PROJECT_ID, projectID);
         startActivityForResult(intent, 555);
+
+
     }
 
     @Override

@@ -435,7 +435,6 @@ public class SelectDeviceDialog extends DialogFragment {
                     }
 
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -454,7 +453,6 @@ public class SelectDeviceDialog extends DialogFragment {
                         tvDevicePaired.setText((bluetoothDevice.getBondState() == 10) ? "Not Paired" : (bluetoothDevice.getBondState() == 12) ? "Paired" : "Pairing");
 
                     }catch(Exception e){
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }

@@ -53,4 +53,6 @@
     <string name="title_activity_scancode_question">Scancode Question</string>
     <string name="title_activity_auto_incr_question">Auto Incr Question</string>
     <string name="title_activity_review_questions">Review Questions</string>
+    <string name="title_activity_questions_list">Questions</string>
+    <string name="pleaseselectanswer">Please Select Answer</string>
 </resources>
