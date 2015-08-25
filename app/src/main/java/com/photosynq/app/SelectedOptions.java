@@ -12,6 +12,16 @@ public class SelectedOptions {
     private int questionType;
     private String projectId;
 
+    public boolean isReset() {
+        return reset;
+    }
+
+    public void setReset(boolean reset) {
+        this.reset = reset;
+    }
+
+    private boolean reset;
+
     public String getSelectedValue() {
         return selectedValue;
     }

@@ -89,12 +89,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                             .findViewById(R.id.user_input_edit_text);
                     CheckBox remember = (CheckBox)convertView.findViewById(R.id.remember_check_box);
                     SelectedOptions so = selectedOptions.get(groupPosition);
+
                     if(so.isRemember())
                     {
                         remember.setChecked(true);
                     }else {
                         remember.setChecked(false);
                     }
+
 
                     remember.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -156,9 +158,18 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
                         }
                     });
-                    if (null != selectedOptions.get(groupPosition) && !selectedOptions.get(groupPosition).getSelectedValue().equals("Tap To Select Answer")) {
-                        txtListChild.setText(selectedOptions.get(groupPosition).getSelectedValue());
+                    if(so.isReset())
+                    {
+                        txtListChild.setText("");
+                        so.setReset(false);
+                        selectedOptions.set(groupPosition, so);
+                    }else {
+                        if (null != selectedOptions.get(groupPosition) && !selectedOptions.get(groupPosition).getSelectedValue().equals("Tap To Select Answer")) {
+                            txtListChild.setText(selectedOptions.get(groupPosition).getSelectedValue());
+                        }
                     }
+
+
                     return convertView;
 
                 case Question.PROJECT_DEFINED:
@@ -175,6 +186,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     }else {
                         remember1.setChecked(false);
                     }
+
+
 
                     remember1.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -194,6 +207,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
                     NoDefaultSpinner projectDefinedOptionsSpinner = (NoDefaultSpinner) convertView
                             .findViewById(R.id.project_defined_options_spinner);
+
                     List<String> list = getGroup(groupPosition).getOptions();
                     ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(convertView.getContext(),
                             R.layout.simple_spinner_item,list );
@@ -229,7 +243,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
                         }
                     });
-                    projectDefinedOptionsSpinner.setSelection(dataAdapter.getPosition(selectedOptions.get(groupPosition).getSelectedValue()));
+                    if(so1.isReset())
+                    {
+                        projectDefinedOptionsSpinner.setSelection(-1);
+                        so1.setReset(false);
+                        selectedOptions.set(groupPosition, so1);
+                    }else {
+                        projectDefinedOptionsSpinner.setSelection(dataAdapter.getPosition(selectedOptions.get(groupPosition).getSelectedValue()));
+                    }
                     return convertView;
                 case Question.PHOTO_TYPE_DEFINED:
                     //if (convertView == null) {
@@ -275,7 +296,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     photoDefinedOptionsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                            int questionNumber = (int)parent.getTag();
+                            int questionNumber = (int) parent.getTag();
                             SelectedOptions so = selectedOptions.get(questionNumber);
                             so.setSelectedValue(parent.getItemAtPosition(position).toString());
                             selectedOptions.set(questionNumber, so);
@@ -294,12 +315,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                             Picasso.with(_context)
                                     .load(splitOptionText[1])
                                     .placeholder(R.drawable.ic_launcher1)
-                                    .resize(60,60)
+                                    .resize(60, 60)
                                     .error(R.drawable.ic_launcher1)
                                     .into(lblListHeader_image);
 
                             final int sdk = android.os.Build.VERSION.SDK_INT;
-                            if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
                                 ll2.setBackgroundDrawable(_context.getResources().getDrawable(R.color.green_light));
                             } else {
                                 ll2.setBackground(_context.getResources().getDrawable(R.color.green_light));
@@ -314,7 +335,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
                         }
                     });
-                    photoDefinedOptionsSpinner.setSelection(dataAdapter1.getPosition(selectedOptions.get(groupPosition).getSelectedValue()));
+                    if(so2.isReset())
+                    {
+                        photoDefinedOptionsSpinner.setSelection(-1);
+                        so2.setReset(false);
+                        selectedOptions.set(groupPosition, so2);
+                    }else{
+                        photoDefinedOptionsSpinner.setSelection(dataAdapter1.getPosition(selectedOptions.get(groupPosition).getSelectedValue()));
+                    }
+
+
 //                    TextView txtListChild3 = (TextView) convertView
 //                            .findViewById(R.id.lblListItem);
 //
@@ -546,8 +576,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         }
         else
         {
-            btnTakeMeasurement.setText("+ Take Measurement");
-            btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
+            if(!btnTakeMeasurement.getText().equals("Cancel")) {
+                btnTakeMeasurement.setText("+ Take Measurement");
+                btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
+            }
+
         }
 
     }
@@ -559,5 +592,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
+    }
+
+    public void setSelectedOptions(ArrayList<SelectedOptions> selectedOptions) {
+        this.selectedOptions = selectedOptions;
     }
 }

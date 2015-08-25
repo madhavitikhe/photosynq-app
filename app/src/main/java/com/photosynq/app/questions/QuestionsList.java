@@ -410,7 +410,7 @@ public class QuestionsList extends ActionBarActivity implements SelectDeviceDial
                                 //??mtvStatusMessage.setText(R.string.connected);
                                 String dataString;
                                 StringBuffer options = new StringBuffer();
-                                options.append("\"user_answers\": [");
+                                options.append("\"user_answers\": {");
                                 //loop
                                 ArrayList<SelectedOptions> allOptions = listAdapter.getSelectedOptions();
                                     for (int i = 0; i < allOptions.size(); i++) {
@@ -425,7 +425,7 @@ public class QuestionsList extends ActionBarActivity implements SelectDeviceDial
                                         if (i < allOptions.size() - 1)
                                             options.append(",");
                                     }
-                                options.append(" ],");
+                                options.append(" },");
 //                                final long time = System.currentTimeMillis();
                                 String currentLocation = PrefUtils.getFromPrefs(QuestionsList.this, PrefUtils.PREFS_CURRENT_LOCATION, "");
                                 if (allOptions.size() <= 0) {
@@ -445,7 +445,8 @@ public class QuestionsList extends ActionBarActivity implements SelectDeviceDial
                                 System.out.println("###### writing data.js :" + dataString);
                                 CommonUtils.writeStringToFile(QuestionsList.this, "data.js", dataString);
 
-                                final String reading = measurement.replaceAll("\\r\\n", "");
+                                final String reading = measurement.replaceAll("\\r\\n", "").replaceFirst("\\{", "{" + options)
+                                        ;
 
                                 new CountDownTimer(1000, 1000) {
 
@@ -558,8 +559,19 @@ public class QuestionsList extends ActionBarActivity implements SelectDeviceDial
         btnTakeMeasurement.setText("+ Take Measurement");
         btnTakeMeasurement.setBackgroundResource(R.drawable.btn_layout_orange);
 
+        ArrayList<SelectedOptions> options = listAdapter.getSelectedOptions();
+        for (SelectedOptions option:options
+             ) {
+            if(option.isRemember()) {
 
-
+                option.setReset(false);
+            }else {
+                option.setSelectedValue("Tap To Select Answer");
+                option.setReset(true);
+            }
+        }
+        listAdapter.setSelectedOptions(options);
+        listAdapter.notifyDataSetChanged();
         scanMode = false;
         mIsMeasureBtnClicked = false;
         mIsCancelMeasureBtnClicked = false;
